@@ -1,0 +1,62 @@
+---
+:src: GraphicsMagick-1.3.15.tar.bz2
+:src_dir: GraphicsMagick-1.3.15
+:type: libs
+:version: '1.3.15'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --with-pic --enable-shared \
+              --with-quantum-depth=16 \
+              --enable-magick-compat \
+              --enable-openmp-slow \
+              --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Library module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "${appcaps}DIR -> base path of library"
+          puts stderr "${appcaps}BIN -> bin path of library"
+          puts stderr "${appcaps}LIB -> lib path of library"
+          puts stderr "${appcaps}INCLUDE -> include path of library"
+          puts stderr "Adds ${appcaps}LIB to LD_LIBRARY_PATH"
+          puts stderr "Adds ${appcaps}DIR/share/man to MANPATH"
+          puts stderr "Adds ${appcaps}LIB/pkgconfig to PKG_CONFIG_PATH"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}MAN ${appdir}/share/man
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig

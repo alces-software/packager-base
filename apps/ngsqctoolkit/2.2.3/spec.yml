@@ -1,0 +1,17 @@
+---
+:license: OTHER - see http://www.nipgr.res.in/ngsqctoolkit.html
+:summary: A toolkit for the quality control (QC) of next generation sequencing (NGS) data
+:url: http://www.nipgr.res.in/ngsqctoolkit.html
+:description: |
+  NGS QC Toolkit: A toolkit for the quality control (QC) of next
+  generation sequencing (NGS) data. The toolkit comprises
+  user-friendly stand alone tools for quality control of the sequence
+  data generated using Illumina and Roche 454 platforms with detailed
+  results in the form of tables and graphs, and filtering of
+  high-quality sequence data. It also includes a few other tools,
+  which are helpful in NGS data quality control and analysis.
+:requires: alces-perl
+:group: Bioinformatics
+:changelog: |
+  * Wed Jun 20 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

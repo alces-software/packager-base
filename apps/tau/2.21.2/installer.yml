@@ -1,0 +1,67 @@
+---
+:src: tau-2.21.2.tar.gz
+:type: apps
+:version: '2.21.2'
+:compilers:
+  gcc:
+:compile: |
+  # bail out if dest_dir already exists to prevent trampling over an
+  # existing installation or packaging up the wrong codebase
+  if [ -d <%= dest_dir %> ]; then
+    cat <<EOF
+  A TAU installation is already installed.  Please remove this
+  installation before continuing. TAU installation was found in:
+  
+    <%= dest_dir %>
+  EOF
+    exit 1
+  fi
+  ./configure -mpi -openmp -prefix=<%= dest_dir %> <%= redirect(:configure) %>
+:install: |
+  make install <%= redirect(:install) %>
+  <% if @mode == :spec %>
+  rmdir ${RPM_BUILD_ROOT}/%{_alces_gridware}/apps/gcc/tau/<%= version %>
+  mv %{_alces_gridware}/apps/gcc/tau/<%= version %> ${RPM_BUILD_ROOT}/%{_alces_gridware}/apps/gcc/tau
+  # cleanup
+  rmdir -p --ignore-fail-on-non-empty %{_alces_gridware}/apps/gcc/tau
+  <% end %>
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Application module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "${appcaps}DIR -> base path of application"
+          puts stderr "${appcaps}BIN -> bin path of application"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  prereq mpi/<%= compiler_name %>/openmpi
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/x86_64/bin
+
+  prepend-path PATH ${appdir}/x86_64/bin
+  prepend-path MANPATH ${appdir}/man
+
+

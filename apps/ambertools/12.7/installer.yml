@@ -1,0 +1,79 @@
+---
+:src: AmberTools12.tar.bz2
+:src_dir: amber12
+:type: apps
+:version: '12.7'
+:compilers:
+  gcc:
+    :amber_compiler_name: gnu
+:sources:
+  - bugfix.1
+  - bugfix.2
+  - bugfix.3
+  - bugfix.4
+  - bugfix.5
+  - bugfix.6
+  - bugfix.7
+:compile: |
+  export AMBERHOME=`pwd`
+  python_interpreter=`which python`
+  if [ "$python_interpreter" ]; then
+    PYTHONARGS="--with-python $python_interpreter"
+  fi
+  mkdir -p .patches/AmberTools_Unapplied_Patches
+  <% 1.upto(7) do |n| %>
+    cp <%= source("bugfix.#{n}") %> .patches/AmberTools_Unapplied_Patches
+  <% end %>
+  for a in .patches/AmberTools_Unapplied_Patches/*; do
+    ./patch_amber.py --apply-patch=$a
+  done
+  ./configure --no-updates $PYTHONARGS <%= compiler[:amber_compiler_name] %> <%= redirect(:configure) %>
+  make install <%= redirect(:compile) %>
+  if [ "$MPI_HOME" ]; then
+    ./configure --no-updates $PYTHONARGS -mpi -rism <%= compiler[:amber_compiler_name] %> <%= redirect(:configure_mpi) %>
+    make install <%= redirect(:compile_mpi) %>
+  fi
+:install: |
+  mkdir -p <%= dest_dir %>
+  cp -Lrv bin dat doc include lib <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Application module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "AMBERHOME -> base path of application"
+          puts stderr "${appcaps}DIR -> base path of application"
+          puts stderr "${appcaps}BIN -> bin path of application"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  prereq mpi/<%= compiler_name %>/openmpi
+  prereq apps/<%= compiler_name %>/python
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv AMBERHOME ${appdir}
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin

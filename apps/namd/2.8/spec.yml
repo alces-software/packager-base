@@ -1,0 +1,25 @@
+---
+:license: NONFREE - see http://www.ks.uiuc.edu/Research/namd/license.html
+:summary: A parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems
+:url: http://www.gromacs.org/
+:description: |
+  NAMD, recipient of a 2002 Gordon Bell Award, is a parallel molecular
+  dynamics code designed for high-performance simulation of large
+  biomolecular systems. Based on Charm++ parallel objects, NAMD scales
+  to hundreds of processors on high-end parallel platforms and tens of
+  processors on commodity clusters using gigabit ethernet. NAMD uses
+  the popular molecular graphics program VMD for simulation setup and
+  trajectory analysis, but is also file-compatible with AMBER, CHARMM,
+  and X-PLOR.
+:group: Biophysics
+:requires: alces-fftw2-float
+:variants:
+  mpi:
+    :modules: mpi/%{compiler}/openmpi libs/%{compiler}/fftw2/float-mpi
+    :build_requires: alces-openmpi alces-fftw2-float-mpi
+  net:
+    :modules: libs/%{compiler}/fftw2/float
+    :build_requires: alces-fftw2-float
+:changelog: |
+  * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

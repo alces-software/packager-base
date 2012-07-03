@@ -1,0 +1,13 @@
+---
+:license: GPL
+:summary: Efficiently aligns DNA sequencing reads with genomic reference sequences
+:url: http://www.sanger.ac.uk/resources/software/smalt/
+:description: |
+  SMALT efficiently aligns DNA sequencing reads with genomic reference
+  sequences.  Reads from a range of sequencing platforms, for example
+  Illumina-Solexa, Roche-454, PacBio or ABI-Sanger, can be processed
+  including paired-end reads.
+:group: Bioinformatics
+:changelog: |
+  * Thu Mar 15 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

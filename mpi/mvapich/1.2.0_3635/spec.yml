@@ -1,0 +1,34 @@
+---
+:license: BSD
+:summary: MPI-1 over OpenFabrics/Gen2, OprnFabrics/Gen2-UD, uDAPL, InfiniPath, VAPI and TCP/IP
+:url: http://mvapich.cse.ohio-state.edu/overview/mvapich/
+:description: |
+  This is an MPI-1 implementation. This implementation is based on
+  MPICH and MVICH. MVAPICH is pronounced as "em-vah-pich".
+
+  MVAPICH 1.2 supports the following seven underlying transport
+  interfaces:
+
+  * High-Performance support with scalability for OpenFabrics/Gen2
+    interface, developed by OpenFabrics, to work with InfiniBand and
+    other RDMA interconnects.
+  * High-Performance support with scalability for
+    OpenFabrics/Gen2-RDMAoE interface, developed by OpenFabrics
+  * High-Performance support with scalability (for clusters with
+    multi-thousand cores) for OpenFabrics/Gen2-Hybrid interface,
+    developed by OpenFabrics, to work with InfiniBand.
+  * Shared-Memory only channel This interface support is useful for
+    running MPI jobs on multi-processor systems without using any
+    high-performance network. For example, multi-core servers,
+    desktops, and laptops; and clusters with serial nodes.
+  * The InfiniPath interface for InfiniPath adapters from QLogic.
+  * The standard TCP/IP interface (provided by MPICH) to work with a
+    range of networks. This interface can be used with IPoIB support
+    of InfiniBand also. However, it will not deliver good
+    performance/scalability as compared to any of the lower-level
+    (OpenFabrics/Gen2 or OpenFabrics/Gen2-Hybrid) support.
+:conflicts: alces-mvapich-qlogic
+:group: MPI
+:changelog: |
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

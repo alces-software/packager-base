@@ -1,0 +1,20 @@
+---
+:license: OTHER - ECL 2.0
+:summary: Methods for computing the properties of molecular and periodic systems
+:url: http://www.nwchem-sw.org
+:description: |
+  NWChem provides many methods for computing the properties of
+  molecular and periodic systems using standard quantum mechanical
+  descriptions of the electronic wavefunction or density. Its
+  classical molecular dynamics capabilities provide for the simulation
+  of macromolecules and solutions, including the computation of free
+  energies using a variety of force fields. These approaches may be
+  combined to perform mixed quantum-mechanics and molecular-mechanics
+  simulations.
+:group: Chemistry
+:requires: alces-openmpi
+:build_requires: alces-openmpi alces-blas
+:modules: mpi/%{compiler}/openmpi libs/%{compiler}/blas
+:changelog: |
+  * Fri Mar 23 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

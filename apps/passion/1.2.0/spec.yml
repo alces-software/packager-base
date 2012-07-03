@@ -1,0 +1,16 @@
+---
+:license: OTHER - see https://trac.nbic.nl/passion/
+:summary: A pattern growth algorithm based pipeline for splice site detection in paired-end RNA-Seq data
+:url: https://trac.nbic.nl/passion/wiki
+:description: |
+  PASSion uses the mapped read in a pair as anchor and then uses a high
+  resolution algorithm, pattern growth, to remap the proximal and distal
+  fragments of the unmapped read to a local region of the reference
+  indicated by the mate. It is capable of identifying both known and
+  novel canonical and non-canonical junctions with SNP or sequencing
+  error tolerance. In addition, our package can discover differential
+  and shared splicing patterns among multiple samples.
+:group: Bioinformatics
+:changelog: |
+  * Thu Mar 15 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

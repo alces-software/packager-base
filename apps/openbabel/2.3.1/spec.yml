@@ -1,0 +1,17 @@
+---
+:license: GPL
+:summary: A chemical toolbox designed to speak the many languages of chemical data
+:url: http://openbabel.org/
+:description: |
+  Open Babel is a chemical toolbox designed to speak the many
+  languages of chemical data. It’s an open, collaborative project
+  allowing anyone to search, convert, analyze, or store data from
+  molecular modeling, chemistry, solid-state materials, biochemistry,
+  or related areas.
+:build_requires: wxGTK-devel alces-cmake alces-eigen2 libxml2-devel zlib-devel cairo-devel
+:requires: wxGTK zlib cairo libxml2
+:modules: apps/%{compiler}/cmake libs/%{compiler}/eigen2
+:group: Chemistry
+:changelog: |
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

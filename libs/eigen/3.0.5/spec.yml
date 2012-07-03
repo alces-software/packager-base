@@ -1,0 +1,13 @@
+---
+:license: OTHER - LGPLv3+ or GPLv2+
+:summary: 'C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms'
+:url: http://eigen.tuxfamily.org/
+:description: |
+  Eigen is a C++ template library for linear algebra: matrices,
+  vectors, numerical solvers, and related algorithms.
+:build_requires: alces-cmake
+:modules: apps/%{compiler}/cmake
+:group: Mathematics
+:changelog: |
+  * Fri Jun  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

@@ -1,0 +1,58 @@
+---
+:src: atlas3.9.32.tar.bz2
+:src_dir: ATLAS
+:type: libs
+:version: 3.9.32
+:params:
+  :cpuspeed: "Specify cpu speed, eg. '2666'"
+  :lapackfile: "Specify lapack tarball location"
+:compilers:
+  gcc:
+:compile: |
+  cd <%= src_dir %>
+  mkdir build
+  cd build
+  ../configure --prefix=<%= dest_dir %> \
+    --incdir=<%= File.join(dest_dir,'include') %> \
+    --libdir=<%= File.join(dest_dir,'lib') %> \
+    --shared -Fa alg -fPIC -b 64 -D c \
+    -DPentiumCPS=<%= param(:cpuspeed) %> \
+    --with-netlib-lapack-tarfile=<%= param(:lapackfile) %> > >(tee -a alces-configure.log) 2> >(tee -a alces-configure.log >&2)
+  make > >(tee -a alces-make.log) 2> >(tee -a alces-make.log >&2)
+  make check > >(tee -a alces-test.log) 2> >(tee -a alces-test.log >&2)
+  make ptcheck > >(tee -a alces-test.log) 2> >(tee -a alces-test.log >&2)
+  make time > >(tee -a alces-test.log) 2> >(tee -a alces-test.log >&2)
+:install: |
+  cd <%= File.join(src_dir,'build') %>
+  make install > >(tee -a alces-install.log) 2> >(tee -a alces-install.log >&2)
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## ATLAS module file
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global version
+
+          puts stderr "\tAdds `atlas-$version' to your PATH environment variable and necessary libraries"
+  }
+
+  set     version <%= version %>
+
+  module-whatis   "loads the necessary `atlas-$version' library paths"
+
+  set ATLAS_DIR <%= dest_dir %>
+
+  setenv           ATLASDIR         $ATLAS_DIR/
+  setenv           ATLAS_DIR        $ATLAS_DIR/
+  setenv           ATLAS_HOME       $ATLAS_DIR/
+
+  setenv           ATLASINCLUDE     $ATLAS_DIR/include
+  setenv           ATLASLIB         $ATLAS_DIR/lib
+  setenv           ATLAS_LIB        $ATLAS_DIR/lib
+  setenv           ATLAS            $ATLAS_DIR/lib/libatlas.a
+
+  prepend-path LD_LIBRARY_PATH $ATLAS_DIR/lib/
+  prepend-path LD_INCLUDE_PATH $ATLAS_DIR/include/
+  prepend-path CPP_INCLUDE_PATH $ATLAS_DIR/include/
+  prepend-path C_INCLUDE_PATH $ATLAS_DIR/include/

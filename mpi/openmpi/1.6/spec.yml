@@ -1,0 +1,26 @@
+---
+:license: BSD
+:summary: A High Performance Message Passing Library
+:url: http://www.open-mpi.org/
+:description: |
+  The Open MPI Project is an open source MPI-2 implementation that is
+  developed and maintained by a consortium of academic, research, and
+  industry partners. Open MPI is therefore able to combine the
+  expertise, technologies, and resources from all across the High
+  Performance Computing community in order to build the best MPI
+  library available. Open MPI offers advantages for system and
+  software vendors, application developers and computer science
+  researchers.
+:conflicts: alces-openmpi-qlogic
+:group: MPI
+:changelog: |
+  * Wed Jun  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.6
+  * Mon Apr  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.4.5
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ported to alces-installer style package
+  * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated Group, Summary and URL fields and added description.
+  * Sat Jan 21 2012 Steve Norledge
+    - First created

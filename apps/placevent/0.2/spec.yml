@@ -1,0 +1,12 @@
+---
+:license: GPL
+:summary: An algorithm for prediction of explicit solvent atom distribution
+:url: https://sites.google.com/site/dansindhikara/Home/software/placement
+:description: |
+  Placevent: An algorithm for prediction of explicit solvent atom
+  distribution—Application to HIV-1 protease and F-ATP synthase
+:requires: alces-numpy
+:group: Biochemistry
+:changelog: |
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

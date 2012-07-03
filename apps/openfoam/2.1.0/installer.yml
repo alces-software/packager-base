@@ -1,0 +1,106 @@
+---
+:src: OpenFOAM-2.1.0.tgz
+:src_dir: OpenFOAM-2.1.0
+:type: apps
+:version: '2.1.0'
+:compilers:
+  gcc:
+:compile: |
+  export FOAM_INST_DIR=`pwd`/..
+  source etc/bashrc
+  ./Allwmake
+:install: |
+  mkdir <%= dest_dir %>/3rdparty
+  cp -r applications bin COPYING doc etc platforms README.* tutorials <%= dest_dir %>
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Application module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "${appcaps}DIR -> base path of application"
+          puts stderr "${appcaps}BIN -> bin path of application"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  prereq mpi/<%= compiler_name %>/openmpi
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv FOAM_APP ${appdir}/applications
+  setenv FOAM_APPBIN ${appdir}/platforms/linux64GccDPOpt/bin
+  setenv FOAM_EXT_LIBBIN ${appdir}/3rdparty/platforms/linux64GccDPOpt/lib
+  setenv FOAM_INST_DIR ${appdir}
+  setenv FOAM_JOB_DIR ${appdir}/jobControl
+  setenv FOAM_LIBBIN ${appdir}/platforms/linux64GccDPOpt/lib
+  setenv FOAM_MPI openmpi
+  setenv FOAM_SETTINGS ""
+  setenv FOAM_SIGFPE ""
+  setenv FOAM_SOLVERS ${appdir}/applications/solvers
+  setenv FOAM_SRC ${appdir}/src
+  setenv FOAM_TUTORIALS ${appdir}/tutorials
+  setenv FOAM_UTILITIES ${appdir}/applications/utilities
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib/dummy
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPOpt/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib
+
+  setenv MPI_ARCH_PATH $::env(MPI_HOME)
+  setenv MPI_BUFFER_SIZE 20000000
+  setenv OPAL_PREFIX $::env(MPI_HOME)
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${appdir}/platforms/linux64GccDPOpt/bin
+
+  setenv ParaView_DIR ${appdir}/3rdparty/platforms/linux64Gcc/paraview-3.12.0
+  setenv ParaView_MAJOR 3.12
+  setenv ParaView_VERSION 3.12.0
+
+  setenv WM_ARCH linux64
+  setenv WM_ARCH_OPTION 64
+  setenv WM_CC gcc
+  setenv WM_CFLAGS '-m64 -fPIC'
+  setenv WM_COMPILER Gcc
+  setenv WM_COMPILER_LIB_ARCH 64
+  setenv WM_COMPILE_OPTION Opt
+  setenv WM_CXX g++
+  setenv WM_CXXFLAGS '-m64 -fPIC'
+  setenv WM_DIR ${appdir}/wmake
+  setenv WM_LDFLAGS -m64
+  setenv WM_LINK_LANGUAGE c++
+  setenv WM_MPLIB OPENMPI
+  setenv WM_OPTIONS linux64GccDPOpt
+  setenv WM_OSTYPE POSIX
+  setenv WM_PRECISION_OPTION DP
+  setenv WM_PROJECT OpenFOAM
+  setenv WM_PROJECT_DIR ${appdir}
+  setenv WM_PROJECT_INST_DIR ${appdir}
+  setenv WM_PROJECT_VERSION ${version}
+  setenv WM_THIRD_PARTY_DIR ${appdir}/3rdparty
+
+  #foamPV () 
+  #{ 
+  #     . $WM_PROJECT_DIR/etc/config/paraview.sh ParaView_VERSION=$1;
+  #     echo "paraview-$ParaView_VERSION  (major: $ParaView_MAJOR)"
+  #}

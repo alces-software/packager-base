@@ -1,0 +1,53 @@
+---
+:src: openmpi-1.4.5.tar.bz2
+:type: mpi
+:version: '1.4.5'
+:compilers:
+  gcc:
+    :configure_flags: ''
+  intel:
+    :configure_flags: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+:sources:
+  - examples.sge.openmpi-1.4.5.template
+:compile: |
+  ./configure --with-sge --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  install -D -m 644 <%= source("examples.sge.openmpi-#{version}.template") %> <%= dest_dir %>/examples/sge/openmpi.template
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## openmpi module file
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global version
+  
+          puts stderr "\tAdds `openmpi-$version' to your PATH environment variable and necessary libraries"
+  }
+  
+  set     version <%= version %>
+
+  module-whatis   "loads the necessary `openmpi-$version' library paths"
+
+  # Enable the following two options to force openmpi to operate over
+  # ethernet even if an InfiniBand card is detected.  This can be
+  # useful if you are trying to diagnose a potential problem with your
+  # IB fabric.
+  # setenv OMPI_MCA_btl_tcp_if_include eth0
+  # setenv OMPI_MCA_btl tcp,self
+
+  # Enable the following if you are running jobs that span more than
+  # 128 nodes.  Adjust '512' to match the maximum number of nodes your
+  # jobs will span (which would usually be the number of nodes in your
+  # cluster).
+  # setenv OMPI_MCA_plm_rsh_num_concurrent 512
+
+  set MPI_DIR <%= dest_dir %>
+
+  setenv MPI_HOME $MPI_DIR
+
+  prepend-path PATH $MPI_DIR/bin/
+  prepend-path LD_LIBRARY_PATH $MPI_DIR/lib/
+  prepend-path MANPATH $MPI_DIR/share/man/

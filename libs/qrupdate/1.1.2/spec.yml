@@ -1,0 +1,22 @@
+---
+:license: GPL
+:summary: Fortran library for fast updates of QR and Cholesky decompositions
+:url: http://sourceforge.net/projects/qrupdate/
+:description: |
+  qrupdate is a Fortran library for fast updates of QR and Cholesky
+  decompositions.
+
+  The following operations are supported:
+
+  * QR rank-1 update, QR column insert, QR column delete, QR column
+    shift, QR row insert, QR row delete
+  * Cholesky rank-1 update, Cholesky rank-1 downdate, Cholesky
+    symmetric insert, Cholesky symmetric insert, Cholesky symmetric
+    shift
+  * LU rank-1 update, LU pivoted rank-1 update
+:group: Mathematics
+:modules: libs/%{compiler}/atlas
+:build_requires: alces-atlas
+:changelog: |
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

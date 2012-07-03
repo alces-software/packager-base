@@ -1,0 +1,39 @@
+---
+:src: cblas-1alces.tgz
+:src_dir: CBLAS-1
+:type: libs
+:version: '1'
+:compilers:
+  gcc:
+:compile: |
+  SRCDIR=`pwd`
+  sed -e "s|%TOPDIR%|$SRCDIR|g" Makefile.LINUX_ALCES > Makefile.in
+  make alllib <%= redirect(:make) %>
+:install: |
+  install -D -m 644 lib/LINUX_ALCES/cblas_LINUX_ALCES.a <%= dest_dir %>/libcblas.a
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## CBLAS module file
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global version
+
+          puts stderr "\tAdds `CBLAS-$version' to your PATH environment variable and necessary libraries"
+  }
+
+  set     version <%= version %>
+
+  module-whatis   "loads the necessary `CBLAS-$version' library paths"
+
+  set CBLAS_DIR <%= dest_dir %>
+
+  setenv           CBLASDIR        $CBLAS_DIR 
+  setenv           CBLAS_DIR       $CBLAS_DIR
+  setenv           CBLASLIB        $CBLAS_DIR
+  setenv           CBLAS_LIB       $CBLAS_DIR
+  setenv           CBLAS       $CBLAS_DIR/libcblas.a
+
+  prepend-path LD_LIBRARY_PATH $CBLAS_DIR
+  prepend-path --delim " " LDFLAGS " -L$CBLAS_DIR"

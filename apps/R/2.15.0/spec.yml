@@ -1,0 +1,35 @@
+---
+:license: GPL
+:summary: Language and environment for statistical computing and graphics
+:url: http://www.r-project.org/
+:description: |
+  R is a language and environment for statistical computing and
+  graphics, providing a wide variety of statistical (linear and
+  nonlinear modelling, classical statistical tests, time-series
+  analysis, classification, clustering, ...) and graphical techniques,
+  and is highly extensible.
+
+  The integrated suite of software facilities for data manipulation,
+  calculation and graphical display includes:
+
+    * an effective data handling and storage facility
+    * a suite of operators for calculations on arrays, in particular
+      matrices
+    * a large, coherent, integrated collection of intermediate tools
+      for data analysis
+    * graphical facilities for data analysis and display either
+      on-screen or on hardcopy
+    * a well-developed, simple and effective programming language
+      which includes conditionals, loops, user-defined recursive
+      functions and input and output facilities.
+:group: Languages
+:modules: libs/gcc/lapack libs/gcc/blas
+:build_requires: alces-lapack alces-blas
+:changelog: |
+  * Wed Apr 11 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.15.0
+    - Ported to alces-installer style package
+  * Tue May 24 2011 Steve Norledge
+    - Build standalone math libs
+  * Fri Feb 18 2011 Steve Norledge
+    - First created

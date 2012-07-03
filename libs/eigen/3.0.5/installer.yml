@@ -1,0 +1,53 @@
+---
+:src: 3.0.5.tar.bz2
+:src_dir: eigen-eigen-6e7488e20373
+:type: libs
+:version: '3.0.5'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:configure) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  mv include/eigen3/* include
+  rmdir include/eigen3
+  sed -i 's/include\/eigen3/include/' share/pkgconfig/eigen3.pc
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Library module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "${appcaps}DIR -> base path of library"
+          puts stderr "${appcaps}INCLUDE -> include path of library"
+          puts stderr "Adds ${appcaps}/share/pkgconfig to PKG_CONFIG_PATH"
+          puts stderr ""
+  }
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/share/pkgconfig

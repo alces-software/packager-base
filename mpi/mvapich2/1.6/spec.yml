@@ -1,0 +1,70 @@
+---
+:license: BSD
+:summary: MPI-2 over OpenFabrics-IB, OpenFabrics-iWARP, PSM, uDAPL and TCP/IP
+:url: http://mvapich.cse.ohio-state.edu/overview/mvapich2/
+:description: |
+  This is an MPI-2 implementation (conforming to MPI 2.2 standard)
+  which includes all MPI-1 features. It is based on MPICH2 and MVICH.
+
+  The current release supports the following ten underlying transport
+  interfaces:
+
+  * OFA-IB-CH3: This interface supports all InfiniBand compliant
+    devices based on the OpenFabrics Gen2 layer. This interface has
+    the most features and is most widely used. For example, this
+    interface can be used over all Mellanox InfiniBand adapters, IBM
+    eHCA adapters and Qlogic adapters.
+
+  * OFA-IB-Nemesis: This interface supports all InfiniBand compliant
+    devices based on the OpenFabrics libibverbs layer with the
+    emerging Nemesis channel of the MPICH2 stack. This interface can
+    be used by all Mellanox InfiniBand adapters.
+
+  * OFA-iWARP-CH3: This interface supports all iWARP compliant devices
+    supported by OpenFabrics. For example, this layer supports Chelsio
+    T3 adapters with the native iWARP mode.
+
+  * OFA-RoCE-CH3: This interface supports the emerging RoCE (RDMA over
+    Convergence Ethernet) interface for Mellanox ConnectX-EN adapters
+    with 10GigE switches.
+
+  * PSM-CH3: This interface provides native support for InfiniPath
+    adapters from QLogic over PSM interface. It provides
+    high-performance point-to-point communication for both one-sided
+    and two-sided operations.
+
+  * uDAPL-CH3: This interface supports all network-adapters and
+    software stacks which implement the portable DAPL interface from
+    the DAT Collaborative. For example, this interface can be used
+    over all Mellanox adapters, Chelsio adapters and NetEffect
+    adapters. It can also be used with Solaris uDAPL-IBTL
+    implementation over InfiniBand adapters.
+
+  * Shared-Memory-CH3: This interface provides native shared memory
+    support on multi-core platforms where communication is required
+    only within a node. Such as SMP-only systems, laptops, etc.
+
+  * TCP/IP-CH3: The standard TCP/IP interface (provided by MPICH2) to
+    work with a range of network adapters supporting TCP/IP
+    interface. This interface can be used with IPoIB (TCP/IP over
+    InfiniBand network) support of InfiniBand also. However, it will
+    not deliver good performance/ scalability as compared to the other
+    interfaces.
+
+  * TCP/IP-Nemesis: The standard TCP/IP interface (provided by MPICH2
+    Nemesis channel) to work with a range of network adapters
+    supporting TCP/IP interface. This interface can be used with IPoIB
+    (TCP/IP over InfiniBand network) support of InfiniBand
+    also. However, it will not deliver good performance/ scalability
+    as compared to the other interfaces.
+
+  * Shared-Memory-Nemesis: This interface provides native shared
+    memory support on multi-core platforms where communication is
+    required only within a node. Such as SMP-only systems, laptops,
+    etc.
+:conflicts: alces-mvapich2-qlogic
+:build_requires: libibumad-devel libibverbs-devel
+:group: MPI
+:changelog: |
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

@@ -1,0 +1,63 @@
+---
+:src: vmd-1.9.1.bin.LINUXAMD64.opengl.tar.gz
+:src_dir: vmd-1.9.1
+:type: apps
+:version: '1.9.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op, this is a binary installer.
+:install: |
+  export VMDINSTALLBINDIR=<%= dest_dir %>/bin
+  export VMDINSTALLLIBRARYDIR=<%= dest_dir %>/lib
+  ./configure  <%= redirect(:configure) %>
+  cd src
+  make install <%= redirect(:make) %>
+  <% if @mode == :spec %>
+  # sed out the RPM_BUILD_ROOT from various files
+  # NB. the -I parameter to grep ensures we don't clobber binary files
+  # (-I is treat binary files as unmatched)
+  grep -Ilr $RPM_BUILD_ROOT $RPM_BUILD_ROOT | xargs -L1 sed -i "s|$RPM_BUILD_ROOT||g"
+  # un-prelink a prelinked .so file
+  prelink --undo <%= dest_dir %>/lib/libexpat.so.0
+  <% end %>
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Application module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          # we use BASEDIR here rather than DIR in order to prevent an
+          # environment conflict with the application
+          puts stderr "${appcaps}BASEDIR -> base path of application"
+          puts stderr "${appcaps}BIN -> bin path of application"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  # we use BASEDIR here rather than DIR in order to prevent an
+  # environment conflict with the application
+  setenv ${appcaps}BASEDIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  

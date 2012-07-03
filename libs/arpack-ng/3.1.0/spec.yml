@@ -1,0 +1,28 @@
+---
+:license: BSD
+:summary: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
+:url: http://forge.scilab.org/index.php/p/arpack-ng/
+:description: |
+  ARPACK is a collection of Fortran77 subroutines designed to solve
+  large scale eigenvalue problems.
+
+  Important Features:
+
+   * Reverse Communication Interface.
+   * Single and Double Precision Real Arithmetic Versions for
+     Symmetric, Non-symmetric, Standard or Generalized Problems.
+   * Single and Double Precision Complex Arithmetic Versions for
+     Standard or Generalized Problems.
+   * Routines for Banded Matrices - Standard or Generalized Problems.
+   * Routines for The Singular Value Decomposition.
+   * Example driver routines that may be used as templates to
+     implement numerous Shift-Invert strategies for all problem types,
+     data types and precision.
+   * It is free software. arpack-ng (like arpack) is released under
+     the BSD 3 clauses license.
+:group: Mathematics
+:modules: libs/%{compiler}/atlas mpi/%{compiler}/openmpi
+:build_requires: alces-atlas alces-openmpi
+:changelog: |
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created

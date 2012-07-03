@@ -1,0 +1,16 @@
+---
+:license: GPL
+:summary: A C++ toolbox for the development of customized numerical solvers, and pre-/post-processing utilities
+:url: http://www.openfoam.com/
+:description: |
+  OpenFOAM (Open Field Operation and Manipulation) is a C++ toolbox
+  for the development of customized numerical solvers, and
+  pre-/post-processing utilities for the solution of continuum
+  mechanics problems, including computational fluid dynamics (CFD).
+:group: Physics
+:requires: alces-openmpi
+:build_requires: alces-openmpi
+:modules: mpi/%{compiler}/openmpi
+:changelog: |
+  * Fri Mar 23 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
