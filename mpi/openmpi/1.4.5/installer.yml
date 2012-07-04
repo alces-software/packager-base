@@ -8,13 +8,13 @@
   intel:
     :configure_flags: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
 :sources:
-  - examples.sge.openmpi-1.4.5.template
+  - examples.sge.openmpi.template
 :compile: |
   ./configure --with-sge --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
-  install -D -m 644 <%= source("examples.sge.openmpi-#{version}.template") %> <%= dest_dir %>/examples/sge/openmpi.template
+  install -D -m 644 <%= source("examples.sge.openmpi.template") %> <%= dest_dir %>/examples/sge/openmpi.template
 :module: |
   #%Module1.0#####################################################################
   ##
