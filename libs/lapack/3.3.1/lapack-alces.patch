@@ -1,0 +1,26 @@
+--- INSTALL/make.inc.gfortran	2009-04-16 19:10:16.000000000 +0100
++++ INSTALL/make.inc.gfortran	2011-02-18 12:55:05.000000000 +0000
+@@ -8,7 +8,7 @@
+ #
+ #  The machine (platform) identifier to append to the library names
+ #
+-PLAT = _LINUX
++PLAT = _LINUX_ALCES
+ #  
+ #  Modify the FORTRAN and OPTS definitions to refer to the
+ #  compiler and desired compiler options for your machine.  NOOPT
+@@ -17,11 +17,11 @@
+ #  desired load options for your machine.
+ #
+ FORTRAN  = gfortran 
+-OPTS     = -O2
++OPTS     = -O2 -fPIC -m64
+ DRVOPTS  = $(OPTS)
+-NOOPT    = -O0
++NOOPT    = -O0 -fPIC -m64
+ LOADER   = gfortran
+-LOADOPTS =
++LOADOPTS = 
+ #
+ # Timer for the SECOND and DSECND routines
+ #
