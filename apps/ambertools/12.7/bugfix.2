@@ -1,0 +1,102 @@
+********>Bugfix 2:
+Author: Daniel R. Roe
+Date: 13 April 2012
+Programs: Cpptraj, Ptraj
+Description: -Cpptraj: Fix reading of Charmm PSF files.
+             -Cpptraj: Fix frame and atom #s in 'closestout' output of closest command.
+             -Cpptraj: Update version string to 12.1.
+             -Ptraj: Update version string to 12.0.
+
+-----------------------------------------------------------------------------
+ AmberTools/src/cpptraj/src/Action_Closest.cpp      |    8 +++++---
+ AmberTools/src/cpptraj/src/Parm_CharmmPsf.cpp      |    2 +-
+ AmberTools/src/cpptraj/src/main.cpp                |    2 +-
+ AmberTools/src/ptraj/version.h                     |    2 +-
+ .../test/cpptraj/Test_Closest/closestmols.dat.save |   20 ++++++++++----------
+ 5 files changed, 18 insertions(+), 16 deletions(-)
+
+diff --git AmberTools/src/cpptraj/src/Action_Closest.cpp AmberTools/src/cpptraj/src/Action_Closest.cpp
+index bad7fc7..ca8a844 100644
+--- AmberTools/src/cpptraj/src/Action_Closest.cpp
++++ AmberTools/src/cpptraj/src/Action_Closest.cpp
+@@ -304,12 +304,14 @@ int Closest::action() {
+       stripMask.Selected[maskPosition++] = (*solvent).mask.Selected[solventAtom];
+     // Record which water molecules are closest if requested
+     if (outFile!=NULL) {
+-      framedata->Add(Nclosest, &frameNum);
++      int fnum = frameNum + 1;
++      framedata->Add(Nclosest, &fnum);
+       moldata->Add(Nclosest, &((*solvent).mol));
+       Dist = sqrt( (*solvent).D );
+       distdata->Add(Nclosest, &Dist);
+-      atomdata->Add(Nclosest, &((*solvent).mask.Selected[0]));
+-      Nclosest++;
++      int anum = (*solvent).mask.Selected[0] + 1;
++      atomdata->Add(Nclosest, &anum);
++      ++Nclosest;
+     }
+     // DEBUG - print first closestWaters distances
+     //mprintf("DEBUG: Mol %i   D2= %lf   Atom0= %i\n",(*it).mol, (*it).D, (*it).mask->Selected[0]);
+diff --git AmberTools/src/cpptraj/src/Parm_CharmmPsf.cpp AmberTools/src/cpptraj/src/Parm_CharmmPsf.cpp
+index 0f48fe6..98d1059 100644
+--- AmberTools/src/cpptraj/src/Parm_CharmmPsf.cpp
++++ AmberTools/src/cpptraj/src/Parm_CharmmPsf.cpp
+@@ -58,7 +58,7 @@ int CharmmPsfParmFile::ReadParm(AmberParm &parmOut, CpptrajFile &parmfile) {
+     //if (buffer[bufferLen-1] == '\n') buffer[bufferLen-1]='\0';
+     // Read line
+     // ATOM# SEGID RES# RES ATNAME ATTYPE CHRG MASS (REST OF COLUMNS ARE LIKELY FOR CMAP AND CHEQ)
+-    sscanf(buffer,"%*8i %*4s %i %4s %4s %4i %14lf %14lf",&psfresnum,psfresname,psfname,
++    sscanf(buffer,"%*i %*s %i %s %s %i %lf %lf",&psfresnum,psfresname,psfname,
+            &psfattype,parmOut.charge+atom,parmOut.mass+atom);
+     // Ensure name has 4 chars
+     PadWithSpaces( psfname );
+diff --git AmberTools/src/cpptraj/src/main.cpp AmberTools/src/cpptraj/src/main.cpp
+index f9c32de..23f290e 100644
+--- AmberTools/src/cpptraj/src/main.cpp
++++ AmberTools/src/cpptraj/src/main.cpp
+@@ -9,7 +9,7 @@
+ #include <cstdio>
+ #include <cstdlib> // atoi
+ #ifndef CPPTRAJ_VERSION_STRING
+-#define CPPTRAJ_VERSION_STRING "V12.0"
++#define CPPTRAJ_VERSION_STRING "V12.1"
+ #define CPPTRAJ_INTERNAL_VERSION "V2.4.7b"
+ #endif
+ 
+diff --git AmberTools/src/ptraj/version.h AmberTools/src/ptraj/version.h
+index 7190592..732deaa 100644
+--- AmberTools/src/ptraj/version.h
++++ AmberTools/src/ptraj/version.h
+@@ -41,5 +41,5 @@
+ 
+ #define VERSION_INCLUDED        /* version.h include file */
+ #ifndef PTRAJ_VERSION_STRING
+-#define PTRAJ_VERSION_STRING "\"AMBER 11.0 integrated\" (4/2010)"
++#define PTRAJ_VERSION_STRING "\"AMBER 12.0 integrated\" (4/2012)"
+ #endif
+diff --git AmberTools/test/cpptraj/Test_Closest/closestmols.dat.save AmberTools/test/cpptraj/Test_Closest/closestmols.dat.save
+index f152110..2e1833b 100644
+--- AmberTools/test/cpptraj/Test_Closest/closestmols.dat.save
++++ AmberTools/test/cpptraj/Test_Closest/closestmols.dat.save
+@@ -1,11 +1,11 @@
+ #Frame                Mol         Dist     FirstAtm
+-           0         1560       1.8259         4894
+-           0          523       1.8780         1783
+-           0          527       1.9439         1795
+-           0          244       1.9483          946
+-           0         1407       1.9627         4435
+-           0          935       1.9646         3019
+-           0          902       1.9773         2920
+-           0         1432       2.0047         4510
+-           0          354       2.0450         1276
+-           0          325       2.0550         1189
++           1         1560       1.8259         4895
++           1          523       1.8780         1784
++           1          527       1.9439         1796
++           1          244       1.9483          947
++           1         1407       1.9627         4436
++           1          935       1.9646         3020
++           1          902       1.9773         2921
++           1         1432       2.0047         4511
++           1          354       2.0450         1277
++           1          325       2.0550         1190

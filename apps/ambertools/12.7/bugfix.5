@@ -1,0 +1,102 @@
+********>Bugfix 5:
+Author: Daniel R. Roe
+Date: 1 May 2012
+Program: Cpptraj
+
+Description: Make cpptraj 'closest' behavior match ptraj. 
+
+-----------------------------------------------------------------------------
+ AmberTools/src/cpptraj/src/Action_Closest.cpp |   29 ++++++++++++++----------
+ AmberTools/src/cpptraj/src/Action_Closest.h   |    1 +
+ 2 files changed, 18 insertions(+), 12 deletions(-)
+
+diff --git AmberTools/src/cpptraj/src/Action_Closest.cpp AmberTools/src/cpptraj/src/Action_Closest.cpp
+index ca8a844..17bd7c6 100644
+--- AmberTools/src/cpptraj/src/Action_Closest.cpp
++++ AmberTools/src/cpptraj/src/Action_Closest.cpp
+@@ -84,13 +84,13 @@ int Closest::init( ) {
+     mprinterr("Error: Closest::init(): No mask specified.\n");
+     return 1;
+   }
+-  soluteMask.SetMaskString(mask1);
++  distanceMask.SetMaskString(mask1);
+ 
+   mprintf("    CLOSEST: Finding closest %i solvent molecules to",closestWaters);
+   //if (mask1==NULL)
+   //  fprintf(stdout,"             all solute atoms\n");
+   //else
+-    mprintf(" atoms in mask %s\n",soluteMask.MaskString());
++    mprintf(" atoms in mask %s\n",distanceMask.MaskString());
+   if (!useImage) 
+     mprintf("             Imaging will be turned off.\n");
+   if (firstAtom)
+@@ -145,14 +145,18 @@ int Closest::setup() {
+     }
+   }
+ 
+-  // Setup solute atom mask
++  // Setup distance atom mask
+   // NOTE: Should ensure that no solvent atoms are selected!
+-  if ( currentParm->SetupIntegerMask(soluteMask, activeReference) ) return 1;
+-  if (soluteMask.None()) {
+-    mprintf("Warning: Closest::setup: Mask %s contains no atoms.\n",soluteMask.MaskString());
++  if ( currentParm->SetupIntegerMask(distanceMask, activeReference) ) return 1;
++  if (distanceMask.None()) {
++    mprintf("Warning: Closest::setup: Mask %s contains no atoms.\n",distanceMask.MaskString());
+     return 1;
+   }
+ 
++  // Setup solute atom mask
++  soluteMask.ResetMask();
++  soluteMask.AddAtomRange(0, currentParm->solventMoleculeStart[0]);
++
+   // Figure out what the the total size of the selected solute atoms plus
+   // the number of kept solvent atoms is in order to set up the stripped
+   // parm.
+@@ -218,7 +222,8 @@ int Closest::setup() {
+ }
+ 
+ // Closest::action()
+-/** Find the minimum distance between atoms in soluteMask and each solvent Mask.
++/** Find the minimum distance between atoms in distanceMask and each 
++  * solvent Mask.
+   */
+ int Closest::action() {
+   int solventMol, solventAtom, maskPosition, atom, maxSolventMolecules;
+@@ -255,19 +260,19 @@ int Closest::action() {
+     //fprintf(stdout,"      Solvent %i %i %i\n", MaskList[solventMol]->Selected[0]+1,
+     //        MaskList[solventMol]->Selected[1]+1,MaskList[solventMol]->Selected[2]+1);
+ 
+-    // Calculate distance between each atom in soluteMask and atoms in solvent Mask
+-    for (atom = 0; atom < soluteMask.Nselected; atom++) {
+-      Dist = currentFrame->DIST2(soluteMask.Selected[atom], 
++    // Calculate distance between each atom in distanceMask and atoms in solvent Mask
++    for (atom = 0; atom < distanceMask.Nselected; atom++) {
++      Dist = currentFrame->DIST2(distanceMask.Selected[atom], 
+                                  SolventMols[solventMol].mask.Selected[0], 
+                                  imageType, ucell, recip);
+       if (Dist < SolventMols[solventMol].D) SolventMols[solventMol].D=Dist;
+-      //fprintf(stdout,"D atom %i %i = %lf image %i\n",soluteMask.Selected[atom],
++      //fprintf(stdout,"D atom %i %i = %lf image %i\n",distanceMask.Selected[atom],
+       //        MaskList[solventMol]->Selected[0],minD,imageType);
+       // Check the rest of the solvent atoms if specified
+       if (!firstAtom) {
+         for (solventAtom=1; solventAtom<SolventMols[solventMol].mask.Nselected; solventAtom++) 
+         {
+-          Dist = currentFrame->DIST2(soluteMask.Selected[atom], 
++          Dist = currentFrame->DIST2(distanceMask.Selected[atom], 
+                                SolventMols[solventMol].mask.Selected[solventAtom],
+                                imageType, ucell, recip);
+           if (Dist < SolventMols[solventMol].D) SolventMols[solventMol].D=Dist;
+diff --git AmberTools/src/cpptraj/src/Action_Closest.h AmberTools/src/cpptraj/src/Action_Closest.h
+index 638eac6..a386000 100644
+--- AmberTools/src/cpptraj/src/Action_Closest.h
++++ AmberTools/src/cpptraj/src/Action_Closest.h
+@@ -18,6 +18,7 @@ class Closest: public Action {
+     bool firstAtom;
+     AtomMask soluteMask;
+     AtomMask stripMask;
++    AtomMask distanceMask;
+     AmberParm *newParm;
+     AmberParm *oldParm;
+     Frame newFrame;

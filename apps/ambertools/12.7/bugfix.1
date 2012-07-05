@@ -1,0 +1,310 @@
+********>Bugfix 1:
+Author: Jason Swails
+
+Date:   Apr. 10, 2012
+
+Programs: ParmEd, xParmEd
+
+Description: The Python mask parser didn't work for masks containing wildcards
+             (*, ?, and =).  This fixes that issue.  It also adds a
+             deleteDihedral action that can be used to remove dihedrals so that,
+             used with addDihedral, dihedral parameters can be changed (or just
+             deleted)
+
+------------------------------------------------------------------------------
+
+ AmberTools/src/parmed/ParmedTools/ParmedActions.py |  111 +++++++++++++++++++-
+ AmberTools/src/parmed/ParmedTools/exceptions.py    |    3 +
+ .../src/parmed/ParmedTools/gui/_guiactions.py      |   32 ++++++
+ AmberTools/src/parmed/chemistry/amber/mask.py      |    9 ++-
+ AmberTools/src/parmed/chemistry/amber/readparm.py  |   33 ++++++
+ AmberTools/src/parmed/chemistry/exceptions.py      |    3 +
+ 6 files changed, 184 insertions(+), 7 deletions(-)
+
+diff --git AmberTools/src/parmed/ParmedTools/ParmedActions.py AmberTools/src/parmed/ParmedTools/ParmedActions.py
+index 33e1e92..4dd905f 100644
+--- AmberTools/src/parmed/ParmedTools/ParmedActions.py
++++ AmberTools/src/parmed/ParmedTools/ParmedActions.py
+@@ -8,7 +8,7 @@ import sys
+ from ParmedTools.exceptions import (WriteOFFError, ParmError, ParmedMoleculeError,
+                                     ChangeStateError, CoarseGrainError,
+                                     ChangeLJPairError, ParmedChangeError,
+-                                    SetParamError)
++                                    SetParamError, DeleteDihedralError)
+ from chemistry.amber.mask import AmberMask
+ from chemistry.amber.readparm import (_Bond, _BondType, _Angle, _AngleType, 
+                                       _Dihedral, _DihedralType)
+@@ -55,7 +55,8 @@ usages = {
+                                    '<per> <phase> <scee> <scnb> [<type>]',
+            'setbond' : 'setBond <mask1> <mask2> <k> <Req>',
+           'setangle' : 'setAngle <mask1> <mask2> <mask3> <k> <THETeq>',
+-   'addatomicnumber' : 'addAtomicNumber'
++   'addatomicnumber' : 'addAtomicNumber',
++    'deletedihedral' : 'deleteDihedral <mask1> <mask2> <mask3> <mask4>'
+ }
+ 
+ # Add help and go as a class here to basically hold docstrings for the help
+@@ -1017,7 +1018,7 @@ class printangles(Action):
+ 
+    def __str__(self):
+       retstr = '%-20s %-20s %-20s %-10s %-10s\n' % (
+-               'Atom 1', 'Atom 2', 'Atom 3', 'Theta eq', 'Frc Cnst')
++               'Atom 1', 'Atom 2', 'Atom 3', 'Frc Cnst', 'Theta eq')
+       # Loop through all of the bonds without and inc hydrogen
+       atomsel = self.mask.Selection()
+       for angle in self.parm.angles_without_h:
+@@ -1033,7 +1034,7 @@ class printangles(Action):
+             '%7d %4s (%4s)  %7d %4s (%4s)  %7d %4s (%4s) %10.4f %10.4f\n' % (
+             idx1+1, atm1.atname, atm1.attype, idx2+1, atm2.atname,
+             atm2.attype, idx3+1, atm3.atname, atm3.attype,
+-            angle.angle_type.theteq*180/math.pi, angle.angle_type.k)
++            angle.angle_type.k, angle.angle_type.theteq*180/math.pi)
+ 
+       for angle in self.parm.angles_inc_h:
+          idx1 = angle.atom1.starting_index
+@@ -1048,7 +1049,7 @@ class printangles(Action):
+             '%7d %4s (%4s)  %7d %4s (%4s)  %7d %4s (%4s) %10.4f %10.4f\n' % (
+             idx1+1, atm1.atname, atm1.attype, idx2+1, atm2.atname,
+             atm2.attype, idx3+1, atm3.atname, atm3.attype,
+-            angle.angle_type.theteq*180/math.pi, angle.angle_type.k)
++            angle.angle_type.k, angle.angle_type.theteq*180/math.pi)
+       
+       return retstr
+ 
+@@ -1437,3 +1438,103 @@ class addatomicnumber(Action):
+       self.parm.addFlag('ATOMIC_NUMBER','10I8',num_items=self.parm.ptr('natom'))
+       for i, mass in enumerate(self.parm.parm_data['MASS']):
+          self.parm.parm_data['ATOMIC_NUMBER'][i] = AtomicNum[Element(mass)]
++
++#+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
++
++class deletedihedral(Action):
++   """
++   Deletes the dihedral around <mask2> and <mask3> in which the end-groups are
++   <mask1> and <mask4>. For multi-term dihedrals, it removes each term.
++   """
++   def __init__(self, parm, mask1, mask2, mask3, mask4):
++      Action.__init__(self, parm)
++      self.mask1 = AmberMask(self.parm, mask1)
++      self.mask2 = AmberMask(self.parm, mask2)
++      self.mask3 = AmberMask(self.parm, mask3)
++      self.mask4 = AmberMask(self.parm, mask4)
++      if sum(self.mask1.Selection()) != sum(self.mask2.Selection()) or \
++         sum(self.mask1.Selection()) != sum(self.mask3.Selection()) or \
++         sum(self.mask1.Selection()) != sum(self.mask4.Selection()):
++         raise DeleteDihedralError('All masks must select the same number of ' +
++               'atoms!. They selected %d, %d, %d, and %d, respectively' % (
++               sum(self.mask1.Selection()), sum(self.mask2.Selection()),
++               sum(self.mask3.Selection()), sum(self.mask4.Selection())))
++
++   def __str__(self):
++      if sum(self.mask1.Selection()) == 0:
++         return 'No specified dihedrals to delete'
++      return 'Deleting dihedral terms involving [%s]-[%s]-[%s]-[%s]' % (
++             self.mask1, self.mask2, self.mask3, self.mask4) + \
++             ' (At most %d total, distinct, dihedrals)' % (
++             sum(self.mask1.Selection()))
++
++   def execute(self):
++      from chemistry.periodic_table import AtomicNum
++      from chemistry.amber.readparm import Element
++      sel1, sel2 = self.mask1.Selection(), self.mask2.Selection()
++      sel3, sel4 = self.mask3.Selection(), self.mask4.Selection()
++      # Bail out if we're deleting nothing
++      if sum(sel1) == 0: return
++
++      # Keep track of the dihedrals we want to delete from each
++      # dihedral list (dihedrals_inc_h, dihedrals_without_h)
++      deleting_dihedrals = [[],[]]
++      # We have already checked that they are the same number of atoms
++      # Now, loop through the atoms and see if any dihedrals match that spec
++      idx1 = idx2 = idx3 = idx4 = 0
++      total_diheds = 0
++      for i in range(sum(sel1)):
++         # This helps us keep track of multi-term dihedrals so we don't confuse
++         # users
++         found_this_dihedral = False
++         # Get the first selected atom from each selection then update our index
++         idx1, idx2 = sel1.index(1), sel2.index(1)
++         idx3, idx4 = sel3.index(1), sel4.index(1)
++         # Make sure none of the indices are the same
++         if idx1 == idx2 or idx1 == idx3 or idx1 == idx4 or idx2 == idx3 or \
++            idx2 == idx4 or idx3 == idx4:
++            print 'Skipping %d-%d-%d-%d dihedral deletion -- duplicate atoms!'%(
++               idx1, idx2, idx3, idx4)
++            continue
++         # Figure out if our dihedral would have hydrogen or not (limits what
++         # dihedral list we have to search...)
++         if AtomicNum[Element(self.parm.parm_data['MASS'][idx1])] == 1 or \
++            AtomicNum[Element(self.parm.parm_data['MASS'][idx2])] == 1 or \
++            AtomicNum[Element(self.parm.parm_data['MASS'][idx3])] == 1 or \
++            AtomicNum[Element(self.parm.parm_data['MASS'][idx4])] == 1:
++            dihed_list = self.parm.dihedrals_inc_h
++            dihed_list_idx = 0
++         else:
++            dihed_list = self.parm.dihedrals_without_h
++            dihed_list_idx = 1
++         # Now search through our dihedral list to see which indexes (if any) we
++         # have to remove. Keep tabs of them so we can pop them in reverse order
++         # (so we don't have to re-figure indices) afterwards
++         proposed_dihedral = (idx1, idx2, idx3, idx4)
++         for j, dihed in enumerate(dihed_list):
++            if dihed == proposed_dihedral:
++               if not found_this_dihedral:
++                  print 'Matched dihedral number %d' % j
++                  found_this_dihedral = True
++                  total_diheds += 1
++               else:
++                  print '  Matched multi-term dihedral number %d' % j
++               deleting_dihedrals[dihed_list_idx].append(j)
++      if not deleting_dihedrals[0] and not deleting_dihedrals[1]:
++         print 'No dihedrals matched -- not deleting any dihedrals'
++         return
++
++      print 'Deleting %d dihedrals' % (len(deleting_dihedrals[0]) + 
++                                       len(deleting_dihedrals[1])),
++      print ' (%d distinct dihedrals)' % total_diheds
++
++      # At this point, we've collected all of our dihedrals, now sort them
++      if deleting_dihedrals[0]: deleting_dihedrals[0].sort()
++      if deleting_dihedrals[1]: deleting_dihedrals[1].sort()
++      # deleting_dihedrals now contains all of our dihedral indexes
++      if deleting_dihedrals[0]:
++         while deleting_dihedrals[0]:
++            del self.parm.dihedrals_inc_h[deleting_dihedrals[0].pop()]
++      if deleting_dihedrals[1]:
++         while deleting_dihedrals[1]:
++            del self.parm.dihedrals_without_h[deleting_dihedrals[1].pop()]
+diff --git AmberTools/src/parmed/ParmedTools/exceptions.py AmberTools/src/parmed/ParmedTools/exceptions.py
+index e961e74..4b4cb49 100644
+--- AmberTools/src/parmed/ParmedTools/exceptions.py
++++ AmberTools/src/parmed/ParmedTools/exceptions.py
+@@ -39,3 +39,6 @@ class ChangeStateError(ParmError):
+ 
+ class SetParamError(ParmError):
+    pass
++
++class DeleteDihedralError(ParmError):
++   pass
+diff --git AmberTools/src/parmed/ParmedTools/gui/_guiactions.py AmberTools/src/parmed/ParmedTools/gui/_guiactions.py
+index 047fe40..48a4ee7 100644
+--- AmberTools/src/parmed/ParmedTools/gui/_guiactions.py
++++ AmberTools/src/parmed/ParmedTools/gui/_guiactions.py
+@@ -892,3 +892,35 @@ def addatomicnumber(amber_prmtop, messages):
+       messages.add_line(str(action))
+ 
+ #~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~+~
++
++def deletedihedral(amber_prmtop, messages):
++   """ Deletes a dihedral between 4 given atoms """
++   # We need 4 masks, phi_k, periodicity, phase, scee/scnb, dihedral type
++   widget_list = [('MaskEntry', 'First (end) atom in dihedral'),
++                  ('MaskEntry', 'Second (middle) atom in dihedral'),
++                  ('MaskEntry', 'Third (middle) atom in dihedral'),
++                  ('MaskEntry', 'Fourth (end) atom in dihedral')]
++   # We need 10 variables
++   var_list = [StringVar() for i in range(4)]
++   description = ('Deletes dihedrals between the atoms specified in mask1, ' +
++                  'mask2, mask3, and mask4.\nIt will try to match dihedrals ' +
++                  'only in the order given or reverse order. Dihedrals are\n' +
++                  'specified by atom N in mask1, mask2, mask3, and mask4,' +
++                  'where N is the selected\natom in that mask.')
++   # Create the window, open it, then wait for it to close
++   cmd_window = _guiwidgets.ActionWindow('deleteDihedral', amber_prmtop, 
++                     widget_list, var_list, description)
++   cmd_window.wait_window()
++   # See if we got any variables back
++   vars_found = True in [bool(v.get()) for v in var_list]
++   if not vars_found: return
++   # If we did, pass them through
++   var_list = [v.get() for v in var_list]
++   var1, var2, var3, var4 = var_list[0], var_list[1], var_list[2], var_list[3]
++   try:
++      action = ParmedActions.deletedihedral(amber_prmtop, var1,var2,var3,var4)
++      messages.add_line(str(action))
++      action.execute()
++   except Exception, err:
++      showerror('Unexpected Error!', '%s: %s' % (type(err).__name__, err))
++      return
+diff --git AmberTools/src/parmed/chemistry/amber/mask.py AmberTools/src/parmed/chemistry/amber/mask.py
+index 6ed2feb..342c75a 100644
+--- AmberTools/src/parmed/chemistry/amber/mask.py
++++ AmberTools/src/parmed/chemistry/amber/mask.py
+@@ -76,6 +76,11 @@ class AmberMask(object):
+             continue
+          # If p is an operator, is the last character, or is a ()...
+          elif self._isOperator(p) or i == len(self.mask) - 1 or p in ['(',')']:
++            # Deal with the last character being a wildcard that we have to
++            # convert
++            if p == '=' and i == len(self.mask) - 1: # wildcard
++               if flag > 0: p = '*'
++               else: raise MaskError('AmberMask: \'=\' not in name list syntax')
+             # If this is the end of an operand, terminate the buffer, flush
+             # it to infix, and reset flag to 0 and empty the buffer
+             if flag > 0:
+@@ -539,8 +544,8 @@ def _nameMatch(atnam1, atnam2):
+    atnam1 = str(atnam1).replace(' ','')
+    atnam2 = str(atnam2).replace(' ','')
+    # Replace amber mask wildcards with appropriate regex wildcards and protect the +
+-   atnam1 = atnam1.replace('*',r'\\w*')
+-   atnam1 = atnam1.replace('?',r'\\w')
++   atnam1 = atnam1.replace('*',r'\w*')
++   atnam1 = atnam1.replace('?',r'\w')
+    atnam1 = atnam1.replace('+',r'\+')
+    # Now replace just the first instance of atnam2 in atnam2 with '', and return *not* that
+    # DEBUG:
+diff --git AmberTools/src/parmed/chemistry/amber/readparm.py AmberTools/src/parmed/chemistry/amber/readparm.py
+index 8f66f6b..5204633 100644
+--- AmberTools/src/parmed/chemistry/amber/readparm.py
++++ AmberTools/src/parmed/chemistry/amber/readparm.py
+@@ -522,6 +522,39 @@ class _Dihedral(object):
+       return id(thing) == id(self.atom1) or id(thing) == id(self.atom2) or \
+              id(thing) == id(self.atom3) or id(thing) == id(self.atom4)
+ 
++   #===================================================
++
++   def __eq__(self, thing):
++      """
++      A dihedral is equivalent if the 4 atoms are the same (or reverse) in order
++
++      Allow comparison with another type of dihedral or with a list of 4 atoms
++      (or tuple)
++      """
++      if type(thing).__name__ == '_Dihedral':
++         # I'm comparing with another _Dihedral here
++         return ( (self.atom1 == thing.atom1 and self.atom2 == thing.atom2 and
++                   self.atom3 == thing.atom3 and self.atom4 == thing.atom4) or
++                  (self.atom1 == thing.atom4 and self.atom2 == thing.atom3 and
++                   self.atom4 == thing.atom1) )
++      if type(thing).__name__ in ('list', 'tuple'):
++         # Here, atoms are expected to index from 0 (Python standard) if we
++         # are comparing with a list or tuple
++         if len(thing) != 4:
++            raise exceptions.DihedralError(('comparative %s has %d elements! ' +
++                           ' Expect 4.') % (type(thing).__name__, len(thing)))
++         # Compare starting_index, since we may not have an index right now...
++         return ( (self.atom1.starting_index == thing[0] and 
++                   self.atom2.starting_index == thing[1] and
++                   self.atom3.starting_index == thing[2] and
++                   self.atom4.starting_index == thing[3]) or
++                  (self.atom1.starting_index == thing[3] and 
++                   self.atom2.starting_index == thing[2] and
++                   self.atom3.starting_index == thing[1] and
++                   self.atom4.starting_index == thing[0]) )
++
++      raise TypeError('Cannot compare _Dihedral with %s' % type(thing).__name__)
++
+ # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
+ class _DihedralType(object):
+diff --git AmberTools/src/parmed/chemistry/exceptions.py AmberTools/src/parmed/chemistry/exceptions.py
+index 32081aa..da8296e 100644
+--- AmberTools/src/parmed/chemistry/exceptions.py
++++ AmberTools/src/parmed/chemistry/exceptions.py
+@@ -41,3 +41,6 @@ class AmberParmError(ChemError):
+ 
+ class MoleculeError(ChemError):
+    """ This occurs when there's a problem determining molecularity """
++
++class DihedralError(ChemError):
++   " This happens when we try to do disallowed things in the _Dihedral class "

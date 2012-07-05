@@ -1,0 +1,957 @@
+********>Bugfix 6:
+Author: Tyler Luchko
+Date: 11 May 2012
+Program: rism1d
+
+Description: rism1d fix for 32-bit machines + mac os configure
+    
+    Bugfix for a number of round-off and pointer issues that only seemed
+    to affect 32-bit machines.
+    
+    -fixed integer rounding error for assigning number of output points
+    -modified test tolerance to account for system varience
+    -cleaned up some uninitialized pointers that cause random errors
+    -rewrote solvent dipole orientation for numerical stability
+    
+    Also fixed mod_command_args() to work on mac os x
+    
+    -on mac os x the new flag(s) for the configure command were not added.
+     This seems to be due to the particular regexp to search for the first
+     white space character which wasn't being matched.
+    -The solution is much simpler than the original regexp.
+
+-----------------------------------------------------------------------------
+ AmberTools/src/configure2                          |    6 +-
+ AmberTools/src/rism/quaternion.F90                 |   36 +++-
+ AmberTools/src/rism/rism1d.F90                     |    2 +-
+ AmberTools/src/rism/rism1d_closure_c.F90           |   13 +-
+ AmberTools/src/rism/rism1d_potential_c.F90         |  193 ++++++++++++++------
+ AmberTools/src/rism/rism_util.F90                  |   65 +++----
+ AmberTools/test/rism1d/check1d                     |   13 +-
+ AmberTools/test/rism1d/lj-py/lj.bvv.save           |    1 +
+ AmberTools/test/rism1d/lj-py/lj.exnvv.save         |    1 +
+ AmberTools/test/rism1d/lj-py/lj.nvv.save           |    1 +
+ AmberTools/test/rism1d/spc-hnc/spc-lj.cvv.save     |    1 +
+ AmberTools/test/rism1d/spc-hnc/spc-lj.exnvv.save   |    1 +
+ AmberTools/test/rism1d/spc-hnc/spc-lj.gvv.save     |    1 +
+ AmberTools/test/rism1d/spc-hnc/spc-lj.nvv.save     |    1 +
+ AmberTools/test/rism1d/spc-hnc/spc-lj.xvv.save     |    4 +-
+ AmberTools/test/rism1d/spc-kh/spc.bvv.save         |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.cvv.save         |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.cvv_dT.save      |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.exnvv.save       |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.gvv.save         |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.gvv_dT.save      |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.nvv.save         |    1 +
+ AmberTools/test/rism1d/spc-kh/spc.xvv.save         |    4 +-
+ AmberTools/test/rism1d/spc-mv0/spc.cvv.save        |    1 +
+ AmberTools/test/rism1d/spc-mv0/spc.exnvv.save      |    1 +
+ AmberTools/test/rism1d/spc-mv0/spc.gvv.save        |    1 +
+ AmberTools/test/rism1d/spc-mv0/spc.nvv.save        |    1 +
+ AmberTools/test/rism1d/spc-mv0/spc.xvv.save        |    4 +-
+ .../test/rism1d/spc-psen/spc-nacl-3.xvv.save       |    4 +-
+ AmberTools/test/rism1d/tip3p-kh/tip3p.exnvv.save   |    1 +
+ AmberTools/test/rism1d/tip3p-kh/tip3p.nvv.save     |    1 +
+ AmberTools/test/rism1d/tip3p-kh/tip3p.xvv.save     |    4 +-
+ 32 files changed, 247 insertions(+), 121 deletions(-)
+
+diff --git AmberTools/src/configure2 AmberTools/src/configure2
+index e20dd5b..9bedd99 100755
+--- AmberTools/src/configure2
++++ AmberTools/src/configure2
+@@ -112,7 +112,7 @@ check_amberhome() {
+    fi
+ }
+ 
+-#returns the command string modified to remove specific flags that may
++#echoes the command string modified to remove specific flags that may
+ #or may not be present and/or adds new flags to the string.  The first
+ #argument is a string of white space delimited flags to remove (order
+ #doesn't matter) and the second arguments is a white space delimited
+@@ -121,7 +121,7 @@ check_amberhome() {
+ #  ./configure -mpi -rism -cuda -cuda_SPDP -nosse -mpi gnu
+ #using
+ #  new_command=`mod_command_args '-rism -mpi -cuda -openmp' '-nofftw3 -altix'`
+-#will set $new_command to 
++#will set $new_command to
+ #  ./configure -nofftw3 -altix -cuda_SPDP -nosse gnu
+ mod_command_args() { 
+     #replace white space in first argument with '\|' and add escaped parentheses
+@@ -133,7 +133,7 @@ mod_command_args() {
+     #delete the flags in the $delete list.  Note the white space
+     #ensure we don't remove part of another flag.  Then insert the add
+     #list at the first occurance of whitespace
+-    echo `echo $command | sed -e "s/$delete//g" -e "s/\([^ ]\+\)/\1 $add/"` 
++    echo `echo $command | sed -e "s/$delete//g" -e "s/ / $add /"` 
+ }
+ 
+ # Test for the presence of /bin/csh, since it's needed for installation
+diff --git AmberTools/src/rism/quaternion.F90 AmberTools/src/rism/quaternion.F90
+index 1c70597..cdeaaf4 100644
+--- AmberTools/src/rism/quaternion.F90
++++ AmberTools/src/rism/quaternion.F90
+@@ -39,15 +39,40 @@
+     implicit none
+   contains
+ 
++    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++    !!!New quaternion from angle and rotation axis. The rotation axis
++    !!!is automatically normalized. If dir=(0,0,0), then no
++    !!!normalization is done and the imaginary parts are left as zero.
++    !!!This does not change the angular part.
++    !!!IN:
++    !!!  angle : angle, in radians, to rotate by
++    !!!  dir : vector to rotate about
++    !!!OUT:
++    !!!    quaternion (4-vector) corresponding to the angle and direction input
++    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     function new_quat(angle,dir)
+       implicit none
+       _REAL_, intent(in) :: angle, dir(3)
+-      _REAL_ :: new_quat(4)
++      _REAL_ :: new_quat(4), magnitude
+ 
++      magnitude  = sqrt(sum(dir**2))
+       new_quat(1) = cos(angle/2d0)
+-      new_quat(2:4) = dir/sqrt(sum(dir**2))*sin(angle/2d0)
++      if(magnitude == 0d0)then
++         new_quat(2:4) = 0d0
++      else
++         new_quat(2:4) = dir/magnitude*sin(angle/2d0)
++      end if
+     end function new_quat
+ 
++    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++    !!!Converts a quaternion to an angle and rotation axis. The rotation axis
++    !!!is automatically normalized.
++    !!!IN:
++    !!!  quat : a quaternion
++    !!!OUT:
++    !!!    the angle and direction corresponding to the input quaternion 
++    !!!    (4-vector)
++    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     function quat_2_angle_axis(quat)
+       implicit none
+       _REAL_, intent(in) :: quat(4)
+@@ -56,6 +81,7 @@
+       quat_2_angle_axis(2:4) = quat(2:4)/sin_ang
+       quat_2_angle_axis(1) = 2d0*atan2(sin_ang,quat(1))
+     end function quat_2_angle_axis
++
+     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     !!Rotates a vector by the given quaterion
+     !!IN:
+@@ -79,7 +105,6 @@
+       rot(1) =2*((t(8)+t(10))*vec(1)+(t(6)- t(4))*vec(2)+(t(3)+t(7))*vec(3))+vec(1)
+       rot(2) =2*((t(4)+ t(6))*vec(1)+(t(5)+t(10))*vec(2)+(t(9)-t(2))*vec(3))+vec(2)
+       rot(3) =2*((t(7)- t(3))*vec(1)+(t(2)+ t(9))*vec(2)+(t(5)+t(8))*vec(3))+vec(3)
+-!!$      vec = rot
+       qvec(1) = 0
+       qvec(2:4) = vec
+       call quat_mult(quat,qvec,qtemp)
+@@ -101,15 +126,10 @@
+       _REAL_,intent(in) :: a(4),b(4)
+       _REAL_,intent(out) :: c(4)
+       _REAL_ :: d(4),t(3)
+-!!$      write(6,*) "MULT A",a
+-!!$      write(6,*) "MULT B",b
+       d(1) = a(1)*b(1) - dot_product(a(2:4),b(2:4))
+-!!$      call cross(a(2:4),b(2:4),t)
+-!!$      d(2:4) = a(1)*b(2:4)+b(1)*a(2:4)+t
+       d(2) = a(1)*b(2) + a(2)*b(1) +a(3)*b(4) - a(4)*b(3)
+       d(3) = a(1)*b(3) -a(2)*b(4) + a(3)*b(1) + a(4)*b(2)
+       d(4) = a(1)*b(4) + a(2)*b(3) - a(3)*b(2) + a(4)*b(1)
+       c=d
+-!!$      write(6,*) "MULT C",C
+     end subroutine quat_mult
+   end module quaternion
+diff --git AmberTools/src/rism/rism1d.F90 AmberTools/src/rism/rism1d.F90
+index 8feb9d3..6dbf2b2 100644
+--- AmberTools/src/rism/rism1d.F90
++++ AmberTools/src/rism/rism1d.F90
+@@ -184,7 +184,7 @@
+       if(rout==0) then
+          nrout = nr
+       else
+-         nrout = min(nr, int(rout/dr))
++         nrout = min(nr, nint(rout/dr)+1)
+       end if
+       if(kout==0) then
+          nkout = nr
+diff --git AmberTools/src/rism/rism1d_closure_c.F90 AmberTools/src/rism/rism1d_closure_c.F90
+index 3b34d37..7e633cc 100644
+--- AmberTools/src/rism/rism1d_closure_c.F90
++++ AmberTools/src/rism/rism1d_closure_c.F90
+@@ -60,11 +60,11 @@ module rism1d_closure_c
+      !xvv   : site-site succeseptibility.
+      _REAL_, pointer :: xvv(:,:,:) => NULL()
+      type(rism1d_potential),pointer :: pot => NULL()
+-     type(rism1d_kh),pointer :: kh
+-     type(rism1d_hnc),pointer :: hnc
+-     type(rism1d_py),pointer :: py
+-     type(rism1d_mv0),pointer :: mv0
+-     type(rism1d_psen),pointer :: psen
++     type(rism1d_kh),pointer :: kh => NULL()
++     type(rism1d_hnc),pointer :: hnc => NULL()
++     type(rism1d_py),pointer :: py => NULL()
++     type(rism1d_mv0),pointer :: mv0 => NULL()
++     type(rism1d_psen),pointer :: psen => NULL()
+      character(len=8) :: type
+ 
+   end type rism1d_closure
+@@ -229,6 +229,7 @@ contains
+     type(rism1d_closure), intent(in) :: this
+     _REAL_, pointer :: bvv(:,:)
+     _REAL_, intent(in) :: gvv(:,:),cvv(:,:)
++    nullify(bvv)
+     if(associated(this%KH))then
+        bvv=> rism1d_kh_bvv(this%kh,this%pot%uvv,gvv,cvv)
+     elseif(associated(this%PSEN))then
+@@ -991,7 +992,7 @@ contains
+     implicit none
+     type(rism1d_closure), intent(inout) :: this
+     _REAL_, intent(in) :: cvv(:,:)
+-    _REAL_, pointer :: cvvk(:,:)
++    _REAL_, pointer :: cvvk(:,:)=>NULL()
+     _REAL_ :: bk(this%pot%nv,this%pot%nv), wck(this%pot%nv,this%pot%nv), ak(this%pot%nv,this%pot%nv),&
+          det,detln
+     _REAL_ :: k, r, presskv, fekv
+diff --git AmberTools/src/rism/rism1d_potential_c.F90 AmberTools/src/rism/rism1d_potential_c.F90
+index 7869521..684e1d0 100644
+--- AmberTools/src/rism/rism1d_potential_c.F90
++++ AmberTools/src/rism/rism1d_potential_c.F90
+@@ -477,9 +477,6 @@ contains
+                 d1z(iv) = 0.d0
+              else
+                 d1z(iv) = spherical_bessel_j1(krz,err)
+-!!$                if(ir==2)then
+-!!$                   write(0,*) d1z(iv),err,(sin(krz)/krz - cos(krz))/krz
+-!!$                end if
+             endif
+ 
+           enddo
+@@ -538,8 +535,10 @@ contains
+                   BLAS_PREC_EXTRA)
+           end if
+        end do
++!!$       write(0,*) 'zkvv', ir,this%zkvv(ir,:,:)
+     enddo
+-
++!!$    write(0,'(a,2(e24.16,1x))') 'wkvv', wkvv(:,:)
++!!$    stop
+     ivv = 0
+     do iv2=1,this%nv
+        do iv1=1,iv2
+@@ -736,15 +735,38 @@ contains
+ !!! and orienting the dipole moment along the OZ axis.
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   subroutine  dipord(this)
++    use quaternion
++    use rism_util, only : calc_pa,orient_pa,cross
+     implicit none
+     type(rism1d_potential), intent(inout) :: this
+-    integer ::  imt,iat,isp, id
+-    _REAL_ ::  rqcm(3), rdm(3), &
+-         qcm, dm,dmxy, cosxy,sinxy,cosz,sinz, r1x,r1y,r1z, r2x,r2y,r2z
+-
+-    !............... shifting and orienting species dipoles ................
++    integer ::  imt,iat,isp, id, iv
++    !rqcm : center of absolute charge vector
++    !rdm : dipole moment vector
++    !qcm : total absolute charge
++    !dm : magnitude of dipole moment
++    _REAL_ ::  rqcm(3), rdm(3), qcm, dm
++    !quat : quaternion for rotations
++    !angle : the angle to rotate about
++    !rotvec : the vector to rotate about
++    !checkvec : vector used to determine the sign of angle
++    !zaxis : the zaxis
++    _REAL_ :: quat(4), angle, rotvec(3), checkvec(3),&
++         zaxis(3)=(/0d0,0d0,1d0/)!, yaxis(3)=(/0d0,1d0,0d0/), xaxis(3)=(/1d0,0d0,0d0/),&
++    !pa : holds principal axes
++    _REAL_ :: pa(3,3)
++    !ratu : temporary array for coordinates while aligning principal axes
++    !mass : variable for mass in PA calculations.  Will be absolute
++    !       charge in this case
++    _REAL_, pointer :: ratu(:,:)=>NULL(), mass(:)=>NULL()
++    
+     do isp=1,this%nsp
+ 
++
++       !
++       !shifting molecule to center of absolute charge
++       !
++
++       !total absolute charge
+        qcm = 0.d0
+        do iat=1,this%nat(isp)
+           do imt=1,this%mta(iat,isp)
+@@ -753,6 +775,7 @@ contains
+        enddo
+        if (qcm == 0.d0)  cycle
+ 
++       !get center of |charge|
+        do id=1,3
+           rqcm(id) = 0.d0
+        enddo
+@@ -761,24 +784,26 @@ contains
+              do id=1,3
+                 rqcm(id) = rqcm(id) + abs(this%qat(iat,isp))*this%rma(id,imt,iat,isp)
+              enddo
+-!!$             write(0,*) iat,imt,this%rma(:,imt,iat,isp),abs(this%qat(iat,isp))
+           enddo
+        enddo
+-
+-
+        do id=1,3
+           rqcm(id) = rqcm(id)/qcm
+        enddo
+-!!$       write(0,*) "RQCM", rqcm
++
++       !translate
+        do iat=1,this%nat(isp)
+           do imt=1,this%mta(iat,isp)
+              do id=1,3
+                 this%rma(id,imt,iat,isp) = this%rma(id,imt,iat,isp) - rqcm(id)
+              enddo
+-!!$             write(0,*) iat,imt,this%rma(:,imt,iat,isp),abs(this%qat(iat,isp))
+           enddo
+        enddo
+ 
++       !
++       !Orient dipole moment on z-axis
++       !
++
++       !calculate dipole moment
+        do id=1,3
+           rdm(id) = 0.d0
+        enddo
+@@ -790,54 +815,114 @@ contains
+           enddo
+        enddo
+ 
+-       dm = 0.d0
+-       do id=1,3
+-          dm = dm + rdm(id)**2
+-       enddo
+-       dm = sqrt(dm)
++       !magnitude of the dipole moment
++       dm = sqrt(sum(rdm**2))
+ 
+        if (dm < 1.d-16)  cycle
+ 
+-       dmxy = 0.d0
+-       do id=1,2
+-          dmxy = dmxy + rdm(id)**2
+-       enddo
+-       dmxy = sqrt(dmxy)
++       !rotate the dipole moment to the z-axis.  
++
++       !For DRISM it is necessary to rotate the molecule such that the
++       !dipole is oriented along the z-axis.  There is also a
++       !dependence on the position of the sites in the xy-plane and it
++       !is not clear what the correct orientation should be, if there
++       !is one.  In light of this, we attempt to at least be
++       !consistent such that the same molecule always ends up with the
++       !same orientation.  
++
++       !This is done by finding the vector perpendicular to the dipole
++       !and the z-axis and then rotating about this vector by the
++       !angle between the dipole and z-axis. The orientation in the
++       !XY-plane is then fixed by aligning the XY principal axis
++       !(using absolute charge instead of mass) on the x-axis.  It is
++       !possible to get rotations of 180 degrees, which does not
++       !change the final solution
++       
++       !orient dipole
++       call cross(zaxis,rdm/dm,rotvec)
++       call cross(rotvec,rdm/dm,checkvec)
++       angle = sign(acos(dot_product(rdm/dm,zaxis)),dot_product(checkvec,zaxis))
++       quat = new_quat(angle,rotvec)
++       do iat=1,this%nat(isp)
++          do imt=1,this%mta(iat,isp)
++             call rotate_quat(this%rma(:,imt,iat,isp),quat)
++          end do
++       end do
+ 
+-       if (dmxy > 1.d-16)  then
+-          cosxy = rdm(1)/dmxy
+-          sinxy = rdm(2)/dmxy
+-          do iat=1,this%nat(isp)
+-             do imt=1,this%mta(iat,isp)
+-                r1x = this%rma(1,imt,iat,isp)
+-                r1y = this%rma(2,imt,iat,isp)
+-                r1z = this%rma(3,imt,iat,isp)
+-                r2x = r1x*cosxy + r1y*sinxy
+-                r2y = -r1x*sinxy + r1y*cosxy
+-                r2z = r1z
+-                this%rma(1,imt,iat,isp) = r2x
+-                this%rma(2,imt,iat,isp) = r2y
+-                this%rma(3,imt,iat,isp) = r2z
+-             enddo
+-          enddo
+-       endif
++       !orient XY-principal axis
+ 
+-       cosz = rdm(3)/dm
+-       sinz = sqrt(1.d0-cosz**2)
++       !1) trans coordinates to an contiguous array
++       ratu=> safemem_realloc(ratu,3,sum(this%mta(:,isp)))
++       mass=> safemem_realloc(mass,sum(this%mta(:,isp)))
++       iv=0
+        do iat=1,this%nat(isp)
+           do imt=1,this%mta(iat,isp)
+-             r1x = this%rma(1,imt,iat,isp)
+-             r1y = this%rma(2,imt,iat,isp)
+-             r1z = this%rma(3,imt,iat,isp)
+-             r2z = r1z*cosz + r1x*sinz
+-             r2x = -r1z*sinz + r1x*cosz
+-             r2y = r1y
+-             this%rma(1,imt,iat,isp) = r2x
+-             this%rma(2,imt,iat,isp) = r2y
+-             this%rma(3,imt,iat,isp) = r2z
+-          enddo
+-       enddo
++             iv=iv+1
++             ratu(:,iv) =this%rma(:,imt,iat,isp)
++             mass(iv) = abs(this%qat(iat,isp))
++          end do
++       end do
++       !avoid rotating the dipole from the proper alignment
++       ratu(3,:) = 0d0
++       
++       !2) calculate PA and rotate
++       call calc_pa(ratu,mass,pa)
++       call orient_pa(ratu,pa,quat)
++       
++       !3) transfer coordinates back
++       iv=0
++       do iat=1,this%nat(isp)
++          do imt=1,this%mta(iat,isp)
++             iv=iv+1
++             this%rma(1:2,imt,iat,isp) = ratu(1:2,iv)
++          end do
++       end do
++
++       !Alternately, we first align the xy-dipole component along the
++       !x-axis and the align the xz-component (there is no more
++       !y-component) along the z-axis.  This was the original method
++       !but could lead to arbitrary rotations in the xz-plane of 90
++       !degrees depending on platform/initial orientation.  Such
++       !rotations, however, do not change the final results
++!!$       !rotate about z-axis to align xy-dipole component with the x-axis.
++!!$       angle = -acos(rdm(1)/sqrt(sum(rdm**2)))
++!!$       write(0,*) "angle 1", angle, sign(zaxis,rdm(2))
++!!$       !The sign of the y-component determines the direction of the axis of rotation
++!!$       quat = new_quat(angle,sign(zaxis,rdm(2)))
++!!$       do iat=1,this%nat(isp)
++!!$          do imt=1,this%mta(iat,isp)
++!!$             call rotate_quat(this%rma(:,imt,iat,isp),quat)
++!!$          end do
++!!$       end do
++!!$       do id=1,3
++!!$          rdm(id) = 0.d0
++!!$       enddo
++!!$       do iat=1,this%nat(isp)
++!!$          do imt=1,this%mta(iat,isp)
++!!$             do id=1,3
++!!$                rdm(id) = rdm(id) + this%qat(iat,isp)*this%rma(id,imt,iat,isp)
++!!$             enddo
++!!$                write(0,*) "COORD",imt,iat,isp, this%rma(:,imt,iat,isp)
++!!$          enddo
++!!$       enddo
++!!$       write(0,*) "RDM x", rdm
++!!$       !rotate about y-axis to align xz-dipole component with the
++!!$       !z-axis 
++!!$       angle = -acos(rdm(3)/sqrt(sum(rdm**2)))
++!!$       write(0,*) "angle 2", angle
++!!$       !now the dipole is positive x and +/- z. So, the y unit
++!!$       !vector is always the correct rotation axis
++!!$       quat = new_quat(angle,yaxis)
++!!$       do iat=1,this%nat(isp)
++!!$          do imt=1,this%mta(iat,isp)
++!!$             call rotate_quat(this%rma(:,imt,iat,isp),quat)
++!!$          end do
++!!$       end do
+     enddo
++    if(safemem_dealloc(ratu) /= 0)&
++         call rism_report_error("DIPORD: deallocation failed: RATU")
++    if(safemem_dealloc(mass) /= 0)&
++         call rism_report_error("DIPORD: deallocation failed: MASS")
+   end subroutine dipord
+ 
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+diff --git AmberTools/src/rism/rism_util.F90 AmberTools/src/rism/rism_util.F90
+index f024aa1..bddf45f 100644
+--- AmberTools/src/rism/rism_util.F90
++++ AmberTools/src/rism/rism_util.F90
+@@ -232,7 +232,7 @@ function calc_rotation(ratu1,ratu0,mass,natu,dt)
+   write(6,*) "ANGULAR MOMENTUM", angvel
+   write(6,'(3(g16.3))') v
+ #endif /*RISM_DEBUG*/
+-  moi = calc_moi(ratu1,mass,natu)
++  moi = calc_moi(ratu1,mass)
+ #ifdef RISM_DEBUG
+   write(6,*) "MOI", moi
+ #endif /*RISM_DEBUG*/
+@@ -280,15 +280,13 @@ end function calc_rotation
+ !Calculate the principal axes of the atom distribution.  
+ !This follows, in part, mofi() in nmode/thermo.f 
+ !IN:
+-!   ratu   :: the x,y,z position of each solute atom.
++!   ratu   :: the x,y,z position of each solute atom. (3,natom)
+ !   mass   :: mass of each atom
+-!   natu   :: the number of solute atoms
+ !   pa     :: the three prinicpal axes
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-subroutine calc_pa(ratu,mass,natu,pa)
++subroutine calc_pa(ratu,mass,pa)
+   implicit none
+-  integer,intent(in) :: natu
+-  _REAL_,intent(in) :: ratu(3,natu),mass(natu)
++  _REAL_,intent(in) :: ratu(:,:),mass(:)
+   _REAL_, intent(out) :: pa(3,3)
+   integer :: id,ier
+ 
+@@ -298,11 +296,11 @@ subroutine calc_pa(ratu,mass,natu,pa)
+   !work     : temp space for the algorithm
+   _REAL_ :: t(6),eigenval(3),eigenvec(3,3),work(3*3)
+ #ifdef RISM_DEBUG
+-  write(6,*)"CALC PA", natu
++  write(6,*)"CALC PA"
+   call flush(6)
+ #endif /*RISM_DEBUG*/
+   
+-  call dspev('V','U',3,calc_moi(ratu,mass,natu),eigenval,pa,3,work,ier)
++  call dspev('V','U',3,calc_moi(ratu,mass),eigenval,pa,3,work,ier)
+ 
+ end subroutine calc_pa
+ 
+@@ -312,27 +310,25 @@ end subroutine calc_pa
+ !           column-major format (xx, xy, yy, xz, yz, zz)
+ !This follows, in part, mofi() in nmode/thermo.f 
+ !IN:
+-!   ratu   :: the x,y,z position of each solute atom.
++!   ratu   :: the x,y,z position of each solute atom. (3,natu)
+ !   mass   :: mass of each atom
+-!   natu   :: the number of solute atoms
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-function calc_moi(ratu,mass,natu)
++function calc_moi(ratu,mass)
+   implicit none
+- integer,intent(in) :: natu
+-  _REAL_,intent(in) :: ratu(3,natu),mass(natu)
++  _REAL_,intent(in) :: ratu(:,:),mass(:)
+ 
+   !calc_moi        : moment of inertia tensor in 1-d, in upper triangular, 
+   _REAL_ :: calc_moi(6)
+ #ifdef RISM_DEBUG
+-  write(6,*)"CALC PA", natu
++  write(6,*)"CALC PA"
+   call flush(6)
+ #endif /*RISM_DEBUG*/
+-  calc_moi(1) = sum(mass*(ratu(2,1:natu)**2+ratu(3,1:natu)**2))
+-  calc_moi(3) = sum(mass*(ratu(1,1:natu)**2+ratu(3,1:natu)**2))
+-  calc_moi(6) = sum(mass*(ratu(1,1:natu)**2+ratu(2,1:natu)**2))
+-  calc_moi(2) = -sum(mass*(ratu(1,1:natu)*ratu(2,1:natu)))
+-  calc_moi(4) = -sum(mass*(ratu(1,1:natu)*ratu(3,1:natu)))
+-  calc_moi(5) = -sum(mass*(ratu(2,1:natu)*ratu(3,1:natu)))
++  calc_moi(1) = sum(mass*(ratu(2,:)**2+ratu(3,:)**2))
++  calc_moi(3) = sum(mass*(ratu(1,:)**2+ratu(3,:)**2))
++  calc_moi(6) = sum(mass*(ratu(1,:)**2+ratu(2,:)**2))
++  calc_moi(2) = -sum(mass*(ratu(1,:)*ratu(2,:)))
++  calc_moi(4) = -sum(mass*(ratu(1,:)*ratu(3,:)))
++  calc_moi(5) = -sum(mass*(ratu(2,:)*ratu(3,:)))
+ 
+ end function calc_moi
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@@ -426,35 +422,34 @@ end subroutine alignorient
+ !Rotates the system such that the previously calculated pricipal axes
+ !coincide with the x-,y- and z-axes.
+ !IN:
+-!   ratu   :: the x,y,z position of each solute atom.  This is modified.
+-!   natu   :: the number of solute atoms
++!   ratu   :: the x,y,z position of each solute atom.  (3,natom) This is modified.
+ !   pa     :: the three prinicpal axes
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-subroutine orient_pa(ratu,mass,natu,pa,backquat)
++subroutine orient_pa(ratu,pa,backquat)
+   use constants, only : PI
+-  use quaternion, only : rotate_quat,quat_mult
++  use quaternion, only : new_quat,rotate_quat,quat_mult
+   implicit none
+-  integer,intent(in) :: natu
+-  _REAL_,intent(inout) :: ratu(3,natu)
+-  _REAL_,intent(in) ::mass(natu)
++  _REAL_,intent(inout) :: ratu(:,:)
+   _REAL_, intent(inout) :: pa(3,3)
+   _REAL_, intent(out) :: backquat(4)
+   _REAL_ :: angle, quat(4),dir(3),xaxis(3)=(/1d0,0d0,0d0/),yaxis(3)=(/0d0,1d0,0d0/),&
+        checkv(3)
++  integer :: natu
+ 
+   integer :: iatu,ipa
+ #ifdef RISM_DEBUG
+   write(6,*) "ORIENT_PA"
+ #endif /*RISM_DEBUG*/
++  natu=ubound(ratu,2)
++
+   !
+   !rotate first principal axis the x-axis
+   !
+ 
+   !get the angle.  This is always positive
+-  angle = acos(dot_product(pa(1:3,1),xaxis))
++  angle = acos(min(1d0,max(-1d0,dot_product(pa(1:3,1),xaxis))))
+   if(angle < PI - 1d-6 .and. angle > -PI+1d-6)then
+      call cross(pa(1:3,1),xaxis,dir)
+-     dir = dir/sqrt(dot_product(dir,dir))
+   else
+      dir = yaxis
+   end if
+@@ -465,8 +460,7 @@ subroutine orient_pa(ratu,mass,natu,pa,backquat)
+   if(dot_product(checkv,xaxis) < 0)then
+      angle = -angle
+   end if
+-  quat(2:4) = dir*sin(angle/2d0)
+-  quat(1) = cos(angle/2d0)
++  quat = new_quat(angle,dir)
+   do iatu = 1 ,natu
+      call rotate_quat(ratu(1:3,iatu),quat)
+   end do
+@@ -474,22 +468,25 @@ subroutine orient_pa(ratu,mass,natu,pa,backquat)
+      call rotate_quat(pa(1:3,ipa),quat)
+   end do
+   backquat = quat
++
+   !Next the second PA (this also places the third one as well)
+-  angle = acos(dot_product(pa(1:3,2),yaxis))
++  !max/min protects against round-off errors in normalized vectors 
++  angle = acos(min(1d0,max(-1d0,dot_product(pa(1:3,2),yaxis))))
+   dir = xaxis
+   call cross(dir,pa(1:3,2),checkv)
+   
+   if(dot_product(checkv,yaxis) < 0)then
+      angle = -angle
+   end if
+-  quat(2:4) = dir*sin(angle/2d0)
+-  quat(1) = cos(angle/2d0)
++
++  quat = new_quat(angle,dir)
+   do iatu = 1 ,natu
+      call rotate_quat(ratu(1:3,iatu),quat)
+   end do
+   do ipa = 1,3
+      call rotate_quat(pa(1:3,ipa),quat)
+   end do
++
+   call quat_mult(quat,backquat,backquat)
+   backquat(2:4) = -1d0*backquat(2:4)
+ 
+diff --git AmberTools/test/rism1d/check1d AmberTools/test/rism1d/check1d
+index 23f5d68..6e1aa50 100755
+--- AmberTools/test/rism1d/check1d
++++ AmberTools/test/rism1d/check1d
+@@ -73,7 +73,7 @@ if [ -s $1.xvv.save ]; then
+    xvvReturnCode=$((xvvReturnCode + $?))
+    tryclean $rc $1.xvv.delhv0.save
+ #XBLAS for temperature derivatives is needed to get better precision
+-   $AMBERHOME/AmberTools/test/dacdif -r 1.e-4 $1.xvv.delhv0_dT.save $1.xvv.delhv0_dT
++   $AMBERHOME/AmberTools/test/dacdif -r 5.e-3 $1.xvv.delhv0_dT.save $1.xvv.delhv0_dT
+    rc=$?
+    xvvReturnCode=$((xvvReturnCode + $?))
+    tryclean $rc $1.xvv.delhv0_dT.save
+@@ -85,7 +85,10 @@ if [ -s $1.xvv.save ]; then
+    rc=$?
+    xvvReturnCode=$((xvvReturnCode + $?))
+    tryclean $rc $1.xvv.xvv_dT.save
+-   $AMBERHOME/AmberTools/test/dacdif -r 1.e-8 $1.xvv.other.save $1.xvv.other
++   #use absolute instead of relative as the rotated atom positions may
++   #have round-off errors when they should be zero.  Theses absolute
++   #differences are on the order of 1e-18
++   $AMBERHOME/AmberTools/test/dacdif -a 1.e-8 $1.xvv.other.save $1.xvv.other
+    rc=$?
+    xvvReturnCode=$((xvvReturnCode + $?))
+    tryclean $rc $1.xvv.other.save
+@@ -137,15 +140,15 @@ if [ -s $1.q00.save ]; then
+ fi
+ #k-space
+ if [ -s $1.hvv.save ]; then
+-   $AMBERHOME/AmberTools/test/dacdif -a 1.e-5 $1.hvv.save $1.hvv
++   $AMBERHOME/AmberTools/test/dacdif -a 2.e-5 $1.hvv.save $1.hvv
+ fi
+ #k-space
+ if [ -s $1.hvv_dT.save ]; then
+-   $AMBERHOME/AmberTools/test/dacdif -a 1.e-5 $1.hvv_dT.save $1.hvv_dT
++   $AMBERHOME/AmberTools/test/dacdif -a 2.e-5 $1.hvv_dT.save $1.hvv_dT
+ fi
+ #k-space
+ if [ -s $1.svv.save ]; then
+-   $AMBERHOME/AmberTools/test/dacdif -a 1.e-5 $1.svv.save $1.svv
++   $AMBERHOME/AmberTools/test/dacdif -a 2.e-5 $1.svv.save $1.svv
+ fi
+ #the bridge function typically contains very small numbers a large distances.  
+ #It is unrealistic to achieve low relative error for these very small number so we only 
+diff --git AmberTools/test/rism1d/lj-py/lj.bvv.save AmberTools/test/rism1d/lj-py/lj.bvv.save
+index 85468f2..4eb52ab 100644
+--- AmberTools/test/rism1d/lj-py/lj.bvv.save
++++ AmberTools/test/rism1d/lj-py/lj.bvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001  2.77663211E-017
+    9.99500000E+001  4.60575772E-017
+    9.99750000E+001  2.44119066E-017
++   1.00000000E+002  2.69310443E-017
+diff --git AmberTools/test/rism1d/lj-py/lj.exnvv.save AmberTools/test/rism1d/lj-py/lj.exnvv.save
+index 7317f81..654b357 100644
+--- AmberTools/test/rism1d/lj-py/lj.exnvv.save
++++ AmberTools/test/rism1d/lj-py/lj.exnvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001 -9.71002859E-001
+   9.99500000E+001 -9.71002858E-001
+   9.99750000E+001 -9.71002858E-001
++  1.00000000E+002 -9.71002858E-001
+diff --git AmberTools/test/rism1d/lj-py/lj.nvv.save AmberTools/test/rism1d/lj-py/lj.nvv.save
+index bd96293..527ce7d 100644
+--- AmberTools/test/rism1d/lj-py/lj.nvv.save
++++ AmberTools/test/rism1d/lj-py/lj.nvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001  1.39172167E+005
+   9.99500000E+001  1.39276651E+005
+   9.99750000E+001  1.39381188E+005
++  1.00000000E+002  1.39485777E+005
+diff --git AmberTools/test/rism1d/spc-hnc/spc-lj.cvv.save AmberTools/test/rism1d/spc-hnc/spc-lj.cvv.save
+index 4995675..85dfd9d 100644
+--- AmberTools/test/rism1d/spc-hnc/spc-lj.cvv.save
++++ AmberTools/test/rism1d/spc-hnc/spc-lj.cvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001 -4.03151179E+000  2.01575590E+000 -1.00787795E+000  1.06061996E-009  3.43825522E-011  1.06062001E-009
+    9.99500000E+001 -4.03050341E+000  2.01525171E+000 -1.00762585E+000  1.05902917E-009  3.43309855E-011  1.05902915E-009
+    9.99750000E+001 -4.02949553E+000  2.01474777E+000 -1.00737388E+000  1.05744130E-009  3.42795276E-011  1.05744116E-009
++   1.00000000E+002 -4.02848816E+000  2.01424408E+000 -1.00712204E+000  1.05585611E-009  3.42282005E-011  1.05585601E-009
+diff --git AmberTools/test/rism1d/spc-hnc/spc-lj.exnvv.save AmberTools/test/rism1d/spc-hnc/spc-lj.exnvv.save
+index 207d22c..a3b63f1 100644
+--- AmberTools/test/rism1d/spc-hnc/spc-lj.exnvv.save
++++ AmberTools/test/rism1d/spc-hnc/spc-lj.exnvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001 -9.11879594E-001 -1.82375919E+000  0.00000000E+000 -9.11879593E-001 -1.82375919E+000  0.00000000E+000 -1.29006267E+000 -2.58012534E+000  0.00000000E+000
+   9.99500000E+001 -9.11879593E-001 -1.82375918E+000  0.00000000E+000 -9.11879592E-001 -1.82375918E+000  0.00000000E+000 -1.29006267E+000 -2.58012535E+000  0.00000000E+000
+   9.99750000E+001 -9.11879592E-001 -1.82375918E+000  0.00000000E+000 -9.11879591E-001 -1.82375918E+000  0.00000000E+000 -1.29006268E+000 -2.58012536E+000  0.00000000E+000
++  1.00000000E+002 -9.11879591E-001 -1.82375918E+000  0.00000000E+000 -9.11879591E-001 -1.82375918E+000  0.00000000E+000 -1.29006268E+000 -2.58012536E+000  0.00000000E+000
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-hnc/spc-lj.gvv.save AmberTools/test/rism1d/spc-hnc/spc-lj.gvv.save
+index 2056e14..0058cc2 100644
+--- AmberTools/test/rism1d/spc-hnc/spc-lj.gvv.save
++++ AmberTools/test/rism1d/spc-hnc/spc-lj.gvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000
+    9.99500000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000
+    9.99750000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000
++   1.00000000E+002  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000  1.00000000E+000
+diff --git AmberTools/test/rism1d/spc-hnc/spc-lj.nvv.save AmberTools/test/rism1d/spc-hnc/spc-lj.nvv.save
+index 0a5fadd..cfc1c1a 100644
+--- AmberTools/test/rism1d/spc-hnc/spc-lj.nvv.save
++++ AmberTools/test/rism1d/spc-hnc/spc-lj.nvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001  1.39172226E+005  2.78344452E+005  0.00000000E+000  1.39172226E+005  2.78344452E+005  0.00000000E+000  1.39171848E+005  2.78343696E+005  0.00000000E+000
+   9.99500000E+001  1.39276711E+005  2.78553421E+005  0.00000000E+000  1.39276711E+005  2.78553421E+005  0.00000000E+000  1.39276332E+005  2.78552665E+005  0.00000000E+000
+   9.99750000E+001  1.39381247E+005  2.78762494E+005  0.00000000E+000  1.39381247E+005  2.78762494E+005  0.00000000E+000  1.39380869E+005  2.78761738E+005  0.00000000E+000
++  1.00000000E+002  1.39485836E+005  2.78971672E+005  0.00000000E+000  1.39485836E+005  2.78971672E+005  0.00000000E+000  1.39485458E+005  2.78970916E+005  0.00000000E+000
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-hnc/spc-lj.xvv.save AmberTools/test/rism1d/spc-hnc/spc-lj.xvv.save
+index 5cefc5d..5ae0d94 100644
+--- AmberTools/test/rism1d/spc-hnc/spc-lj.xvv.save
++++ AmberTools/test/rism1d/spc-hnc/spc-lj.xvv.save
+@@ -51,8 +51,8 @@ O   H1  LJ
+ %FLAG COORD
+ %FORMAT(1P3E24.16)
+  -0.0000000000000000E+00 -2.7755575615628914E-17 -2.8867934551721919E-01
+-  0.0000000000000000E+00 -8.1649069689310605E-01  2.8867924486401891E-01
+-  0.0000000000000000E+00  8.1649069689310605E-01  2.8867944617041952E-01
++ -8.1649069689310605E-01  0.0000000000000000E+00  2.8867924486401891E-01
++  8.1649069689310605E-01  0.0000000000000000E+00  2.8867944617041952E-01
+   0.0000000000000000E+00  0.0000000000000000E+00  0.0000000000000000E+00
+ %COMMENT COLUMN MAJOR NR X NAT X NAT
+ %FLAG XVV
+diff --git AmberTools/test/rism1d/spc-kh/spc.bvv.save AmberTools/test/rism1d/spc-kh/spc.bvv.save
+index d4a31c5..96c7c34 100644
+--- AmberTools/test/rism1d/spc-kh/spc.bvv.save
++++ AmberTools/test/rism1d/spc-kh/spc.bvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001 -1.30587908E-023 -1.23204675E-023 -1.29594322E-023
+    9.99500000E+001 -1.26718577E-023 -1.34109888E-023 -1.27615228E-023
+    9.99750000E+001 -1.29772037E-023 -1.22550362E-023 -1.28867308E-023
++   1.00000000E+002 -1.26136965E-023 -1.33237471E-023 -1.26783200E-023
+diff --git AmberTools/test/rism1d/spc-kh/spc.cvv.save AmberTools/test/rism1d/spc-kh/spc.cvv.save
+index 39b3a1c..3b9279d 100644
+--- AmberTools/test/rism1d/spc-kh/spc.cvv.save
++++ AmberTools/test/rism1d/spc-kh/spc.cvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001 -4.03151179E+000  2.01575590E+000 -1.00787795E+000
+    9.99500000E+001 -4.03050341E+000  2.01525171E+000 -1.00762585E+000
+    9.99750000E+001 -4.02949553E+000  2.01474777E+000 -1.00737388E+000
++   1.00000000E+002 -4.02848816E+000  2.01424408E+000 -1.00712204E+000
+diff --git AmberTools/test/rism1d/spc-kh/spc.cvv_dT.save AmberTools/test/rism1d/spc-kh/spc.cvv_dT.save
+index 611dd86..19d993f 100644
+--- AmberTools/test/rism1d/spc-kh/spc.cvv_dT.save
++++ AmberTools/test/rism1d/spc-kh/spc.cvv_dT.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001  4.03151179E+000 -2.01575590E+000  1.00787795E+000
+    9.99500000E+001  4.03050341E+000 -2.01525171E+000  1.00762585E+000
+    9.99750000E+001  4.02949553E+000 -2.01474777E+000  1.00737388E+000
++   1.00000000E+002  4.02848816E+000 -2.01424408E+000  1.00712204E+000
+diff --git AmberTools/test/rism1d/spc-kh/spc.exnvv.save AmberTools/test/rism1d/spc-kh/spc.exnvv.save
+index a0b21a9..fff1f8e 100644
+--- AmberTools/test/rism1d/spc-kh/spc.exnvv.save
++++ AmberTools/test/rism1d/spc-kh/spc.exnvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001 -9.35120148E-001 -1.87024030E+000 -9.35120148E-001 -1.87024030E+000
+   9.99500000E+001 -9.35120148E-001 -1.87024030E+000 -9.35120148E-001 -1.87024030E+000
+   9.99750000E+001 -9.35120147E-001 -1.87024029E+000 -9.35120147E-001 -1.87024029E+000
++  1.00000000E+002 -9.35120147E-001 -1.87024029E+000 -9.35120147E-001 -1.87024029E+000
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-kh/spc.gvv.save AmberTools/test/rism1d/spc-kh/spc.gvv.save
+index 26c5aa7..6dabee2 100644
+--- AmberTools/test/rism1d/spc-kh/spc.gvv.save
++++ AmberTools/test/rism1d/spc-kh/spc.gvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000
+    9.99500000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000
+    9.99750000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000
++   1.00000000E+002  1.00000000E+000  1.00000000E+000  1.00000000E+000
+diff --git AmberTools/test/rism1d/spc-kh/spc.gvv_dT.save AmberTools/test/rism1d/spc-kh/spc.gvv_dT.save
+index 5708cb7..59dcf3c 100644
+--- AmberTools/test/rism1d/spc-kh/spc.gvv_dT.save
++++ AmberTools/test/rism1d/spc-kh/spc.gvv_dT.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001 -4.78284079E-012 -2.70006240E-012 -4.52748949E-012
+    9.99500000E+001 -3.74278386E-012 -5.83133541E-012 -4.00213196E-012
+    9.99750000E+001 -4.76862994E-012 -2.69029243E-012 -4.51416682E-012
++   1.00000000E+002 -3.73745479E-012 -5.81090731E-012 -3.99080768E-012
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-kh/spc.nvv.save AmberTools/test/rism1d/spc-kh/spc.nvv.save
+index 602aaaa..2d8c91f 100644
+--- AmberTools/test/rism1d/spc-kh/spc.nvv.save
++++ AmberTools/test/rism1d/spc-kh/spc.nvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001  1.39172203E+005  2.78344406E+005  1.39172203E+005  2.78344406E+005
+   9.99500000E+001  1.39276687E+005  2.78553375E+005  1.39276687E+005  2.78553375E+005
+   9.99750000E+001  1.39381224E+005  2.78762448E+005  1.39381224E+005  2.78762448E+005
++  1.00000000E+002  1.39485813E+005  2.78971626E+005  1.39485813E+005  2.78971626E+005
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-kh/spc.xvv.save AmberTools/test/rism1d/spc-kh/spc.xvv.save
+index e61ab7d..845632e 100644
+--- AmberTools/test/rism1d/spc-kh/spc.xvv.save
++++ AmberTools/test/rism1d/spc-kh/spc.xvv.save
+@@ -55,8 +55,8 @@ O   H1
+ %FLAG COORD
+ %FORMAT(1P3E24.16)
+  -0.0000000000000000E+00 -2.7755575615628914E-17 -2.8867934551721919E-01
+-  0.0000000000000000E+00 -8.1649069689310605E-01  2.8867924486401891E-01
+-  0.0000000000000000E+00  8.1649069689310605E-01  2.8867944617041952E-01
++ -8.1649069689310605E-01  0.0000000000000000E+00  2.8867924486401891E-01
++  8.1649069689310605E-01  0.0000000000000000E+00  2.8867944617041952E-01
+ %COMMENT COLUMN MAJOR NR X NAT X NAT
+ %FLAG XVV
+ %FORMAT(1P5E24.16)
+diff --git AmberTools/test/rism1d/spc-mv0/spc.cvv.save AmberTools/test/rism1d/spc-mv0/spc.cvv.save
+index 66e3d48..8ee4369 100644
+--- AmberTools/test/rism1d/spc-mv0/spc.cvv.save
++++ AmberTools/test/rism1d/spc-mv0/spc.cvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001 -4.03151179E+000  2.01575590E+000 -1.00787795E+000
+    9.99500000E+001 -4.03050341E+000  2.01525171E+000 -1.00762585E+000
+    9.99750000E+001 -4.02949553E+000  2.01474777E+000 -1.00737388E+000
++   1.00000000E+002 -4.02848816E+000  2.01424408E+000 -1.00712204E+000
+diff --git AmberTools/test/rism1d/spc-mv0/spc.exnvv.save AmberTools/test/rism1d/spc-mv0/spc.exnvv.save
+index 6194cb7..b553e39 100644
+--- AmberTools/test/rism1d/spc-mv0/spc.exnvv.save
++++ AmberTools/test/rism1d/spc-mv0/spc.exnvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001 -9.57051172E-001 -1.91410234E+000 -9.57051172E-001 -1.91410234E+000
+   9.99500000E+001 -9.57051172E-001 -1.91410234E+000 -9.57051172E-001 -1.91410234E+000
+   9.99750000E+001 -9.57051172E-001 -1.91410234E+000 -9.57051172E-001 -1.91410234E+000
++  1.00000000E+002 -9.57051171E-001 -1.91410234E+000 -9.57051172E-001 -1.91410234E+000
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-mv0/spc.gvv.save AmberTools/test/rism1d/spc-mv0/spc.gvv.save
+index 7f84d2e..0c91868 100644
+--- AmberTools/test/rism1d/spc-mv0/spc.gvv.save
++++ AmberTools/test/rism1d/spc-mv0/spc.gvv.save
+@@ -4002,3 +4002,4 @@
+    9.99250000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000
+    9.99500000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000
+    9.99750000E+001  1.00000000E+000  1.00000000E+000  1.00000000E+000
++   1.00000000E+002  1.00000000E+000  1.00000000E+000  1.00000000E+000
+diff --git AmberTools/test/rism1d/spc-mv0/spc.nvv.save AmberTools/test/rism1d/spc-mv0/spc.nvv.save
+index 5f7a158..5146389 100644
+--- AmberTools/test/rism1d/spc-mv0/spc.nvv.save
++++ AmberTools/test/rism1d/spc-mv0/spc.nvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001  1.39172181E+005  2.78344362E+005  1.39172181E+005  2.78344362E+005
+   9.99500000E+001  1.39276665E+005  2.78553331E+005  1.39276665E+005  2.78553331E+005
+   9.99750000E+001  1.39381202E+005  2.78762404E+005  1.39381202E+005  2.78762404E+005
++  1.00000000E+002  1.39485791E+005  2.78971582E+005  1.39485791E+005  2.78971582E+005
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/spc-mv0/spc.xvv.save AmberTools/test/rism1d/spc-mv0/spc.xvv.save
+index 7366d81..be93519 100644
+--- AmberTools/test/rism1d/spc-mv0/spc.xvv.save
++++ AmberTools/test/rism1d/spc-mv0/spc.xvv.save
+@@ -51,8 +51,8 @@ O   H1
+ %FLAG COORD
+ %FORMAT(1P3E24.16)
+   0.0000000000000000E+00 -2.7755575615628914E-17 -2.8867934551721919E-01
+-  0.0000000000000000E+00 -8.1649069689310605E-01  2.8867924486401891E-01
+-  0.0000000000000000E+00  8.1649069689310605E-01  2.8867944617041952E-01
++  8.1649069689310605E-01  0.0000000000000000E+00  2.8867924486401891E-01
++ -8.1649069689310605E-01  0.0000000000000000E+00  2.8867944617041952E-01
+ %COMMENT COLUMN MAJOR NR X NAT X NAT
+ %FLAG XVV
+ %FORMAT(1P5E24.16)
+diff --git AmberTools/test/rism1d/spc-psen/spc-nacl-3.xvv.save AmberTools/test/rism1d/spc-psen/spc-nacl-3.xvv.save
+index 642d41e..f21631e 100644
+--- AmberTools/test/rism1d/spc-psen/spc-nacl-3.xvv.save
++++ AmberTools/test/rism1d/spc-psen/spc-nacl-3.xvv.save
+@@ -55,8 +55,8 @@ O   H1  Na+ Cl-
+ %FLAG COORD
+ %FORMAT(1P3E24.16)
+  -0.0000000000000000E+00 -2.7755575615628914E-17 -2.8867934551721919E-01
+-  0.0000000000000000E+00 -8.1649069689310605E-01  2.8867924486401891E-01
+-  0.0000000000000000E+00  8.1649069689310594E-01  2.8867944617041941E-01
++ -8.1649069689310605E-01  0.0000000000000000E+00  2.8867924486401891E-01
++  8.1649069689310594E-01  0.0000000000000000E+00  2.8867944617041941E-01
+   0.0000000000000000E+00  0.0000000000000000E+00  0.0000000000000000E+00
+   0.0000000000000000E+00  0.0000000000000000E+00  0.0000000000000000E+00
+ %COMMENT COLUMN MAJOR NR X NAT X NAT
+diff --git AmberTools/test/rism1d/tip3p-kh/tip3p.exnvv.save AmberTools/test/rism1d/tip3p-kh/tip3p.exnvv.save
+index cbd9008..ca72373 100644
+--- AmberTools/test/rism1d/tip3p-kh/tip3p.exnvv.save
++++ AmberTools/test/rism1d/tip3p-kh/tip3p.exnvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001 -9.31938588E-001 -1.86387718E+000 -9.31938588E-001 -1.86387718E+000
+   9.99500000E+001 -9.31938587E-001 -1.86387718E+000 -9.31938588E-001 -1.86387718E+000
+   9.99750000E+001 -9.31938587E-001 -1.86387717E+000 -9.31938587E-001 -1.86387717E+000
++  1.00000000E+002 -9.31938587E-001 -1.86387717E+000 -9.31938587E-001 -1.86387717E+000
+\ No newline at end of file
+diff --git AmberTools/test/rism1d/tip3p-kh/tip3p.nvv.save AmberTools/test/rism1d/tip3p-kh/tip3p.nvv.save
+index 5bbda4c..efd64b6 100644
+--- AmberTools/test/rism1d/tip3p-kh/tip3p.nvv.save
++++ AmberTools/test/rism1d/tip3p-kh/tip3p.nvv.save
+@@ -4002,3 +4002,4 @@
+   9.99250000E+001  1.39172206E+005  2.78344412E+005  1.39172206E+005  2.78344412E+005
+   9.99500000E+001  1.39276690E+005  2.78553381E+005  1.39276690E+005  2.78553381E+005
+   9.99750000E+001  1.39381227E+005  2.78762454E+005  1.39381227E+005  2.78762454E+005
++  1.00000000E+002  1.39485816E+005  2.78971632E+005  1.39485816E+005  2.78971632E+005
+diff --git AmberTools/test/rism1d/tip3p-kh/tip3p.xvv.save AmberTools/test/rism1d/tip3p-kh/tip3p.xvv.save
+index e255a88..9348ab0 100644
+--- AmberTools/test/rism1d/tip3p-kh/tip3p.xvv.save
++++ AmberTools/test/rism1d/tip3p-kh/tip3p.xvv.save
+@@ -55,8 +55,8 @@ O   H1
+ %FLAG COORD
+ %FORMAT(1P3E24.16)
+  -0.0000000000000000E+00  0.0000000000000000E+00 -2.9294097635797300E-01
+-  0.0000000000000000E+00 -7.5695057706448043E-01  2.9294097752160331E-01
+-  0.0000000000000000E+00  7.5695057706448043E-01  2.9294097519434276E-01
++ -7.5695057706448043E-01  0.0000000000000000E+00  2.9294097752160331E-01
++  7.5695057706448043E-01  0.0000000000000000E+00  2.9294097519434276E-01
+ %COMMENT COLUMN MAJOR NR X NAT X NAT
+ %FLAG XVV
+ %FORMAT(1P5E24.16)

@@ -1,0 +1,21 @@
+********>Bugfix 3:
+Author: Jason Swails
+Date: 24 April 2012
+Programs: patch_amber.py
+Description: Corrects a regular expression that didn't recognize file names with
+             periods in them.
+
+-----------------------------------------------------------------------------
+diff --git patch_amber.py patch_amber.py
+index f666f9c..84d90c4 100755
+--- patch_amber.py
++++ patch_amber.py
+@@ -229,7 +229,7 @@ class Patch(object):
+       Parse through the patch file and find out which files are being modified
+       """
+       # This regex matches lines that start like "+++ path/to/file.cpp"
+-      modfile = re.compile(r'\+\+\+ \.*\/*[\w\-\/]+[\w\-]+\.*\w*')
++      modfile = re.compile(r'\+\+\+ \.*\/*[\w\-\/\.\+]+[\w\-\.\+]+\.*\w*')
+       selffile = re.compile('\\+\\+\\+ %s' % path.split(sys.argv[0])[1])
+       patch = open(self.name, 'r')
+       files_modified = []
