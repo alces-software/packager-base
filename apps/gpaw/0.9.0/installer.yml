@@ -1,0 +1,114 @@
+---
+:src: gpaw-0.9.0.8965.tar.gz
+:type: apps
+:version: '0.9.0'
+:compilers:
+  gcc:
+    :compiler:
+  intel:
+    :compiler: icc
+  open64:
+    :compiler: opencc
+:variants:
+  standard:
+    :libraries: "['atlas','lapack','hdf5','hdf5_hl','cblas','f77blas','z']"
+    :library_dirs: "[envget('ATLASLIB'),envget('HDF5LIB'), '%s/%s' % (envget('PYTHONLIB'), 'python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('ATLASINCLUDE'),envget('HDF5INCLUDE'), '%s/%s' % (envget('PYTHONLIB'), 'python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+  scalapack:
+    :libraries: "['hdf5','hdf5_hl','z']"
+    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('PYTHONLIB'), 'python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('PYTHONLIB'), 'python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+    :scalapack: true
+    :scalapack_library_dirs: "[envget('SCALAPACKLIB')]"
+  mkl:
+    :libraries: "['hdf5','hdf5_hl','z']"
+    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('PYTHONLIB'), 'python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('PYTHONLIB'), 'python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+    :scalapack: true
+    :scalapack_libraries: "['mkl_scalapack_lp64','mkl_blacs_openmpi_lp64', 'mkl_intel_lp64', 'mkl_sequential', 'mkl_core', 'mkl_mc3']"
+    :scalapack_library_dirs: "['%s/%s' % (envget('INTELROOT'), 'mkl/lib/intel64')]"
+:sources:
+  - gpaw-setups-0.8.7929.tar.gz
+  - python-ase-3.6.0.2515.tar.gz
+:compile: |
+  # create customize.py
+  cat <<PYTHON > customize.py
+import os
+def envget(v): return v in os.environ and os.environ[v]
+<% if variant[:compiler] %>compiler = '<%= variant[:compiler] %>'<% end %>
+libraries = <%= variant[:libraries]
+library_dirs += <%= variant[:library_dirs] %>
+include_dirs += <%= variant[:include_dirs] %>
+hdf5 = <%= variant[:hdf5] ? 'True' : 'False' %>
+scalapack = <%= variant[:scalapack] ? 'True' : 'False' %>
+if scalapack:
+    libraries += <%= variant[:scalapack_libraries] || "['scalapack']" %>
+    library_dirs += <%= variant[:scalapack_library_dirs] || '[]' %>
+    define_macros += [('GPAW_NO_UNDERSCORE_CBLACS', '1')]
+    define_macros += [('GPAW_NO_UNDERSCORE_CSCALAPACK', '1')]
+PYTHON
+
+  python setup.py build <%= redirect(:compile) %>
+:install: |
+  python setup.py install --prefix=<%= dest_dir %> <%= redirect(:install) %>
+
+  # install ase
+  tar xvf <%= source('python-ase-3.6.0.2515.tar.gz') %>
+  cd python-ase-3.6.0.2515
+  python setup.py install --prefix=<%= dest_dir %>/share/python
+
+  # install setups
+  tar xvf <%= source('gpaw-setups-0.8.7929.tar.gz') %>
+  mkdir -p <%= dest_dir %>/share/setups
+  cp -r gpaw-setups-0.8.7929/* <%= dest_dir %>/share/setups
+  chmod 0644 <%= dest_dir %>/share/setups/*
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Application module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "${appcaps}DIR -> base path of app"
+          puts stderr "${appcaps}BIN -> bin path of app"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  prereq mpi/<%= compiler_name %>/openmpi
+  <% if variant[:scalapack] %>prereq libs/<%= compiler_name %>/scalapack/shared<% end %>
+  <% if variant[:hdf5] %>prereq apps/<%= compiler_name %>/hdf5/mpi<% end %>
+  <% if variant_name == 'mkl' %>prereq compilers/intel<% end %>
+  module load apps/gcc/python
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/share/python/lib/python2.7/site-packages
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
+  
+  <% if variant_name == 'mkl' %>prepend-path LD_LIBRARY_PATH $::env(INTELROOT)/mkl/lib/intel64<% end %>
+  setenv GPAW_SETUP_PATH ${appdir}/share/setups
