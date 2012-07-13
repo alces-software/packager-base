@@ -16,6 +16,9 @@
     :modules: mpi/%{compiler}/openmpi
     :build_requires: alces-openmpi
 :changelog: |
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tweak MPI build in order to generate a shared library
+    - Add support for intel and open64 compilers
   * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated version to 1.8.9
     - Migrated to gridware installer structure

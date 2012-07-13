@@ -4,13 +4,21 @@
 :version: '1.8.9'
 :compilers:
   gcc:
+    :mpi_configure_env: ''
+    :serial_configure_env: ''
+  intel:
+    :mpi_configure_env: 'CC=mpicc CXX=mpiCC F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+  open64:
+    :mpi_configure_env: 'CC=mpicc CXX=mpiCC F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
 :variants:
   mpi:
-    :configure_flags: '--enable-parallel'
+    :configure_flags: '--enable-shared --enable-static --enable-parallel --with-pic'
   serial:
     :configure_flags: ''
 :compile: |
-  ./configure <%= variant[:configure_flags] %> \
+  ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
               --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
