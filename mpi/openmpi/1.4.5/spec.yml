@@ -14,6 +14,8 @@
 :conflicts: alces-openmpi-qlogic
 :group: MPI
 :changelog: |
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 support; incorporated qlogic parameter
   * Wed Jun  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored 1.4 series to alternative version
   * Mon Apr  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>

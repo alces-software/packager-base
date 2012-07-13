@@ -7,10 +7,14 @@
     :configure_flags: ''
   intel:
     :configure_flags: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+  open64:
+    :configure_flags: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
+:params:
+  :qlogic: "Specify whether to use Qlogic Infinipath PSM libs [true|false]"
 :sources:
   - examples.sge.openmpi.template
 :compile: |
-  ./configure --with-sge --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  ./configure --with-sge <%= '--with-psm' if param(:qlogic) == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
