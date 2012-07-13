@@ -36,20 +36,20 @@
 :compile: |
   # create customize.py
   cat <<PYTHON > customize.py
-import os
-def envget(v): return v in os.environ and os.environ[v]
-<% if variant[:compiler] %>compiler = '<%= variant[:compiler] %>'<% end %>
-libraries = <%= variant[:libraries]
-library_dirs += <%= variant[:library_dirs] %>
-include_dirs += <%= variant[:include_dirs] %>
-hdf5 = <%= variant[:hdf5] ? 'True' : 'False' %>
-scalapack = <%= variant[:scalapack] ? 'True' : 'False' %>
-if scalapack:
-    libraries += <%= variant[:scalapack_libraries] || "['scalapack']" %>
-    library_dirs += <%= variant[:scalapack_library_dirs] || '[]' %>
-    define_macros += [('GPAW_NO_UNDERSCORE_CBLACS', '1')]
-    define_macros += [('GPAW_NO_UNDERSCORE_CSCALAPACK', '1')]
-PYTHON
+  import os
+  def envget(v): return v in os.environ and os.environ[v]
+  <% if variant[:compiler] %>compiler = '<%= variant[:compiler] %>'<% end %>
+  libraries = <%= variant[:libraries]
+  library_dirs += <%= variant[:library_dirs] %>
+  include_dirs += <%= variant[:include_dirs] %>
+  hdf5 = <%= variant[:hdf5] ? 'True' : 'False' %>
+  scalapack = <%= variant[:scalapack] ? 'True' : 'False' %>
+  if scalapack:
+      libraries += <%= variant[:scalapack_libraries] || "['scalapack']" %>
+      library_dirs += <%= variant[:scalapack_library_dirs] || '[]' %>
+      define_macros += [('GPAW_NO_UNDERSCORE_CBLACS', '1')]
+      define_macros += [('GPAW_NO_UNDERSCORE_CSCALAPACK', '1')]
+  PYTHON
 
   python setup.py build <%= redirect(:compile) %>
 :install: |
