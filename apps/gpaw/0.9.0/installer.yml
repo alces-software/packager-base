@@ -1,5 +1,6 @@
 ---
 :src: gpaw-0.9.0.8965.tar.gz
+:src_dir: gpaw-0.9.0.8965
 :type: apps
 :version: '0.9.0'
 :compilers:
