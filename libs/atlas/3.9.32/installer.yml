@@ -8,11 +8,14 @@
   :lapackfile: "Specify lapack tarball location"
 :compilers:
   gcc:
+    :configure_flags: ''
+  open64:
+    :configure_flags: "-C xc opencc -C ic opencc -C if openf90 -C sk opencc -C dk opencc -C sm opencc -C dm opencc -F xc '-O3 -g -lfortran -lffio -lm' -F ic '-O3 -g -lfortran -lffio -lm' -F if '-O3 -g -lfortran -lffio -lm' -F sk '-O3 -g -lfortran -lffio -lm' -F dk '-O3 -g -lfortran -lffio -lm'  -F sm '-O3 -g -lfortran -lffio -lm' -F dm '-O3 -g -lfortran -lffio -lm'"
 :compile: |
   cd <%= src_dir %>
   mkdir build
   cd build
-  ../configure --prefix=<%= dest_dir %> \
+  ../configure <%= compiler[:configure_flags] %> --prefix=<%= dest_dir %> \
     --incdir=<%= File.join(dest_dir,'include') %> \
     --libdir=<%= File.join(dest_dir,'lib') %> \
     --shared -Fa alg -fPIC -b 64 -D c \
