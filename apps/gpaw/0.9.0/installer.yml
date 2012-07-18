@@ -4,12 +4,11 @@
 :type: apps
 :version: '0.9.0'
 :compilers:
-  gcc:
-    :compiler:
+  gcc: {}
   intel:
-    :compiler: icc
+    :cc: icc
   open64:
-    :compiler: opencc
+    :cc: opencc
 :variants:
   standard:
     :libraries: "['atlas','lapack','hdf5','hdf5_hl','cblas','f77blas','z']"
@@ -39,8 +38,8 @@
   cat <<PYTHON > customize.py
   import os
   def envget(v): return v in os.environ and os.environ[v]
-  <% if variant[:compiler] %>compiler = '<%= variant[:compiler] %>'<% end %>
-  libraries = <%= variant[:libraries]
+  <% if compiler[:cc] %>compiler = '<%= compiler[:cc] %>'<% end %>
+  libraries = <%= variant[:libraries] %>
   library_dirs += <%= variant[:library_dirs] %>
   include_dirs += <%= variant[:include_dirs] %>
   hdf5 = <%= variant[:hdf5] ? 'True' : 'False' %>
@@ -94,6 +93,7 @@
   <% if variant[:scalapack] %>prereq libs/<%= compiler_name %>/scalapack/shared<% end %>
   <% if variant[:hdf5] %>prereq apps/<%= compiler_name %>/hdf5/mpi<% end %>
   <% if variant_name == 'mkl' %>prereq compilers/intel<% end %>
+  <% if compiler_name == 'open64' %>prereq compilers/open64<% end %>
   module load apps/gcc/python
 
   set     app      <%= package.name %>
@@ -112,4 +112,5 @@
   prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
   
   <% if variant_name == 'mkl' %>prepend-path LD_LIBRARY_PATH $::env(INTELROOT)/mkl/lib/intel64<% end %>
+  <% if compiler_name == 'open64' %>prepend-path LD_LIBRARY_PATH $::env(OPEN64DIR)/lib/gcc-lib/x86_64-open64-linux/4.2.4<% end %>
   setenv GPAW_SETUP_PATH ${appdir}/share/setups
