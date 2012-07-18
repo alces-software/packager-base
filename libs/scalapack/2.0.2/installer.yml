@@ -15,6 +15,12 @@
     :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.a;$ATLASLIB/libf77blas.a" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.a;$ATLASLIB/libatlas.a"'
   shared:
     :cmake_parameters: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.so;$ATLASLIB/libf77blas.so" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.so;$ATLASLIB/libatlas.so"'
+  atlas-3.10+shared:
+    :cmake_parameters: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/libsatlas.so" -DBLAS_LIBRARIES="$ATLASLIB/libsatlas.so"'
+  acml+static:
+    :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ACMLDIR/lib/libacml.a" -DBLAS_LIBRARIES="$ACMLDIR/lib/libacml.a"'
+  acml+shared:
+    :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ACMLDIR/lib/libacml.so" -DBLAS_LIBRARIES="$ACMLDIR/lib/libacml.so"'
 :compile: |
   sed -i -e 's/"-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}"/"-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}" "-DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}"/' CMAKE/FortranMangling.cmake
   mkdir build
@@ -44,7 +50,7 @@
           puts stderr "##############"
           puts stderr "${appcaps}DIR -> base path of library"
           puts stderr "${appcaps}LIB -> lib path of app"
-          <% if variant_name == 'shared' %>
+          <% if ['shared','atlas-3.10+shared'].include?(variant_name) %>
           puts stderr "Adds ${appcaps}LIB to LD_LIBRARY_PATH"
           <% end %>
           puts stderr "Adds ${appcaps}/lib/pkgconfig to PKG_CONFIG_PATH"
@@ -64,6 +70,6 @@
   setenv ${appcaps}LIB ${appdir}/lib
 
   prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
-  <% if variant_name == 'shared' %>
+  <% if ['shared','atlas-3.10+shared'].include?(variant_name) %>
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   <% end %>
