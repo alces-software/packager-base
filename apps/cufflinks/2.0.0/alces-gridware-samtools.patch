@@ -1,0 +1,44 @@
+diff -uNr configure configure
+--- configure	2011-06-03 03:24:13.000000000 +0100
++++ configure	2011-10-31 21:22:04.852787182 +0000
+@@ -4169,8 +4169,8 @@
+ 	succeeded=no
+ 
+ 		if test "$ac_bam_path" != ""; then
+-		BAM_LDFLAGS="-L$ac_bam_path/lib"
+-		BAM_CPPFLAGS="-I$ac_bam_path/include"
++		BAM_LDFLAGS="-L$ac_bam_path/"
++		BAM_CPPFLAGS="-I$ac_bam_path/"
+ 	else
+ 		for ac_bam_path_tmp in /usr /usr/local /opt /opt/local ; do
+ 			if test -d "$ac_bam_path_tmp/include/bam" && test -r "$ac_bam_path_tmp/include/bam"; then
+@@ -4206,7 +4206,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ 
+-	#include <bam/bam.h>
++	#include <bam.h>
+ 
+ int
+ main ()
+@@ -4329,7 +4329,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ 
+-		#include <bam/version.hpp>
++		#include <version.hpp>
+ 
+ int
+ main ()
+diff -uNr src/hits.h src/hits.h
+--- src/hits.h	2011-06-03 03:19:29.000000000 +0100
++++ src/hits.h	2011-10-31 21:22:04.853786683 +0000
+@@ -16,7 +16,7 @@
+ 
+ #include <boost/shared_ptr.hpp>
+ 
+-#include <bam/sam.h>
++#include <sam.h>
+ 
+ #include "common.h"
+ #include "multireads.h"
