@@ -1,0 +1,109 @@
+---
+:schema: 1
+:license: GPL
+:summary: Perform molecular dynamics; simulate the Newtonian equations of motion for systems with hundreds to millions of particles
+:url: http://www.gromacs.org/
+:description: |
+  GROMACS is a versatile package to perform molecular dynamics,
+  i.e. simulate the Newtonian equations of motion for systems with
+  hundreds to millions of particles.
+
+  It is primarily designed for biochemical molecules like proteins,
+  lipids and nucleic acids that have a lot of complicated bonded
+  interactions, but since GROMACS is extremely fast at calculating the
+  nonbonded interactions (that usually dominate simulations) many groups
+  are also using it for research on non-biological systems,
+  e.g. polymers.
+:type: apps
+:group: Chemistry
+:modules:
+  :runtime: mpi/openmpi
+  :build: libs/fftw3/float-mpi
+:changelog: |
+  * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gromacs-4.5.5.tar.gz
+:version: '4.5.5'
+:compilers:
+  gcc:
+    :fft: fftw3
+  intel:
+    :fft: fftw3
+:compile: |
+  cp -r <%= src_dir %> <%= src_dir %>.mpi
+  <%= compiler[:configure_prefix] %> ./configure \
+    --prefix=<%= dest_dir %> \
+    --enable-shared \
+    --with-fft=<%= compiler[:fft] %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  cd <%= src_dir %>.mpi
+  <%= compiler[:configure_prefix] %> ./configure \
+    --prefix=<%= dest_dir %> \
+    --enable-shared \
+    --enable-mpi \
+    --program-suffix=_mpi \
+    --with-fft=<%= compiler[:fft] %> <%= redirect(:configure) %>
+  make mdrun <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cd <%= src_dir %>.mpi
+  make install-mdrun <%= redirect(:install) %>
+:module: |
+  #%Module1.0#####################################################################
+  ##
+  ## Alces HPC Software Stack - Application module file
+  ## Copyright (c) 2008-2012 Alces Software Ltd
+  ##
+  ################################################################################
+  proc ModulesHelp { } {
+          global app
+          global version
+          global appcaps
+          global appdir
+
+          puts stderr "Adds `$app-$version' to your environment variables"
+          puts stderr ""
+          puts stderr "##############"
+          puts stderr "ENV after load"
+          puts stderr "##############"
+          puts stderr "${appcaps}DIR -> base path of application"
+          puts stderr "${appcaps}BIN -> bin path of application"
+          puts stderr "Adds ${appcaps}BIN to PATH"
+          puts stderr ""
+  }
+
+  prereq mpi/<%= compiler_name %>/openmpi
+  prereq libs/<%= compiler_name %>/fftw3/float-mpi
+
+  set     app      <%= package.name %>
+  set     version  <%= version %>
+  set     appcaps  <%= package.caps_name %>
+  set     appdir   <%= dest_dir %>
+
+  module-whatis   "loads the necessary `$app-$version' setup environment"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  setenv GMXBIN ${appdir}/bin
+  setenv GMXLDLIB ${appdir}/lib
+  setenv GMXMAN ${appdir}/share/man
+  setenv GMXDATA ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
+
+  set completion_data ""
+  if { [module-info shell] == "bash" } {
+    set completion_data [exec bash -c "complete >/dev/null 2>&1 && echo source ${appdir}/bin/completion.bash"]
+  } elseif { [module-info shell] == "tcsh" } {
+    set completion_data [exec tcsh -c "complete >& /dev/null && echo source ${appdir}/bin/completion.csh"]
+  } elseif { [module-info shell] == "zsh" } {
+    set completion_data [exec zsh -c "compctl >& /dev/null && echo source ${appdir}/bin/completion.zsh"]
+  }
+
+  puts $completion_data
