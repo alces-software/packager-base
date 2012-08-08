@@ -37,5 +37,5 @@
   setenv ${appcaps}_JAVA_MEM_MS 256m
   setenv ${appcaps}_JAVA_OPTS "-Xms\$${appcaps}_JAVA_MEM_MS -Xmx\$${appcaps}_JAVA_MEM_MX"
   
-  set-alias kggseq "java `eval echo \\$JAVA_OPTS` -jar $APPDIR/kggseq.jar"
-  set-alias kggseq_commands_generator "java `eval echo \\$JAVA_OPTS` -jar $APPDIR/kggseq.commands.generator.jar"
+  set-alias kggseq "java `eval echo \\$JAVA_OPTS` -jar $appdir/kggseq.jar"
+  set-alias kggseq_commands_generator "java `eval echo \\$JAVA_OPTS` -jar $appdir/kggseq.commands.generator.jar"
