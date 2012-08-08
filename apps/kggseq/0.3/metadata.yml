@@ -1,0 +1,41 @@
+---
+:schema: 1
+:license: OTHER
+:summary: A biological knowledge-based mining platform for genomic and genetic studies using sequence data
+:url: http://statgenpro.psychiatry.hku.hk/limx/kggseq/
+:description: |
+  KGGSeq is a software platform constituted of Bioinformatics and
+  statistical genetics functions making use of valuable biologic
+  resources and knowledge for sequencing-based genetic mapping of
+  variants/genes responsible for human diseases/traits. Simply, KGGSeq
+  is like a fishing rod facilitating geneticists to fish the genetic
+  determinants of human diseases/traits in the big sea of DNA
+  sequences. Compared with other genetic tools like plink/seq, KGGSeq
+  paid more attention downstream analysis of genetic
+  mapping. Currently, a comprehensive and efficient framework was
+  newly implemented on KGGSeq to filter and prioritize genetic
+  variants from whole exome sequencing data.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Aug  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: kggseq.zip
+:src_dir: kggseq
+:version: '0.3'
+:compilers:
+  noarch:
+:compile: |
+  # no op
+:install: |
+  cp -r * <%= dest_dir %>
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+  
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}_JAVA_MEM_MX 1300m
+  setenv ${appcaps}_JAVA_MEM_MS 256m
+  setenv ${appcaps}_JAVA_OPTS "-Xms\$${appcaps}_JAVA_MEM_MS -Xmx\$${appcaps}_JAVA_MEM_MX"
+  
+  set-alias kggseq "java `eval echo \\$JAVA_OPTS` -jar $APPDIR/kggseq.jar"
+  set-alias kggseq_commands_generator "java `eval echo \\$JAVA_OPTS` -jar $APPDIR/kggseq.commands.generator.jar"
