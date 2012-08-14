@@ -1,6 +1,20 @@
 ---
-:src: openmpi-1.6.tar.bz2
+:schema: 1
+:license: BSD
+:summary: A High Performance Message Passing Library
+:url: http://www.open-mpi.org/
+:description: |
+  The Open MPI Project is an open source MPI-2 implementation that is
+  developed and maintained by a consortium of academic, research, and
+  industry partners. Open MPI is therefore able to combine the
+  expertise, technologies, and resources from all across the High
+  Performance Computing community in order to build the best MPI
+  library available. Open MPI offers advantages for system and
+  software vendors, application developers and computer science
+  researchers.
 :type: mpi
+:group: MPI
+:src: openmpi-1.6.tar.bz2
 :version: '1.6'
 :compilers:
   gcc:
@@ -20,21 +34,6 @@
   make install <%= redirect(:install) %>
   install -D -m 644 <%= source("examples.sge.openmpi.template") %> <%= dest_dir %>/examples/sge/openmpi.template
 :module: |
-  #%Module1.0#####################################################################
-  ##
-  ## openmpi module file
-  ##
-  ################################################################################
-  proc ModulesHelp { } {
-          global version
-  
-          puts stderr "\tAdds `openmpi-$version' to your PATH environment variable and necessary libraries"
-  }
-  
-  set     version <%= version %>
-
-  module-whatis   "loads the necessary `openmpi-$version' library paths"
-
   # Enable the following two options to force openmpi to operate over
   # ethernet even if an InfiniBand card is detected.  This can be
   # useful if you are trying to diagnose a potential problem with your
@@ -55,3 +54,16 @@
   prepend-path PATH $MPI_DIR/bin/
   prepend-path LD_LIBRARY_PATH $MPI_DIR/lib/
   prepend-path MANPATH $MPI_DIR/share/man/
+:changelog: |
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 support; incorporated qlogic parameter
+  * Wed Jun  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.6
+  * Mon Apr  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.4.5
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ported to alces-installer style package
+  * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated Group, Summary and URL fields and added description.
+  * Sat Jan 21 2012 Steve Norledge
+    - First created
