@@ -1,0 +1,65 @@
+---
+:schema: 1
+:license: BSD
+:summary: Automatically Tuned Linear Algebra Software - portably optimal linear algebra software
+:url: http://math-atlas.sourceforge.net/
+:description: |
+  ATLAS stands for Automatically Tuned Linear Algebra Software. ATLAS
+  is both a research project and a software package. ATLAS's purpose
+  is to provide portably optimal linear algebra software. The current
+  version provides a complete BLAS API (for both C and Fortran77), and
+  a very small subset of the LAPACK API. For all supported operations,
+  ATLAS achieves performance on par with machine-specific tuned
+  libraries.
+:group: Libraries
+:changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated Licenses, Group, Summary and URL fields and added description.
+  * Thu Jul 7 2011 Steve Norledge
+    - First Created
+:src: atlas3.10.0.tar.bz2
+:src_dir: ATLAS
+:type: libs
+:version: 3.10.0
+:params:
+  :cpuspeed: "Specify cpu speed, eg. '2666'"
+  :lapackfile: "Specify lapack tarball location"
+:compilers:
+  gcc:
+    :configure_flags: ''
+  open64:
+    :configure_flags: "-C xc opencc -C ic opencc -C if openf90 -C sk opencc -C dk opencc -C sm opencc -C dm opencc -F xc '-O3 -g -lfortran -lffio -lm' -F ic '-O3 -g -lfortran -lffio -lm' -F if '-O3 -g -lfortran -lffio -lm' -F sk '-O3 -g -lfortran -lffio -lm' -F dk '-O3 -g -lfortran -lffio -lm'  -F sm '-O3 -g -lfortran -lffio -lm' -F dm '-O3 -g -lfortran -lffio -lm'"
+:compile: |
+  # export F77FLAGS="$F77FLAGS -msse2"
+  cd <%= src_dir %>
+  mkdir build
+  cd build
+  ../configure <%= compiler[:configure_flags] %> --prefix=<%= dest_dir %> \
+    --incdir=<%= File.join(dest_dir,'include') %> \
+    --libdir=<%= File.join(dest_dir,'lib') %> \
+    --shared -Fa alg -fPIC -b 64 -D c \
+    -DPentiumCPS=<%= param(:cpuspeed) %> \
+    --with-netlib-lapack-tarfile=<%= param(:lapackfile) %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  make check <%= redirect(:check) %>
+  make ptcheck <%= redirect(:ptcheck) %>
+  make time <%= redirect(:time) %>
+:install: |
+  cd <%= File.join(src_dir,'build') %>
+  make install <%= redirect(:install) %>
+:module: |
+  setenv           ATLASDIR         ${appdir}
+  setenv           ATLAS_DIR        ${appdir}
+  setenv           ATLAS_HOME       ${appdir}
+
+  setenv           ATLASINCLUDE     ${appdir}/include
+  setenv           ATLASLIB         ${appdir}/lib
+  setenv           ATLAS_LIB        ${appdir}/lib
+  setenv           ATLAS            ${appdir}/lib/libatlas.a
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/
+  prepend-path LD_INCLUDE_PATH ${appdir}/include/
+  prepend-path CPP_INCLUDE_PATH ${appdir}/include/
+  prepend-path C_INCLUDE_PATH ${appdir}/include/

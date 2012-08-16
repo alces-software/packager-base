@@ -1,0 +1,10 @@
+--- jkOwnLib/fuzzyFind.c.orig   2011-11-03 15:19:15.408580182 +0000
++++ jkOwnLib/fuzzyFind.c        2011-11-03 15:17:43.467590563 +0000
+@@ -1025,6 +1025,7 @@
+ proto.hEnd = ali->hEnd;
+ proto.nStart = ali->nStart;
+ proto.nEnd = ali->nEnd;
++proto.score = 0;
+ lastDif = ali->hStart - ali->nStart;
+ 
+ /* Go through rest of list and put others that are close to

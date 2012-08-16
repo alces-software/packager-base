@@ -1,0 +1,49 @@
+---
+:schema: 1
+:license: BSD
+:summary: Linear Algebra PACKage - routines for equation solving systems
+:url: http://www.netlib.org/lapack/
+:description: |
+  Linear Algebra PACKage (LAPACK) is written in Fortran 90 and
+  provides routines for solving systems of simultaneous linear
+  equations, least-squares solutions of linear systems of equations,
+  eigenvalue problems, and singular value problems. The associated
+  matrix factorizations (LU, Cholesky, QR, SVD, Schur, generalized
+  Schur) are also provided, as are related computations such as
+  reordering of the Schur factorizations and estimating condition
+  numbers. Dense and banded matrices are handled, but not general
+  sparse matrices. In all areas, similar functionality is provided for
+  real and complex matrices, in both single and double precision.
+:group: Libraries
+:changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ported to alces-installer style package
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: lapack-3.3.1.tgz
+:type: libs
+:version: 3.3.1
+:compilers:
+  gcc:
+:patches:
+  - lapack-alces.patch
+:compile: |
+  cp INSTALL/make.inc.gfortran make.inc
+  make blaslib lapacklib tmglib variants <%= redirect(:make) %>
+:install: |
+  install -D -m 644 lapack_LINUX_ALCES.a <%= dest_dir %>/liblapack.a
+  install -D -m 644 tmglib_LINUX_ALCES.a <%= dest_dir %>/libtmglib.a
+  install -D -m 644 blas_LINUX_ALCES.a <%= dest_dir %>/libblas.a
+  install -m 644 README LICENSE -t <%= dest_dir %>
+  install -d <%= dest_dir %>/variants
+  install -m 644 SRC/VARIANTS/LIB/* -t <%= dest_dir %>/variants
+  install -m 644 SRC/VARIANTS/README <%= dest_dir %>/variants/README
+:module: |
+  setenv           LAPACKDIR        ${appdir}
+  setenv           LAPACK_DIR       ${appdir}
+  setenv           LAPACK           ${appdir}/liblapack.a
+  
+  prepend-path LD_LIBRARY_PATH ${appdir}
+  prepend-path --delim " " LDFLAGS " -L${appdir}"

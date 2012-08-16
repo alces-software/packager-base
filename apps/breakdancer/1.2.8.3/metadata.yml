@@ -1,0 +1,96 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Provides genome-wide detection of structural variants from next generation paired-end sequencing reads
+:url: http://gmt.genome.wustl.edu/breakdancer
+:description: |
+  BreakDancer provides genome-wide detection of structural variants
+  from next generation paired-end sequencing reads. It includes two
+  complementary programs. BreakDancerMax predicts five types of
+  structural variants: insertions, deletions, inversions, inter- and
+  intra-chromosomal translocations from next-generation short
+  paired-end sequencing reads using read pairs that are mapped with
+  unexpected separation distances or orientation. BreakDancerMini
+  focuses on detecting small indels (usually between 10bp and 100bp)
+  using normally mapped read pairs.
+:type: apps
+:group: Bioinformatics
+:requirements:
+  :tool:
+    - apps/cmake
+  :build: 
+    - apps/samtools
+:changelog: |
+  * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.2.8.3
+    - Refactored to packager style
+  * Thu Jul 14 2011 Steve Norledge
+    - general improvements
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:sources:
+  - build-common.20120420.tar.gz
+  - Statistics-Descriptive-2.6.tar.gz
+  - Math-CDF-0.1.tar.gz
+  - GD-2.11.tar.gz
+  - GDGraph-1.43.tar.gz
+  - GDGraph-histogram-1.1.tar.gz
+  - GDTextUtil-0.86.tar.gz
+:perllibs:
+  - Statistics-Descriptive-2.6
+  - Math-CDF-0.1
+  - GD-2.11
+  - GDGraph-1.43
+  - GDGraph-histogram-1.1
+  - GDTextUtil-0.86
+:src: breakdancer-1.2.8.3.tar.gz
+:src_dir: genome-breakdancer-f5f354f
+:version: '1.2.8.3'
+:revision: 07f9257
+:compilers:
+  gcc:
+:compile: |
+  tar xzf <%= source("build-common.20120420.tar.gz") %>
+  mv genome-build-common-bd01ad3/* build-common
+  rm -rf genome-build-common-bd01ad3
+  mv build-common/bin/gitrev.pl build-common/bin/gitrev.pl.not
+  cat <<EOF > build-common/bin/gitrev.pl
+  #!/bin/sh
+  echo "-dist <%= version %> <%= package.revision %>"
+  EOF
+  chmod 755 build-common/bin/gitrev.pl
+  export SAMTOOLS_ROOT=${SAMTOOLSDIR}
+  export BOOST_ROOT=${BOOSTDIR}
+  mkdir build
+  cd build
+  cmake .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+  cd ../..
+  <% package.perllibs.each do |s| %>
+    tar xzf <%= source("#{s}.tar.gz") %>
+    cd <%= s %>
+    perl Makefile.PL PREFIX=<%= dest_dir %>/perl <%= redirect(:perlmake) %>
+    make <%= redirect(:make) %>
+    cd ..
+  <% end %>
+:install: |
+  cd build
+  sed -i -e 's|CMAKE_INSTALL_PREFIX "/usr"|CMAKE_INSTALL_PREFIX "<%= dest_dir %>"|g' cmake_install.cmake
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/lib/breakdancer-max-dist/*.pl <%= dest_dir %>/bin
+  mkdir -p <%= dest_dir %>/perl/lib/perl5/site_perl
+  mv <%= dest_dir %>/lib/breakdancer-max-dist/*.pm <%= dest_dir %>/perl/lib/perl5/site_perl
+  rm -rf <%= dest_dir %>/lib
+  cd ..
+  <% package.perllibs.each do |s| %>
+    cd ../<%= s %>
+    make install <%= redirect(:install) %>
+  <% end %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/site_perl
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/perl/share/man

@@ -1,0 +1,27 @@
+diff -uNr perl.orig/AlnParser.pm perl/AlnParser.pm
+--- perl.orig/AlnParser.pm	2010-10-25 16:09:49.000000000 +0100
++++ perl/AlnParser.pm	2011-02-22 12:51:05.000000000 +0000
+@@ -1,4 +1,4 @@
+-#!/gsc/bin/perl
++#!/usr/bin/env perl
+ #Parse different alignment format and convert it to MAQ format
+ 
+ use strict;
+diff -uNr perl.orig/bam2cfg.pl perl/bam2cfg.pl
+--- perl.orig/bam2cfg.pl	2010-10-25 16:09:49.000000000 +0100
++++ perl/bam2cfg.pl	2011-02-22 12:51:18.000000000 +0000
+@@ -1,4 +1,4 @@
+-#!/gsc/bin/perl
++#!/usr/bin/env perl
+ #Create a BreakDancer configuration file from a set of bam files
+ 
+ use strict;
+diff -uNr perl.orig/Poisson.pm perl/Poisson.pm
+--- perl.orig/Poisson.pm	2010-10-25 16:09:49.000000000 +0100
++++ perl/Poisson.pm	2011-02-22 12:51:30.000000000 +0000
+@@ -1,4 +1,4 @@
+-#!/gsc/bin/perl
++#!/usr/bin/env perl
+ 
+ use strict;
+ use warnings;

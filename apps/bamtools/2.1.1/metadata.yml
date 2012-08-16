@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: MIT
+:summary: Provides a programmer's API and an end-user's toolkit for handling BAM files
+:url: https://github.com/pezmaster31/bamtools/
+:description: |
+  BamTools is a project that provides both a C++ API and a
+  command-line toolkit for reading, writing, and manipulating BAM
+  (genome alignment) files.
+:type: apps
+:group: Bioinformatics
+:requirements:
+  :tool: 
+    - apps/cmake >= 2.6.4
+:changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 2.1.1
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: bamtools-2.1.1.20120727.tgz
+:src_dir: pezmaster31-bamtools-e235c55
+:version: '2.1.1'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  cp -rv bin lib include <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib

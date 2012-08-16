@@ -1,0 +1,33 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: A flexible suite of utilities for comparing genomic features
+:url: http://code.google.com/p/bedtools/
+:description: |
+  The BEDTools utilities allow one to address common genomics tasks
+  such as finding feature overlaps and computing coverage. The
+  utilities are largely based on four widely-used file formats: BED,
+  GFF/GTF, VCF, and SAM/BAM. Using BEDTools, one can develop
+  sophisticated pipelines that answer complicated research questions
+  by "streaming" several BEDTools together.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: BEDTools.v2.11.2.tar.gz
+:src_dir: BEDTools-Version-2.11.2
+:version: '2.11.2'
+:compilers:
+  gcc:
+:compile: |
+  make all <%= redirect(:make) %>
+:install: |
+  cp -rv LICENSE README.rst RELEASE_HISTORY bin data genomes <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

@@ -1,0 +1,63 @@
+---
+:schema: 1
+:license: NONFREE - Free for academic, nonprofit and personal use
+:summary: An alignment tool like BLAST
+:url: http://genome.ucsc.edu/
+:description: |
+  Blat is an alignment tool like BLAST, but it is structured
+  differently. On DNA, Blat works by keeping an index of an entire
+  genome in memory. Thus, the target database of BLAT is not a set of
+  GenBank sequences, but instead an index derived from the assembly of
+  the entire genome. Blat of DNA is designed to quickly find
+  sequences of 95% and greater similarity of length 40 bases or
+  more. It may miss more divergent or short sequence alignments.
+
+  From a practical standpoint, Blat has several advantages over BLAST:
+
+    * speed (no queues, response in seconds) at the price of lesser
+      homology depth
+    * the ability to submit a long list of simultaneous queries in
+      fasta format
+    * five convenient output sort options
+    * a direct link into the UCSC browser
+    * alignment block details in natural genomic order
+    * an option to launch the alignment later as part of a custom
+      track
+
+  Blat is commonly used to look up the location of a sequence in the
+  genome or determine the exon structure of an mRNA, but expert users
+  can run large batch jobs and make internal parameter sensitivity
+  changes by installing command line Blat on their own Linux server.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Nov 03 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added patch derived from
+      http://genecats.cse.ucsc.edu/git-reports-history/v214/review/file/context/src/jkOwnLib/fuzzyFind.c.1.17-1.18.html
+      to remove "fuzzyFind.c:1049: error: 'proto.score' may be used
+      uninitialized in this function" warning.
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: blatSrc34.zip
+:src_dir: blatSrc
+:version: '34'
+:compilers:
+  gcc:
+:patches:
+  - install-prefix.patch
+  - fuzzy-find-proto-score.patch
+:compile: |
+  export MACHTYPE=x86_64
+  export PREFIX=$(cd .. && pwd)/blat
+  rm -rf ${PREFIX}
+  mkdir -p ${PREFIX}/bin/${MACHTYPE}
+  make <%= redirect(:make) %>
+:install: |
+  cp -rv ../blat/bin/x86_64/* <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

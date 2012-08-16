@@ -1,0 +1,19 @@
+--- inc/common.mk.orig	2011-02-22 10:22:10.000000000 +0000
++++ inc/common.mk	2011-02-22 10:26:35.000000000 +0000
+@@ -27,13 +27,13 @@
+ endif
+ 
+ ifeq (${SCRIPTS},)
+-    SCRIPTS=/cluster/bin/scripts
++    SCRIPTS=${PREFIX}/bin/scripts
+ endif
+ ifeq (${CGI_BIN},)
+-    CGI_BIN=/usr/local/apache/cgi-bin
++    CGI_BIN=${PREFIX}/apache/cgi-bin
+ endif
+ ifeq (${BINDIR},)
+-    BINDIR = ${HOME}/bin/${MACHTYPE}
++    BINDIR = ${PREFIX}/bin/${MACHTYPE}
+ endif
+ MKDIR=mkdir -p
+ ifeq (${STRIP},)

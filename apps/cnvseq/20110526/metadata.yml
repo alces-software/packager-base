@@ -1,0 +1,42 @@
+---
+:schema: 1
+:license: OTHER
+:summary: A method for detecting DNA copy number variation (CNV) using highthroughput sequencing
+:url: http://tiger.dbs.nus.edu.sg/cnv-seq/
+:description: |
+  CNV-seq, a new method to detect copy number variation using
+  high-throughput sequencing.
+  
+  The method is based on a robust statistical model that describes the
+  complete analysis procedure and allows the computation of essential
+  confidence values for detection of CNV. Our results show that the
+  number of reads, not the length of the reads is the key factor
+  determining the resolution of detection. This favors the
+  next-generation sequencing methods that rapidly produce large amount
+  of short reads.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: cnv-seq.tar.gz
+:src_dir: cnv-seq
+:version: '20110526'
+:compilers:
+  noarch:
+:compile: |
+  # sed #!s to use env
+  for a in *.pl; do
+    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir <%= dest_dir %>/{bin,R}
+  cp -rv *.pl <%= dest_dir %>/bin
+  cp -rv cnv <%= dest_dir %>/R
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

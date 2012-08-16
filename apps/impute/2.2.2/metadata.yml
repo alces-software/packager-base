@@ -1,0 +1,31 @@
+---
+:schema: 1
+:license: NONFREE - Free for academic use; see http://www.stats.ox.ac.uk/~marchini/software/gwas/gwas.html#licence
+:summary: A genotype imputation and phasing program based on ideas from Howie et al. (2009)
+:url: https://mathgen.stats.ox.ac.uk/impute/impute_v2.html
+:description: |
+  IMPUTE is a program for estimating ("imputing") unobserved genotypes
+  in SNP association studies. The program is designed to work
+  seamlessly with the output of the genotype calling program CHIAMO
+  and the population genetic simulator HAPGEN, and it produces output
+  that can be analyzed using the program SNPTEST.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: impute_v2.2.2_x86_64_dynamic.tgz
+:src_dir: impute_v2.2.2_x86_64_dynamic
+:version: '2.2.2'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary package
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+  setenv ${appcaps}EXAMPLE ${appdir}/Example
+
+  prepend-path PATH ${appdir}

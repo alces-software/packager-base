@@ -1,0 +1,11 @@
+--- build-common/cmake/FindSamtools.cmake.orig	2012-08-16 16:05:00.000000000 +0100
++++ build-common/cmake/FindSamtools.cmake	2012-08-16 16:05:08.000000000 +0100
+@@ -7,7 +7,7 @@
+ 
+ set(SAMTOOLS_SEARCH_DIRS
+     ${SAMTOOLS_SEARCH_DIRS}
+-    $ENV{SAMTOOLS_ROOT}
++    $ENV{SAMTOOLSDIR}
+     /gsc/pkg/bio/samtools
+     /usr
+ )

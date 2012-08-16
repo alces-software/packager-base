@@ -1,4 +1,5 @@
 ---
+:schema: 1
 :license: NONFREE - http://www.netlib.org/blas/faq.html#2
 :summary: Routines that provide standard building blocks for performing basic vector and matrix operations
 :url: http://www.netlib.org/blas/
@@ -13,7 +14,30 @@
   linear algebra software, LAPACK for example.
 :group: Libraries
 :changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
   * Mon Mar 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Ported to alces-installer style package
   * Fri Feb 18 2011 Steve Norledge
     - First created
+:src: blas.tgz
+:src_dir: BLAS
+:type: libs
+:version: '1'
+:compilers:
+  gcc:
+:patches:
+  - blas-alces.patch
+:compile: |
+  make all <%= redirect(:make) %>
+:install: |
+  install -D -m 644 blas_LINUX_ALCES.a <%= dest_dir %>/libblas.a
+:module: |
+  setenv           BLASDIR        ${appdir} 
+  setenv           BLAS_DIR       ${appdir}
+  setenv           BLASLIB        ${appdir}
+  setenv           BLAS_LIB       ${appdir}
+  setenv           BLAS       ${appdir}/libblas.a
+
+  prepend-path LD_LIBRARY_PATH ${appdir}
+  prepend-path --delim " " LDFLAGS " -L${appdir}"

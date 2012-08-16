@@ -1,0 +1,40 @@
+---
+:schema: 1
+:license: NONFREE - Free for academic use; see http://www.shapeit.fr/pages/download.php
+:summary: Segmented HAPlotype Estimation and Imputation Tool - Fast and accurate haplotype inference
+:url: http://www.shapeit.fr/
+:description: |
+  Segmented HAPlotype Estimation and Imputation Tool (SHAPEIT) is a
+  fast and accurate haplotype inference software with several notable
+  features:
+
+  * Linear complexity with the number of SNPs/individuals in the
+    sample.
+  * Linear complexity with the number of conditioning haplotypes used
+    in each update step.
+  * Whole chromosome of GWAS scale dataset can be phased in a single
+    run.
+  * Mixed samples of Trios, Duos and Unrelateds are handled.
+  * Phasing is multi-threaded to decrease computational time on
+    multi-core computers.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: shapeit.v1.ESHG.linux.x64.tar.gz
+:src_dir: .
+:version: '1.0'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary package
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+  ln -s shapeit.v1.ESHG.linux.x86_64 <%= dest_dir %>/shapeit
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+  setenv ${appcaps}EXAMPLE ${appdir}/EXAMPLE
+
+  prepend-path PATH ${appdir}
