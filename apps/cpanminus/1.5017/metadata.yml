@@ -1,0 +1,27 @@
+---
+:schema: 1
+:license: Perl license
+:summary: Get, unpack, build and install modules from CPAN
+:url: https://github.com/miyagawa/cpanminus
+:description: |
+  cpanminus is a script to get, unpack, build and install modules from
+  CPAN. It's dependency free, requires zero configuration, and stands
+  alone. When running, it requires only 10MB of RAM.
+:type: apps
+:group: Tools
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: cpanm.sic
+:version: '1.5017'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a binary distribution of a Perl application
+:install: |
+  install -D -m 0755 cpanm.sic <%= dest_dir %>/bin/cpanm <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
