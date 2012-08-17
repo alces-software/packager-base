@@ -12,10 +12,9 @@
   Standards Committee's upcoming C++ Standard Library Technical
   Report.)
 :group: Libraries
-:modules: apps/%{compiler}/python mpi/%{compiler}/openmpi
-:requires: alces-python alces-openmpi
-:build_requires: alces-python alces-openmpi
 :changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - refactored to use packager style
   * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - update to 1.49.0
     - refactored to use installer style
@@ -25,3 +24,27 @@
     - add latest link
   * Tue Feb 22 2011 Steve Norledge
     - First created
+:src: boost_1_49_0.tar.bz2
+:src_dir: boost_1_49_0
+:type: libs
+:version: '1.49.0'
+:requirements:
+  :runtime: mpi/openmpi
+  :build: mpi/openmpi
+#:modules: apps/%{compiler}/python mpi/%{compiler}/openmpi
+#:requires: alces-python alces-openmpi
+#:build_requires: alces-python alces-openmpi
+:compilers:
+  gcc:
+:compile: |
+  ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  echo "using mpi ;" >> project-config.jam
+  ./bjam stage <%= redirect(:stage) %>
+:install: |
+  ./bjam install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
