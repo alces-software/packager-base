@@ -1,0 +1,50 @@
+---
+:schema: 1
+:license: LGPLv3
+:summary: A comprehensive analysis suite for mutations in cancer genomes
+:url: http://gmt.genome.wustl.edu/genome-music/current/
+:description: |
+  Mutational Significance In Cancer package (MuSiC) consists of a
+  suite of downstream analysis tools designed to:
+
+    * apply statistical methods to identify significantly mutated
+      genes
+    * highlight significantly altered pathways
+    * investigate the proximity of amino acid mutations in the same
+      gene
+    * search for gene-based or site-based correlations to mutations
+      and relationships between mutations themselves
+    * correlate mutations to clinical features
+    * cross-reference findings with relevant databases such as Pfam,
+      COSMIC, and OMIM
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: genome-music-0.4.tar.gz
+:src_dir: genome-music-0.4
+:version: '0.4'
+:requirements:
+  :tool: apps/cpanminus
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Perl application
+:install: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm . <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/bin
+  mv <%= dest_dir %>/perl/bin/genome <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+
+  prepend-path PATH ${appdir}/bin
+
+  set-alias genome-music "genome music"
+  set-alias music "genome music"
