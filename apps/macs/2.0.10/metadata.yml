@@ -1,0 +1,48 @@
+---
+:schema: 1
+:license: Artistic License
+:summary: Novel algorithm for identifying transcript factor binding sites
+:url: http://liulab.dfci.harvard.edu/MACS/index.html
+:description: |
+  Model-based Analysis of ChIP-Seq (MACS), a novel algorithm for short
+  reads sequencers such as Genome Analyzer (Illumina / Solexa).
+
+  Next generation parallel sequencing technologies made chromatin
+  immunoprecipitation followed by sequencing (ChIP-Seq) a popular
+  strategy to study genome-wide protein-DNA interactions, while
+  creating challenges for analysis algorithms. 
+
+  MACS empirically models the length of the sequenced ChIP fragments,
+  which tends to be shorter than sonication or library construction
+  size estimates, and uses it to improve the spatial resolution of
+  predicted binding sites. MACS also uses a dynamic Poisson
+  distribution to effectively capture local biases in the genome
+  sequence, allowing for more sensitive and robust prediction. MACS
+  compares favorably to existing ChIP-Seq peak-finding algorithms, is
+  publicly available open source, and can be used for ChIP-Seq with or
+  without control samples.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: macs-2.0.10.tar.gz
+:src_dir: taoliu-MACS-20a05e4
+:version: '2.0.10'
+:requirements:
+  :runtime: libs/numpy
+  :build: libs/numpy
+:compilers:
+  gcc:
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
