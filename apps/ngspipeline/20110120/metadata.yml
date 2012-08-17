@@ -1,0 +1,50 @@
+---
+:schema: 1
+:license: OTHER - unknown, see http://www.mutationtaster.org/NextGenerationSequencing.html
+:summary: Next-generation sequencing pipeline from Mutation Taster (http://www.mutationtaster.org)
+:url: http://www.mutationtaster.org/NextGenerationSequencing.html
+:description: |
+  Identification of pathogenic DNA sequence alterations in patients
+  with inherited diseases is one of the main tasks of human
+  genetics. Next-generation sequencing (NGS) techniques enable
+  sequencing of hundreds of candidate genes, whole linkage intervals
+  or the entire exome. This inevitably leads to the detection of vast
+  numbers of alterations, all of which have to be tested for their
+  disease-causing potential.
+
+  This software handles sequences in FASTA, CSFASTA, and FASTQ format,
+  i.e. Illumina Genome Analyzer, Roche 454, and ABI SOLiD reads.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: NGS_pipeline-20110120.zip
+:src_dir: .
+:version: '20110120'
+:requirements:
+  :runtime: apps/blat
+  :tool: apps/cpanminus
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a binary distribution of a Perl/Java application
+:install: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm LWP::UserAgent <%= redirect(:cpanm_install) %>
+  mkdir -p <%= dest_dir %>/{bin,java,doc,example}
+  cp -rv *.pl <%= dest_dir %>/bin
+  cp -rv *.jar <%= dest_dir %>/java
+  cp -rv EXAMPLE_FBN1 <%= dest_dir %>/example
+  cp -rv *.html <%= dest_dir %>/doc
+  chmod 0755 <%= dest_dir %>/bin/*.pl
+  sed -i -e 's|mutmapper.jar|<%= dest_dir %>/java/mutmapper.jar|g' <%= dest_dir %>/bin/seq2snippet.pl
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+
+  prepend-path PATH ${appdir}/bin
