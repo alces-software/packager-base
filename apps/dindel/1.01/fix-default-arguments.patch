@@ -1,0 +1,79 @@
+--- seqan_library/seqan/align/align_generated_forwards.h	2009-08-02 20:35:57.000000000 +0100
++++ seqan_library/seqan/align/align_generated_forwards.h	2012-08-17 14:28:33.000000000 +0100
+@@ -602,7 +602,7 @@
+ // goNext
+ 
+ template <typename TAlign, typename TSpec> inline void goNext(Iter<TAlign, AlignColIterator<TSpec> > & me);       	// "projects/library/seqan/align/align_iterator_base.h"(139)
+-template <typename TValue> inline void goNext(Iter< Matrix<TValue, NDimensional>, PositionIterator > & me, unsigned int dimension_ );       	// "projects/library/seqan/align/matrix_base.h"(430)
++template <typename TValue> inline void goNext(Iter< Matrix<TValue, NDimensional>, PositionIterator > & me, unsigned int dimension_ = 0 );       	// "projects/library/seqan/align/matrix_base.h"(430)
+ template <typename TGaps> inline void goNext(Iter<TGaps, GapsIterator<SequenceGaps> > & me);       	// "projects/library/seqan/align/gaps_simple.h"(665)
+ template <typename TGaps> inline void goNext(Iter<TGaps, GapsIterator<SequenceGaps> > const & me);       	// "projects/library/seqan/align/gaps_simple.h"(678)
+ template <typename TSize, typename TSpec, typename TSpec2> inline void goNext(Navi< AlignTrace<TSize, TSpec>, TSpec2 > & me, unsigned int dimension_);       	// "projects/library/seqan/align/align_trace.h"(298)
+@@ -615,7 +615,7 @@
+ // goPrevious
+ 
+ template <typename TAlign, typename TSpec> inline void goPrevious(Iter<TAlign, AlignColIterator<TSpec> > & me);       	// "projects/library/seqan/align/align_iterator_base.h"(182)
+-template <typename TValue> inline void goPrevious(Iter< Matrix<TValue, NDimensional>, PositionIterator > & me, unsigned int dimension_ );       	// "projects/library/seqan/align/matrix_base.h"(442)
++template <typename TValue> inline void goPrevious(Iter< Matrix<TValue, NDimensional>, PositionIterator > & me, unsigned int dimension_ = 0 );       	// "projects/library/seqan/align/matrix_base.h"(442)
+ template <typename TGaps> inline void goPrevious(Iter<TGaps, GapsIterator<SequenceGaps> > & me);       	// "projects/library/seqan/align/gaps_simple.h"(694)
+ template <typename TGaps> inline void goPrevious(Iter<TGaps, GapsIterator<SequenceGaps> > const & me);       	// "projects/library/seqan/align/gaps_simple.h"(707)
+ template <typename TSize, typename TSpec, typename TSpec2> inline void goPrevious(Navi< AlignTrace<TSize, TSpec>, TSpec2 > & me, unsigned int dimension_);       	// "projects/library/seqan/align/align_trace.h"(338)
+diff -r -u seqan_library/seqan/align/matrix_base.h seqan_library/seqan/align/matrix_base.h
+--- seqan_library/seqan/align/matrix_base.h	2009-07-31 15:07:58.000000000 +0100
++++ seqan_library/seqan/align/matrix_base.h	2012-08-17 14:28:53.000000000 +0100
+@@ -426,7 +426,7 @@
+ template <typename TValue>
+ inline void
+ goNext(Iter< Matrix<TValue, NDimensional>, PositionIterator > & me,
+-	   unsigned int dimension_ = 0)
++	   unsigned int dimension_)
+ {
+ 	setPosition(me, nextPosition(container(me), position(me), dimension_));
+ }
+@@ -438,7 +438,7 @@
+ template <typename TValue>
+ inline void
+ goPrevious(Iter< Matrix<TValue, NDimensional>, PositionIterator > & me,
+-		   unsigned int dimension_ = 0)
++		   unsigned int dimension_)
+ {
+ 	setPosition(me, previousPosition(container(me), position(me), dimension_));
+ }
+diff -r -u seqan_library/seqan/file/file_format_embl.h seqan_library/seqan/file/file_format_embl.h
+--- seqan_library/seqan/file/file_format_embl.h	2009-07-31 15:07:55.000000000 +0100
++++ seqan_library/seqan/file/file_format_embl.h	2012-08-17 14:27:02.000000000 +0100
+@@ -43,7 +43,7 @@
+ template <typename TFile, typename TFile2, typename TSpec>
+ inline void
+ goBegin(Iter<TFile, FileReader<Embl, TFile2, TSpec> > & it, 
+-bool skip_meta = true)
++bool skip_meta)
+ {
+ SEQAN_CHECKPOINT
+ 	if (skip_meta)
+diff -r -u seqan_library/seqan/file/file_format_genbank.h seqan_library/seqan/file/file_format_genbank.h
+--- seqan_library/seqan/file/file_format_genbank.h	2009-07-31 15:07:55.000000000 +0100
++++ seqan_library/seqan/file/file_format_genbank.h	2012-08-17 14:27:31.000000000 +0100
+@@ -42,7 +42,7 @@
+ 
+ template <typename TFile, typename TFile2, typename TSpec>
+ inline void
+-goBegin(Iter<TFile, FileReader<Genbank, TFile2, TSpec> > & it, bool skip_meta = true)
++goBegin(Iter<TFile, FileReader<Genbank, TFile2, TSpec> > & it, bool skip_meta)
+ {
+ SEQAN_CHECKPOINT
+ 	String<char> line;
+diff -r -u seqan_library/seqan/file/file_generated_forwards.h seqan_library/seqan/file/file_generated_forwards.h
+--- seqan_library/seqan/file/file_generated_forwards.h	2009-08-02 20:35:56.000000000 +0100
++++ seqan_library/seqan/file/file_generated_forwards.h	2012-08-17 14:27:38.000000000 +0100
+@@ -945,8 +945,8 @@
+ template <typename TContainer> inline void goBegin(Iter<TContainer, FileReaderIterator> & it);       	// "projects/library/seqan/file/file_filereader.h"(714)
+ template <typename TFile, typename TFile2, typename TSpec> inline void goBegin(Iter<TFile, FileReader<Fasta, TFile2, TSpec> > & it, bool skip_meta);       	// "projects/library/seqan/file/file_format_fasta.h"(45)
+ template <typename TFile, typename TFile2, typename TSpec> inline void goBegin(Iter<TFile, FileReader<Fasta, TFile2, TSpec> > & it);       	// "projects/library/seqan/file/file_format_fasta.h"(82)
+-template <typename TFile, typename TFile2, typename TSpec> inline void goBegin(Iter<TFile, FileReader<Genbank, TFile2, TSpec> > & it, bool skip_meta );       	// "projects/library/seqan/file/file_format_genbank.h"(46)
+-template <typename TFile, typename TFile2, typename TSpec> inline void goBegin(Iter<TFile, FileReader<Embl, TFile2, TSpec> > & it, bool skip_meta );       	// "projects/library/seqan/file/file_format_embl.h"(47)
++template <typename TFile, typename TFile2, typename TSpec> inline void goBegin(Iter<TFile, FileReader<Genbank, TFile2, TSpec> > & it, bool skip_meta = true);       	// "projects/library/seqan/file/file_format_genbank.h"(46)
++template <typename TFile, typename TFile2, typename TSpec> inline void goBegin(Iter<TFile, FileReader<Embl, TFile2, TSpec> > & it, bool skip_meta = true );       	// "projects/library/seqan/file/file_format_embl.h"(47)
+ 
+ //____________________________________________________________________________
+ // goEnd

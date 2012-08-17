@@ -1,0 +1,44 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Calls small indels from next-generation sequence data by realigning reads to candidate haplotypes
+:url: http://www.sanger.ac.uk/resources/software/dindel/
+:description: |
+  Dindel is a program for calling small indels from next-generation
+  sequence data by realigning reads to candidate haplotypes. The
+  simplest use of Dindel is to consider all in indels in a
+  read-alignment ﬁle (a BAM ﬁle), and to test whether each of these is
+  a real indel or a sequencing error or mapping error.  Dindel can
+  also test candidate indels or sequence variants from other sources,
+  e.g. a database of known variants, or indels called on a different
+  sample for which you want to know if it is also supported by reads
+  in your current sample.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: dindel-1.01-src.tar.gz
+:src_dir: dindel-1.01-src
+:version: '1.01'
+:requirements:
+  :runtime:
+    - libs/boost = 1.45.0
+  :build:
+    - libs/boost = 1.45.0
+    - apps/samtools
+:patches:
+  - gridware.patch
+  - fix-default-arguments.patch
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp dindel <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
