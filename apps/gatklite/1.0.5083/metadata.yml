@@ -1,0 +1,95 @@
+---
+:schema: 1
+:license: MIT
+:summary: Software package developed at the Broad Institute to analyse next-generation resequencing data
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: GenomeAnalysisTK-1.0.5083.tar.bz2
+:src_dir: GenomeAnalysisTK-1.0.5083
+:version: '1.0.5083'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  set-alias GenomeAnalysisTK "java -jar ${appdir}/GenomeAnalysisTK.jar"
+  set-alias gatk "java -jar ${appdir}/GenomeAnalysisTK.jar"
+  set-alias AnalyzeCovariates "java -jar ${appdir}/AnalyzeCovariates.jar"
+
+  set-alias gatk_AnalyzeAnnotations "gatk -T AnalyzeAnnotations"
+  set-alias gatk_VariantAnnotator "gatk -T VariantAnnotator"
+  set-alias gatk_BeagleOutputToVCF "gatk -T BeagleOutputToVCF"
+  set-alias gatk_ProduceBeagleInput "gatk -T ProduceBeagleInput"
+  set-alias gatk_CallableLoci "gatk -T CallableLoci"
+  set-alias gatk_CoarseCoverage "gatk -T CoarseCoverage"
+  set-alias gatk_CompareCallableLoci "gatk -T CompareCallableLoci"
+  set-alias gatk_DepthOfCoverage "gatk -T DepthOfCoverage"
+  set-alias gatk_FastaAlternateReferenceMaker "gatk -T FastaAlternateReferenceMaker"
+  set-alias gatk_FastaReferenceMaker "gatk -T FastaReferenceMaker"
+  set-alias gatk_VariantFiltration "gatk -T VariantFiltration"
+  set-alias gatk_GenomicAnnotator "gatk -T GenomicAnnotator"
+  set-alias gatk_TranscriptToGenomicInfo "gatk -T TranscriptToGenomicInfo"
+  set-alias gatk_UGCalcLikelihoods "gatk -T UGCalcLikelihoods"
+  set-alias gatk_UGCallVariants "gatk -T UGCallVariants"
+  set-alias gatk_UnifiedGenotyper "gatk -T UnifiedGenotyper"
+  set-alias gatk_IndelGenotyperV2 "gatk -T IndelGenotyperV2"
+  set-alias gatk_IndelRealigner "gatk -T IndelRealigner"
+  set-alias gatk_LeftAlignIndels "gatk -T LeftAlignIndels"
+  set-alias gatk_RealignerTargetCreator "gatk -T RealignerTargetCreator"
+  set-alias gatk_AnnotateMNPs "gatk -T AnnotateMNPs"
+  set-alias gatk_MergeMNPs "gatk -T MergeMNPs"
+  set-alias gatk_MergeSegregatingAlternateAlleles "gatk -T MergeSegregatingAlternateAlleles"
+  set-alias gatk_ReadBackedPhasing "gatk -T ReadBackedPhasing"
+  set-alias gatk_CountLoci "gatk -T CountLoci"
+  set-alias gatk_CountPairs "gatk -T CountPairs"
+  set-alias gatk_CountReads "gatk -T CountReads"
+  set-alias gatk_CountRod "gatk -T CountRod"
+  set-alias gatk_CountRodByRef "gatk -T CountRodByRef"
+  set-alias gatk_CycleQuality "gatk -T CycleQuality"
+  set-alias gatk_PrintLocusContext "gatk -T PrintLocusContext"
+  set-alias gatk_ProfileRodSystem "gatk -T ProfileRodSystem"
+  set-alias gatk_ReadClippingStats "gatk -T ReadClippingStats"
+  set-alias gatk_ReadValidation "gatk -T ReadValidation"
+  set-alias gatk_ValidateBAQ "gatk -T ValidateBAQ"
+  set-alias gatk_ValidatingPileup "gatk -T ValidatingPileup"
+  set-alias gatk_CountCovariates "gatk -T CountCovariates"
+  set-alias gatk_TableRecalibration "gatk -T TableRecalibration"
+  set-alias gatk_CreateSequenomMask "gatk -T CreateSequenomMask"
+  set-alias gatk_PickSequenomProbes "gatk -T PickSequenomProbes"
+  set-alias gatk_VariantEval "gatk -T VariantEval"
+  set-alias gatk_ApplyVariantCuts "gatk -T ApplyVariantCuts"
+  set-alias gatk_GenerateVariantClusters "gatk -T GenerateVariantClusters"
+  set-alias gatk_VariantRecalibrator "gatk -T VariantRecalibrator"
+  set-alias gatk_CombineVariants "gatk -T CombineVariants"
+  set-alias gatk_FilterLiftedVariants "gatk -T FilterLiftedVariants"
+  set-alias gatk_LeftAlignVariants "gatk -T LeftAlignVariants"
+  set-alias gatk_LiftoverVariants "gatk -T LiftoverVariants"
+  set-alias gatk_SelectVariants "gatk -T SelectVariants"
+  set-alias gatk_ValidateVariants "gatk -T ValidateVariants"
+  set-alias gatk_VariantsToTable "gatk -T VariantsToTable"
+  set-alias gatk_VariantValidationAssessor "gatk -T VariantValidationAssessor"
+  set-alias gatk_PrintRODs "gatk -T PrintRODs"
+  set-alias gatk_SplitSamFile "gatk -T SplitSamFile"
+  set-alias gatk_VariantsToVCF "gatk -T VariantsToVCF"
+  set-alias gatk_FlagStat "gatk -T FlagStat"
+  set-alias gatk_Pileup "gatk -T Pileup"
+  set-alias gatk_PrintReads "gatk -T PrintReads"
+  
