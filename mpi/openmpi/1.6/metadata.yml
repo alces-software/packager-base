@@ -47,13 +47,11 @@
   # cluster).
   # setenv OMPI_MCA_plm_rsh_num_concurrent 512
 
-  set MPI_DIR <%= dest_dir %>
+  setenv MPI_HOME ${appdir}
 
-  setenv MPI_HOME $MPI_DIR
-
-  prepend-path PATH $MPI_DIR/bin/
-  prepend-path LD_LIBRARY_PATH $MPI_DIR/lib/
-  prepend-path MANPATH $MPI_DIR/share/man/
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
 :changelog: |
   * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added open64 support; incorporated qlogic parameter
