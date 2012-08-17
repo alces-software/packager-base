@@ -23,9 +23,12 @@
     - First created
 :src: cnv-seq.tar.gz
 :src_dir: cnv-seq
-:version: '20110526'
+:version: '20100531'
+:requirements:
+  :runtime: apps/R
+  :build: apps/R
 :compilers:
-  noarch:
+  gcc:
 :compile: |
   # sed #!s to use env
   for a in *.pl; do
@@ -34,9 +37,16 @@
 :install: |
   mkdir <%= dest_dir %>/{bin,R}
   cp -rv *.pl <%= dest_dir %>/bin
-  cp -rv cnv <%= dest_dir %>/R
+  # install ggplot R library and dependencies
+  R CMD BATCH <(cat <<EOF
+    local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+    install.packages("ggplot2","<%= dest_dir %>/R")                                 
+  EOF) alces-R-install.out
+  # install cnv R library
+  R CMD INSTALL -l "<%= dest_dir %>/R" cnv
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
+  append-path R_LIBS_SITE ${appdir}/R  
   prepend-path PATH ${appdir}/bin
