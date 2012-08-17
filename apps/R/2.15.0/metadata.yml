@@ -59,6 +59,8 @@
   cd src/nmath/standalone
   make install <%= redirect(:install) %>
 :module: |
+  set r_user_libs $::env(HOME)/gridware/share/R/${version}
+
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
@@ -66,3 +68,10 @@
   prepend-path PKG_CONFIG_PATH ${appdir}/lib64/pkgconfig
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
+  append-path R_LIBS_USER ${r_user_libs}
+  if { [module-info mode load] } {
+    # make the user libs directory if it doesn't exist
+    if { ! [file exists "${r_user_libs}"] } {
+      file mkdir "${r_user_libs}"
+    }
+  }
