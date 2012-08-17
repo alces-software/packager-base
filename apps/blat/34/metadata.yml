@@ -55,7 +55,8 @@
   mkdir -p ${PREFIX}/bin/${MACHTYPE}
   make <%= redirect(:make) %>
 :install: |
-  cp -rv ../blat/bin/x86_64/* <%= dest_dir %> <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/bin
+  cp -rv ../blat/bin/x86_64/* <%= dest_dir %>/bin <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
