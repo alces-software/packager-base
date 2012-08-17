@@ -1,0 +1,45 @@
+---
+:schema: 1
+:license: LGPLv2.1
+:summary: A high-performance visualization tool for interactive exploration of large, integrated genomic datasets
+:url: http://www.broadinstitute.org/software/igv/home
+:description: |
+  The Integrative Genomics Viewer (IGV) is a high-performance
+  visualization tool for interactive exploration of large, integrated
+  genomic datasets. It supports a wide variety of data types,
+  including array-based and next-generation sequence data, and genomic
+  annotations.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.5.65 (only available 1.5.x series)
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: IGV_1.5.65.zip
+:src_dir: IGV_1.5.65
+:version: '1.5.65'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Java application
+:install: |
+  mkdir <%= dest_dir %>/{bin,java}
+  cp -rv *.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  cat <<EOF > <%= dest_dir %>/bin/igv.sh
+  #!/bin/bash
+  java \$JAVA_OPTS -jar <%= dest_dir %>/java/igv.jar "\$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/igv.sh
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}_JAVA_MEM_MX 1800m
+  setenv ${appcaps}_JAVA_OPTS "-Dapple.laf.useScreenMenuBar=true -Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  prepend-path PATH ${appdir}/bin
+
+  set-alias igv "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/igv.jar"
