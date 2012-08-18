@@ -27,7 +27,7 @@
 :compile: |
   mkdir build
   cd build
-  ../configure --prefix <%= dest_dir %> --enable-shared --enable-threads=posix --enable-checking=release --enable-plugin --enable-languages=c,c++,objc,obj-c++,fortran <%= redirect(:configure) %>
+  ../configure --prefix="<%= dest_dir %>" --enable-shared --enable-threads=posix --enable-checking=release --enable-plugin --enable-languages=c,c++,objc,obj-c++,fortran <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   cd build
