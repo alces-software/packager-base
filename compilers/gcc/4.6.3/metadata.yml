@@ -32,12 +32,6 @@
   make install <%= redirect(:install) %>
 :module:
   :compiler: |
-    if { [info exists ::env(GRIDWARE_OPT_NOPATH)] == 0 } {
-        set     basepath ${appdir}/bin
-    } {
-        set     basepath ""
-    }
-
     setenv  CC       ${basepath}gcc
     setenv  CXX      ${basepath}g++
     setenv  F77      ${basepath}gfortran
