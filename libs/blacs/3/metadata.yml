@@ -1,0 +1,49 @@
+---
+:schema: 1
+:license: BSD
+:summary: A linear algebra oriented message passing interface
+:url: http://www.netlib.org/blacs/
+:description: |
+  The BLACS (Basic Linear Algebra Communication Subprograms) project
+  is an ongoing investigation whose purpose is to create a linear
+  algebra oriented message passing interface that may be implemented
+  efficiently and uniformly across a large range of distributed memory
+  platforms.
+
+  The length of time required to implement efficient distributed
+  memory algorithms makes it impractical to rewrite programs for every
+  new parallel machine. The BLACS exist in order to make linear
+  algebra applications both easier to program and more portable.
+:group: Libraries
+:changelog: |
+  * Mon Aug 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mpiblacs.tgz
+:src_dir: BLACS
+:sources:
+  - mpiblacs-patch03.tgz
+  - Bmake.inc.alces
+:type: libs
+:version: '3'
+:requirements:
+  :build: mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  cp <%= source('Bmake.inc.alces') %> Bmake.inc
+  ( cd .. && tar xzf <%= source('mpiblacs-patch03.tgz') %> )
+  export BLACS_BUILD_DIR=$(pwd)
+  make mpi <%= redirect(:make) %>
+:install: |
+  install -D -m 644 LIB/blacsCinit_MPI-LINUX-0.a <%= dest_dir %>/libblasCinit.a
+  install -D -m 644 LIB/blacsF77init_MPI-LINUX-0.a <%= dest_dir %>/libblasF77init.a
+  install -D -m 644 LIB/blacs_MPI-LINUX-0.a <%= dest_dir %>/libblacs.a
+:module: |
+  setenv           BLACSDIR        ${appdir} 
+  setenv           BLACS_DIR       ${appdir}
+  setenv           BLACSLIB        ${appdir}
+  setenv           BLACS_LIB       ${appdir}
+  setenv           BLACS       ${appdir}/libblacs.a
+
+  prepend-path LD_LIBRARY_PATH ${appdir}
+  prepend-path --delim " " LDFLAGS " -L${appdir}"
