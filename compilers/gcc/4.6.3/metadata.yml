@@ -49,8 +49,7 @@
     prepend-path DYLD_LIBRARY_PATH ${appdir}/lib
     prepend-path MANPATH ${appdir}/man/
 
-    prepend-path --delim " " CXXFLAGS " -I${appdir}/include"
-    prepend-path --delim " " CFLAGS " -I${appdir}/include"
+    prepend-path --delim " " CPPFLAGS " -I${appdir}/include"
     prepend-path --delim " " LDFLAGS " -L${appdir}/lib -L${appdir}/lib64"
   :runtime: |
     prepend-path LD_LIBRARY_PATH ${appdir}/lib64
