@@ -1,0 +1,70 @@
+---
+:license: Apache License, Version 2.0
+:summary: Java-based command-line utilities and API for manipulating SAM files
+:url: http://picard.sourceforge.net/
+:description: |
+  SAM (Sequence Alignment/Map) format is a generic format for storing
+  large nucleotide sequence alignments.  Picard comprises Java-based
+  command-line utilities that manipulate SAM files, and a Java API
+  (SAM-JDK) for creating new programs that read and write SAM
+  files. Both SAM text format and SAM binary (BAM) format are
+  supported.
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Oct 12 2011 Mark J. Titorenko
+    - First created
+:src: picard-tools-1.53.zip
+:src_dir: picard-tools-1.53
+:type: apps
+:version: '1.53'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Java application
+:install: |
+  mkdir -p <%= dest_dir %>/java
+  cp -rv *.jar ../*.jar <%= dest_dir %>/java
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias AddOrReplaceReadGroups "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/AddOrReplaceReadGroups.jar"
+  set-alias BamIndexStats "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/BamIndexStats.jar"
+  set-alias BamToBfq "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/BamToBfq.jar"
+  set-alias BuildBamIndex "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/BuildBamIndex.jar"
+  set-alias CalculateHsMetrics "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CalculateHsMetrics.jar"
+  set-alias CleanSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CleanSam.jar"
+  set-alias CollectAlignmentSummaryMetrics "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CollectAlignmentSummaryMetrics.jar"
+  set-alias CollectGcBiasMetrics "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CollectGcBiasMetrics.jar"
+  set-alias CollectInsertSizeMetrics "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CollectInsertSizeMetrics.jar"
+  set-alias CollectMultipleMetrics "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CollectMultipleMetrics.jar"
+  set-alias CollectRnaSeqMetrics "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CollectRnaSeqMetrics.jar"
+  set-alias CompareSAMs "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CompareSAMs.jar"
+  set-alias CreateSequenceDictionary "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/CreateSequenceDictionary.jar"
+  set-alias DownsampleSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/DownsampleSam.jar"
+  set-alias EstimateLibraryComplexity "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/EstimateLibraryComplexity.jar"
+  set-alias ExtractIlluminaBarcodes "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/ExtractIlluminaBarcodes.jar"
+  set-alias ExtractSequences "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/ExtractSequences.jar"
+  set-alias FastqToSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/FastqToSam.jar"
+  set-alias FixMateInformation "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/FixMateInformation.jar"
+  set-alias IlluminaBasecallsToSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/IlluminaBasecallsToSam.jar"
+  set-alias IntervalListTools "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/IntervalListTools.jar"
+  set-alias MarkDuplicates "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/MarkDuplicates.jar"
+  set-alias MeanQualityByCycle "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/MeanQualityByCycle.jar"
+  set-alias MergeBamAlignment "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/MergeBamAlignment.jar"
+  set-alias MergeSamFiles "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/MergeSamFiles.jar"
+  set-alias NormalizeFasta "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/NormalizeFasta.jar"
+  set-alias QualityScoreDistribution "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/QualityScoreDistribution.jar"
+  set-alias ReorderSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/ReorderSam.jar"
+  set-alias ReplaceSamHeader "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/ReplaceSamHeader.jar"
+  set-alias RevertSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/RevertSam.jar"
+  set-alias SamFormatConverter "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/SamFormatConverter.jar"
+  set-alias SamToFastq "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/SamToFastq.jar"
+  set-alias SortSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/SortSam.jar"
+  set-alias ValidateSamFile "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/ValidateSamFile.jar"
+  set-alias ViewSam "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/ViewSam.jar"
