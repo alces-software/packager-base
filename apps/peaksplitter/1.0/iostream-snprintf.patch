@@ -1,0 +1,54 @@
+diff -u -r PeakSplitter_Linux64.orig/PeakSplitter_v1/SFL/prelude.h PeakSplitter_Linux64/PeakSplitter_v1/SFL/prelude.h
+--- PeakSplitter_Linux64.orig/PeakSplitter_v1/SFL/prelude.h	2011-05-16 08:52:12.000000000 +0100
++++ PeakSplitter_Linux64/PeakSplitter_v1/SFL/prelude.h	2012-08-21 11:26:43.000000000 +0100
+@@ -218,7 +218,7 @@
+ /*- Standard ANSI include files ---------------------------------------------*/
+ 
+ #ifdef __cplusplus
+-#include <iostream.h>                   /*  A bit of support for C++         */
++#include <iostream>                   /*  A bit of support for C++         */
+ #endif
+ 
+ #include <ctype.h>
+@@ -685,6 +685,8 @@
+ #   define DOES_SNPRINTF
+ #elif (defined (__UTYPE_LINUX))
+ #   define DOES_SNPRINTF
++#elif (defined (__UTYPE_GENERIC))
++#   define DOES_SNPRINTF
+ #else
+ #   undef DOES_SNPRINTF
+ #endif
+diff -u -r PeakSplitter_Linux64.orig/PeakSplitter_v1/SFL/sfl.h PeakSplitter_Linux64/PeakSplitter_v1/SFL/sfl.h
+--- PeakSplitter_Linux64.orig/PeakSplitter_v1/SFL/sfl.h	2011-05-16 08:52:12.000000000 +0100
++++ PeakSplitter_Linux64/PeakSplitter_v1/SFL/sfl.h	2012-08-21 11:26:43.000000000 +0100
+@@ -233,7 +233,7 @@
+ /*- Standard ANSI include files ---------------------------------------------*/
+ 
+ #ifdef __cplusplus
+-#include <iostream.h>                   /*  A bit of support for C++         */
++#include <iostream>                   /*  A bit of support for C++         */
+ #endif
+ 
+ #include <ctype.h>
+@@ -700,6 +700,8 @@
+ #   define DOES_SNPRINTF
+ #elif (defined (__UTYPE_LINUX))
+ #   define DOES_SNPRINTF
++#elif (defined (__UTYPE_GENERIC))
++#   define DOES_SNPRINTF
+ #else
+ #   undef DOES_SNPRINTF
+ #endif
+diff -u -r PeakSplitter_Linux64.orig/PeakSplitter_v1/SplitPeaks/SequenceDownloader.cpp PeakSplitter_Linux64/PeakSplitter_v1/SplitPeaks/SequenceDownloader.cpp
+--- PeakSplitter_Linux64.orig/PeakSplitter_v1/SplitPeaks/SequenceDownloader.cpp	2011-05-16 08:52:12.000000000 +0100
++++ PeakSplitter_Linux64/PeakSplitter_v1/SplitPeaks/SequenceDownloader.cpp	2012-08-21 11:26:43.000000000 +0100
+@@ -15,7 +15,7 @@
+ #include <string.h>     /* for memset() */
+ #include <unistd.h>     /* for close() */
+ #include <netdb.h>
+-#include <iostream.h>
++#include <iostream>
+ using namespace std;
+ #define RCVBUFSIZE 1024   /* Size of receive buffer */
+ 

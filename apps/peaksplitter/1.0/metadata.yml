@@ -1,0 +1,38 @@
+---
+:license: MIT/X Consortium License
+:summary: Subdivision of ChIP-seq/ChIP-chip regions into discrete signal peaks
+:url: http://www.ebi.ac.uk/bertone/software.html
+:description: |
+  PeakSplitter accurately subdivides experimentally-derived peak
+  regions containing more than one site of signal enrichment,
+  optionally retrieving genomic DNA sequences corresponding to subpeak
+  summit regions. This procedure facilitates more detailed analysis of
+  individual subpeaks.
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: PeakSplitter_Cpp_1.0.tar.gz
+:src_dir: PeakSplitter_Cpp
+:type: apps
+:version: '1.0'
+:patches:
+  - iostream-snprintf.patch
+:compilers:
+  gcc:
+:compile: |
+  cd PeakSplitter_Linux64/PeakSplitter_v1/SFL/Release
+  make <%= redirect(:make) %>
+  cd ../../Zlib/Release
+  make <%= redirect(:make) %>
+  cd ../..
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp PeakSplitter_Linux64/PeakSplitter_v1/PeakSplitter <%= dest_dir %>/bin
+  cp PeakSplitter_Linux64/README <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
