@@ -1,0 +1,12 @@
+diff -u -r blimps.orig/include/global.h blimps/include/global.h
+--- blimps.orig/include/global.h	2012-08-21 15:02:34.000000000 +0100
++++ blimps/include/global.h	2012-08-21 15:00:24.000000000 +0100
+@@ -17,7 +17,7 @@
+ #include <string.h>
+ #include <stddef.h>
+ #include <ctype.h>
+-#include <malloc.h>
++/* #include <malloc.h> */
+ 
+ /*
+  * Exported variables and data structures

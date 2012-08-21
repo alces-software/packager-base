@@ -1,0 +1,62 @@
+---
+:license: NONFREE - Free for non-profit use; see http://sift.jcvi.org/blocks/license.html
+:summary: Predicts whether an amino acid substitution affects protein function
+:url: http://sift.jcvi.org/
+:description: |
+  SIFT predicts whether an amino acid substitution affects protein
+  function. SIFT prediction is based on the degree of conservation of
+  amino acid residues in sequence alignments derived from closely
+  related sequences, collected through PSI-BLAST. SIFT can be applied
+  to naturally occurring nonsynonymous polymorphisms or
+  laboratory-induced missense mutations.
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: jcvi-sift-1.03.tar.gz
+:src_dir: jcvi-sift-1.03
+:patches:
+  - remove-obsolete-malloch.patch
+:requirements:
+  :runtime: apps/ncbiblast >= 2.2.23
+  :tool:
+    - apps/ncbiblast >= 2.2.23
+    - apps/cpanminus
+:type: apps
+:version: '1.03'
+:compilers:
+  gcc:
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm DBI DBD::SQLite Tie::IxHash <%= redirect(:cpanm) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  # replace hard-coded path for psiblast with environment modules aware version
+  for a in IntersectLocations SIFT_for_submitting_NCBI_gi_id SIFT_for_submitting_alignment SIFT_for_submitting_fasta_seq seqs_chosen_via_median_info; dp
+    sed -i -e 's|export NCBI=.*|export NCBI=${NCBIBLASTBIN}|g' scripts/$a
+  done
+  make install <%= redirect(:install) %>
+  cat <<EOF > <%= dest_dir %>/bin/download-sift-data
+    FTPSITE="ftp://ftp.jcvi.org/pub/data/sift/Human_db_37_ensembl_63"
+    echo "Downloading precomputed Human sift predictions...."
+    echo "This may take quite a while..."
+    cd <%= dest_dir %>/share/data/jcvi-sift/ensemble/h_sapien/sqlite
+    for FILE in bins.list Human_CHR10.sqlite.gz Human_CHR11.sqlite.gz Human_CHR12.sqlite.gz Human_CHR13.sqlite.gz Human_CHR14.sqlite.gz Human_CHR15.sqlite.gz Human_CHR16.sqlite.gz Human_CHR17.sqlite.gz Human_CHR18.sqlite.gz Human_CHR19.sqlite.gz Human_CHR1.sqlite.gz Human_CHR20.sqlite.gz Human_CHR21.sqlite.gz Human_CHR22.sqlite.gz Human_CHR2.sqlite.gz Human_CHR3.sqlite.gz Human_CHR4.sqlite.gz Human_CHR5.sqlite.gz Human_CHR6.sqlite.gz Human_CHR7.sqlite.gz Human_CHR8.sqlite.gz Human_CHR9.sqlite.gz Human_CHRX.sqlite.gz Human_CHRY.sqlite.gz Human_Supp.sqlite.gz TRANSCRIPT_DB.sqlite.gz; do
+      echo "Retrieving \$FILE"
+      wget "\$FTPSITE/\$FILE" || exit 1
+      case \$FILE in
+        *.gz)
+          gunzip $FILE || exit 1 ;;
+      esac
+    done
+  EOF
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/share/man
