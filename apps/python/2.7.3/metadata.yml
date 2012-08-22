@@ -1,0 +1,53 @@
+---
+:schema: 1
+:license: Python License
+:summary: A remarkably powerful dynamic programming language
+:url: http://www.python.org/
+:description: |
+  Python is a remarkably powerful dynamic programming language that is
+  used in a wide variety of application domains. Python is often
+  compared to Tcl, Perl, Ruby, Scheme or Java. Some of its key
+  distinguishing features include:
+
+    * very clear, readable syntax
+    * strong introspection capabilities
+    * intuitive object orientation
+    * natural expression of procedural code
+    * full modularity, supporting hierarchical packages
+    * exception-based error handling
+    * very high level dynamic data types
+    * extensive standard libraries and third party modules for
+      virtually every task
+    * extensions and modules easily written in C, C++ (or Java for
+      Jython, or .NET languages for IronPython)
+    * embeddable within applications as a scripting interface
+:group: Languages
+:changelog: |
+  * Tue Aug 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v2.7.3
+    - Refactored to packager style
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: Python-2.7.3.tar.bz2
+:src_dir: Python-2.7.3
+:type: apps
+:version: '2.7.3'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv PYTHONDIR ${appdir}
+  setenv PYTHONBIN ${appdir}/bin
+  setenv PYTHONLIB ${appdir}/lib
+  setenv PYTHONINCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/python2.7
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LIBRARY_PATH ${appdir}/lib
