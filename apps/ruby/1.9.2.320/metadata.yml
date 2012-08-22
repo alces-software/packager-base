@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: Ruby License
+:summary: A dynamic, open source programming language with a focus on simplicity and productivity
+:url: http://www.ruby-lang.org/
+:description: |
+  Ruby is a dynamic, open source programming language with a focus on
+  simplicity and productivity. It has an elegant syntax that is
+  natural to read and easy to write.
+:group: Languages
+:changelog: |
+  * Wed Aug 22 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Created package for v1.9.2-p320
+    - Refactored to packager style
+  * Thu Sep 8 2011 Steve Norledge
+    - First created
+:src: ruby-1.9.2-p320.tar.bz2
+:src_dir: ruby-1.9.2-p320
+:type: apps
+:version: '1.9.2.320'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --enable-shared --disable-rpath --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path LIBRARY_PATH ${appdir}/lib
+
