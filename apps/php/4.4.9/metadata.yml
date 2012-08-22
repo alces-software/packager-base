@@ -1,0 +1,36 @@
+---
+:schema: 1
+:license: PHP License
+:summary: A widely-used general-purpose scripting language that is especially suited for Web development
+:url: http://www.php.net/
+:description: |
+  PHP (recursive acronym for PHP: Hypertext Preprocessor) is a
+  widely-used open source general-purpose scripting language that is
+  especially suited for web development and can be embedded into HTML.
+:group: Languages
+:changelog: |
+  * Tue Aug 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: php-4.4.9.tar.bz2
+:type: apps
+:version: '4.4.9'
+:compilers:
+  gcc:
+:compile: |
+  if [ "$(uname -s)" == 'Darwin' ]; then
+    # remove obsolete Darwin flag
+    sed -i -e 's|-no-cpp-precomp||g' configure
+    # add libresolv to LDFLAGS to get compilation to work
+    export LDFLAGS="${LDFLAGS} -lresolv"
+  fi
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/php/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
