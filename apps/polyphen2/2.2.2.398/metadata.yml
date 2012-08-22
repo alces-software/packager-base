@@ -1,0 +1,151 @@
+---
+:license: NONFREE - Free for academic and research use; see http://genetics.bwh.harvard.edu/pph2/dokuwiki/downloads
+:summary: Predicts possible impact of amino acid substitutions on the structure and function of human proteins
+:url: http://genetics.bwh.harvard.edu/pph2/dokuwiki/start
+:description: |
+  PolyPhen-2 (Polymorphism Phenotyping v2) is a software tool which
+  predicts possible impact of amino acid substitutions on the
+  structure and function of human proteins using straightforward
+  physical and evolutionary comparative considerations.
+
+  PolyPhen-2 is a new development of the PolyPhen tool for annotating
+  coding nonsynonymous SNPs. Some of the highlights of the new version
+  are:
+
+    * High quality multiple sequence alignment pipeline
+    * Probabilistic classifier based on machine-learning method
+    * Optimized for high-throughput analysis of the next-generation
+      sequencing data
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: polyphen-2.2.2r398.tar.gz
+:src_dir: polyphen-2.2.2
+:type: apps
+:version: '2.2.2.398'
+:sources:
+  - coils.tar.gz
+  - dsspcmbi.zip
+  - mafft-6.864-without-extensions-src.tgz
+  - leon_1.0.tar.gz
+  - leon_1.1.tar.gz
+  - weka-3-6-6.zip
+  - gridware-polyphen2-installdb.sh
+  - gridware-polyphen2-userprep.sh
+:requirements:
+  :runtime:
+    - apps/ncbiblast >= 2.2.25
+    - apps/blat
+  :tool:
+    - apps/cpanminus
+:compilers:
+  gcc:
+:compile: |
+  cd src
+
+  # install the required Perl libraries inside the source tree
+  SRC_DIR="$(pwd)"
+  export PERL5LIB="${SRC_DIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${SRC_DIR}/perl -n"
+  # XML::Simple <-- seems to fail with write to system directory fsr :-(
+  cpanm LWP::Simple DBD::SQLite <%= redirect(:cpanm) %>
+
+  # Perform the build
+  <% package.sources.each do |s| %>
+    cp <%= source(s) %> .
+  <% end %>
+  make download <%= redirect(:download) %>
+  make clean
+  make <%= redirect(:make) %>
+:polyphen_dbvars:
+  NRDB_BLAST: $ENV{POLYPHEN2_NRDB_BLAST}
+  NRDB_FASTA: $ENV{POLYPHEN2_NRDB_FASTA}
+  UNIPROT: $ENV{POLYPHEN2_UNIPROT}/$CONFIG{REFORGCOMMON}
+  PDB: $ENV{POLYPHEN2_PDB}
+  PDB2FASTA: $ENV{POLYPHEN2_PDB2FASTA}
+  DSSP: $ENV{POLYPHEN2_DSSP}
+  GOLDENPATH: $ENV{POLYPHEN2_UCSC}
+  GENESET: $ENV{POLYPHEN2_GENESET}
+:install: |
+  cd src
+  # this installs the binaries within the current compilation tree
+  make install <%= redirect(:install) %>
+  cd ..
+  # copy everything into place in gridware (barring src/)
+  cp -rv [A-Za-rt-z]* scratch sets <%= dest_dir %>
+
+  cd <%= dest_dir %>
+  # execute configure script non-interactively to generate a default config
+  ./configure </dev/null
+  # update paths for BLAST
+  sed -i -e 's|FASTACMD\s*=.*|FASTACMD = $ENV{NCBIBLASTBIN}/blastdbcmd|g' config/programs.cnf
+  sed -i -e 's|BLAST\s*=.*|BLAST = $ENV{NCBIBLASTBIN}/blastp|g' config/programs.cnf
+  # update paths for blat and twoBitToFa
+  sed -i -e 's|BLAT\s*=.*|BLAT = $ENV{BLATBIN}/blat|g' config/programs.cnf
+  sed -i -e 's|TWOBIT\s*=.*|TWOBIT = $ENV{BLATBIN}/twoBitToFa|g' config/programs.cnf
+  # update configuration for per-user usage
+  sed -i -e 's|SCRATCH\s*=.*|SCRATCH = $ENV{POLYPHEN2_USER_SCRATCH}|g' config/paths.cnf
+  sed -i -e 's|PRECOMPATH\s*=.*|PRECOMPATH = $ENV{POLYPHEN2_USER_PRECOMP}|g' config/paths.cnf
+  sed -i -e 's|TMPOUT\s*=.*|TMPOUT = $ENV{POLYPHEN2_TMP}|g' config/paths.cnf
+  # update database paths
+  <% package.polyphen_dbvars.each do |k, v| %>
+  sed -i -e 's|<%= k %>\s*=.*|<%= k %> = <%= v %>|g' config/databases.cnf
+  <% end %>
+
+  mkdir skel
+  mv scratch skel
+  cp -r precomputed skel
+
+  install -D -m 755 <%= source('gridware-polyphen2-installdb.sh') %> <%= dest_dir %>/bin/gridware-polyphen2-installdb.sh
+  install -D -m 755 <%= source('gridware-polyphen2-userprep.sh') %> <%= dest_dir %>/bin/gridware-polyphen2-userprep.sh
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl
+  prepend-path PATH ${appdir}/bin
+
+  setenv PPH ${appdir}
+  setenv ${appcaps}_USER_SCRATCH $::env(HOME)/polyphen2/scratch
+  setenv ${appcaps}_TMP /tmp
+
+  # 1. Try GRIDWARE_DATADIR env var
+  # 2. Try gridware configuration file
+  # 3. Fallback to $appdir
+  if { [ info exists ::env(GRIDWARE_DATADIR) ] } {
+    set datadir $::env(GRIDWARE_DATADIR)
+  } elseif { [ file exists ~/gridware/etc/gridware.tcl ] } {
+    source ~/gridware/etc/gridware.tcl
+    if { [ info exists gridware_datadir ] } {
+      set datadir $gridware_datadir
+    }
+  } 
+  if { [ info exists datadir ] == 0 } {
+    set datadir ${appdir}
+  }
+  if { [ module-info mode load ] } {
+    puts stderr " * --+ [alces pretty [module-info name]]\n     + --> Using data directory: $datadir"
+  }
+
+  if { [module-info mode load] } {
+    # cause user prep script to be executed if home directory doesn't
+    # yet conform.
+    if { ! [file exists "$::env(HOME)/polyphen2"] } {
+      puts "${appdir}/bin/gridware-polyphen2-userprep.sh \"${appdir}\""
+    }
+    if { ! [file exists "${datadir}/polyphen2"] } {
+      puts "echo -e \"\\n > Data directory (${datadir}/polyphen2) not configured - have you executed 'gridware-polyphen2-installdb.sh'?\\n\";"
+    }
+  }
+
+  setenv ${appcaps}_DATADIR ${datadir}
+  setenv ${appcaps}_USER_PRECOMP ${datadir}/polyphen2/precomputed
+  setenv ${appcaps}_NRDB_BLAST ${datadir}/nrdb/uniref100
+  setenv ${appcaps}_NRDB_FASTA ${datadir}/nrdb/uniref100
+  setenv ${appcaps}_UNIPROT ${datadir}/uniprot
+  setenv ${appcaps}_PDB ${datadir}/wwpdb/all/pdb
+  setenv ${appcaps}_PDB2FASTA ${datadir}/pdb2fasta
+  setenv ${appcaps}_DSSP ${datadir}/dssp
+  setenv ${appcaps}_UCSC ${datadir}/ucsc
+  setenv ${appcaps}_GENESET hg19
