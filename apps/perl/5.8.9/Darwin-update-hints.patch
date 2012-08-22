@@ -1,0 +1,40 @@
+--- hints/darwin.sh	2011-06-10 05:04:29.000000000 +0900
++++ hints/darwin.sh	2011-08-09 17:38:29.000000000 +0900
+@@ -179,6 +179,20 @@
+    ldflags="${ldflags} -flat_namespace"
+    lddlflags="${ldflags} -bundle -undefined suppress"
+    ;;
++9.*)
++   lddlflags="${ldflags} -bundle -undefined dynamic_lookup"
++   case "$ld" in
++       *MACOSX_DEVELOPMENT_TARGET*) ;;
++       *) ld="env MACOSX_DEPLOYMENT_TARGET=10.5 ${ld}" ;;
++   esac
++   ;;
++10.*)
++   lddlflags="${ldflags} -bundle -undefined dynamic_lookup"
++   case "$ld" in
++       *MACOSX_DEVELOPMENT_TARGET*) ;;
++       *) ld="env MACOSX_DEPLOYMENT_TARGET=10.6 ${ld}" ;;
++   esac
++   ;;
+ *) 
+    lddlflags="${ldflags} -bundle -undefined dynamic_lookup"
+    case "$ld" in
+@@ -260,6 +274,10 @@
+ ;;
+ esac
+ 
++# When the bind9 port is installed, its libbind includes dups from
++# /usr/lib/libdl, so remove libbind
++libswanted=`echo $libswanted | sed 's/ bind / /'`
++
+ ##
+ # System libraries
+ ##
+@@ -324,3 +342,5 @@
+ # makefile in the same place.  Since Darwin uses GNU make, this dodges
+ # the problem.
+ firstmakefile=GNUmakefile;
++
++usenm='false'

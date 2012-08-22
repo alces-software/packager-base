@@ -1,0 +1,15 @@
+Index: Configure
+===================================================================
+--- Configure 2011-07-24 09:17:26.000000000 -0700
++++ /Users/jcm/Configure 2011-07-24 09:18:11.000000000 -0700
+@@ -7455,6 +7455,10 @@
+ . ./getfile
+ libc="$ans"
+ 
++# Adding distributed libc madness on osx
++distr_libc=`otool -L /usr/lib/libc.dylib | awk '{print $1}'`
++libc="$libc $distr_libc"
++
+ echo " "
+ echo $libc $libnames | $tr ' ' $trnl | $sort | $uniq > libnames
+ set X `cat libnames`
