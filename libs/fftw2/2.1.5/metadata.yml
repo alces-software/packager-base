@@ -1,0 +1,60 @@
+---
+:schema: 1
+:license: GPL
+:summary: C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions
+:url: http://www.fftw.org/
+:description: |
+  FFTW is a C subroutine library for computing the discrete Fourier
+  transform (DFT) in one or more dimensions, of arbitrary input size,
+  and of both real and complex data (as well as of even/odd data,
+  i.e. the discrete cosine/sine transforms or DCT/DST).
+:group: Libraries
+:type: libs
+:changelog: |
+  * Fri Aug 24 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Mar  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fftw-2.1.5.tar.gz
+:src_dir: fftw-2.1.5
+:version: 2.1.5
+:compilers:
+  gcc:
+    :configure_prefix: ''
+  intel:
+    :configure_prefix: "CC='icc -i-dynamic' CXX='icpc -i-dynamic' FC='ifort -i-dynamic' F90='' && "
+:variants:
+  float:
+    :configure_flags: '--enable-float'
+  double:
+    :configure_flags: ''
+  float-mpi:
+    :configure_flags: '--enable-float --enable-mpi'
+    :requirements:
+      :build: mpi/openmpi
+  double-mpi:
+    :configure_flags: '--enable-mpi'
+    :requirements:
+      :build: mpi/openmpi
+:compile: |
+  <%= compiler[:configure_prefix] %> ./configure \
+    --prefix=<%= dest_dir %> \
+    --enable-shared <%= variant[:configure_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  set FFTW_DIR ${appdir}
+
+  setenv           FFTWDIR          $FFTW_DIR/lib
+  setenv           FFTW             $FFTW_DIR
+  setenv           FFTWINCLUDE      $FFTW_DIR/include
+  setenv           FFTWLIB          fftw
+
+  prepend-path LD_LIBRARY_PATH $FFTW_DIR/lib/
+  prepend-path MANPATH $FFTW_DIR/share/man/
+  prepend-path C_INCLUDE_PATH $FFTW_DIR/include/
+  prepend-path CPLUS_INCLUDE_PATH $FFTW_DIR/include/
+  prepend-path --delim " " CPPFLAGS " -I$FFTW_DIR/include"
+  prepend-path --delim " " CFLAGS " -I$FFTW_DIR/include"
+  prepend-path --delim " " LDFLAGS " -L$FFTW_DIR/lib/"
