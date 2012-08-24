@@ -25,10 +25,12 @@
     :configure_flags: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
 :params:
   :qlogic: "Specify whether to use Qlogic Infinipath PSM libs [true|false]"
+  :torque: "Specify whether to enable Torque Support [true|false]"
+  :sge: "Specify where to enable SGE Support [true|false]"
 :sources:
   - examples.sge.openmpi.template
 :compile: |
-  ./configure --with-sge <%= '--with-psm' if param(:qlogic) == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  ./configure <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> <%= '--with-tm=$TORQUEDIR' if param(:torque).to_s.downcase == 'true' %> <%= '--with-psm' if param(:qlogic).to_s.downcase == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
