@@ -1,0 +1,45 @@
+:schema: 1
+:license: Freeware
+:summary: IOzone is a filesystem benchmark tool.
+:url: http://www.iozone.org/
+:description: |
+  IOzone is a filesystem benchmark tool. The benchmark generates and measures 
+  a variety of file operations. It is useful for performing a broad filesystem 
+  analysis of a vendor’s computer platform. The benchmark tests file I/O 
+  performance for the following operations: Read, write, re-read, re-write, 
+  read backwards, read strided, fread, fwrite, random read, pread ,mmap, 
+  aio_read, aio_write.
+:group: Benchmarks
+:changelog: |
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Bumped version to 3.408
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Ported to installer
+  * Thu Jun 16 2011 Steve Norledge
+    - First created
+:src: iozone3_408.tar
+:patches: 
+  - alces-iozone-ssh.patch
+:type: apps
+:version: '3.408'
+:src_dir: iozone3_408
+:compilers:
+  gcc:
+:compile: |
+  cd src/current
+  make linux-AMD64 <%= redirect :make %>
+:tgtbin: 
+  - src/current/iozone
+  - src/current/fileop
+  - src/current/gengnuplot.sh
+  - src/current/iozone_visualizer.pl
+  - src/current/report.pl
+:install: |
+  <%package.tgtbin.each do |f|%>
+    install -D -m 755 <%=f%> <%=dest_dir%>/bin/<%=File::basename(f)%>
+  <%end%>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+
+  prepend-path PATH ${appdir}/bin/

@@ -1,0 +1,24 @@
+diff -uNr src.orig/current/iozone.c src/current/iozone.c
+--- src.orig/current/iozone.c	2011-05-06 16:39:00.000000000 +0100
++++ src/current/iozone.c	2011-06-16 17:58:52.000000000 +0100
+@@ -22225,18 +22225,7 @@
+ char *shell;
+ #endif
+ {
+-	char *value;
+-	value=(char *)getenv("RSH");
+-	if(value)
+-	{
+-		strcpy(shell,value);
+-		return;
+-	}
+-#ifdef _HPUX_SOURCE
+-	strcpy(shell,"remsh");
+-#else
+-	strcpy(shell,"rsh");
+-#endif
++	strcpy(shell,"ssh");
+ 	return;
+ }	
+ #ifdef HAVE_ANSIC_C
+

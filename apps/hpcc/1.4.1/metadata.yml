@@ -1,0 +1,51 @@
+:schema: 1
+:license: BSD
+:summary: The HPC Challenge benchmark
+:url: http://icl.cs.utk.edu/hpcc/index.html
+:description: |
+  The HPC Challenge benchmark consists of basically 7 tests:
+    HPL - the Linpack TPP benchmark which measures the floating point 
+          rate of execution for solving a linear system of equations.
+    DGEMM - measures the floating point rate of execution of double 
+          precision real matrix-matrix multiplication.
+    STREAM - a simple synthetic benchmark program that measures sustainable 
+          memory bandwidth (in GB/s) and the corresponding computation 
+          rate for simple vector kernel.
+    PTRANS (parallel matrix transpose) - exercises the communications 
+          where pairs of processors communicate with each other simultaneously. 
+          It is a useful test of the total communications capacity of the network.
+    RandomAccess - measures the rate of integer random updates of memory (GUPS).
+    FFT - measures the floating point rate of execution of double precision 
+          complex one-dimensional Discrete Fourier Transform (DFT).
+    Communication bandwidth and latency - a set of tests to measure latency 
+          and bandwidth of a number of simultaneous communication patterns; 
+          based on b_eff (effective bandwidth benchmark).
+:group: Benchmarks
+:changelog: |
+  * Fri Aug 24 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Ported to installer
+  * Fri Jun 17 2011 Steve Norledge
+    - First created
+:src: hpcc-1.4.1.tar.gz
+:patches: 
+  - alces-hpcc.patch
+:type: apps
+:version: '1.4.1'
+:compilers:
+  gcc:
+:requirements:
+  :runtime:
+    - mpi/openmpi
+  :build:
+    - mpi/openmpi
+    - libs/atlas
+:compile: |
+  make LAdir=$ATLASLIB arch=Linux-gcc <%= redirect :make %> 
+:install: |
+  cp -pav . <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  prepend-path PATH ${appdir}
+  prepend-path MANPATH ${appdir}/hpl/man/

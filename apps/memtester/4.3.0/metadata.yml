@@ -1,0 +1,32 @@
+:schema: 1
+:license: GPL
+:summary: A userspace utility for testing the memory subsystem for faults.
+:url: http://freecode.com/projects/memtester
+:description: |
+  A user-space utility for testing the memory subsystem in a computer to determine 
+  if it is faulty. It does a good job of finding intermittent faults and 
+  non-deterministic faults. It has many tests to help catch borderline memory.
+:group: Benchmarks
+:changelog: |
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Bumped version to 4.3.0
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Ported to installer
+  * Mon May 16 2011 - Steve Norledge <steve.norledge@alces-software.com>
+    - First created
+:src: memtester-4.3.0.tar.gz
+:type: apps
+:version: '4.3.0'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir%>/bin/
+  cp -rv memtester <%= dest_dir %>/bin/.
+  chmod 755 <%=dest_dir%>/bin/memtester
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+
+  prepend-path PATH ${appdir}/bin/
