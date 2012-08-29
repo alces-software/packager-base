@@ -1,8 +1,23 @@
 ---
-:src: fftw-2.1.5.tar.gz
-:src_dir: fftw-2.1.5
+:schema: 1
+:license: GPL
+:summary: C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions
+:url: http://www.fftw.org/
+:description: |
+  FFTW is a C subroutine library for computing the discrete Fourier
+  transform (DFT) in one or more dimensions, of arbitrary input size,
+  and of both real and complex data (as well as of even/odd data,
+  i.e. the discrete cosine/sine transforms or DCT/DST).
+:group: Libraries
 :type: libs
-:version: 2.1.5
+:changelog: |
+  * Fri Aug 24 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Mar 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fftw-3.2.2.tar.gz
+:src_dir: fftw-3.2.2
+:version: 3.2.2
 :compilers:
   gcc:
     :configure_prefix: ''
@@ -12,42 +27,26 @@
   float:
     :configure_flags: '--enable-float'
   double:
-    :configure_flags: ''
-  float-mpi:
-    :configure_flags: '--enable-float --enable-mpi'
-  double-mpi:
-    :configure_flags: '--enable-mpi'
+    :configure_flags: '--enable-sse2'
+  long-double:
+    :configure_flags: '--enable-long-double'
+:requirements:
+  :build: mpi/openmpi
 :compile: |
   <%= compiler[:configure_prefix] %> ./configure \
     --prefix=<%= dest_dir %> \
+    --enable-mpi \
     --enable-shared <%= variant[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
 :module: |
-  #%Module1.0#####################################################################
-  ##
-  ## fftw2 module file
-  ##
-  ################################################################################
-  proc ModulesHelp { } {
-          global version
-
-          puts stderr "\tAdds `fftw-$version' to your PATH environment variable and necessary libraries"
-  }
-
-  <%= "prereq mpi/#{compiler_name}/openmpi" if variant_name =~ /-mpi$/ %>
-
-  set     version <%= version %>
-
-  module-whatis   "loads the necessary `fftw-$version' library paths"
-
-  set FFTW_DIR <%= dest_dir %>
+  set FFTW_DIR ${appdir}
 
   setenv           FFTWDIR          $FFTW_DIR/lib
   setenv           FFTW             $FFTW_DIR
   setenv           FFTWINCLUDE      $FFTW_DIR/include
-  setenv           FFTWLIB          fftw
+  setenv           FFTWLIB          fftw3
 
   prepend-path LD_LIBRARY_PATH $FFTW_DIR/lib/
   prepend-path MANPATH $FFTW_DIR/share/man/
