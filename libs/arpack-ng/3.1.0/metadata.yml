@@ -1,0 +1,59 @@
+---
+:schema: 1
+:license: BSD
+:summary: Collection of Fortran77 subroutines designed to solve large scale eigenvalue problems
+:url: http://forge.scilab.org/index.php/p/arpack-ng/
+:description: |
+  ARPACK is a collection of Fortran77 subroutines designed to solve
+  large scale eigenvalue problems.
+
+  Important Features:
+
+   * Reverse Communication Interface.
+   * Single and Double Precision Real Arithmetic Versions for
+     Symmetric, Non-symmetric, Standard or Generalized Problems.
+   * Single and Double Precision Complex Arithmetic Versions for
+     Standard or Generalized Problems.
+   * Routines for Banded Matrices - Standard or Generalized Problems.
+   * Routines for The Singular Value Decomposition.
+   * Example driver routines that may be used as templates to
+     implement numerous Shift-Invert strategies for all problem types,
+     data types and precision.
+   * It is free software. arpack-ng (like arpack) is released under
+     the BSD 3 clauses license.
+:group: Mathematics
+:requirements:
+  :compiler:
+    - libs/atlas
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: arpack-ng_3.1.0.tar.gz
+:src_dir: arpack-ng_3.1.0
+:type: libs
+:version: '3.1.0'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --with-blas=$ATLASDIR/lib/libatlas.a \
+    --with-lapack=$ATLASDIR/lib/liblapack.a \
+    --enable-mpi \
+    --prefix=<%= dest_dir %> \
+    LDFLAGS=-L$ATLASDIR/lib \
+    F77=gfortran <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig

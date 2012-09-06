@@ -1,0 +1,63 @@
+---
+:license: GPL
+:summary: Fortran library for fast updates of QR and Cholesky decompositions
+:url: http://sourceforge.net/projects/qrupdate/
+:description: |
+  qrupdate is a Fortran library for fast updates of QR and Cholesky
+  decompositions.
+
+  The following operations are supported:
+
+  * QR rank-1 update, QR column insert, QR column delete, QR column
+    shift, QR row insert, QR row delete
+  * Cholesky rank-1 update, Cholesky rank-1 downdate, Cholesky
+    symmetric insert, Cholesky symmetric insert, Cholesky symmetric
+    shift
+  * LU rank-1 update, LU pivoted rank-1 update
+:group: Mathematics
+:requirements:
+  :compile: libs/atlas
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: qrupdate-1.1.2.tar.gz
+:type: libs
+:version: '1.1.2'
+:compilers:
+  gcc:
+:compile: |
+  # patch the build parameters file to use ATLAS
+  patch -p1 <<\EOF
+  --- a/Makeconf   2010-01-19 11:35:49.000000000 +0000
+  +++ b/Makeconf   2012-05-16 19:17:16.613414906 +0100
+  @@ -6,9 +6,9 @@
+   FPICFLAGS=-fPIC
+   
+   # BLAS library (only required for tests)
+  -BLAS=-lblas
+  +BLAS=-L$(ATLASDIR)/lib -latlas
+   # LAPACK library (only required for tests)
+  -LAPACK=-llapack
+  +LAPACK=-L$(ATLASDIR)/lib -llapack
+   
+   # Library version
+   VERSION=1.1
+  EOF
+  make lib <%= redirect(:make_lib) %>
+  make solib <%= redirect(:make_solib) %>
+:install: |
+  for a in ChangeLog COPYING README; do
+    install -D -m 644 $a <%= dest_dir %>/$a
+  done
+  install -D -m 644 libqrupdate.a <%= dest_dir %>/lib/libqrupdate.a
+  install -D -m 755 libqrupdate.so <%= dest_dir %>/lib/libqrupdate.so.1.1
+  ln -s libqrupdate.so.1.1 <%= dest_dir %>/lib/libqrupdate.so
+  ln -s libqrupdate.so.1.1 <%= dest_dir %>/lib/libqrupdate.so.1
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  

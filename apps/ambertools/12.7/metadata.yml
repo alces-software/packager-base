@@ -1,0 +1,69 @@
+---
+:schema: 1
+:license: OTHER - Mixed GPL, BSD, public domain
+:summary: Set of programs for biomolecular simulation and analysis
+:url: http://ambermd.org/
+:description: |
+  AmberTools is a set of programs for biomolecular simulation and
+  analysis. They are designed to work well with each other, and with
+  the "regular" Amber suite of programs. You can perform many
+  simulation tasks with AmberTools, and you can do more extensive
+  simulations with the combination of AmberTools and Amber itself.
+:group: Biochemistry
+:changelog: |
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: AmberTools12.tar.bz2
+:src_dir: amber12
+:type: apps
+:version: '12.7'
+# :build_requires: alces-python alces-openmpi flex tcsh zlib-devel bzip2-devel libXt-devel libXext-devel libXdmcp-devel
+:requirements:
+  :runtime:
+    - apps/python
+    - mpi/openmpi
+  :build:
+    - apps/python
+    - mpi/openmpi
+:compilers:
+  gcc:
+    :amber_compiler_name: gnu
+:sources:
+  - bugfix.1
+  - bugfix.2
+  - bugfix.3
+  - bugfix.4
+  - bugfix.5
+  - bugfix.6
+  - bugfix.7
+:compile: |
+  export AMBERHOME=`pwd`
+  python_interpreter=`which python`
+  if [ "$python_interpreter" ]; then
+    PYTHONARGS="--with-python $python_interpreter"
+  fi
+  mkdir -p .patches/AmberTools_Unapplied_Patches
+  <% 1.upto(7) do |n| %>
+    cp <%= source("bugfix.#{n}") %> .patches/AmberTools_Unapplied_Patches
+  <% end %>
+  for a in .patches/AmberTools_Unapplied_Patches/*; do
+    ./patch_amber.py --apply-patch=$a
+  done
+  ./configure --no-updates $PYTHONARGS <%= compiler[:amber_compiler_name] %> <%= redirect(:configure) %>
+  make install <%= redirect(:compile) %>
+  if [ "$MPI_HOME" ]; then
+    ./configure --no-updates $PYTHONARGS -mpi -rism <%= compiler[:amber_compiler_name] %> <%= redirect(:configure_mpi) %>
+    make install <%= redirect(:compile_mpi) %>
+  fi
+:install: |
+  mkdir -p <%= dest_dir %>
+  cp -Lrv bin dat doc include lib <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv AMBERHOME ${appdir}
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin

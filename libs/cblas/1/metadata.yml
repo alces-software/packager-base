@@ -1,0 +1,44 @@
+---
+:schema: 1
+:license: NONFREE - unknown, check http://www.netlib.org/blas/blast-forum/
+:summary: Reference implementation for the C interface to the Legacy BLAS
+:url: http://www.netlib.org/blas/blast-forum/
+:description: |
+  The BLAS (Basic Linear Algebra Subprograms) are routines that
+  provide standard building blocks for performing basic vector and
+  matrix operations. The Level 1 BLAS perform scalar, vector and
+  vector-vector operations, the Level 2 BLAS perform matrix-vector
+  operations, and the Level 3 BLAS perform matrix-matrix
+  operations. Because the BLAS are efficient, portable, and widely
+  available, they are commonly used in the development of high quality
+  linear algebra software, LAPACK for example.
+
+  This package contains the reference implementation for the C
+  interface to the Legacy BLAS.
+:group: Libraries
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Mar 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: cblas-1alces.tgz
+:src_dir: CBLAS-1
+:type: libs
+:version: '1'
+:compilers:
+  gcc:
+:compile: |
+  SRCDIR=`pwd`
+  sed -e "s|%TOPDIR%|$SRCDIR|g" Makefile.LINUX_ALCES > Makefile.in
+  make alllib <%= redirect(:make) %>
+:install: |
+  install -D -m 644 lib/LINUX_ALCES/cblas_LINUX_ALCES.a <%= dest_dir %>/libcblas.a
+:module: |
+  setenv           CBLASDIR        ${appdir} 
+  setenv           CBLAS_DIR       ${appdir}
+  setenv           CBLASLIB        ${appdir}
+  setenv           CBLAS_LIB       ${appdir}
+  setenv           CBLAS       ${appdir}/libcblas.a
+
+  prepend-path LD_LIBRARY_PATH ${appdir}
+  prepend-path --delim " " LDFLAGS " -L${appdir}"

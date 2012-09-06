@@ -1,0 +1,65 @@
+---
+:scheme: 1
+:license: OTHER - see http://www.qhull.org/COPYING.txt
+:summary: General dimension code for computing convex hulls
+:url: http://www.qhull.org/
+:description: |
+  Qhull is a general dimension code for computing convex hulls,
+  Delaunay triangulations, halfspace intersections about a point,
+  Voronoi diagrams, furthest-site Delaunay triangulations, and
+  furthest-site Voronoi diagrams. These structures have applications
+  in science, engineering, statistics, and mathematics.
+
+  This package comprises six programs:
+
+    * qconvex - convex hulls
+    * qdelaunay - Delaunay triangulations and furthest-site Delaunay
+      triangulations
+    * qhalf - halfspace intersections about a point
+    * qhull - all structures with additional options
+    * qvoronoi - Voronoi diagrams and furthest-site Voronoi diagrams
+    * rbox - generate point distributions for qhull
+:group: Mathematics
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: qhull-2012.1-src.tgz
+:type: apps
+:version: '2012.1'
+:compilers:
+  gcc:
+:compile: |
+  # patch the Makefile to addd -fno-strict-aliasing
+  patch -p1 <<\EOF
+  --- a/Makefile     2012-02-20 02:55:57.000000000 +0000
+  +++ b/Makefile     2012-05-16 14:27:57.504411338 +0100
+  @@ -87,11 +87,11 @@
+   
+   #for Gnu's gcc compiler, -O2 for optimization, -g for debugging
+   CC        = gcc
+  -CC_OPTS1  = -O2 -fPIC -ansi -Isrc/libqhull $(CC_WARNINGS)
+  +CC_OPTS1  = -O2 -fPIC -ansi -Isrc/libqhull -fno-strict-aliasing $(CC_WARNINGS)
+   CXX       = g++
+   
+   # libqhullcpp must be before libqhull
+  -CXX_OPTS1 = -O2 -Dqh_QHpointer -Isrc/ -Isrc/libqhullcpp -Isrc/libqhull $(CXX_WARNINGS)
+  +CXX_OPTS1 = -O2 -fPIC -Dqh_QHpointer -Isrc/ -Isrc/libqhullcpp -Isrc/libqhull -fno-strict-aliasing $(CXX_WARNINGS)
+   
+   # for shared library link
+   CC_OPTS3  =
+  EOF
+  make <%= redirect(:make) %>
+:install: |
+  make install BINDIR=<%=dest_dir%>/bin INCDIR=<%=dest_dir%>/include LIBDIR=<%=dest_dir%>/lib DOCDIR=<%=dest_dir%>/share/doc/qhull MANDIR=<%=dest_dir%>/share/man/man1 <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  

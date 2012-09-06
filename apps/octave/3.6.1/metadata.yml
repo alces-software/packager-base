@@ -1,0 +1,77 @@
+---
+:schema: 1
+:license: GPL
+:summary: High-level interpreted language, primarily intended for numerical computations
+:url: http://www.gnu.org/software/octave/
+:description: |
+  GNU Octave is a high-level interpreted language, primarily intended
+  for numerical computations. It provides capabilities for the
+  numerical solution of linear and nonlinear problems, and for
+  performing other numerical experiments. It also provides extensive
+  graphics capabilities for data visualization and
+  manipulation. Octave is normally used through its interactive
+  command line interface, but it can also be used to write
+  non-interactive programs. The Octave language is quite similar to
+  Matlab so that most programs are easily portable.
+:group: Mathematics
+:requirements:
+  :compile:
+    - libs/atlas
+    - mpi/openmpi
+    - libs/arpack-ng
+    - libs/fltk
+    - apps/qhull
+    - libs/qrupdate
+    - libs/suitesparse
+    - apps/hdf5_serial
+    - libs/graphicsmagick
+    - libs/fftw3_double-mpi
+    # - libs/fftw3_float-mpi
+  :runtime:
+    - libs/qrupdate
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: octave-3.6.1.tar.bz2
+:type: apps
+:version: '3.6.1'
+:compilers:
+  gcc:
+:compile: |
+  export FFTWF=$(echo $FFTW | sed 's/double/float/')
+  
+  ./configure --with-qhull-includedir=$QHULLINCLUDE --with-qhull-libdir=$QHULLLIB \
+    --with-hdf5-includedir=$HDF5INCLUDE --with-hdf5-libdir=$HDF5LIB \
+    --with-fftw3-includedir=$FFTW/include --with-fftw3-libdir=$FFTW/lib \
+    --with-fftw3f-includedir=$FFTWF/include --with-fftw3f-libdir=$FFTWF/lib \
+    --with-magick=GraphicsMagick \
+    --with-blas=$ATLASDIR/lib/libatlas.a \
+    --with-lapack=$ATLASDIR/lib/liblapack.a \
+    --with-qrupdate-includedir=$QRUPDATEINCLUDE --with-qrupdate-libdir=$QRUPDATELIB \
+    --with-amd-includedir=$SUITESPARSEINCLUDE --with-amd-libdir=$SUITESPARSELIB \
+    --with-camd-includedir=$SUITESPARSEINCLUDE --with-camd-libdir=$SUITESPARSELIB \
+    --with-colamd-includedir=$SUITESPARSEINCLUDE --with-colamd-libdir=$SUITESPARSELIB \
+    --with-ccolamd-includedir=$SUITESPARSEINCLUDE --with-ccolamd-libdir=$SUITESPARSELIB \
+    --with-cholmod-includedir=$SUITESPARSEINCLUDE --with-cholmod-libdir=$SUITESPARSELIB \
+    --with-cxsparse-includedir=$SUITESPARSEINCLUDE --with-cxsparse-libdir=$SUITESPARSELIB \
+    --with-umfpack-includedir=$SUITESPARSEINCLUDE --with-umfpack-libdir=$SUITESPARSELIB \
+    --with-arpack-libdir=$ARPACK_NGLIB \
+    --prefix=<%= dest_dir %> \
+    CPPFLAGS=-I$HDF5INCLUDE \
+    LDFLAGS="-L$ATLASDIR/lib -L$QRUPDATELIB" <%= redirect(:configure) %>
+  
+  make check <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include/octave-${version}
+  setenv ${appcaps}LIB ${appdir}/lib/octave/${version}
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/octave/${version}
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path INFOPATH ${appdir}/share/info

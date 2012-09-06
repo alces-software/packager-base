@@ -1,0 +1,42 @@
+---
+:schema: 1
+:license: ARTISTIC
+:summary: Enhanced version of TopHat with the ability to align reads across fusion points
+:url: http://tophat-fusion.sourceforge.net/
+:description: |
+  TopHat-Fusion is an enhanced version of TopHat with the ability to
+  align reads across fusion points, which results from the breakage
+  and re-joining of two different chromosomes, or from rearrangements
+  within a chromosome.
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Apr  5 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:requirements:
+  :compile:
+    - apps/samtools
+:src: tophatfusion-0.1.0.tar.gz
+:type: apps
+:version: '0.1.0'
+:compilers:
+  gcc:
+:compile: |
+  mkdir -p bamlib/include/bam
+  cp $SAMTOOLSDIR/*.h bamlib/include/bam
+  mkdir -p bamlib/lib
+  cp $SAMTOOLSDIR/libbam.a bamlib/lib
+  ./configure PYTHON='/usr/bin/env python' --prefix=<%= dest_dir %> --with-bam=`pwd`/bamlib <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  for a in AUTHORS COPYING THANKS NEWS README; do
+    install -D -m 644 $a <%= dest_dir %>/doc/$a
+  done
+  cp -r annotation <%= dest_dir %>/annotation  
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

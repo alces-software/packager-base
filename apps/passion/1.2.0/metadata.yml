@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: OTHER - see https://trac.nbic.nl/passion/
+:summary: A pattern growth algorithm based pipeline for splice site detection in paired-end RNA-Seq data
+:url: https://trac.nbic.nl/passion/wiki
+:description: |
+  PASSion uses the mapped read in a pair as anchor and then uses a high
+  resolution algorithm, pattern growth, to remap the proximal and distal
+  fragments of the unmapped read to a local region of the reference
+  indicated by the mate. It is capable of identifying both known and
+  novel canonical and non-canonical junctions with SNP or sequencing
+  error tolerance. In addition, our package can discover differential
+  and shared splicing patterns among multiple samples.
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Mar 15 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: passion-1.2.0.tar.gz
+:type: apps
+:version: '1.2.0'
+:compilers:
+  gcc:
+:compile:
+  ./compile.sh <%= redirect(:compile) %>
+:install: |
+  for a in *.pl; do
+    sed -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+    install -D -m 755 $a <%= dest_dir %>/bin/$a
+  done
+  install -D -m 755 passion_pipeline.sh <%= dest_dir %>/bin/passion_pipeline.sh
+  install -D -m 755 PASSION <%= dest_dir %>/bin/PASSION
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

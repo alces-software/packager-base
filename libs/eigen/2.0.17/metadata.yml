@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: LGPLv3+ or GPLv2+
+:summary: 'C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms'
+:url: http://eigen.tuxfamily.org/
+:description: |
+  Eigen is a C++ template library for linear algebra: matrices,
+  vectors, numerical solvers, and related algorithms.
+:requirements:
+  :tool: apps/cmake
+:group: Mathematics
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 2.0.17.tar.bz2
+:src_dir: eigen-eigen-b23437e61a07
+:type: libs
+:version: '2.0.17'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:configure) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  mv include/eigen2/* include
+  rmdir include/eigen2
+  sed -i 's/include\/eigen2/include/' share/pkgconfig/eigen2.pc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/share/pkgconfig

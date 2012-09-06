@@ -1,0 +1,62 @@
+---
+:schema: 1
+:license: LGPL
+:summary: Cross-platform program for Bayesian MCMC analysis of molecular sequences
+:url: http://beast.bio.ed.ac.uk/
+:description: |
+  BEAST (Bayesian Evolutionary Analysis Sampling Trees) is a
+  cross-platform program for Bayesian MCMC analysis of molecular
+  sequences. It is entirely orientated towards rooted, time-measured
+  phylogenies inferred using strict or relaxed molecular clock
+  models. It can be used as a method of reconstructing phylogenies but
+  is also a framework for testing evolutionary hypotheses without
+  conditioning on a single tree topology. BEAST uses MCMC to average
+  over tree space, so that each tree is weighted proportional to its
+  posterior probability.
+# :build_requires: ant
+:group: Biochemistry
+:changelog: |
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Apr 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: beast-1.7.1.tgz
+:type: apps
+:version: '1.7.1'
+:compilers:
+  gcc:
+:compile: |
+  # beast core
+  ant linux <%= redirect(:ant) %>
+  pushd release/Linux/BEASTv<%= version %>/native
+  export JAVA_HOME=${JAVA_HOME:-`readlink -f /usr/bin/javac | sed 's/\/bin\/javac//'`}
+  sed -i 's/       /\t/g' Makefile.amd64
+  make -f Makefile.amd64
+  rm -f *.o
+  cd ../lib
+  rm -f *.so
+  mv ../native/*.so .
+  popd
+
+  # phylogeography
+  ant -f build_phylogeography.xml package
+
+  # Other ant build files seem not to package anything usefully right
+  # now.
+:install: |
+  mkdir -p <%= dest_dir %>
+
+  # beast core
+  cp -r release/Linux/BEASTv<%= version %>/* <%= dest_dir %>
+  cp LICENSE NOTIFY <%= dest_dir %>
+
+  # phylogeography
+  cp -r release_phylogeography/common/bin/* <%= dest_dir %>/bin
+  cp -r release_phylogeography/PhylogeographyTools*/lib/* <%= dest_dir %>/lib
+  cp -r plugins_SDK <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin

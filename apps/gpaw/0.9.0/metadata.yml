@@ -1,0 +1,140 @@
+---
+:schema: 1
+:license: GPLv3+
+:summary: A density-functional theory (DFT) Python code
+:url: https://wiki.fysik.dtu.dk/gpaw/
+:description: |
+  GPAW is a density-functional theory (DFT) Python code based on the
+  projector-augmented wave (PAW) method and the atomic simulation
+  environment (ASE). It uses real-space uniform grids and multigrid
+  methods or atom-centered basis-functions.
+:group: Bioinformatics
+:requirements: 
+  :runtime:
+    - mpi/openmpi
+    - libs/numpy
+    - apps/hdf5_mpi
+    - apps/python
+  :build:
+    - mpi/openmpi
+    - libs/numpy
+    - apps/hdf5_mpi
+    - apps/python
+:changelog: |
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.0.0
+    - refactored to installer style
+  * Thu Feb 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 1.3.0
+    - brought spec file into line with recent macro additions
+  * Thu Jul 14 2011 Steve Norledge
+    - updated version 1.0.3
+    - improved dependecies
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: gpaw-0.9.0.8965.tar.gz
+:src_dir: gpaw-0.9.0.8965
+:type: apps
+:version: '0.9.0'
+:compilers:
+  gcc: {}
+  intel:
+    :cc: icc
+  open64:
+    :cc: opencc
+:variants:
+  atlas:
+    :libraries: "['atlas','lapack','hdf5','hdf5_hl','cblas','f77blas','z']"
+    :library_dirs: "[envget('ATLASLIB'),envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('ATLASINCLUDE'),envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+    :requirements:
+      :runtime:
+        - libs/atlas
+      :build:
+        - libs/atlas
+  scalapack:
+    :libraries: "['hdf5','hdf5_hl','z']"
+    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+    :scalapack: true
+    :scalapack_library_dirs: "[envget('SCALAPACKLIB')]"
+    :requirements:
+      :runtime:
+        - libs/scalapack_atlas
+      :build:
+        - libs/scalapack_atlas
+  mkl:
+    :libraries: "['hdf5','hdf5_hl','z']"
+    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+    :scalapack: true
+    :scalapack_libraries: "['mkl_scalapack_lp64','mkl_blacs_openmpi_lp64', 'mkl_intel_lp64', 'mkl_sequential', 'mkl_core', 'mkl_mc3']"
+    :scalapack_library_dirs: "['%s/%s' % (envget('INTELROOT'), 'mkl/lib/intel64')]"
+    :requirements:
+      :runtime:
+        - libs/intelmkl
+      :build:
+        - libs/intelmkl
+  acml:
+    :libraries: "['hdf5','hdf5_hl','z','fortran','ffio']"
+    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib'), '%s/%s' % (envget('OPEN64DIR'), 'lib/gcc-lib/x86_64-open64-linux/4.2.4')]"
+    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :hdf5: true
+    :scalapack: true
+    :scalapack_libraries: "['scalapack','acml']"
+    :scalapack_library_dirs: "[envget('SCALAPACKLIB'), '%s/%s' % (envget('ACMLDIR'), 'lib')]"
+    :requirements:
+      :runtime:
+        - libs/scalapack_acml_shared
+      :build:
+        - libs/scalapack_acml_shared
+:sources:
+  - gpaw-setups-0.8.7929.tar.gz
+  - python-ase-3.6.0.2515.tar.gz
+:compile: |
+  # create customize.py
+  cat <<PYTHON > customize.py
+  import os
+  def envget(v): return v in os.environ and os.environ[v]
+  <% if compiler[:cc] %>compiler = '<%= compiler[:cc] %>'<% end %>
+  libraries = <%= variant[:libraries] %>
+  library_dirs += <%= variant[:library_dirs] %>
+  include_dirs += <%= variant[:include_dirs] %>
+  hdf5 = <%= variant[:hdf5] ? 'True' : 'False' %>
+  scalapack = <%= variant[:scalapack] ? 'True' : 'False' %>
+  if scalapack:
+      libraries += <%= variant[:scalapack_libraries] || "['scalapack']" %>
+      library_dirs += <%= variant[:scalapack_library_dirs] || '[]' %>
+      define_macros += [('GPAW_NO_UNDERSCORE_CBLACS', '1')]
+      define_macros += [('GPAW_NO_UNDERSCORE_CSCALAPACK', '1')]
+  PYTHON
+
+  python setup.py build <%= redirect(:compile) %>
+:install: |
+  python setup.py install --prefix=<%= dest_dir %> <%= redirect(:install) %>
+
+  # install ase
+  tar xvf <%= source('python-ase-3.6.0.2515.tar.gz') %>
+  cd python-ase-3.6.0.2515
+  python setup.py install --prefix=<%= dest_dir %>/share/python
+
+  # install setups
+  tar xvf <%= source('gpaw-setups-0.8.7929.tar.gz') %>
+  mkdir -p <%= dest_dir %>/share/setups
+  cp -r gpaw-setups-0.8.7929/* <%= dest_dir %>/share/setups
+  chmod 0644 <%= dest_dir %>/share/setups/*
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/share/python/lib/python2.7/site-packages
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
+  
+  setenv GPAW_SETUP_PATH ${appdir}/share/setups

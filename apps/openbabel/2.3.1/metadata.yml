@@ -1,0 +1,46 @@
+---
+:schema: 1
+:license: GPL
+:summary: A chemical toolbox designed to speak the many languages of chemical data
+:url: http://openbabel.org/
+:description: |
+  Open Babel is a chemical toolbox designed to speak the many
+  languages of chemical data. It’s an open, collaborative project
+  allowing anyone to search, convert, analyze, or store data from
+  molecular modeling, chemistry, solid-state materials, biochemistry,
+  or related areas.
+# :build_requires: wxGTK-devel alces-cmake alces-eigen2 libxml2-devel zlib-devel cairo-devel
+# :requires: wxGTK zlib cairo libxml2
+:requirements:
+  :tool: apps/cmake
+  :compile: libs/eigen2
+:group: Chemistry
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: openbabel-2.3.1.tar.gz
+:type: apps
+:version: '2.3.1'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DBUILD_GUI=ON \
+        -DPYTHON_BINDINGS=ON \
+        -DPERL_BINDINGS=ON \
+        -DEIGEN2_INCLUDE_DIR=$EIGEN2INCLUDE \
+        -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+        .. <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin

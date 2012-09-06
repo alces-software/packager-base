@@ -1,0 +1,45 @@
+---
+:schema: 1
+:license: OTHER - see http://www.nipgr.res.in/ngsqctoolkit.html
+:summary: A toolkit for the quality control (QC) of next generation sequencing (NGS) data
+:url: http://www.nipgr.res.in/ngsqctoolkit.html
+:description: |
+  NGS QC Toolkit: A toolkit for the quality control (QC) of next
+  generation sequencing (NGS) data. The toolkit comprises
+  user-friendly stand alone tools for quality control of the sequence
+  data generated using Illumina and Roche 454 platforms with detailed
+  results in the form of tables and graphs, and filtering of
+  high-quality sequence data. It also includes a few other tools,
+  which are helpful in NGS data quality control and analysis.
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Jun 20 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: NGSQCToolkit_v2.2.3.zip
+:src_dir: NGSQCToolkit_v2.2.3
+:type: apps
+:version: '2.2.3'
+:compilers:
+  noarch:
+:compile: |
+  # No-op; this is a noarch perl-based package
+:install: |
+  mkdir -p <%= dest_dir %>/doc <%= dest_dir %>/bin
+  for a in Format-converter Trimming QC Statistics; do
+    cp -rv $a/* <%= dest_dir %>/bin
+  done
+  chmod 755 <%= dest_dir %>/bin/*.pl
+  # clean up
+  rm -f <%= dest_dir %>/bin/lib/version~
+  # sed #!s to use env
+  for a in <%= dest_dir %>/bin/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+  done
+  cp NGSQCToolkitv2.2.3_manual.pdf <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

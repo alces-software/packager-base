@@ -14,30 +14,28 @@
 :group: Libraries
 :changelog: |
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - Bundle lapack-3.4.1.tgz with ATLAS 3.10.0
-  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
+    - Bundle lapack-3.2.2.tgz with ATLAS 3.9.32
   * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated Licenses, Group, Summary and URL fields and added description.
   * Thu Jul 7 2011 Steve Norledge
     - First Created
 :sources:
-  - lapack-3.4.1.tgz
-:src: atlas3.10.0.tar.bz2
+  - lapack-3.2.2.tgz
+:src: atlas3.9.32.tar.bz2
 :src_dir: ATLAS
 :type: libs
-:version: 3.10.0
+:version: 3.9.32
 :params:
   :cpuspeed: "Specify cpu speed in Hz, eg. '2666'"
-  :lapackfile: "Specify alternative lapack tarball location (pass 'default' to use bundled lapack-3.4.1.tgz)"
+  :lapackfile: "Specify alternative lapack tarball location (pass 'default' to use bundled lapack-3.2.2.tgz)"
 :compilers:
   gcc:
     :configure_flags: ''
   open64:
     :configure_flags: "-C xc opencc -C ic opencc -C if openf90 -C sk opencc -C dk opencc -C sm opencc -C dm opencc -F xc '-O3 -g -lfortran -lffio -lm' -F ic '-O3 -g -lfortran -lffio -lm' -F if '-O3 -g -lfortran -lffio -lm' -F sk '-O3 -g -lfortran -lffio -lm' -F dk '-O3 -g -lfortran -lffio -lm'  -F sm '-O3 -g -lfortran -lffio -lm' -F dm '-O3 -g -lfortran -lffio -lm'"
 :compile: |
-  <% lapackfile = param(:lapackfile) == 'default' ? source('lapack-3.4.1.tgz') : param(:lapackfile) %>
-  # export F77FLAGS="$F77FLAGS -msse2"
+  <% lapackfile = param(:lapackfile) == 'default' ? source('lapack-3.2.2.tgz') : param(:lapackfile) %>
   mkdir build
   cd build
   ../configure <%= compiler[:configure_flags] %> --prefix=<%= dest_dir %> \
@@ -63,7 +61,13 @@
   setenv           ATLAS_LIB        ${appdir}/lib
   setenv           ATLAS            ${appdir}/lib/libatlas.a
 
+  # this flag is set so applications know how to link against ATLAS
+  # shared object files (legacy mode indicates that there multiple
+  # library files exist for atlas, cblas, f77blas etc.  More modern
+  # ATLAS versions provide a single library (satlas) to link against.
+  setenv	   ATLAS_LEGACY	    true
+
   prepend-path LD_LIBRARY_PATH ${appdir}/lib/
   prepend-path LD_INCLUDE_PATH ${appdir}/include/
-  prepend-path CPLUS_INCLUDE_PATH ${appdir}/include/
+  prepend-path CPP_INCLUDE_PATH ${appdir}/include/
   prepend-path C_INCLUDE_PATH ${appdir}/include/

@@ -1,0 +1,32 @@
+---
+:schema: 1
+:license: GPL
+:summary: An algorithm for prediction of explicit solvent atom distribution
+:url: https://sites.google.com/site/dansindhikara/Home/software/placement
+:description: |
+  Placevent: An algorithm for prediction of explicit solvent atom
+  distribution—Application to HIV-1 protease and F-ATP synthase
+:requirements:
+  :runtime: libs/numpy
+:group: Biochemistry
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: placevent-0.2.tgz
+:type: apps
+:version: '0.2'
+:compilers:
+  noarch:
+:compile: |
+  # no compilation
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= dest_dir %>/doc
+  cp *.py <%= dest_dir %>/bin
+  cp GNU_General_Public_License <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

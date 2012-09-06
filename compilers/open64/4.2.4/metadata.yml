@@ -1,0 +1,62 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: An open source, optimizing compiler for the Itanium and x86-64 microprocessor architectures
+:url: http://www.open64.net/
+:description: |
+  Open64 has been well-recognized as an industrial-strength production
+  compiler.  It is the final result of research contributions from a
+  number of compiler groups around the world. Formerly known as Pro64,
+  Open64 was initially created by SGI from SGI's MIPSPro compiler, and
+  licensed under the GNU Public License (GPL v2).
+
+  Open64 also derives from work done by Intel Corp, in conjunction
+  with the Chinese Academy of Sciences. They created the Open Research
+  Compiler (ORC), and all their changes were later folded back into
+  the main Open64 source tree in 2005.
+
+  Open64 includes advanced interprocedural optimizations, loop nest
+  optimizations, global scalar optimizations, and code generation with
+  advanced global register allocation and software pipelining.
+:group: Compilers
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: open64-4.2.4-0.src.tar.bz2
+:type: compilers
+:src_dir: open64-4.2.4-src
+:version: '4.2.4'
+:compilers:
+  gcc:
+:compile: |
+  CONFIGURE=`pwd`/configure
+  mkdir ../build
+  cd ../build
+  $CONFIGURE --build=x86_64-unknown-linux-gnu --prefix=<%= dest_dir.gsub("compilers/#{compiler_name}/",'compilers/') %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd ../build
+  make install <%= redirect(:install) %>
+:module:
+  :compiler: |
+    setenv  CC       ${basepath}opencc
+    setenv  CXX      ${basepath}openCC
+    setenv  F77      ${basepath}openf90
+    setenv  F90      ${basepath}openf90
+    setenv  F95      ${basepath}openf95
+    setenv  FC       ${basepath}openf95
+
+    setenv ${appcaps}DIR ${appdir}
+    setenv ${appcaps}BIN ${appdir}/bin
+
+    prepend-path PATH ${appdir}/bin
+    prepend-path LD_LIBRARY_PATH ${appdir}/lib/gcc-lib/x86_64-open64-linux/${version}
+    prepend-path DYLD_LIBRARY_PATH ${appdir}/lib/gcc-lib/x86_64-open64-linux/${version}
+  :runtime: |
+    prepend-path LD_LIBRARY_PATH ${appdir}/lib/gcc-lib/x86_64-open64-linux/${version}
+    prepend-path DYLD_LIBRARY_PATH ${appdir}/lib/gcc-lib/x86_64-open64-linux/${version}
+
+
+

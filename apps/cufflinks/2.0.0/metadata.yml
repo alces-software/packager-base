@@ -20,12 +20,8 @@
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0.5
 :changelog: |
-  * Wed Aug 15 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - make requirements more stringent
-    - build against 0.1.18 of samtools
-  * Wed Jul 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - updated to version 2.0.2
-    - refactored to packager style
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
   * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - updated to version 2.0.0
     - refactored to installer style
@@ -37,9 +33,9 @@
     - improved dependecies
   * Tue Feb 22 2011 Steve Norledge
     - First created
-:src: cufflinks-2.0.2.tar.gz
+:src: cufflinks-2.0.0.tar.gz
 :type: apps
-:version: '2.0.2'
+:version: '2.0.0'
 :compilers:
   gcc:
 :patches:

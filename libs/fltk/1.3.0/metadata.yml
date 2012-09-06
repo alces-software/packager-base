@@ -1,0 +1,41 @@
+---
+:schema: 1
+:license: LGPL
+:summary: A cross-platform C++ GUI toolkit providing modern GUI functionality without the bloat
+:url: http://www.fltk.org/
+:description: |
+  FLTK (pronounced "fulltick") is a cross-platform C++ GUI toolkit for
+  UNIX®/Linux® (X11), Microsoft® Windows®, and MacOS® X. FLTK provides
+  modern GUI functionality without the bloat and supports 3D graphics
+  via OpenGL® and its built-in GLUT emulation.
+
+  FLTK is designed to be small and modular enough to be statically
+  linked, but works fine as a shared library. FLTK also includes an
+  excellent UI builder called FLUID that can be used to create
+  applications in minutes.
+:group: Libraries
+:changelog: |
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fltk-1.3.0-source.tar.gz
+:type: libs
+:version: '1.3.0'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --enable-shared --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  
