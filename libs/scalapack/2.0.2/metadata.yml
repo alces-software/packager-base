@@ -29,6 +29,7 @@
 :requirements:
   :build: mpi/openmpi
   :runtime: mpi/openmpi
+  :tool: apps/cmake
 :compilers:
   gcc:
     :configure_env: ''
