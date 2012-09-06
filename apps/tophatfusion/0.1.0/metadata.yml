@@ -24,9 +24,9 @@
   gcc:
 :compile: |
   mkdir -p bamlib/include/bam
-  cp $SAMTOOLSDIR/*.h bamlib/include/bam
+  cp $SAMTOOLSDIR/include/*.h bamlib/include/bam
   mkdir -p bamlib/lib
-  cp $SAMTOOLSDIR/libbam.a bamlib/lib
+  cp $SAMTOOLSDIR/lib/libbam.a bamlib/lib
   ./configure PYTHON='/usr/bin/env python' --prefix=<%= dest_dir %> --with-bam=`pwd`/bamlib <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
