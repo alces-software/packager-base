@@ -15,7 +15,7 @@
   Matlab so that most programs are easily portable.
 :group: Mathematics
 :requirements:
-  :compile:
+  :build:
     - libs/atlas
     - mpi/openmpi
     - libs/arpack-ng

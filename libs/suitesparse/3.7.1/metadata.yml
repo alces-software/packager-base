@@ -24,7 +24,7 @@
     * SuiteSparseQR: multifrontal sparse QR
 :group: Mathematics
 :requirements:
-  :compile: libs/atlas
+  :build: libs/atlas
 :changelog: |
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style

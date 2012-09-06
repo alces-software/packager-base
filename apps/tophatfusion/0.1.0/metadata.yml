@@ -15,7 +15,7 @@
   * Thu Apr  5 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :requirements:
-  :compile:
+  :build:
     - apps/samtools
 :src: tophatfusion-0.1.0.tar.gz
 :type: apps

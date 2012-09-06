@@ -10,7 +10,7 @@
   mechanics problems, including computational fluid dynamics (CFD).
 :group: Physics
 :requirements:
-  :compile: mpi/openmpi
+  :build: mpi/openmpi
   :runtime: mpi/openmpi
 :changelog: |
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
