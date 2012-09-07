@@ -61,7 +61,7 @@
     :include_dirs: "[envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
     :scalapack: true
-    :scalapack_library_dirs: "[envget('SCALAPACK_ATLAS_SAHREDLIB')]"
+    :scalapack_library_dirs: "[envget('SCALAPACK_ATLAS_SHAREDLIB')]"
     :requirements:
       :runtime:
         - libs/scalapack_atlas_shared
