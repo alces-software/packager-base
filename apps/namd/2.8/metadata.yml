@@ -41,7 +41,7 @@
   cd `basename $CHARMTAR .tar`
   ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared --with-production <%= redirect(:charm_build) %>
   cd ..
-  if [[ "$FFTWMODULES" =~ ":libs/fftw2_float-mpi" ]]; then
+  if [[ "$FFTW_MODULES" =~ ":libs/fftw2_float-mpi" ]]; then
     export FFTWDIR=$FFTW2_FLOAT_MPIDIR
   else
     export FFTWDIR=$FFTW2_FLOATDIR
