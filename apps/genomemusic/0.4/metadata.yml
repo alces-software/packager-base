@@ -20,6 +20,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri Sep  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added Bit::Vector dependency as it is not picked up by the usual perl build process/cpanm
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: genome-music-0.4.tar.gz
@@ -34,6 +36,7 @@
 :install: |
   export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
   export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm Bit::Vector <%= redirect(:extra_deps) %>
   cpanm . <%= redirect(:install) %>
   mkdir <%= dest_dir %>/bin
   mv <%= dest_dir %>/perl/bin/genome <%= dest_dir %>/bin
