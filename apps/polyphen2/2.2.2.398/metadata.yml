@@ -25,11 +25,7 @@
 :type: apps
 :version: '2.2.2.398'
 :sources:
-  - coils.tar.gz
-  - dsspcmbi.zip
   - mafft-6.864-without-extensions-src.tgz
-  - leon_1.0.tar.gz
-  - leon_1.1.tar.gz
   - weka-3-6-6.zip
   - gridware-polyphen2-installdb.sh
   - gridware-polyphen2-userprep.sh
@@ -73,7 +69,8 @@
   make install <%= redirect(:install) %>
   cd ..
   # copy everything into place in gridware (barring src/)
-  cp -rv [A-Za-rt-z]* scratch sets <%= dest_dir %>
+  # NB. while it seems that this shouldn't include UPCASE file names it, in fact, does.
+  cp -rv [a-rt-z]* scratch sets <%= dest_dir %>
 
   cd <%= dest_dir %>
   # execute configure script non-interactively to generate a default config
