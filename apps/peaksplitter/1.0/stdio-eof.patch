@@ -1,0 +1,22 @@
+diff -u -r PeakSplitter_Linux64.orig/PeakSplitter_v1/SplitPeaks/tclap/MultiArg.h PeakSplitter_Linux64/PeakSplitter_v1/SplitPeaks/tclap/MultiArg.h
+--- PeakSplitter_Linux64.orig/PeakSplitter_v1/SplitPeaks/tclap/MultiArg.h       2011-05-16 08:52:12.000000000 +0100
++++ PeakSplitter_Linux64/PeakSplitter_v1/SplitPeaks/tclap/MultiArg.h    2012-09-07 22:32:00.498134043 +0100
+@@ -25,6 +25,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <stdio.h>
+ 
+ #include <tclap/Arg.h>
+ #include <tclap/Constraint.h>
+diff -u -r PeakSplitter_Linux64.orig/PeakSplitter_v1/SplitPeaks/tclap/ValueArg.h PeakSplitter_Linux64/PeakSplitter_v1/SplitPeaks/tclap/ValueArg.h
+--- PeakSplitter_Linux64.orig/PeakSplitter_v1/SplitPeaks/tclap/ValueArg.h       2011-05-16 08:52:12.000000000 +0100
++++ PeakSplitter_Linux64/PeakSplitter_v1/SplitPeaks/tclap/ValueArg.h    2012-09-07 22:32:31.430601842 +0100
+@@ -25,6 +25,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <stdio.h>
+ 
+ #include <tclap/Arg.h>
+ #include <tclap/Constraint.h>
