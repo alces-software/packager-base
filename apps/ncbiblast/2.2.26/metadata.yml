@@ -29,6 +29,7 @@
 :compile: |
   cd c++
   ./configure --without-boost --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  sed -i -e 's|/usr/bin/touch|touch|g' GCC446-Debug64/build/Makefile.meta GCC446-Debug64/build/Makefile.mk
   make <%= redirect(:make) %>
 :install: |
   cd c++
