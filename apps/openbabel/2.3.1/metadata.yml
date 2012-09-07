@@ -16,6 +16,8 @@
   :build: libs/eigen ~> 2.0.0
 :group: Chemistry
 :changelog: |
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use EIGENINCLUDE rather than EIGEN2INCLUDE
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -31,7 +33,7 @@
   cmake -DBUILD_GUI=ON \
         -DPYTHON_BINDINGS=ON \
         -DPERL_BINDINGS=ON \
-        -DEIGEN2_INCLUDE_DIR=$EIGEN2INCLUDE \
+        -DEIGEN2_INCLUDE_DIR=$EIGENINCLUDE \
         -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
         .. <%= redirect(:configure) %>
   make <%= redirect(:make) %>
