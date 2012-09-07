@@ -14,12 +14,12 @@
     - mpi/openmpi
     - libs/numpy
     - apps/hdf5_mpi
-    - apps/python
+    - apps/python ~> 2.7.0
   :build:
     - mpi/openmpi
     - libs/numpy
     - apps/hdf5_mpi
-    - apps/python
+    - apps/python ~> 2.7.0
 :changelog: |
   * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
@@ -61,12 +61,12 @@
     :include_dirs: "[envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
     :scalapack: true
-    :scalapack_library_dirs: "[envget('SCALAPACKLIB')]"
+    :scalapack_library_dirs: "[envget('SCALAPACK_ATLAS_SAHREDLIB')]"
     :requirements:
       :runtime:
-        - libs/scalapack_atlas
+        - libs/scalapack_atlas_shared
       :build:
-        - libs/scalapack_atlas
+        - libs/scalapack_atlas_shared
   mkl:
     :libraries: "['hdf5','hdf5_hl','z']"
     :library_dirs: "[envget('HDF5_MPILIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
@@ -87,7 +87,7 @@
     :hdf5: true
     :scalapack: true
     :scalapack_libraries: "['scalapack','acml']"
-    :scalapack_library_dirs: "[envget('SCALAPACKLIB'), '%s/%s' % (envget('ACMLDIR'), 'lib')]"
+    :scalapack_library_dirs: "[envget('SCALAPACK_ACML_SHAREDLIB'), '%s/%s' % (envget('ACMLDIR'), 'lib')]"
     :requirements:
       :runtime:
         - libs/scalapack_acml_shared

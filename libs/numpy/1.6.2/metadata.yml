@@ -34,6 +34,9 @@
     :atlas_dir: '$ATLASDIR'
     :requirements:
       :build: libs/atlas
+:requirements:
+  :build: apps/python ~> 2.7.0
+  :runtime: apps/python ~> 2.7.0
 :compile: |
   export BLAS=<%= compiler[:blas_dir] %>
   export LAPACK=<%= compiler[:lapack_dir] %>
