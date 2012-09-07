@@ -20,6 +20,8 @@
   :runtime:
     - mpi/openmpi
 :changelog: |
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add workaround for NWCHEM_TOP exceeding nwchem's limit of 65 characters
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri Mar 23 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -33,7 +35,10 @@
 :compile: |
   export LARGE_FILES=TRUE
   export USE_NOFSCHECK=TRUE
-  export NWCHEM_TOP=`pwd`
+  export NWCHEM_BUILDDIR=/tmp/nwchem.$$
+  mkdir $NWCHEM_BUILDDIR
+  export NWCHEM_TOP=$NWCHEM_BUILDDIR/nwchem-<%= version %>
+  (cd .. && ln -s `pwd`/nwchem-<%= version %> $NWCHEM_BUILDDIR/nwchem-<%= version %>)
   export NWCHEM_MODULES=all
   export NWCHEM_TARGET=LINUX64
 
