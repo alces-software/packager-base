@@ -28,8 +28,10 @@
 :version: '4.5.5'
 :compilers:
   gcc:
+    :configure_prefix: CPPFLAGS="-I$FFTW3_FLOATINCLUDE" LDFLAGS="-L$FFTW3_FLOATLIB"
     :fft: fftw3
   intel:
+    :configure_prefix: CPPFLAGS="-I$FFTW3_FLOATINCLUDE" LDFLAGS="-L$FFTW3_FLOATLIB"
     :fft: fftw3
 :compile: |
   cp -r <%= src_dir %> <%= src_dir %>.mpi
