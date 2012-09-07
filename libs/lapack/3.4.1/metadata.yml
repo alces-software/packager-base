@@ -39,11 +39,13 @@
   cp INSTALL/make.inc.<%= compiler[:base_file] %> make.inc
   sed -i -e 's/^FORTRAN\s\+=.*$/FORTRAN = \$(FC)/g' make.inc  
   sed -i -e 's/^LOADER\s\+=.*$/LOADER = \$(FC)/g' make.inc  
-  make blaslib lapacklib tmglib variants <%= redirect(:make) %>
+  sed -i -e 's/^\(CC\s\+=.*\)$/#\1/g' make.inc  
+  make blaslib lapacklib lapackelib tmglib variants <%= redirect(:make) %>
 :install: |
-  install -D -m 644 lapack_LINUX_ALCES.a <%= dest_dir %>/liblapack.a
-  install -D -m 644 tmglib_LINUX_ALCES.a <%= dest_dir %>/libtmglib.a
-  install -D -m 644 blas_LINUX_ALCES.a <%= dest_dir %>/libblas.a
+  install -D -m 644 liblapack.a <%= dest_dir %>/liblapack.a
+  install -D -m 644 liblapacke.a <%= dest_dir %>/liblapacke.a
+  install -D -m 644 libtmglib.a <%= dest_dir %>/libtmglib.a
+  install -D -m 644 librefblas.a <%= dest_dir %>/librefblas.a
   install -m 644 README LICENSE -t <%= dest_dir %>
   install -d <%= dest_dir %>/variants
   install -m 644 SRC/VARIANTS/LIB/* -t <%= dest_dir %>/variants
