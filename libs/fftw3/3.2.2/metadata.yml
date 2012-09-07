@@ -11,6 +11,8 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Modified modulefile for consistency with other gridware
   * Fri Aug 24 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Mon Mar 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -41,17 +43,16 @@
 :install: |
   make install <%= redirect(:install) %>
 :module: |
-  set FFTW_DIR ${appdir}
+  prepend-path FFTW_MODULES [module-info name]
 
-  setenv           FFTWDIR          $FFTW_DIR/lib
-  setenv           FFTW             $FFTW_DIR
-  setenv           FFTWINCLUDE      $FFTW_DIR/include
-  setenv           FFTWLIB          fftw3
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
 
-  prepend-path LD_LIBRARY_PATH $FFTW_DIR/lib/
-  prepend-path MANPATH $FFTW_DIR/share/man/
-  prepend-path C_INCLUDE_PATH $FFTW_DIR/include/
-  prepend-path CPLUS_INCLUDE_PATH $FFTW_DIR/include/
-  prepend-path --delim " " CPPFLAGS " -I$FFTW_DIR/include"
-  prepend-path --delim " " CFLAGS " -I$FFTW_DIR/include"
-  prepend-path --delim " " LDFLAGS " -L$FFTW_DIR/lib/"
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+  # prepend-path C_INCLUDE_PATH ${appdir}/include
+  # prepend-path CPLUS_INCLUDE_PATH ${appdir}/include
+  # prepend-path --delim " " CPPFLAGS " -I${appdir}/include"
+  # prepend-path --delim " " CFLAGS " -I${appdir}/include"
+  # prepend-path --delim " " LDFLAGS " -L${appdir}/lib"
