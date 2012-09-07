@@ -34,7 +34,7 @@
   make <%= redirect(:make) %>
 :install: |
   # replace hard-coded path for psiblast with environment modules aware version
-  for a in IntersectLocations SIFT_for_submitting_NCBI_gi_id SIFT_for_submitting_alignment SIFT_for_submitting_fasta_seq seqs_chosen_via_median_info; dp
+  for a in IntersectLocations SIFT_for_submitting_NCBI_gi_id SIFT_for_submitting_alignment SIFT_for_submitting_fasta_seq seqs_chosen_via_median_info; do
     sed -i -e 's|export NCBI=.*|export NCBI=${NCBIBLASTBIN}|g' scripts/$a
   done
   make install <%= redirect(:install) %>
