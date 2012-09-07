@@ -13,7 +13,7 @@
 # :requires: wxGTK zlib cairo libxml2
 :requirements:
   :tool: apps/cmake
-  :build: libs/eigen2
+  :build: libs/eigen ~> 2.0.0
 :group: Chemistry
 :changelog: |
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
