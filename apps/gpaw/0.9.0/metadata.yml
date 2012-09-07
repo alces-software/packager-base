@@ -46,7 +46,9 @@
     :cc: opencc
 :variants:
   atlas:
-    :libraries: "['atlas','lapack','hdf5','hdf5_hl','cblas','f77blas','z']"
+    :libraries: 
+      :static: "['atlas','lapack','hdf5','hdf5_hl','cblas','f77blas','z']"
+      :shared: "['satlas','hdf5','hdf5_hl','z']"
     :library_dirs: "[envget('ATLASLIB'),envget('HDF5_MPILIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
     :include_dirs: "[envget('ATLASINCLUDE'),envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
@@ -102,7 +104,18 @@
   import os
   def envget(v): return v in os.environ and os.environ[v]
   <% if compiler[:cc] %>compiler = '<%= compiler[:cc] %>'<% end %>
-  libraries = <%= variant[:libraries] %>
+  libraries = <%=
+     if variant_name == 'atlas'
+       atlas_version = ":#{ENV['LOADEDMODULES']}:".match(":libs/atlas/([^/]*)/")[1]
+       if atlas_version >= '3.10.0'
+         variant[:libraries][:shared]
+       else
+         variant[:libraries][:static]
+       end
+     else
+       variant[:libraries]
+     end
+  %>
   library_dirs += <%= variant[:library_dirs] %>
   include_dirs += <%= variant[:include_dirs] %>
   hdf5 = <%= variant[:hdf5] ? 'True' : 'False' %>
