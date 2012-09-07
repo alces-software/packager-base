@@ -21,6 +21,9 @@
     - apps/hdf5_mpi
     - apps/python ~> 2.7.0
 :changelog: |
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Work with modern ATLAS shared library
+    - Work with HDF5 MPI and Scalapack variants
   * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
