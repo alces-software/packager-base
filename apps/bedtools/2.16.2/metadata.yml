@@ -13,6 +13,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 support
   * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to version 2.16.2
     - Refactored to packager style
@@ -26,7 +28,9 @@
 :version: '2.16.2'
 :compilers:
   gcc:
+  open64:
 :compile: |
+  sed -i -e 's/^\(export CXX.*\)$/#\1/g' Makefile
   make all <%= redirect(:make) %>
 :install: |
   cp -rv LICENSE README.rst RELEASE_HISTORY bin data genomes test <%= dest_dir %> <%= redirect(:install) %>
