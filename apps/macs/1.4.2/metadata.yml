@@ -27,7 +27,7 @@
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: MACS-1.4.2.tar.gz
-#:src_dir: taoliu-MACS-20a05e4
+:src_dir: MACS-1.4.2
 :version: '1.4.2'
 :compilers:
   gcc:
