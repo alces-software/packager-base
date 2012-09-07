@@ -41,7 +41,12 @@
   cd `basename $CHARMTAR .tar`
   ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared --with-production <%= redirect(:charm_build) %>
   cd ..
-  sed -i -e 's|FFTDIR=.*|FFTDIR=$(FFTW)|g;s|-ls|-l|g;s|\(FFTFLAGS=.*\)|\1 -DNAMD_FFTW_NO_TYPE_PREFIX|g' arch/Linux-x86_64.fftw
+  if [[ "$FFTWMODULES" =~ ":libs/fftw2_float-mpi" ]]; then
+    export FFTWDIR=$FFTW2_FLOAT_MPIDIR
+  else
+    export FFTWDIR=$FFTW2_FLOATDIR
+  fi
+  sed -i -e 's|FFTDIR=.*|FFTDIR=$(FFTWDIR)|g;s|-ls|-l|g;s|\(FFTFLAGS=.*\)|\1 -DNAMD_FFTW_NO_TYPE_PREFIX|g' arch/Linux-x86_64.fftw
   sed -i -e 's|TCLDIR=.*|TCLDIR=/usr|g;s|lib -ltcl8.3|lib64 -ltcl8.5|g' arch/Linux-x86_64.tcl
   ./config Linux-x86_64-g++ --charm-arch <%= variant_name %>-linux-x86_64 <%= redirect(:config) %>
   cd Linux-x86_64-g++

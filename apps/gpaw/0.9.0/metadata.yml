@@ -47,8 +47,8 @@
 :variants:
   atlas:
     :libraries: "['atlas','lapack','hdf5','hdf5_hl','cblas','f77blas','z']"
-    :library_dirs: "[envget('ATLASLIB'),envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
-    :include_dirs: "[envget('ATLASINCLUDE'),envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :library_dirs: "[envget('ATLASLIB'),envget('HDF5_MPILIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('ATLASINCLUDE'),envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
     :requirements:
       :runtime:
@@ -57,8 +57,8 @@
         - libs/atlas
   scalapack:
     :libraries: "['hdf5','hdf5_hl','z']"
-    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
-    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :library_dirs: "[envget('HDF5_MPILIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
     :scalapack: true
     :scalapack_library_dirs: "[envget('SCALAPACKLIB')]"
@@ -69,8 +69,8 @@
         - libs/scalapack_atlas
   mkl:
     :libraries: "['hdf5','hdf5_hl','z']"
-    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
-    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :library_dirs: "[envget('HDF5_MPILIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib')]"
+    :include_dirs: "[envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
     :scalapack: true
     :scalapack_libraries: "['mkl_scalapack_lp64','mkl_blacs_openmpi_lp64', 'mkl_intel_lp64', 'mkl_sequential', 'mkl_core', 'mkl_mc3']"
@@ -82,8 +82,8 @@
         - libs/intelmkl
   acml:
     :libraries: "['hdf5','hdf5_hl','z','fortran','ffio']"
-    :library_dirs: "[envget('HDF5LIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib'), '%s/%s' % (envget('OPEN64DIR'), 'lib/gcc-lib/x86_64-open64-linux/4.2.4')]"
-    :include_dirs: "[envget('HDF5INCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
+    :library_dirs: "[envget('HDF5_MPILIB'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/lib'), '%s/%s' % (envget('MPI_HOME'), 'lib'), '%s/%s' % (envget('OPEN64DIR'), 'lib/gcc-lib/x86_64-open64-linux/4.2.4')]"
+    :include_dirs: "[envget('HDF5_MPIINCLUDE'), '%s/%s' % (envget('NUMPYDIR'), 'python/lib/python2.7/site-packages/numpy/core/include'), '%s/%s' % (envget('MPI_HOME'), 'include')]"
     :hdf5: true
     :scalapack: true
     :scalapack_libraries: "['scalapack','acml']"

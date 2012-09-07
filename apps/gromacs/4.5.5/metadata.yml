@@ -20,7 +20,7 @@
   :runtime: mpi/openmpi
   :build: 
     - mpi/openmpi
-    - libs/fftw3/float-mpi
+    - libs/fftw3_float
 :changelog: |
   * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created

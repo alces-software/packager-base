@@ -28,6 +28,7 @@
 :type: compilers
 :src_dir: open64-4.2.4-src
 :version: '4.2.4'
+# on RHEL 6.x systems, requires: libstdc++-devel-4.4.6-3.el6.i686
 :compilers:
   gcc:
 :compile: |

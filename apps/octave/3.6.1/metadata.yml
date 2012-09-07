@@ -25,8 +25,8 @@
     - libs/suitesparse
     - apps/hdf5_serial
     - libs/graphicsmagick
-    - libs/fftw3_double-mpi
-    # - libs/fftw3_float-mpi
+    - libs/fftw3_double
+    - libs/fftw3_float
   :runtime:
     - libs/qrupdate
 :changelog: |
@@ -40,12 +40,10 @@
 :compilers:
   gcc:
 :compile: |
-  export FFTWF=$(echo $FFTW | sed 's/double/float/')
-  
   ./configure --with-qhull-includedir=$QHULLINCLUDE --with-qhull-libdir=$QHULLLIB \
-    --with-hdf5-includedir=$HDF5INCLUDE --with-hdf5-libdir=$HDF5LIB \
-    --with-fftw3-includedir=$FFTW/include --with-fftw3-libdir=$FFTW/lib \
-    --with-fftw3f-includedir=$FFTWF/include --with-fftw3f-libdir=$FFTWF/lib \
+    --with-hdf5-includedir=$HDF5_SERIALINCLUDE --with-hdf5-libdir=$HDF5_SERIALLIB \
+    --with-fftw3-includedir=$FFTW3_DOUBLEINCLUDE --with-fftw3-libdir=$FFTW3_DOUBLELIB \
+    --with-fftw3f-includedir=$FFTW3_FLOATINCLUDE --with-fftw3f-libdir=$FFTW3_FLOATLIB \
     --with-magick=GraphicsMagick \
     --with-blas=$ATLASDIR/lib/libatlas.a \
     --with-lapack=$ATLASDIR/lib/liblapack.a \
@@ -59,7 +57,7 @@
     --with-umfpack-includedir=$SUITESPARSEINCLUDE --with-umfpack-libdir=$SUITESPARSELIB \
     --with-arpack-libdir=$ARPACK_NGLIB \
     --prefix=<%= dest_dir %> \
-    CPPFLAGS=-I$HDF5INCLUDE \
+    CPPFLAGS=-I$HDF5_SERIALINCLUDE \
     LDFLAGS="-L$ATLASDIR/lib -L$QRUPDATELIB" <%= redirect(:configure) %>
   
   make check <%= redirect(:make) %>
