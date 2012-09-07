@@ -26,11 +26,14 @@
     :requirements:
       :runtime:
         - mpi/openmpi
+        - libs/fftw2_float-mpi
       :build:
         - mpi/openmpi
         - libs/fftw2_float-mpi
   net:
     :requirements:
+      :runtime:
+        - libs/fftw2_float
       :build:
         - libs/fftw2_float
 :compilers:
