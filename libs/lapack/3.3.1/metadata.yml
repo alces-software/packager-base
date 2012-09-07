@@ -16,6 +16,8 @@
   real and complex matrices, in both single and double precision.
 :group: Libraries
 :changelog: |
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 compiler support
   * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style  
   * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -27,10 +29,15 @@
 :version: 3.3.1
 :compilers:
   gcc:
+    :base_file: gfortran
+  open64:
+    :base_file: gfortran
 :patches:
   - lapack-alces.patch
 :compile: |
-  cp INSTALL/make.inc.gfortran make.inc
+  cp INSTALL/make.inc.<%= compiler[:base_file] %> make.inc
+  sed -i -e 's/^FORTRAN\s\+=.*$/FORTRAN = \$(FC)/g' make.inc  
+  sed -i -e 's/^LOADER\s\+=.*$/LOADER = \$(FC)/g' make.inc  
   make blaslib lapacklib tmglib variants <%= redirect(:make) %>
 :install: |
   install -D -m 644 lapack_LINUX_ALCES.a <%= dest_dir %>/liblapack.a
