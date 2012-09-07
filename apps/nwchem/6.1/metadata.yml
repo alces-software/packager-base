@@ -55,6 +55,8 @@
   make nwchem_config <%= redirect(:configure) %>
   make <%= compiler[:compiler_env] %> <%= redirect(:make) %>
   cd ..
+  rm $NWCHEM_BUILDDIR/nwchem-<%= version %>
+  rmdir $NWCHEM_BUILDDIR
   cat > default.nwchemrc <<\EOT
   nwchem_basis_library <%= dest_dir %>/data/libraries/
   nwchem_nwpw_library <%= dest_dir %>/data/libraryps/
