@@ -40,21 +40,28 @@
 :compilers:
   gcc:
 :compile: |
+  export PPH2_TOPDIR=$(pwd)
+
   cd src
 
   # install the required Perl libraries inside the source tree
-  SRC_DIR="$(pwd)"
-  export PERL5LIB="${SRC_DIR}/perl/lib/perl5"
-  export PERL_CPANM_OPT="-l ${SRC_DIR}/perl -n"
-  # XML::Simple <-- seems to fail with write to system directory fsr :-(
+  export PERL5LIB="${PPH2_TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${PPH2_TOPDIR}/perl -n"
+  # XML::Simple may fail with write to system directory fsr :-(
+  cpanm XML::Simple <%= redirect(:cpanm) %> 
   cpanm LWP::Simple DBD::SQLite <%= redirect(:cpanm) %>
 
   # Perform the build
   <% package.sources.each do |s| %>
     cp <%= source(s) %> .
   <% end %>
+
   make download <%= redirect(:download) %>
   make clean
+
+  # patch the Makefile to ensure pph2 variable is set up to point to
+  # top of source tree
+  sed -i -e 's/^pph2\s\+=.*$/pph2 = \$(PPH2_TOPDIR)/g' Makefile
   make <%= redirect(:make) %>
 :polyphen_dbvars:
   NRDB_BLAST: $ENV{POLYPHEN2_NRDB_BLAST}
@@ -72,7 +79,7 @@
   cd ..
   # copy everything into place in gridware (barring src/)
   # NB. while it seems that this shouldn't include UPCASE file names it, in fact, does.
-  cp -rv [a-rt-z]* scratch sets <%= dest_dir %>
+  cp -rv [a-rt-z]* scratch sets <%= dest_dir %> <%= redirect(:install) %>
 
   cd <%= dest_dir %>
   # execute configure script non-interactively to generate a default config
@@ -101,6 +108,10 @@
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PATH ${appdir}/perl/bin
+  prepend-path MANPATH ${appdir}/perl/man
 
   prepend-path PERL5LIB ${appdir}/perl
   prepend-path PATH ${appdir}/bin
