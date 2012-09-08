@@ -1,0 +1,53 @@
+---
+:schema: 1
+:license: GPL
+:summary: Facilitates the fast and accurate mapping of short reads to reference sequences
+:url: http://sourceforge.net/apps/mediawiki/bfast
+:description: |
+  BFAST facilitates the fast and accurate mapping of short reads to
+  reference sequences. Some advantages of BFAST include:
+
+   * Speed: enables billions of short reads to be mapped quickly.
+   * Accuracy: A priori probabilities for mapping reads with defined
+     set of variants.
+   * An easy way to measurably tune accuracy at the expense of speed.
+
+  Specifically, BFAST was designed to facilitate whole-genome
+  resequencing, where mapping billions of short reads with variants is
+  of utmost importance.
+:group: Bioinformatics
+:changelog: |
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Fri Dec 2 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bfast-0.7.0a.tar.gz
+:type: apps
+:version: 0.7.0a
+:requirements:
+  :tool: apps/cpanminus
+# needs expat on nodes and expat-devel on build host to support XML::Simple
+:compilers:
+  gcc:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm XML::Simple <%= redirect(:cpanm) %> 
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  for a in <%= dest_dir %>/bin/*.pl; do
+    sed -i -e 's|#!/usr/bin/perl|#!/usr/bin/env perl|g' $a
+  done
+  cp -rv perl <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
