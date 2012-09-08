@@ -14,6 +14,8 @@
   linear algebra software, LAPACK for example.
 :group: Libraries
 :changelog: |
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 compiler support
   * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Mon Mar 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -26,9 +28,12 @@
 :version: '1'
 :compilers:
   gcc:
+  open64:
 :patches:
   - blas-alces.patch
 :compile: |
+  sed -i -e 's/^FORTRAN\s\+=.*$/FORTRAN = \$(F77)/g' make.inc  
+  sed -i -e 's/^LOADER\s\+=.*$/LOADER = \$(F77)/g' make.inc  
   make all <%= redirect(:make) %>
 :install: |
   install -D -m 644 blas_LINUX_ALCES.a <%= dest_dir %>/libblas.a
