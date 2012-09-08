@@ -36,6 +36,8 @@
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
   setenv ${appcaps}DATA ${appdir}/share/EMBOSS/data
 
   prepend-path PATH ${appdir}/bin
