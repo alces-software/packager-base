@@ -25,6 +25,9 @@
 :type: apps
 :version: '2.2.2.398'
 :sources:
+  - coils.tar.gz
+  - leon_1.0.tar.gz
+  - leon_1.1.tar.gz
   - mafft-6.864-without-extensions-src.tgz
   - weka-3-6-6.zip
   - gridware-polyphen2-installdb.sh
