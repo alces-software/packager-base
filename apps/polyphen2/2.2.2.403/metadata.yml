@@ -61,7 +61,7 @@
 
   # patch the Makefile to ensure pph2 variable is set up to point to
   # top of source tree
-  sed -i -e 's/^pph2\s\+=.*$/pph2 = \$(PPH2_TOPDIR)/g' Makefile
+  sed -i -e "s|^pph2\\s\\+=.*\$|pph2 = $PPH2_TOPDIR|g" Makefile
   make <%= redirect(:make) %>
 :polyphen_dbvars:
   NRDB_BLAST: $ENV{POLYPHEN2_NRDB_BLAST}
