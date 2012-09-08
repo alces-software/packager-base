@@ -79,7 +79,7 @@
   cd ..
   # copy everything into place in gridware (barring src/)
   # NB. while it seems that this shouldn't include UPCASE file names it, in fact, does.
-  cp -rv [a-rt-z]* scratch sets <%= dest_dir %> <%= redirect(:install) %>
+  cp -rv [a-rt-z]* scratch sets share <%= dest_dir %> <%= redirect(:install) %>
 
   cd <%= dest_dir %>
   # execute configure script non-interactively to generate a default config
@@ -112,6 +112,7 @@
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5
   prepend-path PATH ${appdir}/perl/bin
   prepend-path MANPATH ${appdir}/perl/man
+  prepend-path MANPATH ${appdir}/share/man
 
   prepend-path PERL5LIB ${appdir}/perl
   prepend-path PATH ${appdir}/bin
