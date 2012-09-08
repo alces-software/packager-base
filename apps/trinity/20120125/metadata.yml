@@ -1,0 +1,50 @@
+---
+:schema: 1
+:license: BSD
+:summary: A novel method for the efficient and robust de novo reconstruction of transcriptomes from RNA-seq data
+:url: http://trinityrnaseq.sourceforge.net/
+:description: |
+  Trinity, developed at the Broad Institute and the Hebrew University
+  of Jerusalem, represents a novel method for the efficient and robust
+  de novo reconstruction of transcriptomes from RNA-seq data. Trinity
+  combines three independent software modules: Inchworm, Chrysalis,
+  and Butterfly, applied sequentially to process large volumes of
+  RNA-seq reads. Trinity partitions the sequence data into many
+  individual de Bruijn graphs, each representing the transcriptional
+  complexity at at a given gene or locus, and then processes each
+  graph independently to extract full-length splicing isoforms and to
+  tease apart transcripts derived from paralogous genes.
+:group: Bioinformatics
+:changelog: |
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Fri Feb 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: trinityrnaseq_r2012-01-25.tgz
+:src_dir: trinityrnaseq_r2012-01-25
+:type: apps
+:version: 20120125
+:requirements:
+  :tool: apps/cpanminus
+:compilers:
+  gcc:
+:compile: |
+  export TOPDIR=$(pwd)
+  make <%= redirect(:make) %>
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm IO::Compress <%= redirect(:cpanm) %> 
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/util
+  prepend-path PATH ${appdir}
+
+  

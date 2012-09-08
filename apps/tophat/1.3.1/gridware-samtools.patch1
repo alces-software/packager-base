@@ -1,0 +1,143 @@
+diff -uNr tophat-1.3.1/ax_bam.m4 tophat-1.3.1.alces/ax_bam.m4
+--- tophat-1.3.1/ax_bam.m4	2010-10-11 20:24:42.000000000 +0100
++++ tophat-1.3.1.alces/ax_bam.m4	2011-07-14 13:12:37.516666767 +0100
+@@ -102,7 +102,7 @@
+ 
+ 	AC_LANG_PUSH(C++)
+      	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+-	@%:@include <bam/bam.h>
++	@%:@include <bam.h>
+ 	]], [[
+ 	]])],[
+         AC_MSG_RESULT(yes)
+diff -uNr tophat-1.3.1/configure tophat-1.3.1.alces/configure
+--- tophat-1.3.1/configure      2011-06-23 15:21:43.000000000 +0100
++++ tophat-1.3.1.alces/configure        2011-07-14 13:12:08.646666766 +0100
+@@ -4110,7 +4110,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ 
+-	#include <bam/bam.h>
++	#include <bam.h>
+ 
+ int
+ main ()
+diff -uNr tophat-1.3.1/src/align_status.h tophat-1.3.1.alces/src/align_status.h
+--- tophat-1.3.1/src/align_status.h	2011-06-23 15:20:56.000000000 +0100
++++ tophat-1.3.1.alces/src/align_status.h	2011-07-14 13:12:08.646666766 +0100
+@@ -14,7 +14,7 @@
+ #include <cassert>
+ #include <cstring>
+ #include <seqan/sequence.h>
+-#include <bam/sam.h>
++#include <sam.h>
+ #include "common.h"
+ #include "junctions.h"
+ 
+diff -uNr tophat-1.3.1/src/align_status.h.orig tophat-1.3.1.alces/src/align_status.h.orig
+--- tophat-1.3.1/src/align_status.h.orig	1970-01-01 01:00:00.000000000 +0100
++++ tophat-1.3.1.alces/src/align_status.h.orig	2011-07-14 13:12:08.646666766 +0100
+@@ -0,0 +1,63 @@
++#ifndef ALIGN_STATUS_H
++#define ALIGN_STATUS_H
++
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string>
++#include <map>
++#include <vector>
++#include <cassert>
++#include <cstring>
++#include <seqan/sequence.h>
++#include <bam/sam.h>
++#include "common.h"
++#include "junctions.h"
++
++
++using namespace std;
++
++
++/**
++ * The main purpose of this struct is to provide a
++ * (fairly primitive) method for ranking competing alignments
++ * for a read. In general,
++ * continguous > spliced > in/dels
++ * Ties are broken with the number of mismatches
++ */
++struct AlignStatus
++{
++
++
++private:
++	/**
++	 * Is this alignment free of indels. Note, if there is no alignment
++	 * this should still be false.
++	 */
++	bool _indelFreeAlignment;
++
++	/**
++	 * Is this alignment free of unannotated splices? Note, if there is no alignment
++	 * this should still be false
++	 */
++	bool _unannotatedSpliceFreeAlignment;
++
++	/**
++	 * Is there an alignment?
++	 */
++	bool _aligned;
++
++public:
++  AlignStatus();
++  AlignStatus(const BowtieHit& bh, const JunctionSet& gtf_junctions);
++
++  bool operator<(const AlignStatus& rhs) const;
++  bool operator==(const AlignStatus& rhs) const;
++  bool operator!=(const AlignStatus& rhs) const;
++};
++
++#endif
+diff -uNr tophat-1.3.1/src/bam2fastx.cpp tophat-1.3.1.alces/src/bam2fastx.cpp
+--- tophat-1.3.1/src/bam2fastx.cpp	2011-06-02 22:56:56.000000000 +0100
++++ tophat-1.3.1.alces/src/bam2fastx.cpp	2011-07-14 13:13:11.206666766 +0100
+@@ -3,8 +3,8 @@
+ #include <cstring>
+ #include <getopt.h>
+ 
+-#include "bam/bam.h"
+-#include "bam/sam.h"
++#include "bam.h"
++#include "sam.h"
+ 
+ static bool is_fastq=true; //default is fastq
+ static char qseq[2048];
+diff -uNr tophat-1.3.1/src/bwt_map.h tophat-1.3.1.alces/src/bwt_map.h
+--- tophat-1.3.1/src/bwt_map.h	2011-06-02 22:56:55.000000000 +0100
++++ tophat-1.3.1.alces/src/bwt_map.h	2011-07-14 13:12:08.646666766 +0100
+@@ -15,7 +15,7 @@
+ #include <cstring>
+ #include <seqan/sequence.h>
+ 
+-#include <bam/sam.h>
++#include <sam.h>
+ using namespace std;
+ 
+ #include "common.h"
+diff -uNr tophat-1.3.1/src/common.h tophat-1.3.1.alces/src/common.h
+--- tophat-1.3.1/src/common.h	2011-06-23 15:20:56.000000000 +0100
++++ tophat-1.3.1.alces/src/common.h	2011-07-14 13:12:08.646666766 +0100
+@@ -15,8 +15,8 @@
+ #include <cstdio>
+ #include <string>
+ #include <vector>
+-#include "bam/bam.h"
+-#include "bam/sam.h"
++#include "bam.h"
++#include "sam.h"
+ 
+ 
+ #ifdef MEM_DEBUG

@@ -1,0 +1,49 @@
+---
+:schema: 1
+:license: BSD
+:summary: Software package for comparative and evolutionary genomics
+:url: http://compgen.bscb.cornell.edu/phast/index.php
+:description: |
+  Phylogenetic Analysis with Space/Time Models (PHAST) is a freely
+  available software package for comparative and evolutionary
+  genomics. It consists of about half a dozen major programs, plus
+  more than a dozen utilities for manipulating sequence alignments,
+  phylogenetic trees, and genomic annotations (see left panel). For
+  the most part, PHAST focuses on two kinds of applications: the
+  identification of novel functional elements, including
+  protein-coding exons and evolutionarily conserved sequences; and
+  statistical phylogenetic modeling, including estimation of model
+  parameters, detection of signatures of selection, and reconstruction
+  of ancestral sequences. It consists of over 60,000 lines of C code.
+
+  PHAST does not support phylogeny reconstruction or sequence
+  alignment, and it is designed for use with DNA sequences only.
+:group: Bioinformatics
+:changelog: |
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Oct 4 2011 Steve Norledge
+    - First created
+:src: phast.v1_1.tgz
+:src_dir: phast
+:type: apps
+:version: '1.1'
+:patches:
+  - gridware-clapack.patch1
+:compilers:
+  gcc:
+:requirements:
+  :build: libs/clapack
+:compile: |
+  cd src
+  make all DESTDIR=<%= dest_dir %>
+:install: |
+  cd src
+  make install DESTDIR=<%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DATA ${appdir}/data
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man

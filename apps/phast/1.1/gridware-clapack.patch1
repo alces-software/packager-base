@@ -1,0 +1,84 @@
+diff -uNr phast.orig/Makefile phast/Makefile
+--- phast.orig/Makefile	2010-11-11 19:10:25.000000000 +0000
++++ phast/Makefile	2011-10-04 13:06:51.000000000 +0100
+@@ -3,7 +3,7 @@
+ 
+ all:
+ 	@echo "Type \"make package\" to create a tarball reflecting the current state of the CVS tree."
+-	(cd src; make DESTDIR=${DESTDIR} CLAPACKPATH=/usr/lib )
++	(cd src; make DESTDIR=${DESTDIR} CLAPACKPATH=${CLAPACKDIR} )
+ 
+ package:
+ 	rm -rf ${TMPDIR}
+diff -uNr phast.orig/src/lib/Makefile phast/src/lib/Makefile
+--- phast.orig/src/lib/Makefile	2010-11-11 19:10:24.000000000 +0000
++++ phast/src/lib/Makefile	2011-10-04 13:38:21.000000000 +0100
+@@ -18,17 +18,17 @@
+ # the compiler.  We'll just create symbolic links in ${PHAST}/lib that
+ # have proper names
+ liblinks: ${PHAST}/lib/liblapack.a ${PHAST}/lib/libtmg.a \
+-	${PHAST}/lib/libblaswr.a 
++	${PHAST}/lib/libblaswr.a
+ 
+-${PHAST}/lib/liblapack.a: ${CLAPACKPATH}/lapack${PLAT}.a
++${PHAST}/lib/liblapack.a: ${CLAPACKLIB}/liblapack.a
+ 	mkdir -p ${PHAST}/lib
+ 	${LN} -s $< $@
+ 
+-${PHAST}/lib/libtmg.a: ${CLAPACKPATH}/tmglib${PLAT}.a
++${PHAST}/lib/libtmg.a: ${CLAPACKLIB}/libtmglib.a
+ 	mkdir -p ${PHAST}/lib
+ 	${LN} -s $< $@
+ 
+-${PHAST}/lib/libblaswr.a: ${CLAPACKPATH}/blas${PLAT}.a
++${PHAST}/lib/libblaswr.a: ${CLAPACKLIB}/libblas.a
+ 	mkdir -p ${PHAST}/lib
+ 	${LN} -s $< $@
+ 
+diff -uNr phast.orig/src/Makefile phast/src/Makefile
+--- phast.orig/src/Makefile	2010-11-11 19:10:25.000000000 +0000
++++ phast/src/Makefile	2011-10-04 13:40:18.000000000 +0100
+@@ -21,12 +21,12 @@
+ ifndef DESTDIR
+ 	DESTDIR=/
+ endif
+-	mkdir -p ${DESTDIR}/usr/bin/
+-	mkdir -p ${DESTDIR}/opt/phast/data/
+-	mkdir -p ${DESTDIR}/usr/share/man/man7/
+-	cp ../bin/* ${DESTDIR}/usr/bin/
+-	cp -R ../data/* ${DESTDIR}/opt/phast/data/
+-	cp -R ../doc/man/* ${DESTDIR}/usr/share/man/man7/
++	mkdir -p ${DESTDIR}/bin/
++	mkdir -p ${DESTDIR}/data/
++	mkdir -p ${DESTDIR}/share/man/man7/
++	cp ../bin/* ${DESTDIR}/bin/
++	cp -R ../data/* ${DESTDIR}/data/
++	cp -R ../doc/man/* ${DESTDIR}/share/man/man7/
+ 
+ doc:
+ 	doxygen
+diff -uNr phast.orig/src/make-include.mk phast/src/make-include.mk
+--- phast.orig/src/make-include.mk	2010-11-11 19:10:25.000000000 +0000
++++ phast/src/make-include.mk	2011-10-04 13:31:57.000000000 +0100
+@@ -112,7 +112,7 @@
+     PLAT =
+   endif
+   # F2C libraries used by CLAPACK; most users won't need to edit
+-  F2CPATH = ${CLAPACKPATH}/F2CLIBS
++  F2CPATH = ${CLAPACKLIB}/
+ endif
+ 
+ # if neither VECLIB nor CLAPACKPATH is defined, then LAPACK will be
+@@ -130,10 +130,10 @@
+ else
+ ifdef CLAPACKPATH
+ ifneq ($(TARGETOS), Windows)
+-  CFLAGS += -I${CLAPACKPATH}/INCLUDE -I${F2CPATH}
++  CFLAGS += -I${CLAPACKINCLUDE} -I${F2CPATH}
+   LIBS = -lphast -llapack -ltmg -lblaswr -lc -lf2c -lm
+ else
+-  CFLAGS += -I${CLAPACKPATH}/INCLUDE -I${F2CPATH} -DPCRE_STATIC
++  CFLAGS += -I${CLAPACKINCLUDE} -I${F2CPATH} -DPCRE_STATIC
+   LIBS = -lphast -lm  ${CLAPACKPATH}/liblapack.a ${CLAPACKPATH}/libf2c.a ${CLAPACKPATH}/libblas.a
+ endif
+ # IMPORTANT: use the following two lines instead for versions of CLAPACK

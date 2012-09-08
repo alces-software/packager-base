@@ -1,0 +1,44 @@
+---
+:schema: 1
+:license: BSD
+:summary: LAPACK translated from Fortran to C
+:url: http://www.netlib.org/clapack/
+:description: |
+  The CLAPACK library was built using a Fortran to C conversion
+  utility called f2c. The entire Fortran 77 LAPACK library is run
+  through f2c to obtain C code, and then modified to improve
+  readability. CLAPACK's goal is to provide LAPACK for someone who
+  does not have access to a Fortran compiler.
+
+  Linear Algebra PACKage (LAPACK) is written in Fortran and provides
+  routines for solving systems of simultaneous linear equations,
+  least-squares solutions of linear systems of equations, eigenvalue
+  problems, and singular value problems. 
+:group: Libraries
+:changelog: |
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Tue Oct 4 2011 Steve Norledge
+    - First created
+:src: clapack.tgz
+:type: libs
+:version: 3.2.1
+:compilers:
+  gcc:
+:patches:
+  - clapack-alces.patch1
+:compile: |
+  make blaslib <%= redirect(:make) %>
+  make all <%= redirect(:make) %>
+:install: |
+  install -D -m 644 lapack_LINUX_ALCES.a <%= dest_dir %>/lib/liblapack.a
+  install -D -m 644 tmglib_LINUX_ALCES.a <%= dest_dir %>/lib/libtmglib.a
+  install -D -m 644 blas_LINUX_ALCES.a <%= dest_dir %>/lib/libblas.a
+  install -D -m 644 F2CLIBS/libf2c.a <%= dest_dir %>/lib/libf2c.a
+  mkdir <%= dest_dir %>/include
+  cp -rv INCLUDE/* <%= dest_dir %>/include
+:module: |
+  setenv CLAPACKDIR ${appdir}
+  setenv CLAPACKINCLUDE ${appdir}/include
+  setenv CLAPACKLIB ${appdir}/lib
+  setenv CLAPACK ${appdir}/lib/liblapack.a
