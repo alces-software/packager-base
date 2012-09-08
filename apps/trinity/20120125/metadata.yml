@@ -33,7 +33,7 @@
   make <%= redirect(:make) %>
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
-  cpanm IO::Compress <%= redirect(:cpanm) %> 
+  cpanm IO::Compress::Base <%= redirect(:cpanm) %> 
 :install: |
   cp -rv * <%= dest_dir %> <%= redirect(:install) %>
 :module: |
@@ -46,5 +46,3 @@
 
   prepend-path PATH ${appdir}/util
   prepend-path PATH ${appdir}
-
-  
