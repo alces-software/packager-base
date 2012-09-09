@@ -1,0 +1,54 @@
+---
+:schema: 1
+:license: GPL
+:summary: Sequence assembler for very short reads
+:url: http://www.ebi.ac.uk/~zerbino/velvet/
+:description: |
+  Velvet is a de novo genomic assembler specially designed for short
+  read sequencing technologies, such as Solexa or 454, developed by
+  Daniel Zerbino and Ewan Birney at the European Bioinformatics
+  Institute (EMBL-EBI), near Cambridge, in the United Kingdom.
+
+  Velvet currently takes in short read sequences, removes errors then
+  produces high quality unique contigs. It then uses paired-end read
+  and long read information, when available, to retrieve the repeated
+  areas between contigs.
+:group: Bioinformatics
+:changelog: |
+  * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Feb 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 1.2.03
+    - brought spec file into line with recent macro additions
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: velvet_1.2.03.tgz
+:src_dir: velvet_1.2.03
+:type: apps
+:version: '1.2.03'
+# requires tetex-latex for build
+:compilers:
+  gcc:
+:compile: |
+  if which pdflatex &>/dev/null; then
+    make <%= redirect(:make) %>
+  else
+    # make without docs
+    make cleanobj zlib obj velveth velvetg <%= redirect(:make) %>
+  fi
+  for a in *.pl; do
+    sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a
+  done
+:install: |
+  mkdir <%= dest_dir %>/build <%= dest_dir %>/bin <%= dest_dir %>/doc
+  cp -rv obj src <%= dest_dir %>/build <%= redirect(:install) %>
+  cp velvetg velveth *.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp ChangeLog *.txt *.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv data contrib <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}BUILD ${appdir}/build
+  setenv ${appcaps}DATA ${appdir}/data
+
+  prepend-path PATH ${appdir}/bin

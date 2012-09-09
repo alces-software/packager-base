@@ -1,0 +1,40 @@
+---
+:schema: 1
+:license: GPL
+:summary: Builds qassembly by mapping short reads to reference sequences
+:url: http://maq.sourceforge.net/
+:description: |
+  Maq (Mapping and Assembly with Quality) is a set of programs that
+  map and assemble fixed-length Solexa/SOLiD reads in a fast and
+  accurate way, building assembly by mapping short reads to reference
+  sequences.
+
+  Maq was previously known as mapass2.
+:group: Bioinformatics
+:changelog: |
+  * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Jul 27 2011 Steve Norledge
+    - Updated to 0.7.1
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: maq-0.7.1.tar.bz2
+:type: apps
+:version: '0.7.1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  for a in scripts/*; do
+    sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a
+  done
+:install: |
+  make install <%= redirect(:install) %>
+  cp -rv scripts <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SCRIPTS ${appdir}/scripts
+
+  prepend-path PATH ${appdir}/bin
