@@ -23,6 +23,8 @@
 :type: apps
 :version: '20100916'
 # requires expat-devel/expat form XML::Simple support
+:requirements:
+  :tools: apps/cpanminus
 :compilers:
   noarch:
 :compile: |
