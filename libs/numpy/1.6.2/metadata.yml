@@ -49,8 +49,8 @@
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
-  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}BIN ${appdir}/python/bin
 
-  prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${appdir}/python/bin
 
   prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
