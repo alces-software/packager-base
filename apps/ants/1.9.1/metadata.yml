@@ -25,6 +25,7 @@
   * Wed May 11 2011 Steve Norledge
     - First created
 :src: ants1pt9pt1_Linux_SMP_x86_64.zip
+:src_dir: .
 :type: apps
 :version: '1.9.1'
 :compilers:
