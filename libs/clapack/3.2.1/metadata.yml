@@ -21,6 +21,7 @@
   * Tue Oct 4 2011 Steve Norledge
     - First created
 :src: clapack.tgz
+:src_dir: CLAPACK-3.2.1
 :type: libs
 :version: 3.2.1
 :compilers:
