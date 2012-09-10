@@ -1,0 +1,55 @@
+---
+:schema: 1
+:license: Apache License
+:summary: Extract raw sequences (with qualities)
+:url: http://www.hudsonalpha.org/gsl/software/bam2fastq.php
+:description: |
+  The BAM format is an efficient method for storing and sharing data
+  from modern, highly parallel sequencers. While primarily used for
+  storing alignment information, BAMs can (and frequently do) store
+  unaligned reads as well.
+
+  There are a growing number of general-purpose SAM/BAM manipulation
+  programs, including samtools, Picard, and Bamtools. This tool is not
+  intended to duplicate the complex suite of tasks those programs
+  perform. Rather, it is simply intended to extract raw sequences
+  (with qualities). We envision this tool being primarily useful to
+  those wishing to duplicate or extend previous analyses.
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Thu Mar  1 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bam2fastq-1.1.0.tgz
+:type: apps
+:version: 1.1.0
+:requirements:
+  :build: apps/samtools >= 0.1.17
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+  mkdir -p dest/bin dest/doc
+  mv bam2fastq dest/bin/bam2fastq.samtools-0.1.8
+  ln -s bam2fastq.samtools-0.1.8 dest/bin/bam2fastq
+  ln -s bam2fastq.samtools-0.1.8 dest/bin/bam2fastq.dist
+  make clean
+  mv samtools samtools.dist
+  mkdir samtools
+  cp $SAMTOOLSINCLUDE/* samtools
+  cp $SAMTOOLSLIB/* samtools
+  make <%= redirect(:make) %>
+  if [[ $LOADEDMODULES =~ :apps/samtools/([^/]*)/ ]]; then
+    SAMTOOLS_VERSION="${BASH_REMATCH[1]}"
+  fi
+  mv bam2fastq dest/bin/bam2fastq.samtools-$SAMTOOLS_VERSION
+  ln -s bam2fastq.samtools-$SAMTOOLS_VERSION dest/bin/bam2fastq.gridware
+  cp HISTORY.txt LICENSE dest/doc
+:install: |
+  cp -av dest/* <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

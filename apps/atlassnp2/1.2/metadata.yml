@@ -1,0 +1,30 @@
+---
+:schema: 1
+:license: Restricted; see http://www.hgsc.bcm.tmc.edu/cascade-tech-software_atlas_snp-ti.hgsc
+:summary: SNP discovery tool developed for next generation sequencing platforms
+:url: http://www.hgsc.bcm.tmc.edu/cascade-tech-software_atlas_snp-ti.hgsc
+:description: |
+  Atlas-SNP2 is a SNP discovery tool developed for next generation
+  sequencing platforms such as Roche 454 and Illumina. It is
+  implemented in Ruby at HGSC.
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Thu Sep 8 2011 Steve Norledge
+    - First created
+:src: Atlas_SNP2_V1_2.tar.gz
+:src_dir: Atlas-SNP2-v1.2
+:type: apps
+:version: 1.2
+:compilers:
+  noarch:
+:compile: |
+  chmod 755 *.rb
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  prepend-path PATH ${appdir}

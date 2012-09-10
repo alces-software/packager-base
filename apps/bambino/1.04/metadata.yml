@@ -1,0 +1,66 @@
+---
+:schema: 1
+:license: Freeware
+:summary: Variant detector and alignment viewer for next-generation sequencing data in the SAM/BAM format
+:url: https://cgwb.nci.nih.gov/goldenPath/bamview/documentation/index.html
+:description: |
+  Bambino is a graphical viewer and variant detector for
+  next-generation sequencing files in SAM/BAM format. Its primary
+  features:
+
+    * detects SNPs, insertions, and deletions directly from BAM files
+      using a configurable process. This may be run from the command
+      line (see BAM utilities documentation) or interactively from
+      within the viewer.
+    * can dynamically pool data from multiple BAM files: view and
+      analyze data from tumor/normal pairs, multiple runs, or even
+      platforms. The variant detector takes advantage of pooling as
+      well, producing output suitable for somatic m utation detection.
+    * Reconciles all indels in the dataset into a unified, padded
+      alignment with the reference sequence, padding the reads and the
+      reference as necessary. While the SAM/BAM specification allows
+      for padded alignments, most BAM files contain unpadded
+      read-mapping data. Bambino essentially converts these unpadded
+      alignments into padded ones. This postprocessing provides a
+      complete and unified view of the assembly, even of reads having
+      different indel sizes at the same location. This is useful for
+      visualizing features such as STRPs, and debugging the alignments
+      produced by read-mapping programs.
+    * displays mappings of dbSNP SNP sites and reference protein
+      sequences, using UCSC genome annotations. The database
+      connection is configurable; it can load features from various
+      databases and/or genome builds, and can use the UCSC public
+      MySQL database server or a local mirror you provide.
+    * calculates protein coding changes caused by SNPs in NCBI RefSeqs
+    * can display reads against finished reference sequence (currently
+      samtools-indexed FASTA, UCSC .2bit and .nib formats are
+      supported), or a consensus generated from the source .bam data
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bambino_bundle_1.04.jar.sic
+:type: apps
+:version: 1.04
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a binary distribution of a Java package
+:install: |
+  install -D -m 644 bambino_bundle_1.04.jar.sic <%= dest_dir %>/java/bambino_bundle.jar
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+
+  setenv ${appcaps}_JAVA_MEM 2g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM"
+
+  set-alias AceViewer "java `eval echo \\$JAVA_OPTS` -cp ${appdir}/java/bambino_bundle.jar Ace2.AceViewer"
+  set-alias SAMStreamingSNPFinder "java `eval echo \\$JAVA_OPTS` -cp ${appdir}/java/bambino_bundle.jar Ace2.SAMStreamingSNPFinder"
+  set-alias SAMExtractUnmapped "java `eval echo \\$JAVA_OPTS` -cp ${appdir}/java/bambino_bundle.jar Ace2.SAMExtractUnmapped"
+  set-alias SAMCoverage "java `eval echo \\$JAVA_OPTS` -cp ${appdir}/java/bambino_bundle.jar Ace2.SAMCoverage"
+  set-alias SAMFinneyCoverage "java `eval echo \\$JAVA_OPTS` -cp ${appdir}/java/bambino_bundle.jar Ace2.SAMCoverage"
+
