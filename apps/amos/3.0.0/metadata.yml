@@ -8,7 +8,7 @@
   of DNA reads. The package includes a robust infrastructure, modular
   assembly pipelines, and tools for overlapping, consensus generation,
   contigging, and assembly manipulation.
-:group: Libraries
+:group: Bioinformatics
 :changelog: |
   * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style  
