@@ -1,0 +1,46 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Reports position-specific measures of conservation
+:url: http://genetics.bwh.harvard.edu/scone/
+:description: |
+  SCONE (Sequence CONservation Evaluation) reports position-specific
+  measures of conservation.
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Nov 03 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Patch maf.cpp and iterator.cpp to include algorithm library
+  * Mon Oct 4 2011 Steve Norledge
+    - First created
+:src: scone-0.6.1.tar.bz2
+:src_dir: dist
+:type: apps
+:version: '0.6.1'
+:patches:
+  - patch-crumpet.patch
+  - include-algorithm-h.patch
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:make) %>
+  cd ..
+  mkdir bin
+  mv -v src/scone src/crumpet bin
+  for a in files/*.pl files/make-prior; do
+    sed -i -e 's|#!/usr/bin/perl|#!/usr/bin/env perl|g' $a  
+  done
+  chmod 755 files/compute-freq.pl
+:install: |
+  mkdir <%= dest_dir %>/doc
+  cp -rv files bin <%= dest_dir %> <%= redirect(:install) %>
+  cp -v COPYING README.html <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}FILES ${appdir}/files
+
+  prepend-path PATH ${appdir}/files
+  prepend-path PATH ${appdir}/bin

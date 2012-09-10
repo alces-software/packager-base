@@ -1,0 +1,52 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Standard Filter for identification of polyclonal and independant errors for SOLiD short read sequences
+:url: http://hts.rutgers.edu/filter/
+:description: |
+
+  Standard Filter for identification of polyclonal and independant
+  errors for SOLiD short read sequences providing:
+
+    * Mean Filter
+    * SOPRA Filters
+    * Excel Templates for Filter QV Analysis
+    * QV Assessment of the SOLiD Run.
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Dec 6 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SOLiD_preprocess-20100916.zip
+:src_dir: .
+:type: apps
+:version: '20100916'
+# requires expat-devel/expat form XML::Simple support
+:compilers:
+  noarch:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm XML::Simple <%= redirect(:cpanm) %> 
+  for a in *.pl; do
+    chmod 755 $a
+    sed -e 's|#!/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+    # remove DOS line endings
+    sed -e 's|\x0D$||' -i $a
+  done
+:install: |
+  mkdir <%= dest_dir %>/doc <%= dest_dir %>/bin
+  cp -v *.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v *.pdf *.xls <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv perl <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin

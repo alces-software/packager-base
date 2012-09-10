@@ -1,0 +1,84 @@
+diff -uNr src.original/crumpet.cpp src/crumpet.cpp
+--- src.original/crumpet.cpp	2008-03-27 19:23:17.000000000 +0000
++++ src/crumpet.cpp	2011-10-04 11:27:47.000000000 +0100
+@@ -2,14 +2,18 @@
+ #include <iostream>
+ #include <fstream>
+ #include <string>
++#include <stdarg.h>
+ #include <vector>
+ #include "maf.h"
+ #include "alias.h"
+ #include "token.h"
+ #include "probability.h"
++#include "distrib.h"
+ #include <getopt.h>
+ #include "const.h"
+ 
++using namespace std;
++
+ #define OPT_FOOTPRINT 1001
+ #define OPT_INTERVAL 1002
+ #define OPT_COUNT 1003
+@@ -33,6 +37,8 @@
+ int recompute = 0;
+ int computing = 0;
+ int totalcount = 0;
++int bytemode = 0;
++FILE *bytefile = 0;
+ int printbase = 0;
+ 
+ int initialize;
+@@ -75,6 +81,52 @@
+ 	exit(0);
+ }
+ 
++void output_data(int b, char type, ...)
++{
++	va_list arg;
++	if (bytemode && !b) return;
++	va_start(arg,type);
++
++	if (type == 's') {
++		char *s = va_arg(arg,char *);
++		if (bytemode) {
++			fwrite(s,sizeof(char),strlen(s),bytefile);
++		} else {
++		cout<<s<<" ";
++		}
++	}
++	else if (type == 'c') {
++		char c = va_arg(arg,int);
++		if (bytemode) {
++			fwrite(&c,sizeof(char),1,bytefile);
++		} else {
++		cout<<c;
++		}
++	}
++	else if (type == 'i') {
++		int i = va_arg(arg,int);
++		if (bytemode) {
++			fwrite(&i,sizeof(int),1,bytefile);
++		} else {
++		cout<<i<<" ";
++		}
++	}
++	else if (type == 'd') {
++		double d = va_arg(arg,double);
++		if (d == 0) d = 0;
++		if (bytemode) {
++			// keep it short.
++			float f = d;
++			if (!d) f = 0;
++			fwrite(&f,sizeof(float),1,bytefile);
++		} else {
++		printf("%e ",d);
++		}
++	}
++	fflush(bytefile);
++	va_end(arg);
++}
++
+ int main(int argc, char **argv)
+ {
+ 	// load phylo
