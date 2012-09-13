@@ -1,6 +1,7 @@
 ---
 :schema: 1
 :license: BSD
+:title: Open MPI
 :summary: A High Performance Message Passing Library
 :url: http://www.open-mpi.org/
 :description: |
