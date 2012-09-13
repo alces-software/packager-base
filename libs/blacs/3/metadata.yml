@@ -1,6 +1,7 @@
 ---
 :schema: 1
 :license: BSD
+:title: Basic Linear Algebra Communication Subprograms
 :summary: A linear algebra oriented message passing interface
 :url: http://www.netlib.org/blacs/
 :description: |
