@@ -1,0 +1,40 @@
+---
+:title: Glimmer
+:license: 
+:summary: System for finding genes in microbial DNA, especially the genomes of bacteria, archaea, and viruses
+:url: http://www.cbcb.umd.edu/software/glimmer/
+:description: |
+  Glimmer is a system for finding genes in microbial DNA, especially
+  the genomes of bacteria, archaea, and viruses. Glimmer (Gene Locator
+  and Interpolated Markov ModelER) uses interpolated Markov models
+  (IMMs) to identify the coding regions and distinguish them from
+  noncoding DNA. The IMM approach uses a combination of Markov models
+  from 1st through 8th-order, weighting each model according to its
+  predictive power. Glimmer uses 3-periodic nonhomogenous Markov
+  models in its IMMs.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 18 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: glimmer302.tar.gz
+:src_dir: glimmer3.02
+:type: apps
+:version: '3.02'
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make all <%= redirect(:make) %>
+:install: |
+  cp -rv bin lib scripts sample-run <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc
+  install -D -m 644 LICENSE glim302notes.pdf <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
+  
+  prepend-path PATH ${appdir}/bin

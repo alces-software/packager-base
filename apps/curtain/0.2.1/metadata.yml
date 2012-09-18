@@ -1,0 +1,38 @@
+---
+:title: Curtain
+:license: Apache License 2.0
+:summary: Assembler of next generation sequence, developed by Matthias Haimel in the Ensembl Genomes team at the EBI
+:url: http://code.google.com/p/curtain/
+:description: |
+  Curtain is an assembler of next generation sequence, developed by
+  Matthias Haimel in the Ensembl Genomes team at the EBI. Curtain is a
+  Java wrapper around next-generation assemblers such as Velvet, which
+  allows the incremental introduction of read-pair information into
+  the assembly process. This enables the assembly of larger genomes
+  than would otherwise be possible within existing memory constraints.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 18 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: curtain-exec_0.2.1-dist.tar.gz
+:src_dir: curtain-exec_0.2.1
+:type: apps
+:version: '0.2.1'
+:compilers:
+  noarch:
+:compile: |
+  # sed #!s to use env
+  for a in bin/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+  done
+  sed -i -e 's|\$JAVA_HOME/bin/||g' bin/doRun.sh
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin

@@ -1,0 +1,41 @@
+---
+:title: Folding@home
+:license: Apache License 2.0
+:summary: A distributed computing project studying protein folding and misfolding
+:url: http://folding.stanford.edu
+:description: |
+  Folding@home is a distributed computing project which studies
+  protein folding, misfolding, aggregation, and related diseases. We
+  use novel computational methods and large scale distributed
+  computing, to simulate timescales thousands to millions of times
+  longer than previously achieved. This has allowed us to simulate
+  folding for the first time, and to now direct our approach to
+  examine folding related disease.
+
+  This package contains client software allowing your system to
+  participate in the Folding@Home project.
+:group: Biochemistry
+:changelog: |
+  * Tue Sep 18 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Sun Aug 28 2011 Steve Norledge
+    - First created
+:src: FAH6.34-Linux64.tgz
+:src_dir: .
+:sources:
+  - client.cfg
+:type: apps
+:version: '6.34'
+:compilers:
+  bin:
+:compile: |
+  # no-op - this is a binary distribution
+:install: |
+  install -D -m 755 fah6 <%= dest_dir %>/bin/fah6
+  install -D -m 644 <%= source('client.cfg') %> <%= dest_dir %>/etc/alcessoftware.client.cfg
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  
+  set-alias fah.alcessoftware "fah6 ${appdir}/etc/alcessoftware.client.cfg"
+  prepend-path PATH ${appdir}/bin
