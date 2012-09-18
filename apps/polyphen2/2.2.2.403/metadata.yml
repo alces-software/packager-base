@@ -18,6 +18,8 @@
       sequencing data
 :group: Bioinformatics
 :changelog: |
+  * Tue Sep 18 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Fixed missing semi-colon in modulefile prep script block
   * Sat Sep  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest revision, r403
   * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -143,7 +145,7 @@
     # cause user prep script to be executed if home directory doesn't
     # yet conform.
     if { ! [file exists "$::env(HOME)/polyphen2"] } {
-      puts "${appdir}/bin/gridware-polyphen2-userprep.sh \"${appdir}\""
+      puts "${appdir}/bin/gridware-polyphen2-userprep.sh \"${appdir}\";"
     }
     if { ! [file exists "${datadir}/polyphen2"] } {
       puts "echo -e \"\\n > Data directory (${datadir}/polyphen2) not configured - have you executed 'gridware-polyphen2-installdb.sh'?\\n\";"
