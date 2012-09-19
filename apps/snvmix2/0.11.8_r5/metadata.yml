@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: SNVMix
+:license: MIT License
+:summary: Detect single nucleotide variants from next generation sequencing data
+:url: http://compbio.bccrc.ca/software/snvmix/
+:description: |
+  SNVMix is designed to detect single nucleotide variants from next
+  generation sequencing data. SNVMix is a post-alignment tool. Given a
+  pileup file (either Maq or Samtools format) as input and model
+  parameters, SNVMix will output the probability that each position is
+  one of three genotypes: aa (homozygous for the reference allele,
+  where the reference is the genome the reads were aligned to), ab
+  (heterozygous) and bb (homozygous for a non-reference allele). A
+  tool for fitting the model using expectation maximization is also
+  supplied.
+:group: Bioinformatics
+:changelog: |
+  * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+    - Bumped to r5
+  * Thu Sep 8 2011 Steve Norledge
+    - First created
+:src: SNVMix2-0.11.8-r5.tar.gz
+:src_dir: SNVMix2-0.11.8-r5
+:type: apps
+:version: '0.11.8'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+  # sed #!s to use env
+  for a in misc/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  install -D -m 755 SNVMix2 <%= dest_dir %>/bin/SNVMix2
+  mkdir -p <%= dest_dir %>/doc
+  install -m 644 misc/SNVMix2_threshold_select.README CHANGELOG README <%= dest_dir %>/doc
+  install -m 755 misc/*.pl <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

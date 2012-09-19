@@ -1,0 +1,33 @@
+---
+:schema: 1
+:title: SHRiMP
+:license: Modified BSD License (without copyright clause)
+:summary: Software package for aligning genomic reads against a target genome
+:url: http://compbio.cs.toronto.edu/shrimp/
+:description: |
+  SHRiMP is a software package for aligning genomic reads against a
+  target genome. It was primarily developed with the multitudinous
+  short reads of next generation sequencing machines in mind, as well
+  as Applied Biosystem's colourspace genomic representation.
+:group: Bioinformatics
+:changelog: |
+  * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Sep 8 2011 Steve Norledge
+    - First created
+:src: SHRiMP_2_2_0.lx26.x86_64.tar.gz
+:src_dir: SHRiMP_2_2_0
+:type: apps
+:version: '2.2.0'
+:compilers:
+  bin:
+:compile: |
+  # This is a binary distribution of an x86_64 application
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}UTILS ${appdir}/utils
+
+  prepend-path PATH ${appdir}/bin

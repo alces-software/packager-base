@@ -1,0 +1,72 @@
+---
+:schema: 1
+:title: Sequence Read Archive Toolkit
+:license: Public Domain
+:summary: Programmatically access data housed within SRA and convert it from the SRA format
+:url: http://www.ncbi.nlm.nih.gov/sra
+:description: |
+  The SRA Toolkit and SDK from NCBI is a collection of tools and
+  libraries for using data in the INSDC Sequence Read Archives,
+  allowing you to programmatically access data housed within SRA and
+  convert it from the SRA format to any of the following formats:
+
+    * AB SOLiD native
+    * FASTQ
+    * SFF (Roche 454)
+    * Illumina native
+
+  You can also use the toolkit to convert from the formats listed
+  below into the SRA format:
+
+    * FASTQ
+    * AB SOLiD-SRF
+    * AB SOLiD-Native
+    * Illumina SRF
+    * Illumina Native
+    * SFF
+
+  The Sequence Read Archive (SRA) stores raw sequence data from
+  "next-generation" sequencing technologies including 454, IonTorrent,
+  Illumina, SOLiD, Helicos and Complete Genomics. In addition to raw
+  sequence data, SRA now stores alignment information in the form of
+  read placements on a reference sequence.
+
+  SRA is NIH’s primary archive of high-throughput sequencing data and
+  is part of the international partnership of archives (INSDC) at the
+  NCBI, the European Bioinformatics Institute and the DNA Database of
+  Japan. Data submitted to any of the three organizations are shared
+  among them.
+:group: Bioinformatics
+:changelog: |
+  * Wed Sep 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Nov 30 2011 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: sra_sdk-2.1.7a.tar.gz
+:src_dir: sra_sdk-2.1.7
+:type: apps
+:version: '2.1.7a'
+:patches:
+  - homedir-ncbi-data-config.patch
+:compilers:
+  gcc:
+:compile: |
+  make OUTDIR="`pwd`/../out" out <%= redirect(:make) %>
+  make dynamic <%= redirect(:make) %>
+  make GCC release <%= redirect(:make) %>
+  make <%= redirect(:make) %>
+  sed -i -e 's|#!/usr/local/bin/perl.*|#!/usr/bin/env perl|g' configuration-assistant.perl
+:install: |
+  mkdir -p <%= dest_dir %>/{doc,bin}
+  cp -rv doc/help README USAGE <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v configuration-assistant.perl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd ../out/linux/rel/gcc/x86_64/
+  cp -rv bin lib <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  

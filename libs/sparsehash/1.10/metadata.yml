@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: SparseHash
+:license: New BSD License
+:summary: An extremely memory-efficient hash_map implementation
+:url: http://code.google.com/p/sparsehash/
+:description: |
+  An extremely memory-efficient hash_map implementation. 2 bits/entry
+  overhead! The SparseHash library contains several hash-map
+  implementations, including implementations that optimize for space
+  or speed.
+
+  These hashtable implementations are similar in API to SGI's hash_map
+  class and the tr1 unordered_map class, but with different
+  performance characteristics. It's easy to replace hash_map or
+  unordered_map by sparse_hash_map or dense_hash_map in C++ code.
+
+  They also contain code to serialize and unserialize from disk.
+:group: Libraries
+:changelog: |
+  * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: sparsehash-1.10.tar.gz
+:type: libs
+:version: '1.10'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}DOC ${appdir}/share/doc/sparsehash-${version}
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+
