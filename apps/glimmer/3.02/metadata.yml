@@ -1,6 +1,7 @@
 ---
+:schema: 1
 :title: Glimmer
-:license: 
+:license: Artistic License 1.0
 :summary: System for finding genes in microbial DNA, especially the genomes of bacteria, archaea, and viruses
 :url: http://www.cbcb.umd.edu/software/glimmer/
 :description: |
