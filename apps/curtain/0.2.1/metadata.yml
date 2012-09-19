@@ -1,4 +1,5 @@
 ---
+:schema: 1
 :title: Curtain
 :license: Apache License 2.0
 :summary: Assembler of next generation sequence, developed by Matthias Haimel in the Ensembl Genomes team at the EBI
