@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: ClustalW
+:license: LGPLv3
+:summary: Multiple alignment of nucleic acid and protein sequences
+:url: http://www.clustal.org
+:description: |
+  Clustal W is a general purpose multiple alignment program for DNA or
+  proteins.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v2.1 release
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: clustalw-2.1.tar.gz
+:version: '2.1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  # tidy up empty directory
+  rm -rf <%= dest_dir %>/share
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib

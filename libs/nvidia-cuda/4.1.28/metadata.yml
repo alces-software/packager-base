@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: CUDA Toolkit
+:license: NONFREE - NVIDIA Software License/CUDPP License
+:license_help: |
+  For NVIDIA Software License details, see
+  <http://www.nvidia.co.uk/object/nv_swlicense.html>.
+
+  For CUDPP Licese details, see
+  <http://www.gpgpu.org/static/developer/cudpp/rel/cudpp_1.0a/html/license.html>. 
+:summary: Development environment for C and C++ developers building GPU-accelerated applications
+:url: http://developer.nvidia.com/cuda/cuda-toolkit
+:description: |
+  NVIDIA® CUDA(TM) is a general purpose parallel computing
+  architecture introduced by NVIDIA. It includes the CUDA Instruction
+  Set Architecture (ISA) and the parallel compute engine in the
+  GPU. To program to the CUDA architecture, developers can use C, one
+  of the most widely used high-level programming languages, which can
+  then be run at great performance on a CUDA-enabled processor
+
+  The NVIDIA® CUDA® Toolkit provides a comprehensive development
+  environment for C and C++ developers building GPU-accelerated
+  applications.  The CUDA Toolkit includes a compiler for NVIDIA GPUs,
+  math libraries, and tools for debugging and optimizing the
+  performance of your applications.  You’ll also find programming
+  guides, user manuals, API reference, and other documentation to help
+  you get started quickly accelerating your application with GPUs.
+:group: Libraries
+:changelog: |
+  * Tue Sep 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Mar 30 2012 Steve Norledge
+    - Bump to latest version
+  * Tue Jul 26 2011 Steve Norledge
+    - First created
+:sources:
+  - gpucomputingsdk_4.1.28_linux.run
+:src: cudatoolkit_4.1.28_linux_64_rhel6.x.run.sic
+:src_dir: .
+:type: libs
+:version: '4.1.28'
+:compilers:
+  bin:
+:compile: |
+  # move main source file to it's proper name (ie. drop the sic extension)
+  mv cudatoolkit_4.1.28_linux_64_rhel6.x.run.sic cudatoolkit_4.1.28_linux_64_rhel6.x.run
+:install: |
+  mkdir -p <%= dest_dir %>/{toolkit,sdk}
+  /bin/sh cudatoolkit_4.1.28_linux_64_rhel6.x.run --nox11 -- --prefix=<%= dest_dir %>/toolkit
+  /bin/sh <%= source('gpucomputingsdk_4.1.28_linux.run') %> --nox11 -- --prefix=<%= dest_dir %>/sdk --cudaprefix=<%= dest_dir %>/toolkit
+  # fix cuda install path in common makefile
+  cd "<%= dest_dir %>/sdk"
+  for a in C/common/*.mk OpenCL/common/common_opencl.mk CUDALibraries/common/common_cudalib.mk CUDALibraries/common/common_npplib.mk CUDALibraries/common/UtilNPP/defines.mk; do
+    sed -e "s|^CUDA_INSTALL_PATH.*$|CUDA_INSTALL_PATH ?= <%= dest_dir %>/toolkit/|g" -i $a
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/toolkit/bin
+  setenv ${appcaps}SDK ${appdir}/sdk
+
+  setenv CUDA_DIR ${appdir}/toolkit
+  setenv CUDA_HOME ${appdir}/toolkit
+  setenv CUDA_SDK ${appdir}/sdk
+
+  prepend-path PATH ${appdir}/toolkit/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/toolkit/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/toolkit/lib64
+

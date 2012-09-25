@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: "Cortex: cortex_con"
+:license: GPLv3
+:summary: "Software for genome assembly and variation analysis: consensus genome assembly"
+:url: http://cortexassembler.sourceforge.net
+:description: |
+  Cortex is an efficient and low-memory software framework for
+  analysis of genomes using sequence data. There are two main
+  executables, being developed in parallel streams: cortex_con
+  (primary contact Mario Caccamo) is for consensus genome assembly,
+  and cortex_var (primary contact Zamin Iqbal) is for variation and
+  population assembly.
+
+  This package is for the cortex_con application, for consensus genome
+  assembly.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: cortex_con_beta_0.05.zip
+:src_dir: cortex_con
+:version: '0.05'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+  # sed #!s to use env
+  for a in scripts/*/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+    chmod 755 $a
+  done
+:install: |
+  cp -rv bin doc scripts data <%= dest_dir %> <%= redirect(:install) %>
+  install -m 644 gpl.txt <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/scripts/simulations
+  prepend-path PATH ${appdir}/scripts/analyse_supernodes
+  prepend-path PATH ${appdir}/scripts/analyse_variants
+  prepend-path PATH ${appdir}/bin

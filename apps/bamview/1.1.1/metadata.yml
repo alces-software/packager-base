@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: BamView
+:license: GPL
+:summary: Interactive display of read alignments in BAM data files
+:url: http://bamview.sourceforge.net
+:description: |
+  BamView is an interactive Java application for visualizing the large
+  amounts of data stored for sequence reads which are aligned against
+  a reference genome sequence. It supports the BAM (Binary
+  Alignment/Map) format. It can be used in a number of contexts
+  including SNP calling and structural annotation.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: BamView_v1.1.1.jar.sic
+:src_dir: .
+:version: '1.1.1'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  install -D -m 644 BamView_v1.1.1.jar.sic <%= dest_dir %>/java/BamView_v1.1.1.jar
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias bamview "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/BamView_v1.1.1.jar"
+  set-alias BamView "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/BamView_v1.1.1.jar"
+
