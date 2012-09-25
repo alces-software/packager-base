@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: SiPhy
+:license: Free
+:summary: Rigorous statistical tests to detect bases under selection from a multiple alignment data
+:url: http://genomewiki.ucsc.edu/index.php/Kent_source_utilities
+:description: |
+  SiPhy implements rigorous statistical tests to detect bases under
+  selection from a multiple alignment data. It takes full advantage of
+  deeply sequenced phylogenies to estimate both unlikely substitution
+  patterns as well as slowdowns or accelerations in mutation rates.
+
+  It can be applied as an Hidden Markov Model (HMM), in sliding
+  windows, or to specific regions.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Oct 4 2011 Steve Norledge
+    - First created
+:src: siphy.dist.0.5.tgz
+:src_dir: .
+:type: apps
+:version: '0.5'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  mkdir -p <%= dest_dir %>/{java,doc}
+  cp -v bin/*.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  cp -v bin/README <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias scaler "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/scaler_0.5.jar"
+  set-alias mafutils "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/mafutils.jar"
+  set-alias pihmm "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/pihmm.jar"

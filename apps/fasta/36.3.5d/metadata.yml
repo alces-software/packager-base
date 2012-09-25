@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: FASTA
+:license: NONFREE - may not be sold or incorporated into a commercial product; see http://faculty.virginia.edu/wrpearson/fasta/COPYRIGHT
+:summary: Search protein or DNA sequence databases comparing a protein sequence to a DNA sequence database
+:url: http://fasta.bioch.virginia.edu/fasta_www2/fasta_down.shtml
+:description: |
+  The FASTA program is a more sensitive derivative of the FASTP
+  program, which can be used to search protein or DNA sequence data
+  bases and can compare a protein sequence to a DNA sequence data base
+  by translating the DNA data base as it is searched.
+
+  FASTA includes an additional step in the calculation of the initial
+  pairwise similarity score that allows multiple regions of similarity
+  to be joined to increase the score of related sequences.
+
+  The RDF2 program can be used to evaluate the significance of
+  similarity scores using a shuffling method that preserves local
+  sequence composition.
+
+  The LFASTA program can display all the regions of local similarity
+  between two sequences with scores greater than a threshold, using
+  the same scoring parameters and a similar alignment algorithm; these
+  local similarities can be displayed as a "graphic matrix" plot or as
+  individual alignments.
+
+  In addition, these programs have been generalized to allow
+  comparison of DNA or protein sequences based on a variety of
+  alternative scoring matrices.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v36.3.5d
+  * Tue Sep 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: fasta-36.3.5d.tar.gz
+:type: apps
+:version: '36.3.5d'
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  if [ "$(uname -s)" == "Darwin" ]; then
+    make -f ../make/Makefile.os_x86_64 <%= redirect(:make) %>
+  else
+    make -f ../make/Makefile.linux64_sse2 <%= redirect(:make) %>
+  fi
+:install: |
+  cp -rv COPYRIGHT README conf doc misc sql test FASTA_LIST bin data seq <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
