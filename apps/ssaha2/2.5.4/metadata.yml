@@ -1,0 +1,39 @@
+---
+:schema: 1
+:license: Freeware
+:title: Sequence Search and Alignment by Hashing Algorithm
+:summary: A pairwise sequence alignment program for efficient mapping of sequencing reads
+:url: http://www.sanger.ac.uk/resources/software/ssaha2/
+:description: |
+  SSAHA2 (Sequence Search and Alignment by Hashing Algorithm) is a
+  pairwise sequence alignment program designed for the efficient
+  mapping of sequencing reads onto genomic reference sequences.
+
+  SSAHA2 reads of most sequencing platforms (ABI-Sanger, Roche 454,
+  Illumina-Solexa) and a range of output formats (SAM, CIGAR, PSL
+  etc.) are supported. A pile-up pipeline for analysis and genotype
+  calling is available as a separate package.
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Oct 18 2011 Mark J. Titorenko
+    - First created
+:src: ssaha2_v2.5.4_x86_64.tgz
+:src_dir: ssaha2_v2.5.4_x86_64
+:type: apps
+:version: '2.5.4'
+:compilers:
+  bin:
+:compile: |
+  # no compilation; this is a distribution of a binary package
+:install: |
+  mkdir <%= dest_dir %>/{doc,bin}
+  cp -v ssa* <%= dest_dir %>/bin
+  cp -v README <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
