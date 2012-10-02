@@ -1,0 +1,99 @@
+---
+:schema: 1
+:license: BSD License
+:title: Staden Package
+:summary: A fully developed set of DNA sequence assembly (Gap4 and Gap5), editing and analysis tools (Spin)
+:url: http://staden.sourceforge.net/
+:description: |
+
+  The sequence handling and analysis software developed at the Medical
+  Research Council Laboratory of Molecular Biology, Cambridge, UK,
+  which has come to be known as the Staden Package.
+
+  The focus of the group since 1990 has been to produce improved
+  methods for processing the data for large scale sequencing projects,
+  and this is reflected in the scope of the package: the most advanced
+  components (trev, prefinish, pregap4 and gap4) are those used in
+  that area. Nevertheless the package also contains a program (spin)
+  for the analysis and comparison of finished sequences. The latter
+  also provides a graphical user interface to EMBOSS.
+
+  Gap4 performs sequence assembly, contig ordering based on read pair
+  data, contig joining based on sequence comparisons, assembly
+  checking, repeat searching, experiment suggestion, read pair
+  analysis and contig editing. It has graphical views of contigs,
+  templates, readings and traces which all scroll in register. Contig
+  editor searches and experiment suggestion routines use confidence
+  values to calculate the confidence of the consensus sequence and
+  hence identify only places requiring visual trace inspection or
+  extra data. The result is extremely rapid finishing and a consensus
+  of known accuracy.
+
+  Pregap4 provides a graphical user interface to set up the processing
+  required to prepare trace data for assembly or analysis. It also
+  automates these processes. The possible processes which can be set
+  up and automated include trace format conversion, quality analysis,
+  vector clipping, contaminant screening, repeat searching and
+  mutation detection.
+
+  Trev is a rapid and flexible viewer and editor for ABI, ALF, SCF and
+  ZTR trace files.
+
+  Prefinish analyses partially completed sequence assemblies and
+  suggests the most efficient set of experiments to help finish the
+  project.
+
+  Tracediff and hetscan automatically locate mutations by comparing
+  trace data against reference traces. They annotate the mutations
+  found ready for viewing in gap4.
+
+  Spin analyses nucleotide sequences to find genes, restriction sites,
+  motifs, etc. It can perform translations, find open reading frames,
+  count codons, etc. Many results are presented graphically and a
+  sliding sequence window is linked to the graphics cursor. Spin also
+  compares pairs of sequences in many ways. It has very rapid dot
+  matrix analysis, global and local alignment algorithms, plus a
+  sliding sequence window linked to the graphical plots. It can
+  compare nucleic acid against nucleic acid, protein against protein,
+  and protein against nucleic acid.
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Mar  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated build phase to build iolib twice - once for build dependency, once as runtime dependency.
+  * Wed Feb 23 2011 Steve Norledge
+    - First created
+:src: staden-2.0.0b8.tar.gz
+:src_dir: .
+:type: apps
+:version: '2.0.0b8'
+:sources:
+  - io_lib-1.12.5.tar.gz
+:compilers:
+  gcc:
+:compile: |
+  IOLIB_PATH=$(pwd)/build/<%= dest_dir %>/iolib
+  TMPLIB=$(pwd)/build
+  tar xzf <%= source('io_lib-1.12.5.tar.gz') %>
+  cd io_lib-1.12.5
+  ./configure --prefix=<%= dest_dir %>/iolib <%= redirect(:configure_iolib) %>
+  make <%= redirect(:make_iolib) %>
+  make install DESTDIR=$TMPLIB <%= redirect(:install_iolib_tmp) %>
+  # Ok, we're done with iolib, moving on to staden itself now.
+  cd ../staden-2.0.0b8-src
+  ./configure --prefix=<%= dest_dir %> --enable-64bit --with-io_lib=$IOLIB_PATH <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd io_lib-1.12.5
+  make install <%= redirect(:install_iolib) %>
+  cd ../staden-2.0.0b8-src
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/iolib/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/staden
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
