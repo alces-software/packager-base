@@ -30,6 +30,12 @@
   gcc:
 :compile: |
   export TOPDIR=$(pwd)
+  # Prevent CXX from being supplied as an absolute path because the
+  # Inchworm/configure file branches based on the name of the compiler
+  # binary, not taking into account that it might be prefixed with a
+  # path.  We assume that the PATH is set up correctly that the
+  # preferred binary is found without the path prefix.
+  CXX=$(basename "$CXX")
   make <%= redirect(:make) %>
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
