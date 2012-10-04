@@ -1,4 +1,6 @@
 ---
+:schema: 1
+:title: PolyPhen-2
 :license: NONFREE - Free for academic and research use; see http://genetics.bwh.harvard.edu/pph2/dokuwiki/downloads
 :summary: Predicts possible impact of amino acid substitutions on the structure and function of human proteins
 :url: http://genetics.bwh.harvard.edu/pph2/dokuwiki/start
