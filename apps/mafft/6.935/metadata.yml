@@ -1,0 +1,37 @@
+---
+:scheme: 1
+:title: MAFFT
+:license: BSD License
+:summary: Multiple alignment program for amino acid or nucleotide sequences
+:url: http://mafft.cbrc.jp/alignment/software/
+:description: |
+  MAFFT is a multiple sequence alignment program for unix-like
+  operating systems.  It offers a range of multiple alignment methods,
+  L-INS-i (accurate; for alignment of <∼200 sequences), FFT-NS-2
+  (fast; for alignment of <∼10,000 sequences), etc.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mafft-6.935-without-extensions-src.tgz
+:src_dir: mafft-6.935-without-extensions
+:type: apps
+:version: '6.935'
+:compilers:
+  gcc:
+:compile: |
+  cd core
+  sed -i -e 's|^PREFIX.*|PREFIX=<%= dest_dir %>|g' Makefile
+  make <%= redirect(:make) %>
+:install: |
+  cd core
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man

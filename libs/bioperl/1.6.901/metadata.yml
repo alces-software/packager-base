@@ -1,0 +1,72 @@
+---
+:schema: 1
+:title: BioPerl
+:license: Perl Artistic License
+:summary: A community effort to produce Perl code which is useful in biology
+:url: http://www.bioperl.org/
+:description: |
+  BioPerl is a toolkit of perl modules useful in building
+  bioinformatics solutions in Perl. It is built in an object-oriented
+  manner so that many modules depend on each other to achieve a
+  task. The collection of modules in the bioperl-live repository
+  consist of the core of the functionality of bioperl.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct  4 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: BioPerl-1.6.901.tar.gz
+:src_dir: BioPerl-1.6.901
+:type: libs
+:version: '1.6.901'
+:requirements:
+  :tool: apps/cpanminus
+  :build: apps/samtools
+:compilers:
+  gcc:
+:additional_prereqs:
+  - Bio::Phylo
+  - XML::LibXML
+  - Ace
+  - Apache::DBI
+:additional_postreqs:
+  - Bio::ASN1::EntrezGene
+  - Bio::Tools::Run::Samtools
+  - Bio::DB::Sam
+:external_reqs:
+  # Bio::GMOD::CMap::Utils - but requires http://gmod.org/wiki/CMap
+  # these requirements are from bioperl-ext - which we should install separately
+  # Bio::Ext::Align
+  # Bio::SeqIO::staden::read
+:compile: |
+  perl Build.PL --install_base <%= dest_dir %> <%= redirect(:buildpl) %>
+  for a in $(find scripts -name '*.PLS'); do
+    sed -e 's|#!.*perl\s*$|#!/usr/bin/env perl|g' -e 's|#!.*perl -w\s*$|#!/usr/bin/env perl\nuse warnings;|g' -i $a
+  done
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in $(./Build prereq_report | grep '!' | awk '{print $2;}') <%= package.additional_prereqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  # configure again, now we've got any missing dependencies installed
+  perl Build.PL --install_base <%= dest_dir %> <%= redirect(:buildpl) %>
+:install: |
+  export PERL5LIB="<%= dest_dir %>/lib/perl5:<%= dest_dir %>/perl/lib/perl5"
+  ./Build install <%= redirect(:install) %>
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  # installation of Bio::DB::Sam requires the SAMTOOLS environment
+  # variable to point to the directory containing SamTools
+  export SAMTOOLS=$SAMTOOLSDIR
+  for a in <%= package.additional_postreqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm_post) %>
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path MANPATH ${appdir}/man
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+
+  prepend-path PERL5LIB ${appdir}/lib/perl5
+  prepend-path PATH ${appdir}/bin
