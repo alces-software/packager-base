@@ -89,4 +89,4 @@ license_help: |
        setenv ${appcaps}BIN ${appdir}/bin
 
        prepend-path PATH ${appdir}/bin
-       prepend-path PATH ${appdir}/share/man
+       prepend-path MANPATH ${appdir}/share/man
