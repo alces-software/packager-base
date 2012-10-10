@@ -35,6 +35,8 @@
   :tool: apps/setuptools
   :build:
     - apps/python
+:sources:
+  - matplotlib-1.1.1_notests.tar.gz
 :compilers:
   gcc:
 :compile: |
@@ -42,12 +44,17 @@
   PYTHONDEPSDIR=$(pwd)/python
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   mkdir $PYTHONDEPSDIR
-  easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %>
+  tar xzf <%= source('matplotlib-1.1.1_notests.tar.gz') %>
+  cd matplotlib-1.1.1
+  python setup.py build <%= redirect(:matplotlib_build) %>
   easy_install --install-dir $PYTHONDEPSDIR pysam <%= redirect(:python) %>
   easy_install --install-dir $PYTHONDEPSDIR simplejson <%= redirect(:python) %>
 :install: |
   PYTHONDEPSDIR=$(pwd)/python
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cd matplotlib-1.1.1
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cd ..
   cp -rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
 :module: |
