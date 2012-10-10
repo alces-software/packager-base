@@ -64,13 +64,15 @@
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   cpanm XML::Simple <%= redirect(:cpanm) %> 
 :install: |
+  cd build
   make install <%= redirect(:install) %>
+  cd ..
+  cp -rv perl <%= dest_dir %>
   cd <%= dest_dir %>
   # fix bad ownerships
   chown -R root:root .
   # fix bad directory permissions
   find -type d -exec chmod 755 {} ';'
-  cp -rv perl <%= dest_dir %>
 :modules:
    - :type: apps
      :content: |
