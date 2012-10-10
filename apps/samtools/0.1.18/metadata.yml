@@ -37,6 +37,7 @@
 :compilers:
   gcc:
 :compile: |
+  sed -i -e 's|^CFLAGS=.*|CFLAGS= -g -Wall -O2 -fPIC|g' Makefile
   make <%= redirect(:make) %>
   if [ "$(uname -s)" == "Darwin" ]; then
     make libbam.1.dylib-local <%= redirect(:make) %>
