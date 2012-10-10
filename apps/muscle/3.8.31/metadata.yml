@@ -23,6 +23,9 @@
   cd src
   # don't output build progress directly to the tty
   sed -i -e 's|>> /dev/tty||g' mk
+  # disable forced static linking on Linux (linker complains as it
+  # tries to dynamically link libm)
+  sed -i -e 's|LINK_OPTS=-static|false #LINK_OPTS=-static|g' mk
   make <%= redirect(:make) %>
 :install: |
   mkdir <%= dest_dir %>/bin
