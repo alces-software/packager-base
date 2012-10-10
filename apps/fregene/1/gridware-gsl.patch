@@ -1,0 +1,26 @@
+--- Fregene_source/makefile.orig	2012-10-10 13:58:53.000000000 +0100
++++ Fregene_source/makefile	2012-10-10 13:59:05.000000000 +0100
+@@ -4,8 +4,8 @@
+ 
+ LIBDIR			= ../Common/
+ 
+-IFLAGS			= -I$(LIBDIR)
+-LFLAGS			= -L$(LIBDIR)
++IFLAGS			= -I$(LIBDIR) -I$(GSLINCLUDE)
++LFLAGS			= -L$(LIBDIR) -L$(GSLLIB)
+ LIBS			= -lgsl -lgslcblas
+ CXXFLAGS		= 
+ CPPFLAGS		= -W -Wall --pedantic -O3  $(IFLAGS)
+--- Sample/makefile.orig	2012-10-10 14:04:09.000000000 +0100
++++ Sample/makefile	2012-10-10 14:03:37.000000000 +0100
+@@ -4,8 +4,8 @@
+ 
+ LIBDIR			= ../Common/
+ 
+-IFLAGS			= -I$(LIBDIR)
+-LFLAGS			= -L$(LIBDIR)
++IFLAGS			= -I$(LIBDIR) -I$(GSLINCLUDE)
++LFLAGS			= -L$(LIBDIR) -L$(GSLLIB)
+ LIBS			= -lgsl -lgslcblas
+ 
+ 

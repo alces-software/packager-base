@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: MrBayes
+:license: GPLv3+ 
+:summary: Bayesian Inference of Phylogeny
+:url: http://mrbayes.sourceforge.net/
+:description: |
+  MrBayes is a program for Bayesian inference and model choice across
+  a wide range of phylogenetic and evolutionary models. MrBayes uses
+  Markov chain Monte Carlo (MCMC) methods to estimate the posterior
+  distribution of model parameters.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mrbayes-3.2.1.tar.gz
+:src_dir: mrbayes_3.2.1
+:type: apps
+:version: '3.2.1'
+:requirements:
+  :build: libs/beagle
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  autoconf <%= redirect(:autoconf) %>
+  ./configure --with-beagle=${BEAGLEDIR} --prefix=<%= dest_dir %> <%= redirect(:autoconf) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -v src/mb <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -rv documentation <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv examples <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin

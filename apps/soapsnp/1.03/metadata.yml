@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: SOAPsnp
+:license: GPLv3
+:summary: Calls consensus genotype by carefully considering data quality, alignment and recurring experimental errors
+:url: http://soap.genomics.org.cn/soapsnp.html
+:description: |
+  SOAPsnp is a member of the SOAP (Short Oligonucleotide Analysis
+  Package). Despite its name, the program is a resequencing utility
+  that can assemble consensus sequence for the genome of a newly
+  sequenced individual based on the alignment of the raw sequencing
+  reads on the known reference. The SNPs can then be identified on the
+  consensus sequence through the comparison with the reference. In the
+  first Asian genome re-sequencing project, evalution of SOAPsnp
+  result on Illumina HapMap 1M BeadChip Duo genotyping sites shows
+  great accuracy. Over 99% of the genotyping sites are covered at over
+  99.9% consistency. Further PCR plus Sanger sequencing of the
+  inconsistent SNP sites confirmed majority of the SOAPsnp results.
+
+  SOAPsnp uses a method based on Bayes’ theorem (the reverse
+  probability model) to call consensus genotype by carefully
+  considering the data quality, alignment, and recurring experimental
+  errors. All these kinds of information was integrated into a single
+  quality score for each base in PHRED scale to measure the accuracy
+  of consensus calling. Currently, it supports the alignment format of
+  SOAPaligner.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SOAPsnp-V1.03.src.tgz
+:src_dir: SOAPsnpZ
+:type: apps
+:version: '1.03'
+:requirements:
+  :build:
+    - libs/boost
+:patches:
+  - gridware-boost.patch
+:compilers:
+  gcc:
+:compile: |
+  make all <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{doc,bin}
+  cp -v soapsnp <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v COPYING release readme <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: SNPTEST v2
+:license: NONFREE - Free to use for academic use only; see http://j.mp/UHtBOK
+:summary: Analysis of single SNP association in genome-wide studies
+:url: https://mathgen.stats.ox.ac.uk/genetics_software/snptest/snptest.html
+:description: |
+  SNPTEST is a program for the analysis of single SNP association in
+  genome-wide studies. The tests implemented include:
+
+    * Binary (case-control) phenotypes, single and multiple
+      quantitative phenotypes
+    * Bayesian and Frequentist tests
+    * Ability to condition upon an arbitrary set of covariates and/or
+      SNPs
+    * Various different methods for the dealing with imputed SNPs
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: snptest_v2.4.1_Linux_x86_64_dynamic.tgz
+:src_dir: snptest_v2.4.1_Linux_x86_64_dynamic
+:type: apps
+:version: '2.4.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -v snptest_v2.4.1 <%= dest_dir %>/bin/snptest <%= redirect(:install) %>
+  cp -rv example <%= dest_dir %> <%= redirect(:install) %>
+  cp LICENCE <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin

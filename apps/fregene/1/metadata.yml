@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: FREGENE
+:license: GPLv3+
+:summary: Simulates sequence-like data over large genomic regions in large diploid populations
+:url: http://www.ebi.ac.uk/projects/BARGEN/
+:description: |
+  FREGENE is a C++ program that simulates sequence-like data over
+  large genomic regions in large diploid populations. Unlike
+  coalescent-based simulation tools, such as MS (Hudson, 2002),
+  FREGENE works forwards-in-time which allows a wide range of
+  demographic and selection scenarios to be implemented. Many such
+  models are already incorporated into FREGENE, and since it is open
+  source users can modify or extend these. Coalescent methods have
+  difficulty incorporating large amounts of gene conversion or
+  crossover (Hoggart et al. 2007), whereas these pose no particular
+  problem for FREGENE. FREGENE offers a flexible model for
+  recombination hotspots, and can readily simulate regions up to tens
+  of Mb on a standard desktop computer.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Fregene.tgz
+:src_dir: Fregene
+:type: apps
+:version: '1'
+:requirements:
+  :build:
+    - libs/gsl
+  :runtime:
+    - libs/gsl
+:patches:
+  - gridware-gsl.patch
+:compilers:
+  gcc:
+:compile: |
+  cd Fregene_source
+  make <%= redirect(:make) %>
+  cd ../Sample
+  make <%= redirect(:make_sample) %>
+  cd ..
+  sed -i -e 's|data/|$<%= package.name.upcase.tr('-','_') %>EXAMPLE/data/|g' Example/*.sh
+  sed -i -e 's|\.\./[^/]*/||g' Example/*.sh
+  rmdir Example/data_sample
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -v Fregene_source/fregene Sample/sample <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -rv Example <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -v documentation.* <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin

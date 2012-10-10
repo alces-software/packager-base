@@ -1,0 +1,36 @@
+---
+:schema: 1
+:title: GNU Scientific Library
+:license: GPL
+:summary: A numerical library for C and C++ programmers
+:url: http://www.gnu.org/software/gsl
+:description: |
+  The GNU Scientific Library (GSL) is a numerical library for C and
+  C++ programmers. It is free software under the GNU General Public
+  License.
+
+  The library provides a wide range of mathematical routines such as
+  random number generators, special functions and least-squares
+  fitting. There are over 1000 functions in total with an extensive
+  test suite.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gsl-1.15.tar.gz
+:version: 1.15
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man

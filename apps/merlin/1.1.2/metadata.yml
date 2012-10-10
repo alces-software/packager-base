@@ -1,0 +1,33 @@
+---
+:schema: 1
+:title: MERLIN
+:license: NONFREE - Free to use, redistribution forbidden
+:summary: Uses sparse trees to represent gene flow in pedigrees
+:url: http://www.sph.umich.edu/csg/abecasis/Merlin
+:description: |
+  MERLIN uses sparse trees to represent gene flow in pedigrees and is
+  one of the fastest pedigree analysis packages around (Abecasis et
+  al, 2002).
+
+  MERLIN performs common pedigree analyses. Input files describe
+  relationships between individuals in your dataset, store marker
+  genotypes, disease status and quantitative traits and provide
+  information on marker locations and allele frequencies.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: merlin-1.1.2.tar.gz
+:type: apps
+:version: '1.1.2'
+:compilers:
+  gcc:
+:compile: |
+  make all <%= redirect(:make) %>
+:install: |
+  make install INSTALLDIR=<%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

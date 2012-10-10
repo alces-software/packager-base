@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: UNPHASED
+:license: GPL
+:summary: Software for genetic association analysis
+:url: http://unphased.sourceforge.net/
+:description: |
+  UNPHASED is a versatile application for performing genetic
+  association analysis. Its features include:
+
+    * Analysis of nuclear families and unrelated subjects, and
+      combinations of the two
+    * Analysis of discrete or quantitative traits
+    * Maximum likelihood treatment of missing genotype data and
+      uncertain haplotypes
+    * Global association tests and tests of individual haplotypes
+    * Conditioning tests that allow for previous associations of
+      linked loci
+    * Inclusion of information from additional tag markers
+    * Support for non-genetic covariates including parent-of-origin
+    * Permutation tests allowing for multiple testing
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: unphased-3.1.6.zip
+:type: apps
+:version: '3.1.6'
+:compilers:
+  gcc:
+:compile: |
+  # sed #!s to use env
+  for a in utilities/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+  done
+  cd src
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,java}
+  cp -v src/unphased <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v utilities/*.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v bin/unphased.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  cp -rv test doc <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}TEST ${appdir}/test
+
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 1g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias unphased-gui "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/unphased.jar"
+
+  prepend-path PATH ${appdir}/bin

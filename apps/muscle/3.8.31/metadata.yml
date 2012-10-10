@@ -1,0 +1,34 @@
+---
+:schema: 1
+:title: MUSCLE
+:license: UNKNOWN - see http://www.drive5.com/muscle/
+:summary: Multiple sequence alignment
+:url: http://www.drive5.com/muscle/
+:description: |
+  MUSCLE is a program for creating multiple alignments of amino acid
+  or nucleotide sequences. A range of options is provided that give
+  you the choice of optimizing accuracy, speed, or some compromise
+  between the two.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: muscle3.8.31_src.tar.gz
+:src_dir: muscle3.8.31
+:type: apps
+:version: '3.8.31'
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  # don't output build progress directly to the tty
+  sed -i -e 's|>> /dev/tty||g' mk
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -v src/muscle <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
