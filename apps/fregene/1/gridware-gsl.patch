@@ -1,6 +1,6 @@
---- Fregene_source/makefile.orig	2012-10-10 13:58:53.000000000 +0100
-+++ Fregene_source/makefile	2012-10-10 13:59:05.000000000 +0100
-@@ -4,8 +4,8 @@
+--- Fregene_source/makefile.orig	2012-10-10 19:43:03.000000000 +0100
++++ Fregene_source/makefile	2012-10-10 19:43:46.000000000 +0100
+@@ -4,11 +4,11 @@
  
  LIBDIR			= ../Common/
  
@@ -10,10 +10,14 @@
 +LFLAGS			= -L$(LIBDIR) -L$(GSLLIB)
  LIBS			= -lgsl -lgslcblas
  CXXFLAGS		= 
- CPPFLAGS		= -W -Wall --pedantic -O3  $(IFLAGS)
---- Sample/makefile.orig	2012-10-10 14:04:09.000000000 +0100
-+++ Sample/makefile	2012-10-10 14:03:37.000000000 +0100
-@@ -4,8 +4,8 @@
+-CPPFLAGS		= -W -Wall --pedantic -O3  $(IFLAGS)
++CPPFLAGS		= -include stdint.h -W -Wall --pedantic -O3  $(IFLAGS)
+ #CPPFLAGS		= -W -Wall -pg -O0 -march=i686 $(IFLAGS)
+ #CPPFLAGS		= -W -Wall -O4 -g $(IFLAGS)
+ 
+--- Sample/makefile.orig	2012-10-10 19:42:18.000000000 +0100
++++ Sample/makefile	2012-10-10 19:42:44.000000000 +0100
+@@ -4,12 +4,12 @@
  
  LIBDIR			= ../Common/
  
@@ -24,3 +28,8 @@
  LIBS			= -lgsl -lgslcblas
  
  
+-CPPFLAGS		= -W -Wall -O3 $(IFLAGS)
++CPPFLAGS		= -include stdint.h -W -Wall -O3 $(IFLAGS)
+ #CPPFLAGS		= -W -Wall -g $(IFLAGS)
+ 
+ # Use the compile option -pg to time C++ code.
