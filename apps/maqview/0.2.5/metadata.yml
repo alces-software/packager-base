@@ -31,6 +31,9 @@
 :compile: |
   ./autogen.sh <%= redirect(:autogen) %>
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  # remove instruction to link libglut statically - there is no static
+  # version of libglut available on modern RHEL derivatives.
+  sed -i -e 's|^GLLIBS =.*|GLLIBS = -lglut -Wl,-Bdynamic -lGL -lGLU -lm|g' Makefile
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
