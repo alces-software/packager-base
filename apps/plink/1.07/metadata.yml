@@ -24,11 +24,22 @@
 :compilers:
   gcc:
 :compile: |
-  exit 1
+  sed -i -e 's|^FORCE_DYNAMIC.*|FORCE_DYNAMIC = 1|g' Makefile
+  make <%= redirect(:make) %>
 :install: |
-  exit 1
+  mkdir <%= dest_dir %>/{bin,doc,java}
+  cp -v COPYING.txt README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v plink <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v gPLINK.jar <%= dest_dir %>/java <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 1g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias gplink "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/gPLINK.jar"
 
   prepend-path PATH ${appdir}/bin
