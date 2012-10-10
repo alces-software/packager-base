@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: Tablet
+:license: Modified BSD License
+:summary: Lightweight, high-performance graphical viewer for next generation sequence assemblies and alignements
+:url: http://bioinf.scri.ac.uk/tablet
+:description: |
+  Tablet is a lightweight, high-performance graphical viewer for next
+  generation sequence assemblies and alignments.
+
+  Tablet features:
+
+    * High-performance visualization and data navigation.
+    * Display of reads in both packed and stacked formats.
+    * File format support for ACE, AFG, MAQ, SOAP2, SAM, BAM, FASTA,
+      FASTQ, and GFF3.
+    * Import GFF3 features and quickly find/highlight/display them.
+    * Search and locate reads by name or subsequence across entire
+      data sets.
+    * Paired end visualization support (for SAM/BAM).
+    * Entire-contig overviews, showing data layout or coverage
+      information.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tablet_linux_x64_1_12_08_29.sh
+:src_dir: .
+:type: apps
+:version: '1.12.08.29'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution
+:install: |
+  echo -e "o\n\n1\n<%= dest_dir %>\nn\nn\n" | sh ./tablet_linux_x64_1_12_08_29.sh.sic
+  rm <%= dest_dir %>/uninstall
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  prepend-path PATH ${appdir}/utils
+  prepend-path PATH ${appdir}
