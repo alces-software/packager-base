@@ -24,7 +24,7 @@
 :changelog: |
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: tablet_linux_x64_1_12_08_29.sh
+:src: tablet_linux_x64_1_12_08_29.sh.sic
 :src_dir: .
 :type: apps
 :version: '1.12.08.29'
@@ -33,7 +33,13 @@
 :compile: |
   # no-op; this is a binary distribution
 :install: |
-  echo -e "o\n\n1\n<%= dest_dir %>\nn\nn\n" | sh ./tablet_linux_x64_1_12_08_29.sh.sic
+  # o - OK (to install)
+  # ENTER, 1 - accept license
+  # dest_dir - where to install
+  # y - yes, it's ok that the directory already exists
+  # n - no, don't do any symlinking
+  # n - no, don't launch the app now
+  echo -e "o\n\n1\n<%= dest_dir %>\ny\nn\nn\n" | sh ./tablet_linux_x64_1_12_08_29.sh.sic
   rm <%= dest_dir %>/uninstall
 :module: |
   setenv ${appcaps}DIR ${appdir}
