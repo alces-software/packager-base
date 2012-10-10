@@ -1,0 +1,32 @@
+---
+:schema: 1
+:title: setuptools
+:license: PSF or ZPL
+:summary: Download, build, install, upgrade and uninstall Python packages -- easily!
+:url: http://pypi.python.org/pypi/setuptools
+:description: |
+  Package management for Python packages.
+:type: apps
+:group: Tools
+:changelog: |
+  * Fri Sep 28 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: setuptools-0.6c11.tar.gz
+:version: '0.6c11'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Python application
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages"
+  python setup.py install --prefix=<%= dest_dir %>/python
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
