@@ -15,6 +15,9 @@
 :version: '0.6c11'
 :compilers:
   noarch:
+:requirements:
+  :build: apps/python
+  :runtime: apps/python
 :compile: |
   # no-op; this is a distribution of a Python application
   python setup.py build <%= redirect(:build) %>
