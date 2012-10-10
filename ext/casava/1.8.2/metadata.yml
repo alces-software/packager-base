@@ -1,0 +1,84 @@
+---
+:schema: 1
+:title: Consensus Assessment of Sequence And VAriation
+:license: NONFREE - Illumina Public Source License
+:summary: Processes sequencing reads provided by RTA or OLB
+:url: http://support.illumina.com/sequencing/sequencing_software/casava.ilmn
+:description: |
+  The CASAVA package processes sequencing reads provided by RTA or
+  OLB. CASAVA supports Nextera dual indexing. CASAVA can generate the
+  following data:
+
+    * Sample-specific reads from multiplexed flow cells
+    * Aligned reads
+    * SNP calls
+    * Indel calls
+    * Expression levels for exons, genes and splice junctions in the
+      RNA Sequencing analysis
+
+  In addition, CASAVA automatically generates a range of statistics,
+  such as mean depth and percentage chromosome coverage, to enable
+  comparison with previous builds or other samples.
+
+  CASAVA analyzes sequencing reads in three stages:
+
+    * FASTQ file generation and demultiplexing
+    * Alignment to a reference genome
+    * Variant detection and counting
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CASAVA_v1.8.2.tar.bz2
+:src_dir: CASAVA_v1.8.2
+:type: ext
+:pkg_type: apps
+:requirements:
+  :tool: apps/cpanminus
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to CASAVA tarball (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('CASAVA_v1.8.2.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('CASAVA_v1.8.2.tar.bz2') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  export TOPDIR=$(pwd)
+  mkdir build
+  cd build
+  ../src/configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm XML::Simple <%= redirect(:cpanm) %> 
+:install: |
+  make install <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  # fix bad ownerships
+  chown -R root:root .
+  # fix bad directory permissions
+  find -type d -exec chmod 755 {} ';'
+  cp -rv perl <%= dest_dir %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+       prepend-path MANPATH ${appdir}/perl/man
+       prepend-path PATH ${appdir}/perl/bin
+
+       prepend-path PATH ${appdir}/bin
