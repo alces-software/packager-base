@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - additionally enable shared library build
   * Wed Aug 15 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - updated to 0.1.18
     - refactored to use packager style
@@ -36,12 +38,22 @@
   gcc:
 :compile: |
   make <%= redirect(:make) %>
+  if [ "$(uname -s)" == "Darwin" ]; then
+    make libbam.1.dylib-local <%= redirect(:make) %>
+    ln -s libbam.1.dylib libbam.dylib
+  else
+    make libbam.so.1-local <%= redirect(:make) %>
+    ln -s libbam.so.1 libbam.so
+  fi
 :install: |
   mkdir -p <%= dest_dir %>/include <%= dest_dir %>/doc <%= dest_dir %>/lib <%= dest_dir %>/bin <%= dest_dir %>/man/man1
   cp ChangeLog AUTHORS COPYING NEWS <%= dest_dir %>/doc
   cp samtools bcftools/bcftools misc/*.pl misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/seqtk misc/wgsim <%= dest_dir %>/bin
   cp samtools.1 <%= dest_dir %>/man/man1
   cp *.a <%= dest_dir %>/lib
+  shopt -s nullglob
+  cp -a *.dylib* *.so* <%= dest_dir %>/lib
+  shopt -u nullglob
   cp *.h <%= dest_dir %>/include
   cp -r examples <%= dest_dir %>
 :module: |
