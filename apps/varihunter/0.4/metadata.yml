@@ -1,0 +1,46 @@
+---
+:schema: 1
+:license: GPLv2
+:title: VariationHunter - CommonLaw
+:summary: A tool for discovery of structural variation in one or more individuals simultaneously using high throughput technologies
+:url: http://variationhunter.sourceforge.net/Home
+:description: |
+  Tool(s) for structural variation (insertion, deletion and inversion)
+  discovery on one or multiple genomes simultaneously.
+
+  The method has two main parts:
+
+    * Clustering of discordant paired-end read mappings 
+    * Selection of the SVs from the clusters created in previous part
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v0.4
+  * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: VariationHunter_CL.v0.04.tar.gz
+:src_dir: "CommonLaw Release"
+:type: apps
+:version: '0.4'
+:compilers:
+  gcc:
+:compile: |
+  cd clustering
+  make <%= redirect(:make) %>
+  cd ..
+  cd selection
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,data,doc}
+  cp -v clustering/VH <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v selection/multiInd_SetCover <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av Hg19_NecessaryFiles/* <%= dest_dir %>/data <%= redirect(:install) %>
+  cp -v README_* <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DATA ${appdir}/data
+
+  prepend-path PATH ${appdir}/bin
