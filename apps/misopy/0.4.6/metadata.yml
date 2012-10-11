@@ -47,7 +47,7 @@
 :install: |
   PYTHONDEPSDIR=$(pwd)/python
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
-  cp -rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
 :module: |
   setenv ${appcaps}DIR ${appdir}
