@@ -72,6 +72,7 @@
 # requires tklib
 :requirements:
   :build: libs/staden-iolib
+  :runtime: libs/staden-iolib
 :compilers:
   gcc:
 :compile: |
@@ -85,4 +86,3 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib/staden
-  prepend-path LD_LIBRARY_PATH ${appdir}/lib
