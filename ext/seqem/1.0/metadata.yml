@@ -1,0 +1,70 @@
+---
+:schema: 1
+:title: SeqEM
+:license: NONFREE - Register at http://hihg.med.miami.edu/software-download/seqem-version-1.0
+:summary: Adaptive genotype-calling approach for next-generation sequencing studies
+:url: http://www.ncbi.nlm.nih.gov/pubmed/20861027
+:description: |
+  Next-generation sequencing presents several statistical challenges,
+  with one of the most fundamental being determining an individual's
+  genotype from multiple aligned short read sequences at a
+  position. Some simple approaches for genotype calling apply fixed
+  filters, such as calling a heterozygote if more than a specified
+  percentage of the reads have variant nucleotide calls. Other
+  genotype-calling methods, such as MAQ and SOAPsnp, are
+  implementations of Bayes classifiers in that they classify genotypes
+  using posterior genotype probabilities.
+
+  The algorithm, which we call SeqEM, applies the well-known
+  Expectation-Maximization algorithm to an appropriate likelihood for
+  a sample of unrelated individuals with next-generation sequence
+  data, leveraging information from the sample to estimate genotype
+  probabilities and the nucleotide-read error rate.
+
+  SeqEM offers an improved, robust and flexible genotype-calling
+  approach that can be widely applied in the next-generation
+  sequencing studies.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: seqem1.0.tar.gz
+:src_dir: seqem1.0
+:version: '1.0'
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:patches:
+  - ccds-cstring.patch
+:params:
+  :tarball: "Path or URL to SeqEM tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('seqem1.0.tar.gz') %>
+  <% else %>
+    wget -O <%= source('seqem1.0.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  cd src
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -v src/seqem <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av documentation sample_data <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin

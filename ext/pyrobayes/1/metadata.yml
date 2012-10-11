@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: PyroBayes
+:license: NONFREE - Register at http://bioinformatics.bc.edu/marthlab/PyroBayes
+:summary: A novel base caller for pyrosequences from the 454 Life Sciences sequencing machines
+:url: http://bioinformatics.bc.edu/marthlab/PyroBayes
+:description: |
+  PyroBayes is a novel base caller for pyrosequences from the 454 Life
+  Sciences sequencing machines. It was designed to assign more
+  accurate base quality estimates to the 454 pyrosequences.
+
+  The PyroBayes manuscript is in press at Nature Methods and should be
+  available in the February 2008 issue.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: pyrobayes-unified.tar.gz
+:src_dir: pyrobayes-unified
+:type: ext
+:pkg_type: apps
+:version: 1
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to PyroBayes tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('pyrobayes-unified.tar.gz') %>
+  <% else %>
+    wget -O <%= source('pyrobayes-unified.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  cp -a * <%= dest_dir %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin

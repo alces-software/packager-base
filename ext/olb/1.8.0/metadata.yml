@@ -1,0 +1,75 @@
+---
+:schema: 1
+:title: Off-Line Basecaller
+:license: NONFREE - Illumina Genome Analyzer Software License
+:summary: Performs base calling and bcl to qseq conversion for the HiSeq, HiScan-SQ, or Genome Analyzer
+:url: http://support.illumina.com/sequencing/sequencing_software/offline_basecaller_olb.ilmn
+:description: |
+  The Off-Line Basecaller (OLB) performs base calling and bcl to qseq
+  conversion for the HiSeq, HiScan-SQ, or Genome Analyzer.
+
+  The standard workflow is to perform base calling using on-instrument
+  real time analysis (RTA), after which CASAVA performs alignment
+  using the base calling results. If needed, OLB provides the option
+  to perform primary data analysis off-line. In addition, OLB allows
+  you to convert per-cycle base call files (*.bcl) into per read base
+  call files (*_qseq.txt).
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: OLB-1.8.0.tar.gz
+:src_dir: OLB-1.8.0
+# requires: ImageMagick for convert; XML::Simple
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - libs/fftw3_float
+  :runtime:
+    - libs/fftw3_float
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to OLB tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('OLB-1.8.0.tar.gz') %>
+  <% else %>
+    wget -O <%= source('OLB-1.8.0.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ ! -d <%= src_dir %> ]; then
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  elif ! which convert &> /dev/null; then
+    echo ":failure: unable to find prerequisite 'convert' - try installing ImageMagick"
+    exit 1
+  fi
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl_depends/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl_depends -n"
+  cpanm XML::Simple <%= redirect(:cpanm) %>
+  make FFTW3F_INCLUDE_DIR=${FFTW3_FLOATINCLUDE} FFTW3F_LIBRARY=${FFTW3_FLOATLIB}/libfftw3f.so <%= redirect(:make) %>
+:install: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl_depends/lib/perl5"
+  make FFTW3F_INCLUDE_DIR=${FFTW3_FLOATINCLUDE} FFTW3F_LIBRARY=${FFTW3_FLOATLIB}/libfftw3f.so install <%= redirect(:install) %>
+  cp -av bin lib <%= dest_dir %> <%= redirect(:install) %>
+  cp -av perl_depends <%= dest_dir %>/perl <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+       prepend-path MANPATH ${appdir}/perl/man
+       prepend-path PATH ${appdir}/perl/bin
+
+       prepend-path PATH ${appdir}/bin

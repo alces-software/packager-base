@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: Off-Instrument Software Applications 
+:license: NONFREE - 454 Life Sciences End User Software License
+:summary: 454 Sequencing System Off-Instrument Software Applications suite
+:url: http://454.com/contact-us/software-request.asp
+:description: |
+  The 454 Sequencing System Off-Instrument Software Applications suite
+  includes the GS De Novo Assembler, GS Reference Mapper, GS Amplicon
+  Variant Analyzer (AVA) Application, associated packages and user
+  manual.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: offInstrumentApps_2.0.01.12-64.tar.gz
+:src_dir: offInstrumentApps_2.0.01.12-64
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to offInstrumentApps tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('offInstrumentApps_2.0.01.12-64.tar.gz') %>
+  <% else %>
+    wget -O <%= source('offInstrumentApps_2.0.01.12-64.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ ! -d <%= src_dir %> ]; then
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  echo -e "1\n\n<%= dest_dir %>\nyes\nno\n" | ./INSTALL <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
+

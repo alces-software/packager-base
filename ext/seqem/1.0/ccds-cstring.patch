@@ -1,0 +1,10 @@
+--- src/ccds.h.orig     2012-10-10 22:03:06.125903926 +0100
++++ src/ccds.h  2012-10-10 22:03:17.308853453 +0100
+@@ -1,6 +1,7 @@
+ #ifndef __CCDS_H__
+ #define __CCDS_H__
+ 
++#include <cstring>
+ #include <iostream>
+ #include <string>
+ #include <stdio.h>

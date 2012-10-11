@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: BCL Converter
+:license: NONFREE - Illumina Genome Analyzer Software License
+:summary: Convert *.bcl files into *_qseq.txt files
+:url: http://support.illumina.com/sequencing/sequencing_software/bcl_converter.ilmn
+:description: |
+  The standard sequencing output for the Illumina sequencing
+  instruments consists of *.bcl files, which contain the base calls
+  and quality scores for per cycle. CASAVA 1.7 uses *_qseq.txt files
+  as input. To convert *.bcl files into *_qseq.txt files, use the BCL
+  Converter.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: BclConverter-1.7.1.tar.gz
+:src_dir: BclConverter-1.7.1
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to BclConverter tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('BclConverter-1.7.1.tar.gz') %>
+  <% else %>
+    wget -O <%= source('BclConverter-1.7.1.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ ! -d <%= src_dir %> ]; then
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cp -av bin lib <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin

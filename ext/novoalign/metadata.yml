@@ -1,0 +1,87 @@
+---
+:schema: 1
+:title: Novoalign 
+:license: NONFREE - Register at http://www.novocraft.com/main/page.php?id=968
+:summary: Aligner for short nucleotide space reads
+:url: http://www.novocraft.com/main/page.php?s=novoalign
+:description: |
+  Novocraft aligner for sort nucleotide space reads.
+
+  Free:
+
+    * Aligns Single End, Paired End and Mate Pair libraries from
+      Illumina/Solexa sequencers
+    * Aligns paired end reads from 454
+    * Adapter trimming for short RNA
+    * Base quailities used thoughout alignment process for high
+      statistical accuracy
+    * Supports reads in fasta, fastq, qseq and prb formats
+    * Supports qualities in Solexa, Illumina of Sanger formats
+    * For reads with multiple good alignments can report: none; one by
+      random selection; or all alignments
+    * Posterior alignment probability (Quality Score) and filter
+    * Option for lower case masking of genome
+    * Allows IUB codes in reference sequence to help remove allelic
+      bias in alignments
+    * Mate pair mode allows mix of paired/mate pairs and reads that
+      cross circularisation junction
+    * Output in industry standard SAM format
+
+  With license:
+
+    * Multithreading for improved throughput
+    * Bisulfite alignment mode for BS-Seq experiments
+    * Support for compressed read files, gzip or bzip2
+    * Base quality calibration during alignment for improved
+      sensitivity and specificity
+    * Adapter trimming for paired end and mate pair reads
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: novoalign.tar.gz
+:src_dir: novocraft
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to Novocraft tarball in tar.gz format (pass 'skip' to use an existing download)"
+  :license: "Path or URL to Novoalign license file (pass 'free' to skip installation of a license)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('novoalign.tar.gz') %>
+  <% else %>
+    wget -O <%= source('novoalign.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  <% if param('license') != 'free' %>
+  if [ ! -f <%= param('license') %> ]; then
+    echo ":failure: unable to find license file: <%= param('license') %>"
+    exit 1
+  fi
+  <% end %>
+  if [ -d <%= src_dir %> ]; then
+    cd <%= src_dir %>
+    version=$(grep 'Release Novoalign' readme.txt | head -n1 | awk '{print $3;'} | cut -c2-)
+    cat <<-EOF
+    :version: '$version'
+  EOF
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  cp -av * <%= dest_dir %> <%= redirect(:install) %>
+  <% if param('license') != 'free' %>
+  cp -v <%= param('license') %> <%= dest_dir %>/novoalign.lic <%= redirect(:install) %>
+  <% end %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}
+
+       prepend-path PATH ${appdir}

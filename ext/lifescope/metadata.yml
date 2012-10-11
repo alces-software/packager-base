@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: LifeScope Genomic Analysis Solutions
+:license: NONFREE - Proprietary Commercial
+:summary: LifeScope Tools 
+:url: http://www.invitrogen.com/site/us/en/home/Products-and-Services/Applications/Sequencing/Next-Generation-Sequencing/Data-Analysis-Solutions-for-Next-Generation-Sequencing/LifeScope-Genomic-Analysis-Solutions.html
+:description: |
+  LifeScope Genomic Analysis Solutions includes a variety of software
+  and hardware configurations to suit your research needs and help you
+  achieve maximum productivity. Developed for seamless integration
+  with 5500 Series SOLiD® Systems,LifeScope Genomic Analysis Software
+  delivers performance-tuned algorithms for highly accurate
+  analysis. Secure project management, pushbutton workflows, and an
+  intuitive user interface make data analysis more straightforward
+  than ever for life scientists and bioinformaticians. Optimized
+  mapping and smaller file formats reduce time to results. New reports
+  and data visualization tools simplify data interpretation
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: lifescope.tar.gz
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to LifeScope tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('lifescope.tar.gz') %>
+  <% else %>
+    wget -O <%= source('lifescope.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  version=$(echo LifeScope-* | cut -f2 -d'-')
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:install: |
+  cp -av LifeScope-*/* <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}LIB ${appdir}/lib
+
+       prepend-path LD_LIBRARY_PATH ${appdir}/lib
+       prepend-path MANPATH ${appdir}/share/man
+       prepend-path PATH ${appdir}/bin
