@@ -1,0 +1,32 @@
+---
+:schema: 1
+:license: BSD License
+:title: Staden Package I/O Libraries
+:summary: I/O libraries developed as part of the Staden Project
+:url: http://staden.sourceforge.net/
+:description: |
+  The sequence handling and analysis software developed at the Medical
+  Research Council Laboratory of Molecular Biology, Cambridge, UK,
+  which has come to be known as the Staden Package.
+
+  This package provides the I/O library component which is used by
+  Staden itself, as well as other packages.
+:group: Libraries
+:changelog: |
+  * Thu Oct 11 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created as standalone package, split out from staden package
+:src: io_lib-1.12.5.tar.gz
+:src_dir: io_lib-1.12.5
+:type: libs
+:version: '1.12.5'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib

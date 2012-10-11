@@ -5,7 +5,6 @@
 :summary: A fully developed set of DNA sequence assembly (Gap4 and Gap5), editing and analysis tools (Spin)
 :url: http://staden.sourceforge.net/
 :description: |
-
   The sequence handling and analysis software developed at the Medical
   Research Council Laboratory of Molecular Biology, Cambridge, UK,
   which has come to be known as the Staden Package.
@@ -58,6 +57,8 @@
   and protein against nucleic acid.
 :group: Bioinformatics
 :changelog: |
+  * Thu Oct 11 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Factored io_lib out into a standalone package on which this depends
   * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri Mar  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -65,35 +66,22 @@
   * Wed Feb 23 2011 Steve Norledge
     - First created
 :src: staden-2.0.0b8.tar.gz
-:src_dir: .
+:src_dir: staden-2.0.0b8-src
 :type: apps
 :version: '2.0.0b8'
-:sources:
-  - io_lib-1.12.5.tar.gz
+:requirements:
+  :build: libs/staden-iolib
 :compilers:
   gcc:
 :compile: |
-  IOLIB_PATH=$(pwd)/build/<%= dest_dir %>/iolib
-  TMPLIB=$(pwd)/build
-  tar xzf <%= source('io_lib-1.12.5.tar.gz') %>
-  cd io_lib-1.12.5
-  ./configure --prefix=<%= dest_dir %>/iolib <%= redirect(:configure_iolib) %>
-  make <%= redirect(:make_iolib) %>
-  make install DESTDIR=$TMPLIB <%= redirect(:install_iolib_tmp) %>
-  # Ok, we're done with iolib, moving on to staden itself now.
-  cd ../staden-2.0.0b8-src
-  ./configure --prefix=<%= dest_dir %> --enable-64bit --with-io_lib=$IOLIB_PATH <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> --enable-64bit --with-io_lib="${STADEN_IOLIBDIR}" <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
-  cd io_lib-1.12.5
-  make install <%= redirect(:install_iolib) %>
-  cd ../staden-2.0.0b8-src
   make install <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
-  prepend-path LD_LIBRARY_PATH ${appdir}/iolib/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/lib/staden
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
