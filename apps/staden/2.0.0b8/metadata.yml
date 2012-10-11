@@ -69,6 +69,7 @@
 :src_dir: staden-2.0.0b8-src
 :type: apps
 :version: '2.0.0b8'
+# requires tklib
 :requirements:
   :build: libs/staden-iolib
 :compilers:
