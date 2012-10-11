@@ -31,6 +31,7 @@
     - First created
 :src: CASAVA_v1.8.2.tar.bz2
 :src_dir: CASAVA_v1.8.2
+:version: '1.8.2'
 :type: ext
 :pkg_type: apps
 :requirements:
