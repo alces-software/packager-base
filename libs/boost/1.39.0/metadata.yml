@@ -13,8 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
-  * Thu Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - added older 1.33.1 version (to allow mirroring of RHEL5 capabilities)
+  * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - added older 1.39.0 version (for CASAVA 1.6.0 support)
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - added older 1.45.0 version for dindel support
     - refactored to use packager style
@@ -27,21 +27,36 @@
     - add latest link
   * Tue Feb 22 2011 Steve Norledge
     - First created
-:src: boost_1_33_1.tar.bz2
-:src_dir: boost_1_33_1
+:src: boost_1_39_0.tar.bz2
+:src_dir: boost_1_39_0
 :type: libs
-:version: '1.33.1'
+:version: '1.39.0'
+:requirements:
+  :runtime: mpi/openmpi
+  :build: mpi/openmpi
 :compilers:
   gcc:
 :compile: |
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
-  if [ "$GCCDIR" != "/usr/bin/" -a "$GCCDIR" != "/usr/bin" -a "$GCCDIR" ]; then
-    sed -i -e 's|^\(BJAM_CONFIG=.*\)|\1 -sGCC_ROOT_DIRECTORY="${GCCDIR}"|' Makefile
-  fi
-  sed -i -e 's|^\(BJAM_CONFIG=.*\)|\1 --layout=system|' Makefile
-  make <%= redirect(:make) %>
+  # We specify libdir explicitly due to a bug in bootstrap.sh that
+  # otherwise causes the libraries to be installed in /lib; see
+  # https://svn.boost.org/trac/boost/ticket/3006
+  ./bootstrap.sh --prefix=<%= dest_dir %> --libdir=<%= dest_dir %>/lib <%= redirect(:configure) %>
+  echo "using mpi ;" >> project-config.jam
+
+  # Maybe we should use this...? http://www.openmamba.org/showfile.html?file=/pub/openmamba/devel/patches/libboost-1.39.0-tagged_layout.patch
+  # Then we can do this:
+  #   ./bjam --layout=tagged threading=multi stage <%= redirect(:stage) %>
+  #   ./bjam --layout=tagged threading=single stage <%= redirect(:stage) %>
+  # In the meantime, we hack a trailing -mt for those apps that need
+  # it as part of the install routine below.
+
+  ./bjam --layout=system stage <%= redirect(:stage) %>
 :install: |
-  make install <%= redirect(:install) %>
+  ./bjam --layout=system install <%= redirect(:install) %>
+  cd <%= dest_dir %>/lib
+  for a in *.so; do
+    ln -s $a $(basename $a .so)-mt.so
+  done
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
