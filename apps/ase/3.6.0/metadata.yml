@@ -45,10 +45,14 @@
 :src_dir: python-ase-3.6.0.2515
 :type: apps
 :version: '3.6.0'
-# requires: pygtk
 :requirements:
-  :build: libs/numpy
-  :runtime: libs/numpy
+  :build:
+    - apps/python
+    - libs/numpy
+  :runtime:
+    - apps/python
+    - libs/numpy
+    - libs/pygtk
   :tool: apps/setuptools
 :compilers:
   noarch:
