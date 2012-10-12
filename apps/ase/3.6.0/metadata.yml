@@ -47,6 +47,7 @@
 :version: '3.6.0'
 # requires: pygtk
 :requirements:
+  :build: libs/numpy
   :runtime: libs/numpy
   :tool: apps/setuptools
 :compilers:
