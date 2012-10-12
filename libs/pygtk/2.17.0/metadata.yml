@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: PyGTK Libraries
+:license: LGPL
+:summary: GTK+ for Python
+:url: http://pygtk.org/
+:description: |
+  PyGTK lets you to easily create programs with a graphical user
+  interface using the Python programming language. The underlying GTK+
+  library provides all kind of visual elements and utilities for it
+  and, if needed, you can develop full featured applications for the
+  GNOME Desktop.
+
+  PyGTK applications are truly multiplatform and they're able to run,
+  unmodified, on Linux, Windows, MacOS X and other platforms.
+
+  Other distinctive features of PyGTK are, besides its ease of use and
+  rapid prototyping, its first class accessibility support or the
+  capability to deal with complex multilingual or bidirectional text
+  for fully localized applications.
+
+  This package includes PyGTK, PyGObject and Pycairo.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Fri Oct 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: pygtk-2.17.0.tar.bz2
+:src_dir: pygtk-2.17.0
+:sources:
+  - pygobject-2.20.0.tar.bz2
+  - pycairo-1.8.8.tar.gz
+:version: 2.17.0
+:requirements:
+  :build: apps/python
+  :runtime: apps/python
+:compilers:
+  gcc:
+:compile: |
+  cd ..
+  tar xjf <%= source('pygobject-2.20.0.tar.bz2') %>
+  tar xzf <%= source('pycairo-1.8.8.tar.gz') %>
+
+  cd pygtk-2.17.0
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure_pygtk) %>
+  make <%= redirect(:make_pygtk) %>
+  cd ../pygobject-2.20.0
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure_pygobject) %>
+  make <%= redirect(:make_pygobject) %>
+  cd ../pycairo-1.8.8
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure_pycairo) %>
+  make <%= redirect(:make_pycairo) %>
+:install: |
+  make install <%= redirect(:install_pygtk) %>
+  cd ../pygobject-2.20.0
+  make install <%= redirect(:install_pygobject) %>
+  cd ../pycairo-1.8.8
+  make install <%= redirect(:install_pycairo) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages/gtk-2.0
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
