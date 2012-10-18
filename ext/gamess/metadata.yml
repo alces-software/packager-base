@@ -123,11 +123,11 @@
     if [[ "$version_str" =~ \(R.*\) ]]; then
       version_rev=$(echo "$version_str" | sed -e "s/.*(R\([^)]*\)).*/\1/g")
       version=${version}.$version_rev
-      ncores=${ncores}
     fi
     cat <<-EOF
     :version: '$version'
     :compiler_version: '$compiler_version'
+    :ncores: ${ncores}
   EOF
   else
     echo ":failure: unable to find source directory: <%= src_dir %>"
