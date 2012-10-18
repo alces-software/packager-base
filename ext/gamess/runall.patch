@@ -1,0 +1,26 @@
+--- runall.orig 2012-10-18 10:06:46.824583171 +0100
++++ runall      2012-10-18 12:50:35.802635383 +0100
+@@ -9,10 +9,12 @@
+ #  sure all tests TERMINATED NORMALLY, and got correct numbers too.
+ #
+ if (null$1 == null) then
+-   echo "Please specify the desired binary version number to be checked",
++   echo "Defaulting to version 00. Specify a different version if required"
++   #echo "Please specify the desired binary version number to be checked",
+    echo "    runall 00"
+    echo "as an example, will test gamess.00.x"
+-   exit 4
++   #exit 4
++   set VERNO=00
+ else
+    set VERNO=$1
+ endif
+@@ -46,7 +48,7 @@
+      xgms -v $VERNO -q $QUEUE -l exam$NUM.log exam$NUM
+      sleep 2
+   else
+-     ./rungms exam$NUM $VERNO 1  >&  exam$NUM.log
++     rungms exam$NUM $VERNO %NCORES%  >&  exam$NUM.log
+   endif
+   @ i++
+ end

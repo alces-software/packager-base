@@ -1,0 +1,184 @@
+---
+:schema: 1
+:title: General Atomic and Molecular Electronic Structure System (GAMESS)
+:license: NONFREE - No redistribution or incorporation; see http://j.mp/U7IGYE
+:summary: Ab initio molecular quantum chemistry
+:url: http://www.msg.chem.iastate.edu/gamess/
+:description: |
+  GAMESS is a program for ab initio molecular quantum
+  chemistry. Briefly, GAMESS can compute SCF wavefunctions ranging
+  from RHF, ROHF, UHF, GVB, and MCSCF. Correlation corrections to
+  these SCF wavefunctions include Configuration Interaction, second
+  order perturbation Theory, and Coupled-Cluster approaches, as well
+  as the Density Functional Theory approximation. Excited states can
+  be computed by CI, EOM, or TD-DFT procedures. Nuclear gradients are
+  available, for automatic geometry optimization, transition state
+  searches, or reaction path following. Computation of the energy
+  hessian permits prediction of vibrational frequencies, with IR or
+  Raman intensities. Solvent effects may be modeled by the discrete
+  Effective Fragment potentials, or continuum models such as the
+  Polarizable Continuum Model. Numerous relativistic computations are
+  available, including infinite order two component scalar
+  corrections, with various spin-orbit coupling options. The Fragment
+  Molecular Orbital method permits use of many of these sophisticated
+  treatments to be used on very large systems, by dividing the
+  computation into small fragments. Nuclear wavefunctions can also be
+  computed, in VSCF, or with explicit treatment of nuclear orbitals by
+  the NEO code.
+
+  A variety of molecular properties, ranging from simple dipole
+  moments to frequency dependent hyperpolarizabilities may be
+  computed. Many basis sets are stored internally, together with
+  effective core potentials or model core potentials, so that
+  essentially the entire periodic table can be considered.
+:group: Chemistry
+:changelog: |
+  * Thu Oct 18 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gamess-current.tar.gz
+:src_dir: gamess
+:type: ext
+:pkg_type: apps
+:patches:
+  - rungms.patch
+  - runall.patch
+  - lked-gridware-openmpi.patch
+:variants:
+  # other possible variants to implement: acml
+  simple:
+    :target: sockets
+    :mpi_kickoff_style: none
+  atlas+sockets:
+    :requirements:
+      :build:
+        - libs/atlas
+    :target: sockets
+    :mpi_kickoff_style: none
+  atlas:
+    :requirements:
+      :build:
+        - mpi/openmpi
+        - libs/atlas
+      :runtime:
+        - mpi/openmpi
+    :target: mpi
+    :mpi_kickoff_style: openmpi
+  mkl:
+    :requirements:
+      :build:
+        - mpi/openmpi
+        - libs/intelmkl
+      :runtime:
+        - mpi/openmpi
+        - libs/intelmkl
+    :target: mpi
+    :mpi_kickoff_style: openmpi
+  impi+mkl:
+    :requirements:
+      :build:
+        - mpi/intelmpi
+        - libs/intelmkl
+      :runtime:
+        - mpi/intelmpi
+    :target: mpi
+    :mpi_kickoff_style: hydra
+:compilers:
+  gcc:
+    :fc: gfortran
+  intel:
+    :fc: ifort
+:params:
+  :tarball: "Path or URL to GAMESS tarball (tar.gz format) (pass 'skip' to use an existing download)"
+  :ncores: "Number of cores on compute nodes (integer) (pass 'default' to determine from /proc/cpuinfo on build host)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('gamess-current.tar.gz') %>
+  <% else %>
+    wget -O <%= source('gamess-current.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  # compiler version
+  <% if compiler_name == 'intel' %>
+    compiler_version=$(ifort -V 2>&1 | head -n1 | sed 's/.*Version \([0-9]*\).*/\1/g')
+  <% else %>
+    compiler_version=$(gcc -dumpversion | cut -f1-2 -d'.')
+  <% end %>
+  <% if param(:ncores) == 'default' %>
+  ncores=$(cat /proc/cpuinfo | grep ^processor | wc -l)
+  <% else
+       ncores = param(:ncores).to_i
+       if ncores <= 0 %>
+  echo ":failure: Invalid number of cores specified: <%= ncores %>"
+  exit 1
+  <%   else %>
+  ncores=<%= ncores %>
+  <%   end
+     end %>
+  if [ -d <%= src_dir %> ]; then
+    cd <%= src_dir %>
+    version_str=$(grep "GAMESS VERSION = " source/gamess.src | sed -e "s/.*VERSION =\s*\([^\']*\).*/\1/g")
+    version=$(date -d "$version_str" +%Y%m%d)
+    if [[ "$version_str" =~ \(R.*\) ]]; then
+      version_rev=$(echo "$version_str" | sed -e "s/.*(R\([^)]*\)).*/\1/g")
+      version=${version}.$version_rev
+      ncores=${ncores}
+    fi
+    cat <<-EOF
+    :version: '$version'
+    :compiler_version: '$compiler_version'
+  EOF
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  <%# easy on OSX, no MPI or math libraries to deal with ;-)
+    # echo -e "\nmac64\n\n\n\n<= analysis_opts[:compiler_version]> \n" | ./config
+  %>
+  <%
+    # slightly trickier on linux :)
+    compiler_details = "#{compiler[:fc]}\\n#{analysis_opts[:compiler_version]}\\n"
+    compiler_details << '\n' if compiler[:fc] == 'ifort'
+  %>
+  <% if variant_name == 'simple' %>
+    echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\nnone\n\n\nsockets\n" | ./config
+  <% elsif variant_name == 'atlas' %>
+    echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\natlas\n${ATLASLIB}\n\n\nmpi\nopenmpi\n${MPI_HOME}\n" | ./config
+  <% elsif variant_name == 'atlas+sockets' %>
+    # no mpi
+    echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\natlas\n${ATLASLIB}\n\n\nsockets\n" | ./config
+  <% elsif variant_name == 'mkl' %>
+    echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\nmkl\n${INTELMKLLIB}/..\nskip\n\n\nmpi\nopenmpi\n${MPI_HOME}\n" | ./config
+  <% elsif variant_name == 'impi+mkl' %>
+    echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\nmkl\n${INTELMKLLIB}\n\n\nmpi\nimpi\n${MPI_HOME}\n" | ./config
+  <% end %>
+  cd ddi
+  ./compddi <%= redirect(:compddi) %>
+  if [ -f ddikick.x ]; then
+    mv ddikick.x ..
+  fi
+  cd ..
+  ./compall <%= redirect(:compall) %>
+  ./lked <%= redirect(:lked) %>
+:install: |
+  cp -av * <%= dest_dir %> <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  # sed variables in rungms script
+  sed -i -e 's|%TARGET%|<%= variant[:target] %>|g' \
+    -e 's|%GMSPATH%|<%= dest_dir %>|g' \
+    -e 's|%MPI_KICKOFF_STYLE%|<%= variant[:mpi_kickoff_style] %>|g' \
+    rungms
+  sed -i -e 's|%NCORES%|<%= analysis_opts[:ncores] %>|g' runall
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}
+
+       # For checktst 
+       prepend-path PATH ${appdir}/tests/standard
+       prepend-path PATH ${appdir}
+
+       setenv GAMESS_NCORES <%= analysis_opts[:ncores] %>

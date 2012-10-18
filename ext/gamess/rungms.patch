@@ -1,0 +1,230 @@
+--- rungms.orig 2012-10-18 12:03:26.042504328 +0100
++++ rungms      2012-10-18 17:02:33.675583398 +0100
+@@ -56,18 +56,31 @@
+ #       both Sun Grid Engine (SGE), and Portable Batch System (PBS).
+ #       See also a very old LoadLeveler "ll-gms" for some IBM systems.
+ #
+-set TARGET=sockets
+-set SCR=/scr/$USER
+-set USERSCR=~$USER/scr
+-set GMSPATH=/u1/mike/gamess
++set TARGET=%TARGET%
++set GMSPATH=%GMSPATH%
+ #
+ set JOB=$1      # name of the input file xxx.inp, give only the xxx part
+ set VERNO=$2    # revision number of the executable created by 'lked' step
+ set NCPUS=$3    # number of compute processes to be run
++
++set DATEDIR=`date +%Y%m%d%H%M%S`
++set SCR=/tmp/gamess/$USER-$JOB-$DATEDIR
++set USERSCR=~$USER/gamess/$JOB-$DATEDIR
++if (-e $SCR) then
++  echo "$0: Scratch directory ($SCR) already exists; please remove first."
++endif
++if (-e $USERSCR) then
++  echo "$0: User scratch directory ($USERSCR) already exists; please remove first."
++endif
++mkdir -p $SCR $USERSCR
++
+ #
+ # provide defaults if last two arguments are not given to this script
+ if (null$VERNO == null) set VERNO=00
+ if (null$NCPUS == null) set NCPUS=1
++
++set GMSBIN=gamess.$VERNO.x
++
+ #
+ #  ---- the top third of the script is input and other file assignments ----
+ #
+@@ -113,9 +126,9 @@
+    cp  $JOB.inp  $SCR/$JOB.F05
+    unset echo
+ else
+-   if (-e tests/standard/$JOB.inp) then
++   if (-e $GMSPATH/tests/standard/$JOB.inp) then
+       set echo
+-      cp  tests/standard/$JOB.inp  $SCR/$JOB.F05
++      cp  $GMSPATH/tests/standard/$JOB.inp  $SCR/$JOB.F05
+       unset echo
+    else
+       if (-e tests/$JOB.inp) then
+@@ -441,9 +454,9 @@
+ #
+ #        Just make sure we have the binaries, before we try to run
+ #
+-   if ((-x $GMSPATH/gamess.$VERNO.x) && (-x $GMSPATH/ddikick.x)) then
++   if ((-x $GMSPATH/$GMSBIN) && (-x $GMSPATH/ddikick.x)) then
+    else
+-      echo The GAMESS executable gamess.$VERNO.x or else
++      echo The GAMESS executable $GMSBIN or else
+       echo the DDIKICK executable ddikick.x
+       echo could not be found in directory $GMSPATH,
+       echo or else they did not properly link to executable permission.
+@@ -455,14 +468,14 @@
+ #
+    if ($DDI_VER == new) then
+       set echo
+-      $GMSPATH/ddikick.x $GMSPATH/gamess.$VERNO.x $JOB \
++      $GMSPATH/ddikick.x $GMSPATH/$GMSBIN $JOB \
+           -ddi $NNODES $NCPUS $HOSTLIST \
+           -scr $SCR < /dev/null
+       unset echo
+    else
+       set path=($GMSPATH $path)
+       set echo
+-      ddikick.x $JOB $GMSPATH gamess.$VERNO.x $SCR $NCPUS $HOSTLIST < /dev/null
++      ddikick.x $JOB $GMSPATH $GMSBIN $SCR $NCPUS $HOSTLIST < /dev/null
+       unset echo
+    endif
+ endif
+@@ -534,7 +547,7 @@
+    #  For example, iMPI and MVAPICH2 can choose "3steps",
+    #  while iMPI (as of version 4.0) can choose "hydra".
+    #
+-   set MPI_KICKOFF_STYLE=hydra
++   set MPI_KICKOFF_STYLE=%MPI_KICKOFF_STYLE%
+    #
+    #  A. build HOSTFILE,
+    #     This is always used below during file cleaning, and while
+@@ -561,6 +574,11 @@
+          set NNODES=`wc -l $HOSTFILE`
+          set NNODES=$NNODES[1]
+       endif
++      # ALCES - mjt - 2012-10-18 - allow tests to run without a scheduler
++      if ($SCHED == none) then
++         set NNODES=1
++      endif
++      # END ALCES
+    endif
+    #           uncomment these if you are still setting up...
+    #--echo '-----debug----'
+@@ -583,13 +601,13 @@
+ 
+    #
+    if ($NCPUS == 1) then
+-      echo "-n $NPROCS -host `hostname` /home/mike/gamess/gamess.$VERNO.x" >> $PROCFILE
++      echo "-n $NPROCS -host `hostname` $GMSPATH/$GMSBIN" >> $PROCFILE
+    else
+       if ($NNODES == 1) then
+              # when all processes are inside a single node, it is simple!
+              # all MPI processes, whether compute processes or data servers,
+              # are just in this node.   (note: NPROCS = 2*NCPUS!)
+-         echo "-n $NPROCS -host `hostname` /home/mike/gamess/gamess.$VERNO.x" >> $PROCFILE
++         echo "-n $NPROCS -host `hostname` $GMSPATH/$GMSBIN" >> $PROCFILE
+       else
+              # For more than one node, we want PPN compute processes on
+              # each node, and of course, PPN data servers on each.
+@@ -602,7 +620,7 @@
+          while ($n <= $NNODES)
+             set host=`sed -n -e "$n p" $HOSTFILE`
+             set host=$host[1]
+-            echo "-n $PPN2 -host $host /home/mike/gamess/gamess.$VERNO.x" >> $PROCFILE
++            echo "-n $PPN2 -host $host $GMSPATH/$GMSBIN" >> $PROCFILE
+             @ n++
+          end
+       endif
+@@ -644,8 +662,9 @@
+    #     add Intel MPI to the library path and to the execution path.
+    #        version number might be 3.2.1, 4.0.1.007, 4.0.2.003, or ...
+    #
+-   setenv LD_LIBRARY_PATH /opt/intel/impi/4.0.2.003/lib64:$LD_LIBRARY_PATH
+-   set path=(/opt/intel/impi/4.0.2.003/bin64 $path)
++   # ALCES - mjt - 2012-10-18 - we deal with these settings via environment modules
++   # setenv LD_LIBRARY_PATH /opt/intel/impi/4.0.2.003/lib64:$LD_LIBRARY_PATH
++   # set path=(/opt/intel/impi/4.0.2.003/bin64 $path)
+    #
+    #  add MVAPICH2 to the execution path
+    #--set path=(/usr/mpi/gcc/mvapich2-1.2p1/bin $path)
+@@ -665,7 +684,9 @@
+    setenv I_MPI_PIN disable
+    setenv I_MPI_DEBUG 0
+    setenv I_MPI_STATS 0
+-   setenv I_MPI_FABRICS dapl
++   # ALCES - mjt - 2012-10-18 - probably want better fabric than this,
++   # but can't convince the Intel MPI to do it at the moment fsr.  Try: ofa
++   setenv I_MPI_FABRICS shm
+    setenv I_MPI_DAT_LIBRARY libdat2.so
+    #      in case someone wants to try the "tag matching interface",
+    #      an option which unfortunately ignores the WAIT_MODE in 4.0.2!
+@@ -758,7 +779,7 @@
+    #  Now, at last, we can actually kick-off the MPI processes...
+    #
+    echo "MPI kickoff will run GAMESS on $NCPUS cores in $NNODES nodes."
+-   echo "The binary to be executed is /home/mike/gamess/gamess.$VERNO.x"
++   echo "The binary to be executed is $GMSPATH/$GMSBIN"
+    echo "MPI will run $NCPUS compute processes and $NCPUS data servers,"
+    echo "    placing $PPN of each process type onto each node."
+    echo "The scratch disk space on each node is $SCR, with free space"
+@@ -790,9 +811,17 @@
+       setenv I_MPI_HYDRA_ENV all
+       setenv I_MPI_PERHOST $PPN2
+       mpiexec.hydra -f $PROCFILE -n $NPROCS \
+-            /home/mike/gamess/gamess.$VERNO.x < /dev/null
++            $GMSPATH/$GMSBIN < /dev/null
++      unset echo
++      breaksw
++   # ALCES - mjt - 2012-10-18 - provide an openmpi kick-off style
++   case openmpi:
++      set echo
++      mpirun -n $NPROCS \
++            $GMSPATH/$GMSBIN < /dev/null
+       unset echo
+       breaksw
++   # END ALCES
+    case default:
+       echo No valid MPI startup procedure chosen.
+       exit
+@@ -833,7 +862,7 @@
+    @ NPROCS = $NCPUS + $NCPUS
+    chdir $SCR
+    set echo
+-   mpiexec_mpt -v -n $NPROCS $GMSPATH/gamess.$VERNO.x $JOB
++   mpiexec_mpt -v -n $NPROCS $GMSPATH/$GMSBIN $JOB
+    unset echo
+    rm $SCR/$JOB.nodes.$$
+    rm $SCR/$JOB.2xnodes.$$
+@@ -887,7 +916,7 @@
+    setenv DDI_DS_PER_NODE 1
+ #---   setenv MPICH_UNEX_BUFFER_SIZE 90000000
+    setenv MPICH_MAX_SHORT_MSG_SIZE 4000
+-   aprun -n $NCPUS -N $TPN $GMSPATH/gamess.$VERNO.x $JOB
++   aprun -n $NCPUS -N $TPN $GMSPATH/$GMSBIN $JOB
+    unset echo
+ 
+    if (-e $SCR/scr/$JOB.efp)   cp $SCR/scr/$JOB.efp $USERSCR
+@@ -967,7 +996,7 @@
+    @ NNODES = ($NCPUS - 1) / $SMP_SIZE + 1
+    echo "Running $NCPUS processes on $NNODES nodes ($SMP_SIZE-way SMP)."
+    set echo
+-   /usr/bin/poe gamess.$VERNO.x $JOB -stdinmode none
++   /usr/bin/poe $GMSBIN $JOB -stdinmode none
+    unset echo
+ endif
+ 
+@@ -983,7 +1012,7 @@
+    set GMSPATH=/home/hbar4/people/schmidt/gamess
+    chdir $SCR
+    set echo
+-   mpirun -np $NCPUS $GMSPATH/gamess.$VERNO.x $JOB < /dev/null
++   mpirun -np $NCPUS $GMSPATH/$GMSBIN $JOB < /dev/null
+    unset echo
+ endif
+ 
+@@ -1001,7 +1030,7 @@
+    endif
+    chdir $SCR
+    set echo
+-   aprun -c core=0 -n $NCPUS -N $PERNODE $OPTS $GMSPATH/gamess.$VERNO.x $JOB
++   aprun -c core=0 -n $NCPUS -N $PERNODE $OPTS $GMSPATH/$GMSBIN $JOB
+    unset echo
+ endif
+ 
+@@ -1021,7 +1050,7 @@
+    echo Running $NCPUS compute processes and $NCPUS data server processes...
+    @ NPROCS = $NCPUS + $NCPUS
+    set echo
+-   mpirun -np $NPROCS $GMSPATH/gamess.$VERNO.x $JOB < /dev/null
++   mpirun -np $NPROCS $GMSPATH/$GMSBIN $JOB < /dev/null
+    unset echo
+ endif
+ #

@@ -1,0 +1,13 @@
+# Patch lked to look in the correct lib/ directory for openmpi linking
+--- lked.dist   2012-10-18 10:12:00.776479133 +0100
++++ lked        2012-10-18 10:13:40.234645999 +0100
+@@ -956,7 +956,7 @@
+                set MPILIBS="$MPILIBS /usr/local/gm/lib/libgm.a"
+                breaksw
+             case openmpi:
+-               set MPILIBS="-L$GMS_MPI_PATH/lib64"
++               set MPILIBS="-L$GMS_MPI_PATH/lib"
+                set MPILIBS="$MPILIBS -lmpi"
+                breaksw
+             case mpt:
+EOF
