@@ -45,25 +45,25 @@
   - lked-gridware-openmpi.patch
 :variants:
   # other possible variants to implement: acml
-  simple:
-    :target: sockets
-    :mpi_kickoff_style: none
-  atlas+sockets:
-    :requirements:
-      :build:
-        - libs/atlas
+  default:
     :target: sockets
     :mpi_kickoff_style: none
   atlas:
     :requirements:
       :build:
+        - libs/atlas
+    :target: sockets
+    :mpi_kickoff_style: none
+  atlas-openmpi:
+    :requirements:
+      :build:
         - mpi/openmpi
         - libs/atlas
       :runtime:
         - mpi/openmpi
     :target: mpi
     :mpi_kickoff_style: openmpi
-  mkl:
+  mkl-openmpi:
     :requirements:
       :build:
         - mpi/openmpi
@@ -73,7 +73,7 @@
         - libs/intelmkl
     :target: mpi
     :mpi_kickoff_style: openmpi
-  impi+mkl:
+  mkl-intelmpi:
     :requirements:
       :build:
         - mpi/intelmpi
