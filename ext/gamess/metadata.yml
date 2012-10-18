@@ -142,16 +142,16 @@
     compiler_details = "#{compiler[:fc]}\\n#{analysis_opts[:compiler_version]}\\n"
     compiler_details << '\n' if compiler[:fc] == 'ifort'
   %>
-  <% if variant_name == 'simple' %>
+  <% if variant_name == 'default' %>
     echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\nnone\n\n\nsockets\n" | ./config
-  <% elsif variant_name == 'atlas' %>
+  <% elsif variant_name == 'atlas-openmpi' %>
     echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\natlas\n${ATLASLIB}\n\n\nmpi\nopenmpi\n${MPI_HOME}\n" | ./config
-  <% elsif variant_name == 'atlas+sockets' %>
+  <% elsif variant_name == 'atlas' %>
     # no mpi
     echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\natlas\n${ATLASLIB}\n\n\nsockets\n" | ./config
-  <% elsif variant_name == 'mkl' %>
+  <% elsif variant_name == 'mkl-openmpi' %>
     echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\nmkl\n${INTELMKLLIB}/..\nskip\n\n\nmpi\nopenmpi\n${MPI_HOME}\n" | ./config
-  <% elsif variant_name == 'impi+mkl' %>
+  <% elsif variant_name == 'mkl-intelmpi' %>
     echo -e "\nlinux64\n\n\n\n<%= compiler_details %>\nmkl\n${INTELMKLLIB}\n\n\nmpi\nimpi\n${MPI_HOME}\n" | ./config
   <% end %>
   cd ddi
