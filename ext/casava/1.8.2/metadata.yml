@@ -34,6 +34,7 @@
 :version: '1.8.2'
 :type: ext
 :pkg_type: apps
+# depends on ImageMagick and gnuplot at runtime
 :requirements:
   :tool: apps/cpanminus
 :compilers:
