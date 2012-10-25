@@ -14,6 +14,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - correct sed hashbang lines for perl scripts to remove trailing options
   * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v0.6.2
     - Refactored to packager style
@@ -27,7 +29,7 @@
   make <%= redirect(:make) %>
   # sed #!s to use env
   for a in *.pl; do
-    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
   done
 :install: |
   mkdir -p <%= dest_dir %>/bin
