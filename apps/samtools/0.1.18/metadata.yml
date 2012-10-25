@@ -21,6 +21,9 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - add missing varfilter.py to bin directory
+    - sed hashbang lines for perl and python scripts to use env
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - additionally enable shared library build
   * Wed Aug 15 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -46,10 +49,17 @@
     make libbam.so.1-local <%= redirect(:make) %>
     ln -s libbam.so.1 libbam.so
   fi
+  # sed #!s to use env
+  for a in misc/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+  for a in misc/*.py; do
+    sed -e 's|#!.*|#!/usr/bin/env python|g' -i $a
+  done
 :install: |
   mkdir -p <%= dest_dir %>/include <%= dest_dir %>/doc <%= dest_dir %>/lib <%= dest_dir %>/bin <%= dest_dir %>/man/man1
   cp ChangeLog AUTHORS COPYING NEWS <%= dest_dir %>/doc
-  cp samtools bcftools/bcftools misc/*.pl misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/seqtk misc/wgsim <%= dest_dir %>/bin
+  cp samtools bcftools/bcftools misc/*.pl misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/seqtk misc/varfilter.py misc/wgsim <%= dest_dir %>/bin
   cp samtools.1 <%= dest_dir %>/man/man1
   cp *.a <%= dest_dir %>/lib
   shopt -s nullglob
