@@ -19,6 +19,7 @@
 :version: '1.1'
 :requirements:
   :build: apps/python ~> 2.7.0
+  :runtime: apps/python ~> 2.7.0
 :compilers:
   gcc:
 :compile: |
