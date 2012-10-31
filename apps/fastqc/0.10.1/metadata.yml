@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: FastQC
+:license: GPLv3+
+:summary: A quality control tool for high throughput sequence data
+:url: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+:description: |
+  FastQC aims to provide a simple way to do some quality control
+  checks on raw sequence data coming from high throughput sequencing
+  pipelines. It provides a modular set of analyses which you can use
+  to give a quick impression of whether your data has any problems of
+  which you should be aware before doing any further analysis.
+
+  The main functions of FastQC are:
+
+    * Import of data from BAM, SAM or FastQ files (any variant)
+    * Providing a quick overview to tell you in which areas there may
+      be problems
+    * Summary graphs and tables to quickly assess your data
+    * Export of results to an HTML based permanent report
+    * Offline operation to allow automated generation of reports
+      without running the interactive application
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 31 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fastqc_v0.10.1.zip
+:src_dir: FastQC
+:type: apps
+:version: '0.10.1'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Perl/Java application
+  sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i fastqc
+  chmod 755 fastqc
+:install: |
+  mkdir -p <%= dest_dir %>/{app,bin,doc}
+  cp -av *.jar fastqc Contaminants Templates Help uk <%= dest_dir %>/app <%= redirect(:install) %>
+  cp -av *.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  ln -s <%= dest_dir %>/app/fastqc <%= dest_dir %>/bin/fastqc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}APP ${appdir}/app
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+
+
