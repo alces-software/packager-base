@@ -16,11 +16,17 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Nov  1 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Also download binary distribution as source distribution doesn't
+      contain python support scripts
+    - Handle installation of python support scripts
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: dindel-1.01-src.tar.gz
 :src_dir: dindel-1.01-src
 :version: '1.01'
+:sources:
+  - dindel-1.01-linux.tar.gz
 :requirements:
   :runtime:
     - libs/boost = 1.45.0
@@ -34,11 +40,29 @@
   gcc:
 :compile: |
   make <%= redirect(:make) %>
+  tar xvzf <%= source('dindel-1.01-linux.tar.gz') %> <%= redirect(:extract) %>
+
+  cd dindel-1.01-python
+  # Add missing hashbang to makeGenotypeLikelihoodFilePooled.py
+  echo "#!/usr/bin/env python" > tmp
+  cat makeGenotypeLikelihoodFilePooled.py >> tmp
+  rm -f makeGenotypeLikelihoodFilePooled.py
+  mv tmp makeGenotypeLikelihoodFilePooled.py
+
+  # Remove 'utils' path handling (we use PYTHONPATH instead)
+  for a in convertVCFToDindel.py makeGenotypeLikelihoodFilePooled.py mergeOutputDiploid.py mergeOutputPooled.py; do
+    sed -i -e '4,8d' $a
+  done
 :install: |
   mkdir <%= dest_dir %>/bin
-  cp dindel <%= dest_dir %>/bin
+  cp -av dindel <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av dindel-1.01-python/*.py <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av dindel-1.01-python/utils <%= dest_dir %>/python <%= redirect(:install) %>
+  chown -R <%= "#{Process.euid}:#{Process.egid}" %> <%= dest_dir %>
+  chmod 755 <%= dest_dir %>/bin/*.py
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python
