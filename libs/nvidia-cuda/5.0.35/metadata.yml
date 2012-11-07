@@ -31,6 +31,7 @@
     - Bumped to v5 release 5.0.35
     - Modifications to cope with new Nvidia installer that packages SDK Tookit and the Nvidia driver all in one.
     - SDK is now samples
+    - Add install script for dev driver
   * Thu Oct 11 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest available v4.2.9
   * Tue Sep 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -58,11 +59,8 @@
   /bin/sh <%=dest_dir%>/installers/cuda-samples_5.0.35_linux.run -noprompt -cudaprefix=<%=dest_dir%>/toolkit -prefix=<%=dest_dir%>/samples
   # create link for dev driver
   (cd <%=dest_dir%>/installers && ln -snf devdriver_5.0_linux_64_304.54.run devdriver.run)
-  # fix cuda install path in common makefile
-  # d "<%= dest_dir %>/sdk"
-  #for a in C/common/*.mk OpenCL/common/common_opencl.mk CUDALibraries/common/common_cudalib.mk CUDALibraries/common/common_npplib.mk CUDALibraries/common/UtilNPP/defines.mk; do
-  #  sed -e "s|^CUDA_INSTALL_PATH.*$|CUDA_INSTALL_PATH ?= <%= dest_dir %>/toolkit/|g" -i $a
-  #done
+  # install script
+  sed -e 's/%NVIDIAINSTALLER%/<%=dest_dir%>/installers/devdriver.run/g' <%=source('nvidia-driver-install.sh')%> > <%=dest_dir%>/installers/alces-nvidia
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/toolkit/bin
@@ -74,6 +72,7 @@
   setenv CUDA_SDK ${appdir}/samples
   setenv CUDA_SAMPLES ${appdir}/samples
   setenv NVIDIA_DRIVER ${appdir}/installers/
+  setenv DRIVERSCRIPT ${appdir}/installers/alces-nvidia
 
   prepend-path PATH ${appdir}/toolkit/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/toolkit/lib
