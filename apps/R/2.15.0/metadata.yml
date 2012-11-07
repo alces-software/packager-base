@@ -47,7 +47,8 @@
   ./configure --with-blas=$BLASDIR/libblas.a \
               --with-lapack=$LAPACKDIR/liblapack.a \
               --prefix=<%= dest_dir %> \
-              --enable-R-shlib <%= redirect(:configure) %>
+              --enable-R-shlib \
+              --enable-BLAS-shlib <%= redirect(:configure) %>
   make <%= redirect(:make) %>
   # make math lib
   cd src/nmath/standalone
