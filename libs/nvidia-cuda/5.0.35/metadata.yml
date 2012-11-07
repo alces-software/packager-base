@@ -40,13 +40,16 @@
   * Tue Jul 26 2011 Steve Norledge
     - First created
 :sources:
-  - nvidia-driver-installer
-:src: cuda_5.0.35_linux_64_rhel6.x-1.run
+  - nvidia-driver-installer.sh
+:src: cuda_5.0.35_linux_64_rhel6.x-1.run.sic
 :src_dir: .
 :type: libs
 :version: '5.0.35'
 :compilers:
   bin:
+:compile: |
+  # move main source file to it's proper name (ie. drop the sic extension)
+  mv cudatoolkit_4.2.9_linux_64_rhel6.0.run.sic cudatoolkit_4.2.9_linux_64_rhel6.0.run  
 :install: |
   mkdir -p <%= dest_dir %>/{toolkit,samples,installers}
   /bin/sh cuda_5.0.35_linux_64_rhel6.x-1.run --extract=<%= dest_dir%>/installers/
