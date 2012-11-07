@@ -15,8 +15,13 @@
   than ever for life scientists and bioinformaticians. Optimized
   mapping and smaller file formats reduce time to results. New reports
   and data visualization tools simplify data interpretation
+
+  Please note: Lifescope is dependent on gcc 4.1.2, we have seen problems
+  with saet erroring unexpectedly when running with newer versions
 :group: Bioinformatics
 :changelog: |
+  * Wed Nov 7 2012 Steve Norledge
+    - Added runtime dependency on gcc 4.1.2
   * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: lifescope.tar.gz
@@ -25,6 +30,8 @@
 :pkg_type: apps
 :compilers:
   bin:
+:requirements:
+  :runtime: compilers/gcc/4.1.2
 :params:
   :tarball: "Path or URL to LifeScope tarball in tar.gz format (pass 'skip' to use an existing download)"
 :prepare: |
