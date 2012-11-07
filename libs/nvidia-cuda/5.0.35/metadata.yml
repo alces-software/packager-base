@@ -60,7 +60,7 @@
   # create link for dev driver
   (cd <%=dest_dir%>/installers && ln -snf devdriver_5.0_linux_64_304.54.run devdriver.run)
   # install script
-  sed -e 's/%NVIDIAINSTALLER%/<%=dest_dir%>/installers/devdriver.run/g' <%=source('nvidia-driver-install.sh')%> > <%=dest_dir%>/installers/alces-nvidia
+  sed -e "s|%NVIDIAINSTALLER%|<%=dest_dir%>/installers/devdriver.run|g" <%=source('nvidia-driver-install.sh')%> > <%=dest_dir%>/installers/alces-nvidia
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/toolkit/bin
