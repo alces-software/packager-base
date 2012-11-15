@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: GeneTorrent
+:license: BSD License
+:summary: Transfer genomic data reliably across a network
+:url: https://cghub.ucsc.edu/software/downloads.html
+:description: |
+  GeneTorrent is a file transfer client application designed for the
+  optimal transfer of genomic data across a computer network. File
+  transfers using GeneTorrent are designed to be authenticated,
+  secure, reliable, and efficient.
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov 15 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: GeneTorrent-3.3.4.src.tar.gz
+:src_dir: GeneTorrent-3.3.4
+:type: apps
+:version: '3.3.4'
+# depends on xqzilla
+:sources:
+  - cgquery-2.1.3.tar.gz
+:requirements:
+  # Pin to 1.49.0 of boost as 1.51.0 series does not contain required header files (haven't checked 1.50.0)
+  :build: libs/boost ~> 1.49.0
+  :runtime: libs/boost ~> 1.49.0
+:compilers:
+  gcc:
+:compile: |
+  mkdir staging
+  STAGINGDIR="$(pwd)/staging"
+  cd libtorrent
+  ./configure --disable-geoip --disable-dht --prefix=${STAGINGDIR} --enable-static --disable-shared --with-boost=${BOOSTDIR} CFLAGS="-g -O2" CXXFLAGS="-g -O2" <%= redirect(:configure_libtorrent) %>
+  make <%= redirect(:make_libtorrent) %>
+  make install <%= redirect(:stage_libtorrent) %>
+  cd ..
+  export PKG_CONFIG_PATH="${STAGINGDIR}/lib/pkgconfig"
+  cd GeneTorrent
+  ./configure --prefix=<%= dest_dir %> CFLAGS="-g -O2 -Wall" CXXFLAGS="-g -O2 -Wall" LDFLAGS="-L ${BOOSTLIB} -L ${STAGINGDIR}/lib" CPPFLAGS="-I ${BOOSTINCLUDE}" <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  cd ..
+  cd scripts
+  ./autogen.sh <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  cd ..
+  mkdir cgquery
+  cd cgquery
+  tar xzf <%= source('cgquery-2.1.3.tar.gz') %>
+:install: |
+  cd GeneTorrent
+  make install <%= redirect(:install) %>
+  cd ../scripts
+  make install <%= redirect(:install) %>
+  cd ..
+  cp cgquery/usr/bin/cgquery <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
