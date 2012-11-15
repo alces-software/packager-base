@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: GTOOL
+:license: NONFREE - Free to use for academic use only; see http://j.mp/UHtBOK
+:summary: Transforms sets of genotype data for use with the programs SNPTEST and IMPUTE
+:url: http://www.well.ox.ac.uk/~cfreeman/software/gwas/gtool.html
+:description: |
+  GTOOL is a program for transforming sets of genotype data for use
+  with the programs SNPTEST and IMPUTE.
+
+  GTOOL can be used to:
+
+    * generate subsets of genotype data
+    * to convert genotype data between the PED file format and the
+      file format used by SNPTEST and IMPUTE
+    * merge genotype datasets together
+    * orient genotype data according to a strand file
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov 15 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gtool_v0.7.5_x86_64_dynamic.tgz
+:src_dir: .
+:type: apps
+:version: '0.7.5'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -v gtool <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av example <%= dest_dir %> <%= redirect(:install) %>
+  cp LICENCE <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
