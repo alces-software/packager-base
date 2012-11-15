@@ -48,7 +48,44 @@
     :version: '$version'
   EOF
 :install: |
+  #useradd lifescope
+  #groupadd lifescope
   cp -av LifeScope-*/* <%= dest_dir %> <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  # clean up a bit
+  rmdir log
+  chown -R root:root .
+  chmod -R g-ws .
+  find ui -type f -exec chmod 644 {} ';'
+  chgrp lifescope ui
+  chmod 775 ui
+  chown lifescope ui/*.jnlp ui/LifeScope.html
+  ln -s LifeScope.html ui/index.html
+  chgrp -R lifescope server
+  chmod 775 server
+
+  # config files - server/server.properties, etc/analysis/system.properties, etc/...
+
+  # XXX - init file
+
+  mkdir -p /mnt/lustre/lifescope/data
+  chmod 755 /users/data/lifescope/data
+
+  cd /mnt/lustre/lifescope/data
+  mkdir bams projects reads results
+  chmod 755 *
+  chown lifescope:clusterusers *
+
+  # copy in the 'lifescope data disk' aka the referenceData directory
+  cp -r <%= referenceDataDir %> references
+  chown -R root:root references
+  find references -type f -exec chmod 644 {} ';'
+  find references -type d -exec chmod 755 {} ';'
+
+  # extract the examples tarball
+
+  # extract the performance verification test data
+
 :modules:
    - :type: apps
      :content: |
@@ -59,3 +96,5 @@
        prepend-path LD_LIBRARY_PATH ${appdir}/lib
        prepend-path MANPATH ${appdir}/share/man
        prepend-path PATH ${appdir}/bin
+
+       setenv LIFE_USER lifescope

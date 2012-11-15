@@ -59,3 +59,5 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/lib/python2.6/site-packages
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
