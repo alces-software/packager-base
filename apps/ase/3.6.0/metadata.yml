@@ -39,6 +39,9 @@
   the code.
 :group: Chemistry
 :changelog: |
+  * Fri Nov 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added libs/pygtk as a build requirement, otherwise the optional
+      GDK backend doesn't get built
   * Fri Sep 28 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: python-ase-3.6.0.2515.tar.gz
@@ -49,6 +52,7 @@
   :build:
     - apps/python
     - libs/numpy
+    - libs/pygtk
   :runtime:
     - apps/python
     - libs/numpy
