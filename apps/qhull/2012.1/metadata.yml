@@ -21,6 +21,10 @@
     * rbox - generate point distributions for qhull
 :group: Mathematics
 :changelog: |
+  * Sat Nov 17 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add additional symlink inside include directory for apps that
+      expect the include subdirectory to be named 'qhull' rather than
+      'libqhull'
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -53,6 +57,10 @@
   make <%= redirect(:make) %>
 :install: |
   make install BINDIR=<%=dest_dir%>/bin INCDIR=<%=dest_dir%>/include LIBDIR=<%=dest_dir%>/lib DOCDIR=<%=dest_dir%>/share/doc/qhull MANDIR=<%=dest_dir%>/share/man/man1 <%= redirect(:install) %>
+  # Add an additional link inside the include directory, as some
+  # applications (eg. openmd) expect include/qhull/*.h rather than the
+  # default distributed include/libqhull/*.h
+  ln -s libqhull <%=dest_dir%>/include/qhull
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
