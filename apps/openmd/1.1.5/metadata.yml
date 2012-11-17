@@ -1,0 +1,54 @@
+---
+:scheme: 1
+:title: OpenMD
+:license: 
+:summary: Open source molecular dynamics engine
+:url: http://openmd.net/
+:description: |
+  OpenMD is an open source molecular dynamics engine which is capable
+  of efﬁciently simulating liquids, proteins, nanoparticles,
+  interfaces, and other complex systems using atom types with
+  orientational degrees of freedom (e.g. “sticky” atoms, point
+  dipoles, and coarse-grained assemblies). Proteins, zeolites, lipids,
+  transition metals (bulk, ﬂat interfaces, and nanoparticles) have all
+  been simulated using force ﬁelds included with the code. OpenMD
+  works on parallel computers using the Message Passing Interface
+  (MPI), and comes with a number of analysis and utility programs that
+  are easy to use and modify. An OpenMD simulation is speciﬁed using a
+  very simple meta-data language that is easy to learn.
+:group: Chemistry
+:changelog: |
+  * Sat Nov 17 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: openmd-1.1.5.tar.gz
+:type: apps
+:version: '1.1.5'
+:patches:
+  - antlr-CharScanner.patch
+:requirements:
+  :build:
+    - apps/qhull
+    - apps/openbabel
+    - libs/fftw3_double
+    - mpi/openmpi
+  :runtime:
+    - apps/qhull
+    - apps/openbabel
+    - libs/fftw3_double
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  MPICXX=mpic++ MPICC=mpicc MPIFC=mpif90 ./configure --prefix=/opt/gridware/apps/gcc/openmd/1.1.5 --with-openbabel=$OPENBABELDIR --with-fftw=$FFTW --with-qhull=$QHULLDIR <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/openmd/* <%= dest_dir %>
+  rmdir <%= dest_dir %>/openmd
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  

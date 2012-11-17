@@ -1,0 +1,12 @@
+--- src/antlr/CharScanner.hpp.orig	2012-11-17 22:52:04.152042212 +0000
++++ src/antlr/CharScanner.hpp		2012-11-17 22:53:29.783014805 +0000
+@@ -1,6 +1,9 @@
+ #ifndef INC_CharScanner_hpp__
+ #define INC_CharScanner_hpp__
+ 
++#include <strings.h>
++#include <cstdio>
++
+ /* ANTLR Translator Generator
+  * Project led by Terence Parr at http://www.jGuru.com
+  * Software rights: http://www.antlr.org/license.html
