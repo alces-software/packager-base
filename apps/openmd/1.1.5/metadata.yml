@@ -45,6 +45,9 @@
   make install <%= redirect(:install) %>
   mv <%= dest_dir %>/openmd/* <%= dest_dir %>
   rmdir <%= dest_dir %>/openmd
+  rm <%= dest_dir %>/bin/{xyz2md,pdb2md}
+  ln -s atom2md <%= dest_dir %>/bin/xyz2md
+  ln -s atom2md <%= dest_dir %>/bin/pdb2md
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
