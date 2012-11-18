@@ -39,7 +39,7 @@
 :compilers:
   gcc:
 :compile: |
-  MPICXX=mpic++ MPICC=mpicc MPIFC=mpif90 ./configure --prefix=/opt/gridware/apps/gcc/openmd/1.1.5 --with-openbabel=$OPENBABELDIR --with-fftw=$FFTW --with-qhull=$QHULLDIR <%= redirect(:configure) %>
+  MPICXX=mpic++ MPICC=mpicc MPIFC=mpif90 ./configure --prefix=<%= dest_dir %> --with-openbabel=$OPENBABELDIR --with-fftw=$FFTW --with-qhull=$QHULLDIR <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
