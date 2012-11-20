@@ -43,8 +43,8 @@
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
-  mv <%= dest_dir %>/openmd/* <%= dest_dir %>
-  rmdir <%= dest_dir %>/openmd
+  mv <%= dest_dir %>/openmd/{bin,doc,samples}* <%= dest_dir %>
+  mv <%= dest_dir %>/openmd/{AUTHORS,LICENSE,README}* <%= dest_dir %>/doc
   rm <%= dest_dir %>/bin/{xyz2md,pdb2md}
   ln -s atom2md <%= dest_dir %>/bin/xyz2md
   ln -s atom2md <%= dest_dir %>/bin/pdb2md
