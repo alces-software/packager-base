@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: GPL
+:summary: Genome browser and annotation tool
+:url: http://www.sanger.ac.uk/resources/software/artemis/
+:description: |
+  Artemis is a free genome browser and annotation tool that allows
+  visualisation of sequence features, next generation data and the
+  results of analyses within the context of the sequence, and also its
+  six-frame translation.
+
+  Artemis is written in Java, and is available for UNIX, Macintosh and
+  Windows systems. It can read EMBL and GENBANK database entries or
+  sequence in FASTA, indexed FASTA or raw format. Other sequence
+  features can be in EMBL, GENBANK or GFF format.
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v14.0.17
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: artemis_compiled_v14.0.17.tar.gz
+:src_dir: artemis
+:type: apps
+:version: 14.0.17
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a noarch distribution of a Java application
+:install: |
+  cp -rv * <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  prepend-path PATH ${appdir}
