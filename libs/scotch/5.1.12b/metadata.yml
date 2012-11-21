@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: SCOTCH
+:license: CeCILL-C free/libre software license - see http://j.mp/T3UC9g
+:summary: Graph and mesh/hypergraph partitioning, graph clustering, and sparse matrix ordering
+:url: http://scotch.gforge.inria.fr/
+:description: |
+  SCOTCH is a software package for sequential and parallel graph
+  partitioning, static mapping, and sparse matrix block ordering, and
+  sequential mesh and hypergraph partitioning.
+
+  Its purpose is to apply graph theory, with a divide and conquer
+  approach, to scientific computing problems such as graph and mesh
+  partitioning, static mapping, and sparse matrix ordering, in
+  application domains ranging from structural mechanics to operating
+  systems or bio-chemistry.
+
+  The SCOTCH distribution is a set of programs and libraries which
+  implement the static mapping and sparse matrix reordering algorithms
+  developed within the SCOTCH project.
+:group: Mathematics
+:changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: scotch_5.1.12b.tar.gz
+:src_dir: scotch_5.1.12
+:type: libs
+:version: '5.1.12b'
+:requirements:
+  :build: mpi/openmpi
+  :runtime: mpi/openmpi
+:sources:
+  - Makefile.shlib.inc
+  - Makefile.static.inc
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  cp <%= source('Makefile.shlib.inc') %> Makefile.inc
+  make <%= redirect(:compile) %>
+  make ptscotch <%= redirect(:compile) %>
+  cp <%= source('Makefile.static.inc') %> Makefile.inc
+  make <%= redirect(:compile) %>
+  make ptscotch <%= redirect(:compile) %>
+:install: |
+  cd src
+  cp <%= source('Makefile.shlib.inc') %> Makefile.inc
+  make install prefix=<%= dest_dir %> <%= redirect(:install) %>
+  cp <%= source('Makefile.static.inc') %> Makefile.inc
+  make install prefix=<%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
+
+
