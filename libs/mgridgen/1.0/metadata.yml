@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: MGRIDGEN
+:license: Freeware - please cite in any result dissemination
+:summary: Obtain a sequence of successive coarse grids that are well-suited for geometric multigrid methods
+:url: http://www-users.cs.umn.edu/~moulitsa/software.html
+:description: |
+  MGRIDGEN is a serial library written entirely in ANSI C that
+  implements (serial) algorithms for obtaining a sequence of
+  successive coarse grids that are well-suited for geometric multigrid
+  methods. The quality of the elements of the coarse grids is
+  optimized using a multilevel framework
+
+  PARMGRIDGEN is is an MPI-based parallel library that is based on the
+  serial package MGRIDGEN. PARMGRIDGEN extends the functionality
+  provided by MGRIDGEN and it is especially suited for large scale
+  numerical simulations.
+:group: Mathematics
+:changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ParMGridGen-1.0.tar.gz
+:src_dir: ParMGridGen-1.0
+:type: libs
+:version: '1.0'
+:requirements:
+  :build: mpi/openmpi
+  :runtime: mpi/openmpi
+:compilers:
+  gcc:
+:patches:
+  - autotools.patch1
+:compile: |
+  autoreconf -fi <%= redirect(:autoconf) %>
+  ./configure --prefix=<%= dest_dir %> CC=mpicc <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cp -av Graphs <%= dest_dir %> <%= redirect(:install) %>
+  cp -av Doc <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+
