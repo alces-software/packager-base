@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: METIS
+:license: NONFREE - Free for use for educational and research purposes by non-profit institutions; see doc/LICENSE.txt
+:summary: Serial Graph Partitioning and Fill-reducing Matrix Ordering
+:url: http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
+:description: |
+  METIS is a set of serial programs for partitioning graphs,
+  partitioning finite element meshes, and producing fill reducing
+  orderings for sparse matrices. The algorithms implemented in METIS
+  are based on the multilevel recursive-bisection, multilevel k-way,
+  and multi-constraint partitioning schemes developed in the Karypis
+  Lab.
+:group: Mathematics
+:changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: metis-5.0.2.tar.gz
+:type: libs
+:version: '5.0.2'
+:requirements:
+  :tool: apps/cmake
+:variants:
+  default:
+    :width: '32'
+  '64':
+    :width: '64'
+:compilers:
+  gcc:
+:compile: |
+  sed -i -e 's/#define IDXTYPEWIDTH 32/#define IDXTYPEWIDTH <%= variant[:width] %>/g' include/metis.h
+  make config shared=1 prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -av manual/manual.pdf LICENSE.txt ChangeLog <%= dest_dir %>/doc <%= redirect(:install) %> 
+  cp -av graphs <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path DYLD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+

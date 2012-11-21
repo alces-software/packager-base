@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: METIS
+:license: NONFREE - Free for use for educational and research purposes by non-profit institutions; see doc/LICENSE
+:summary: Serial Graph Partitioning and Fill-reducing Matrix Ordering
+:url: http://glaros.dtc.umn.edu/gkhome/metis/metis/overview
+:description: |
+  METIS is a set of serial programs for partitioning graphs,
+  partitioning finite element meshes, and producing fill reducing
+  orderings for sparse matrices. The algorithms implemented in METIS
+  are based on the multilevel recursive-bisection, multilevel k-way,
+  and multi-constraint partitioning schemes developed in the Karypis
+  Lab.
+:group: Mathematics
+:changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: metis-4.0.3.tar.gz
+:type: libs
+:version: '4.0.3'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,lib,include,doc}
+  cp -av graphchk kmetis mesh2dual mesh2nodal oemetis onmetis partdmesh partnmesh pmetis <%= dest_dir %>/bin <%= redirect(:install) %> 
+  cp -av libmetis.a <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -av Lib/*.h <%= dest_dir %>/include <%= redirect(:install) %>
+  cp -av Doc/manual.ps LICENSE CHANGES <%= dest_dir %>/doc <%= redirect(:install) %> 
+  cp -av Graphs <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
