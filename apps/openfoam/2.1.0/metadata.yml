@@ -10,9 +10,26 @@
   mechanics problems, including computational fluid dynamics (CFD).
 :group: Physics
 :requirements:
-  :build: mpi/openmpi
-  :runtime: mpi/openmpi
+  :build:
+    - mpi/openmpi
+    - libs/scotch
+    - libs/mgridgen
+  :runtime:
+    - mpi/openmpi
+    - libs/scotch
+    - libs/mgridgen
 :changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added dependency on libs/scotch in order to build the SCOTCH
+      decomposer
+    - Added dependency on libs/mgridgen in order to build the MGridGen
+      agglomeration method
+    - Bundle OpenFOAM compatible version of METIS in order to build
+      the METIS decomposer
+    - Tweak build environment variables to ensure PStream is built
+      correctly
+    - Changed dummy library path from a prepend to an append to ensure
+      real libraries are always located first
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri Mar 23 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -21,12 +38,41 @@
 :src_dir: OpenFOAM-2.1.0
 :type: apps
 :version: '2.1.0'
+:sources:
+  - metis-5.0pre2.tar.gz
+:patches:
+  - openfoam-openmpi.patch1
+  - openfoam-scotch.patch1
+  - openfoam-metis.patch1
+  - openfoam-mgridgen.patch1
 :compilers:
   gcc:
 :compile: |
-  export FOAM_INST_DIR=`pwd`/..
+  cd ..
+  export TOPDIR=`pwd`
+  
+  tar xvzf <%= source('metis-5.0pre2.tar.gz') %>
+  cd metis-5.0pre2
+  patch -p1 < <%= source('metis-5.0pre2.patch') %> <%= redirect(:patch_metis) %>
+  make all <%= redirect(:build_metis) %>
+
+  cd "${TOPDIR}/OpenFOAM-2.1.0"
+  export FOAM_INST_DIR="${TOPDIR}"
+  # Need to do this waltz as OpenFOAM unsets MPI_HOME :-/
+  old_MPI_HOME=${MPI_HOME}
   source etc/bashrc
+  export MPI_HOME=${old_MPI_HOME}
+  export SCOTCH_ROOT=${SCOTCHDIR}
+  unset old_MPI_HOME
   ./Allwmake <%= redirect(:make) %>
+
+  # Make the metis decomposer
+  cd "${TOPDIR}/OpenFOAM-2.1.0/src/parallel/decompose/metisDecomp"
+  wmake libso <%= redirect(:make_metisdecomp) %>
+
+  # Make the mgridgen agglomeration method
+  cd "${TOPDIR}/OpenFOAM-2.1.0/src/fvAgglomerationMethods/MGridGenGamgAgglomeration"
+  wmake libso <%= redirect(:make_mgridgenagglomeration) %>
 :install: |
   mkdir <%= dest_dir %>/3rdparty
   cp -r applications bin COPYING doc etc platforms README.* tutorials <%= dest_dir %>
@@ -48,7 +94,9 @@
   setenv FOAM_TUTORIALS ${appdir}/tutorials
   setenv FOAM_UTILITIES ${appdir}/applications/utilities
 
-  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib/dummy
+  # dummy goes at the end of the LD_LIBRARY_PATH to ensure that all
+  # other locations are tried first before falling back to dummies.
+  append-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib/dummy
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPOpt/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib
 

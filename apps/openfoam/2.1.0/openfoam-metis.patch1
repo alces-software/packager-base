@@ -1,0 +1,14 @@
+diff -ur OpenFOAM-2.1.0.orig/src/parallel/decompose/metisDecomp/Make/options OpenFOAM-2.1.0/src/parallel/decompose/metisDecomp/Make/options
+--- OpenFOAM-2.1.0.orig/src/parallel/decompose/metisDecomp/Make/options        2012-04-10 11:21:23.405768093 +0100
++++ OpenFOAM-2.1.0/src/parallel/decompose/metisDecomp/Make/options      2012-11-21 12:21:53.393995295 +0000
+@@ -1,7 +1,8 @@
+ EXE_INC = \
+     -I$(WM_THIRD_PARTY_DIR)/metis-5.0pre2/include \
+-    -I../../dummyThirdParty/metisDecomp  /* location of dummy metis.h */ \
++    -I$(TOPDIR)/metis-5.0pre2/include  /* location of dummy metis.h */ \
+     -I../decompositionMethods/lnInclude
+ 
+ LIB_LIBS = \
+-    -L$(FOAM_EXT_LIBBIN) -lmetis -lGKlib
++    -L$(TOPDIR)/metis-5.0pre2/GKlib/builds/Linux-x86_64 \
++    -L$(TOPDIR)/metis-5.0pre2/build/Linux-x86_64 -L$(FOAM_EXT_LIBBIN) -lmetis -lGKlib
