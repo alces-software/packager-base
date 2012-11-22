@@ -73,6 +73,9 @@
   # Make the mgridgen agglomeration method
   cd "${TOPDIR}/OpenFOAM-2.1.0/src/fvAgglomerationMethods/MGridGenGamgAgglomeration"
   wmake libso <%= redirect(:make_mgridgenagglomeration) %>
+
+  cd "${TOPDIR}/OpenFOAM-2.1.0"
+  mv platforms/linux64GccDPOpt/lib/openmpi-1.5.3 platforms/linux64GccDPOpt/lib/mpi
 :install: |
   mkdir <%= dest_dir %>/3rdparty
   cp -r applications bin COPYING doc etc platforms README.* tutorials <%= dest_dir %>
@@ -98,6 +101,7 @@
   # other locations are tried first before falling back to dummies.
   append-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib/dummy
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPOpt/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib/mpi
   prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPOpt/lib
 
   setenv MPI_ARCH_PATH $::env(MPI_HOME)
