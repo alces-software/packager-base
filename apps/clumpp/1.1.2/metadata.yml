@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: CLUMPP
+:license: 
+:summary: Deals with label switching and multimodality problems in population-genetic cluster analyses
+:url: http://www.stanford.edu/group/rosenberglab/clumpp.html
+:description: |
+  CLUMPP is a program that deals with label switching and
+  multimodality problems in population-genetic cluster
+  analyses. CLUMPP permutes the clusters output by independent runs of
+  clustering programs such as structure, so that they match up as
+  closely as possible. The user has the option of choosing one of
+  three algorithms for aligning replicates, with a tradeoff of speed
+  and similarity to the optimal alignment. A program note describing
+  CLUMPP was published in Bioinformatics 23: 1801-1806 (2007).
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CLUMPP_Linux64.1.1.2.tar.gz
+:src_dir: CLUMPP_Linux64.1.1.2
+:type: apps
+:version: '2.6.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary application
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -av CLUMPP <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av CLUMPP_Manual.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av example <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  prepend-path PATH ${appdir}/bin
