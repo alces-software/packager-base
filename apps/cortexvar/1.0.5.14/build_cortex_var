@@ -1,0 +1,30 @@
+#!/bin/bash
+set -o pipefail
+set -o errexit
+
+if [ -z "$3" ]; then
+  echo "Usage: $0 <max kmers> <number of colors> <destination directory>"
+  echo "       NB: max kmers must be multiple of 32 minus 1, eg. 31, 63, 95 etc."
+  exit 1
+fi
+
+if [[ $((($1+1)%32)) != 0 ]]; then
+  echo "Max kmers was not a multiple of 32, minus 1."
+  echo ""
+  echo "Usage: $0 <max kmers> <number of colors> <destination directory>"
+  echo "       NB: max kmers must be multiple of 32 minus 1, eg. 31, 63, 95 etc."
+  exit 1
+fi
+
+mkdir -p "$3"
+BUILD_DIR=/tmp/cortexvardir.build.$$
+cp -r $CORTEXVARDIR/builder ${BUILD_DIR}
+pushd ${BUILD_DIR} &>/dev/null
+echo "Building for MAXK=$1 and NUM_COLS=$2..."
+MAXK=$1 NUM_COLS=$2 make &>${BUILD_DIR}/build.log
+cd bin
+BINARY_OUT=$(echo *)
+popd &>/dev/null
+cp $BUILD_DIR/bin/* "$3"
+rm -rf "${BUILD_DIR}"
+echo "Binary '$BINARY_OUT' now available in '$3'."

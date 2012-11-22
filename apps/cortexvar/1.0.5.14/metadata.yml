@@ -1,0 +1,89 @@
+---
+:schema: 1
+:title: "Cortex: cortex_var"
+:license: GPLv3
+:summary: "Software for genome assembly and variation analysis: variation and population assembly"
+:url: http://cortexassembler.sourceforge.net
+:description: |
+  Cortex is an efficient and low-memory software framework for
+  analysis of genomes using sequence data. There are two main
+  executables, being developed in parallel streams: cortex_con
+  (primary contact Mario Caccamo) is for consensus genome assembly,
+  and cortex_var (primary contact Zamin Iqbal) is for variation and
+  population assembly.
+
+  This package is for the cortex_var application, for variation and
+  population assembly.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 21 2012 Steve Norledge
+    - First created
+:src: CORTEX_release_v1.0.5.14.tgz
+:src_dir: CORTEX_release_v1.0.5.14
+:version: '1.0.5.14'
+:requirements:
+  :build:
+    - apps/samtools
+    - libs/gsl
+  :runtime:
+    - apps/samtools
+    - libs/gsl
+    - apps/vcftools
+    - apps/stampy
+:patches:
+  - gridware-aware.patch1
+:sources:
+  - build_cortex_var
+:compilers:
+  gcc:
+:compile: |
+  TOPDIR=$(pwd)
+  cd "${TOPDIR}/libs/string_buffer"
+  make clean && make <%= redirect(:build_string_buffer) %>
+  cd "${TOPDIR}/libs/seq_file"
+  make clean && make STRING_BUF_PATH=../string_buffer <%= redirect(:build_seq_file) %>
+  cd "${TOPDIR}/scripts/analyse_variants/needleman_wunsch"
+  make clean && make <%= redirect(:build_needleman_munsch) %>
+  cd "${TOPDIR}"
+  mkdir bin
+  cp scripts/analyse_variants/needleman_wunsch/needleman_wunsch bin
+  cp <%= source('build_cortex_var') %> bin
+
+  # clean up
+  rm -rf libs/gsl-1.15* libs/samtools-0.1.18* scripts/analyse_variants/needleman_wunsch
+
+  # build some 'standard' binaries
+  make MAXK=63 cortex_var <%= redirect(:make) %>
+  make MAXK=95 cortex_var <%= redirect(:make) %>
+  make MAXK=127 cortex_var <%= redirect(:make) %>
+  make NUM_COLS=2 cortex_var <%= redirect(:make) %>
+  make NUM_COLS=4 cortex_var <%= redirect(:make) %>
+
+  # sed scripts #!s to use env
+  for a in scripts/*/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+    chmod 755 $a
+  done
+:install: |
+  cp -rv bin data demo doc scripts <%= dest_dir %> <%= redirect(:install) %>
+  install -m 644 gpl.txt <%= dest_dir %>/doc
+  install -m 644 ReleaseNotes <%= dest_dir %>/doc
+  mkdir <%= dest_dir %>/builder
+  make clean
+  cp -rv src include libs Makefile <%= dest_dir %>/builder <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SCRIPTS ${appdir}/scripts
+
+  prepend-path PATH ${appdir}/scripts/1000genomes
+  prepend-path PATH ${appdir}/scripts/simulations
+  prepend-path PATH ${appdir}/scripts/analyse_supernodes
+  prepend-path PATH ${appdir}/scripts/analyse_variants
+  prepend-path PATH ${appdir}/scripts/calling
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/scripts/analyse_variants/bioinf-perl/lib
+  prepend-path PERL5LIB ${appdir}/scripts/calling

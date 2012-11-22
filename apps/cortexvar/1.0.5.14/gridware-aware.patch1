@@ -1,0 +1,112 @@
+diff -ur CORTEX_release_v1.0.5.14.orig/Makefile CORTEX_release_v1.0.5.14/Makefile
+--- CORTEX_release_v1.0.5.14.orig/Makefile	2012-11-14 14:08:11.000000000 +0000
++++ CORTEX_release_v1.0.5.14/Makefile	2012-11-21 23:31:43.000000000 +0000
+@@ -63,14 +63,19 @@
+ endif
+ 
+ # Library paths
+-IDIR_GSL = libs/gsl-1.15
+-IDIR_GSL_ALSO = libs/gsl-1.15/gsl
+-IDIR_GSL3 = libs/gsl-1.15/.libs
+-IDIR_GSL4 = libs/gsl-1.15/cblas/.libs
++IDIR_GSL = $(GSLINCLUDE)
++IDIR_GSL_ALSO = $(GSLINCLUDE)/gsl
++IDIR_GSL3 = $(GSLINCLUDE)/gsl
++IDIR_GSL4 = $(GSLINCLUDE)/gsl
++LDIR_GSL = $(GSLLIB)
++LDIR_GSL_ALSO = $(GSLLIB)
++LDIR_GSL3 = $(GSLLIB)
++LDIR_GSL4 = $(GSLLIB)
+ 
+ IDIR_STRS = libs/string_buffer
+ IDIR_SEQ = libs/seq_file
+-IDIR_BAM = libs/samtools-0.1.18
++IDIR_BAM = $(SAMTOOLSINCLUDE)
++LDIR_BAM = $(SAMTOOLSLIB)
+ 
+ # Main program includes
+ IDIR_BASIC = include/basic
+@@ -135,8 +140,8 @@
+ 
+ # Add -L/usr/local/lib/ to satisfy some systems that struggle to link libz
+ LIBINCS = -L/usr/local/lib -I$(IDIR_GSL) -I$(IDIR_GSL_ALSO) -I$(IDIR_BAM) \
+-          -I$(IDIR_SEQ) -I$(IDIR_STRS) -L$(IDIR_GSL) -L$(IDIR_GSL_ALSO) -L$(IDIR_GSL3)  -L$(IDIR_GSL4) \
+-          -L$(IDIR_BAM) -L$(IDIR_SEQ) -L$(IDIR_STRS)
++          -I$(IDIR_SEQ) -I$(IDIR_STRS) -L$(LDIR_GSL) -L$(LDIR_GSL_ALSO) -L$(LDIR_GSL3)  -L$(LDIR_GSL4) \
++          -L$(LDIR_BAM) -L$(IDIR_SEQ) -L$(IDIR_STRS)
+ 
+ TEST_LIBINCS = -I$(IDIR_CUNIT) -L$(LDIR_CUNIT) $(LIBINCS)
+ 
+diff -ur CORTEX_release_v1.0.5.14.orig/libs/seq_file/Makefile CORTEX_release_v1.0.5.14/libs/seq_file/Makefile
+--- CORTEX_release_v1.0.5.14.orig/libs/seq_file/Makefile	2012-11-14 17:42:18.000000000 +0000
++++ CORTEX_release_v1.0.5.14/libs/seq_file/Makefile	2012-11-21 23:21:30.000000000 +0000
+@@ -19,9 +19,9 @@
+ # Check mac/linux
+ UNAME:=$(shell uname)
+ 
+-CFLAGS := $(CFLAGS) -Wall -Wextra -I$(SAMTOOLS_PATH) -I$(STRING_BUF_PATH)
++CFLAGS := $(CFLAGS) -Wall -Wextra -I$(SAMTOOLSINCLUDE) -I$(STRING_BUF_PATH)
+ 
+-LIB_INCS := -L. -L$(SAMTOOLS_PATH) -L$(STRING_BUF_PATH)
++LIB_INCS := -L. -L$(SAMTOOLSLIB) -L$(STRING_BUF_PATH)
+ LIB_FLAGS := -lseqfile -lbam -lstrbuf -lz -lm
+ 
+ ifdef ZLIB_PATH
+diff -ur CORTEX_release_v1.0.5.14.orig/scripts/analyse_variants/process_calls.pl CORTEX_release_v1.0.5.14/scripts/analyse_variants/process_calls.pl
+--- CORTEX_release_v1.0.5.14.orig/scripts/analyse_variants/process_calls.pl	2012-11-14 13:50:24.000000000 +0000
++++ CORTEX_release_v1.0.5.14/scripts/analyse_variants/process_calls.pl	2012-11-22 00:09:47.000000000 +0000
+@@ -4,13 +4,9 @@
+ use File::Basename;
+ use Getopt::Long;
+ 
+-
+-#### Dear User - this following line is the only one in this script you may want to edit
+-my $stampy_bin =
+-  "/home/zam/installed_apps/stampy-1.0.13/stampy.py";    #### <<<<<<< can also use command line parameter to specify this
+-my $vcftools_dir="/path/to/vcftools/dir";### <<<< can also use command line param
+-
+-#### no need to modify anything below this line
++my $stampy_bin = $ENV{STAMPYBIN} . "/stampy.py";
++my $vcftools_dir = $ENV{VCFTOOLSDIR};
++my $needleman_wunsch_bin = $ENV{CORTEXVARBIN} . "/needleman_wunsch";
+ 
+ # However you may decide you want to increase this threshold
+ my $mapping_qual_thresh = 40;    #  - demand 5prime flank maps with quality>= 40
+@@ -318,20 +314,6 @@
+ 	);
+ }
+ 
+-my $needleman_wunsch_bin = $cortex_dir
+-  . "/scripts/analyse_variants/needleman_wunsch/needleman_wunsch";
+-if ( !( -e $needleman_wunsch_bin ) )
+-{
+-	print("Cannot find the needleman_wunsch binary. Either:\n");
+-	print(
+-"1. you mis-entered the path to your Cortex directory when you manually edited process_calls.pl, or\n"
+-	);
+-	print(
+-"2. you forgot to cd into scripts/analyse_variants/needleman_wunsch and type \"make\", as documented in the compilation section of the Manual\n"
+-	);
+-	die();
+-}
+-
+ #print "Using reference colour $reference_colour\n";
+ 
+ #if (   ( $apply_filter_one_allele_must_be_ref eq "yes" )
+diff -ur CORTEX_release_v1.0.5.14.orig/scripts/calling/run_calls.pl CORTEX_release_v1.0.5.14/scripts/calling/run_calls.pl
+--- CORTEX_release_v1.0.5.14.orig/scripts/calling/run_calls.pl	2012-11-14 13:50:24.000000000 +0000
++++ CORTEX_release_v1.0.5.14/scripts/calling/run_calls.pl	2012-11-22 00:10:39.000000000 +0000
+@@ -9,11 +9,8 @@
+ # genotype all samples at the union of all called sites, make a VCF and remove duplicate sites from the VCF
+ ##############################################################################################################
+ 
+-
+-#### Dear User - this following line is the only one in this script you may want to edit
+-my $stampy_bin ="/path/to/stampy.py";    #### <<<<<<< can also use command line parameter
+-my $vcftools_dir="/path/to/vcftools/dir";### <<<< can also use command line param
+-#### ****************  no need to modify anything below this line
++my $stampy_bin = $ENV{STAMPYBIN} . "/stampy.py";
++my $vcftools_dir = $ENV{VCFTOOLSDIR};
+ 
+ # However you may decide you want to increase this threshold
+ 
