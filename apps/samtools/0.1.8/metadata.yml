@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Wed Nov 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - add $SAMTOOLSLIB to LD_LIBRARY_PATH
   * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Package for v0.1.8
   * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -78,3 +80,4 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib

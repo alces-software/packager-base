@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Wed Nov 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - add $SAMTOOLSLIB to LD_LIBRARY_PATH
   * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - add missing varfilter.py to bin directory
     - sed hashbang lines for perl and python scripts to use env
@@ -76,3 +78,4 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
