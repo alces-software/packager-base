@@ -14,6 +14,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected broken alias; conflicts with apps/gatk
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Tue Feb 22 2011 Steve Norledge
@@ -28,12 +30,14 @@
 :install: |
   cp -rv * <%= dest_dir %> <%= redirect(:install) %>
 :module: |
+  conflict apps/gatk
+
   setenv ${appcaps}DIR ${appdir}
 
   set-alias GenomeAnalysisTK "java -jar ${appdir}/GenomeAnalysisTK.jar"
   set-alias gatk "java -jar ${appdir}/GenomeAnalysisTK.jar"
-  set-alias AnalyzeCovariates "java -jar ${appdir}/AnalyzeCovariates.jar"
 
+  set-alias gatk_AnalyzeCovariates "java -jar ${appdir}/AnalyzeCovariates.jar"
   set-alias gatk_AnalyzeAnnotations "gatk -T AnalyzeAnnotations"
   set-alias gatk_VariantAnnotator "gatk -T VariantAnnotator"
   set-alias gatk_BeagleOutputToVCF "gatk -T BeagleOutputToVCF"

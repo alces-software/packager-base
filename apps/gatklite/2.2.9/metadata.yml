@@ -15,15 +15,17 @@
 :group: Bioinformatics
 :changelog: |
   * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to 2.2.9
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Conflicts with apps/gatk
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to 2.0.39
     - Refactored to packager style
   * Tue Feb 22 2011 Steve Norledge
     - First created
-:src: GenomeAnalysisTKLite-2.0.39.tar.bz2
-:src_dir: GenomeAnalysisTKLite-2.0-39-ge14ea5c
-:version: '2.0.39'
+:src: GenomeAnalysisTKLite-2.2.9.tar.bz2
+:src_dir: GenomeAnalysisTKLite-2.2-9-g74c9db9
+:version: '2.2.9'
 :compilers:
   noarch:
 :compile: |
@@ -38,9 +40,7 @@
   set-alias GenomeAnalysisTKLite "java -jar ${appdir}/GenomeAnalysisTKLite.jar"
   set-alias gatk "java -jar ${appdir}/GenomeAnalysisTKLite.jar"
 
-  set-alias gatk_Align "gatk -T Align"
   set-alias gatk_AlignmentValidation "gatk -T AlignmentValidation"
-  set-alias gatk_CountBestAlignments "gatk -T CountBestAlignments"
   set-alias gatk_VariantAnnotator "gatk -T VariantAnnotator"
   set-alias gatk_BeagleOutputToVCF "gatk -T BeagleOutputToVCF"
   set-alias gatk_ProduceBeagleInput "gatk -T ProduceBeagleInput"
@@ -67,6 +67,7 @@
   set-alias gatk_SomaticIndelDetector "gatk -T SomaticIndelDetector"
   set-alias gatk_PhaseByTransmission "gatk -T PhaseByTransmission"
   set-alias gatk_ReadBackedPhasing "gatk -T ReadBackedPhasing"
+  set-alias gatk_AssessReducedQuals "gatk -T AssessReducedQuals"
   set-alias gatk_CountBases "gatk -T CountBases"
   set-alias gatk_CountIntervals "gatk -T CountIntervals"
   set-alias gatk_CountLoci "gatk -T CountLoci"

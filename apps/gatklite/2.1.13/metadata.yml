@@ -15,15 +15,17 @@
 :group: Bioinformatics
 :changelog: |
   * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to 2.1.13
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Conflicts with apps/gatk
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to 2.0.39
     - Refactored to packager style
   * Tue Feb 22 2011 Steve Norledge
     - First created
-:src: GenomeAnalysisTKLite-2.0.39.tar.bz2
-:src_dir: GenomeAnalysisTKLite-2.0-39-ge14ea5c
-:version: '2.0.39'
+:src: GenomeAnalysisTKLite-2.1.13.tar.bz2
+:src_dir: GenomeAnalysisTKLite-2.1-13-g0f021e6
+:version: '2.1.13'
 :compilers:
   noarch:
 :compile: |
