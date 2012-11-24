@@ -1,0 +1,39 @@
+:schema: 1
+:license: Modified Free http://www.netlib.org/benchmark/hpl/copyright.html
+:summary: A Portable Implementation of the High-Performance Linpack Benchmark for Distributed-Memory Computers
+:url: http://www.netlib.org/benchmark/hpl/
+:description: |
+  HPL is a software package that solves a (random) dense linear system in double precision (64 bits) arithmetic on distributed-memory computers. It can thus be regarded as a portable as well as freely available implementation of the High Performance Computing Linpack Benchmark.
+  The algorithm used by HPL can be summarized by the following keywords: Two-dimensional block-cyclic data distribution - Right-looking variant of the LU factorization with row partial pivoting featuring multiple look-ahead depths - Recursive panel factorization with pivot search and column broadcast combined - Various virtual panel broadcast topologies - bandwidth reducing swap-broadcast algorithm - backward substitution with look-ahead of depth 1.
+  The HPL package provides a testing and timing program to quantify the accuracy of the obtained solution as well as the time it took to compute it. The best performance achievable by this software on your system depends on a large variety of factors. Nonetheless, with some restrictive assumptions on the interconnection network, the algorithm described here and its attached implementation are scalable in the sense that their parallel efficiency is maintained constant with respect to the per processor memory usage.
+  The HPL software package requires the availibility on your system of an implementation of the Message Passing Interface MPI (1.1 compliant). An implementation of either the Basic Linear Algebra Subprograms BLAS or the Vector Signal Image Processing Library VSIPL is also needed. Machine-specific as well as generic implementations of MPI, the BLAS and VSIPL are available for a large variety of systems.
+:group: Benchmarks
+:changelog: |
+  * Wed Nov 21 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - First created
+:src: hpl-2.1.tar.gz
+:patches: 
+  - alces-hpl.patch
+:type: apps
+:version: '2.1'
+:compilers:
+  gcc:
+    :build_name: Linux-gcc
+:requirements:
+  :runtime:
+    - mpi/openmpi
+  :build:
+    - mpi/openmpi
+    - libs/atlas
+:compile: |
+  export TOPdir=`pwd`
+  make arch=<%= compiler[:build_name]%> <%= redirect :make %> 
+:install: |
+  (cd bin && ln -snf <%=compiler[:build_name]%>/* .)
+  cp -pav . <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+
+  prepend-path PATH ${appdir}/bin/
+  prepend-path MANPATH ${appdir}/man/
