@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: distruct
+:license: Freeware; registration and citation requested - see http://www.stanford.edu/group/rosenberglab/distruct.html
+:summary: Graphically display results produced by the genetic clustering program structure
+:url: http://www.stanford.edu/group/rosenberglab/distruct.html
+:description: |
+  distruct is a program that can be used to graphically display
+  results produced by the genetic clustering program structure or by
+  other similar programs. The figures produced by distruct display
+  individual membership coefficients in the same form as used in
+  "Genetic structure of human populations" Science 298: 2381-2385
+  (2002). Various options enable the user to control left-to-right
+  printing order of populations, bottom-to-top printing order of
+  clusers, colors, and other graphical details.
+:group: Bioinformatics
+:changelog: |
+  * Mon Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: distruct1.1.tar.gz
+:src_dir: distruct1.1
+:type: apps
+:version: '1.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary application
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,example}
+  cp -av distructLinux1.1 <%= dest_dir %>/bin/distruct <%= redirect(:install) %>
+  cp -av distructManual.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av casia* drawparams <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -av ColorBrewer <%= dest_dir %> <%= redirect(:install) %>
+  chmod 644 <%= dest_dir %>/example/* <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  prepend-path PATH ${appdir}/bin
