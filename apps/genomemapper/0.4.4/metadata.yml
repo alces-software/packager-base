@@ -1,0 +1,34 @@
+---
+:schema: 1
+:title: GenomeMapper
+:license: UNKNOWN - Freeware
+:summary: Short read mapping tool designed for accurate read alignments
+:url: http://1001genomes.org/software/genomemapper_singleref.html
+:description: |
+  GenomeMapper is a short read mapping tool designed for accurate read
+  alignments. It quickly aligns millions of reads either with ungapped
+  or gapped alignments. This version is used to align against a single
+  reference.
+:group: Bioinformatics
+:changelog: |
+  * Mon Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: genomemapper-0.4.4.tar.gz
+:src_dir: genomemapper-0.4.4
+:type: apps
+:version: '0.4.4'
+:compilers:
+  gcc:
+:compile: |
+  sed -i -e 's/OS=/#OS=/g' Makefile
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -av genomemapper gmindex <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av doc/* <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  prepend-path PATH ${appdir}/bin
