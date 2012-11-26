@@ -1,7 +1,7 @@
 ---
 :schema: 1
 :title: CLUMPP
-:license: 
+:license: Freeware; registration and citation requested - see http://www.stanford.edu/group/rosenberglab/clumpp.html
 :summary: Deals with label switching and multimodality problems in population-genetic cluster analyses
 :url: http://www.stanford.edu/group/rosenberglab/clumpp.html
 :description: |
