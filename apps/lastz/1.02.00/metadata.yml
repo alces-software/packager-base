@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: LASTZ
+:license: UNKNOWN; licensing information absent, considered freeware
+:summary: Program for aligning DNA sequences, a pairwise aligner
+:url: http://www.bx.psu.edu/~rsharris/lastz/
+:description: |
+  LASTZ is a tool for aligning two DNA sequences, and inferring
+  appropriate scoring parameters automatically.
+
+  LASTZ is designed to preprocess one sequence or set of sequences
+  (collectively called the target) and then align several query
+  sequences to it. The general flow of the program is like a pipeline:
+  the output of one stage is the input to the next. The user can
+  choose to skip most stages via command-line options; any stages that
+  are skipped pass their input along to the next stage unchanged. Two
+  of the stages, scoring inference and interpolation, are special in
+  that they perform a miniature version of the pipeline within them.
+:group: Bioinformatics
+:changelog: |
+  * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: lastz-1.02.00.tar.gz
+:src_dir: lastz-distrib-1.02.00
+:type: apps
+:version: '1.02.00'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  export LASTZ_INSTALL=<%= dest_dir %>/bin
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/{doc,etc}
+  cp -av images *.html <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av test_data <%= dest_dir %> <%= redirect(:install) %>
+  cp -av tools/*.py tools/*.sh <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av tools/*.control <%= dest_dir %>/etc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
