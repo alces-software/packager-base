@@ -25,7 +25,7 @@
 :src: locas.tar.gz
 :src_dir: locas_src
 :type: apps
-:version: '1'
+:version: '0.1.7'
 :compilers:
   gcc:
 :compile: |
