@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: structureHarvester
+:license: MIT License
+:summary: Extracting data from STRUCTURE results files
+:url: http://users.soe.ucsc.edu/~dearl/software/struct_harvest/
+:description: |
+  structureHarvester.py is a Python script capable of extracting all
+  the relevant data from STRUCTURE results files.  Features:
+
+    * Harvests the Run Number, number of Assumed Populations (k),
+      Estimated Ln, Mean Likelihood and Variance in Likelihood, for
+      every file in the results folder. The script takes less than a
+      second for 110 files.
+    * Evanno method (Detecting the number of clusters of individuals
+      using the software STRUCTURE: a simulation study [Evanno et. al
+      2005 Molecular Ecology 14, 2611-2620])
+    * CLUMPP indfile generation
+:group: Bioinformatics
+:changelog: |
+  * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: structureHarvester-0.6.93.zip
+:src_dir: dentearl-structureHarvester-ef878f5
+:type: apps
+:version: '20121121'
+:compilers:
+  noarch:
+:compile: |
+  # replace the hashbang requirement for python2.6 with something a
+  # little less strict
+  sed -i -e 's|^#!.*|#!/usr/bin/env python|g' structureHarvester.py
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,python}
+  cp -av LICENSE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av harvesterCore.py <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -av structureHarvester.py <%= dest_dir %>/bin <%= redirect(:install) %>
+  ln -s structureHarvester.py <%= dest_dir %>/bin/structureHarvester
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python
