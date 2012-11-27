@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: LOCAS
+:license: GPLv3
+:summary: Low-coverage short-read assembler
+:url: http://ab.inf.uni-tuebingen.de/software/locas/
+:description: |
+  LOCAS is a program to assemble short reads of second generation
+  sequencing technologies. It explicitly handles low coverage data by
+  allowing mismatches in the overlap alignment of reads.
+
+  An extra module, called SUPERLOCAS, provides some additional features
+  for resequencing projects. In a resequencing project reads are
+  mapped onto a closely related reference genome and a consensus from
+  the mapped reads is calculated as an approximation of the new genome
+  sequence. (Highly polymorphic regions and insert sites are not
+  covered with this consenus.) SUPERLOCAS can be used to incorporate
+  unmapped reads into the assembly of mapped regions and elongate this
+  consenus. Further, SUPERLOCAS takes advantage of given mapping
+  positions of reads.
+:group: Bioinformatics
+:changelog: |
+  * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: locas.tar.gz
+:src_dir: locas_src
+:type: apps
+:version: '1'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -av gpl.txt LOCAS_Manual.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av LOCASopt locas superlocas <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
