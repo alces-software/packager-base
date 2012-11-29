@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: MIRA
+:license: GPLv2
+:summary: Whole genome shotgun and EST sequence assembler
+:url: http://sourceforge.net/apps/mediawiki/mira-assembler/index.php?title=Main_Page
+:description: |
+  MIRA is a whole genome shotgun and EST sequence assembler for
+  Sanger, 454, Solexa (Illumina), IonTorrent data and PacBio (the
+  later at the moment only CCS and error-corrected CLR reads). It can
+  be seen as a Swiss army knife of sequence assembly developed and
+  used in the past 12 years to get assembly jobs done efficiently -
+  and especially accurately. That is, without actually putting too
+  much manual work into finishing the assembly.
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 28 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mira-3.4.1.1.tar.gz
+:src_dir: mira-3.4.1.1
+:type: apps
+:version: '3.4.1.1'
+# Requires expat-devel
+:requirements:
+  :build: libs/boost
+  :runtime: libs/boost
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix="<%= dest_dir %>" --with-boost="${BOOSTDIR}" <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
