@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: MUMmer
+:license: Artistic License
+:summary: System for rapidly aligning entire genomes
+:url: http://mummer.sourceforge.net/
+:description: |
+  MUMmer is a system for rapidly aligning entire genomes, whether in
+  complete or draft form. For example, MUMmer 3.0 can find all
+  20-basepair or longer exact matches between a pair of 5-megabase
+  genomes in 13.7 seconds, using 78 MB of memory, on a 2.4 GHz Linux
+  desktop computer. MUMmer can also align incomplete genomes; it can
+  easily handle the 100s or 1000s of contigs from a shotgun sequencing
+  project, and will align them to another set of contigs or a genome
+  using the NUCmer program included with the system. If the species
+  are too divergent for a DNA sequence alignment to detect similarity,
+  then the PROmer program can generate alignments based upon the
+  six-frame translations of both input sequences.
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 28 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: MUMmer3.23.tar.gz
+:src_dir: MUMmer3.23
+:type: apps
+:version: '3.23'
+:patches:
+  - makefile-rationalization.patch1
+:compilers:
+  gcc:
+:compile: |
+  sed -i -e 's|%DEST_DIR%|<%= dest_dir %>|g' scripts/Makefile
+  mkdir build
+  make check <%= redirect(:check) %>
+  make <%= redirect(:compile) %>
+  cd docs
+  make || true
+:install: |
+  cp -av build <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/{lib,doc}
+  cp -av scripts/*.pm scripts/*.awk <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -av ACKNOWLEDGEMENTS COPYRIGHT ChangeLog LICENSE README <%= dest_dir %>/doc <%= redirect(:install) %>
+  for a in docs/*.README docs/maxmat3man.pdf; do
+    [ -f "$a" ] && cp -av "$a" <%= dest_dir %>/doc <%= redirect(:install) %>
+  done
+  cp -av docs/web <%= dest_dir %>/doc/html <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
