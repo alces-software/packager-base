@@ -20,38 +20,100 @@
   :runtime: mpi/openmpi
   :build: 
     - mpi/openmpi
-    - libs/fftw3_float
+:variants:
+  default:
+    :description: "Builds both double and single precision GROMACS into the same application location."
+    :default_precision: float
+    :default_precision_mpi_program_suffix: _mpi
+    :requirements:
+      :build: 
+        - libs/fftw3_float
+        - libs/fftw3_double
+  float:
+    :description: "Builds only a single precision GROMACS."
+    :default_precision: float
+    :default_precision_mpi_program_suffix: _mpi
+    :requirements:
+      :build: 
+        - libs/fftw3_float
+  double:
+    :description: "Builds only a double precision GROMACS."
+    :default_precision: double
+    :default_precision_configure_flags: --disable-float
+    :default_precision_mpi_program_suffix: _d_mpi
+    :requirements:
+      :build: 
+        - libs/fftw3_double
 :changelog: |
+  * Thu Dec  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add variant logic to provide builds for double precision, single
+      precision or both (default).
   * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: gromacs-4.5.5.tar.gz
 :version: '4.5.5'
 :compilers:
   gcc:
-    :configure_prefix: CPPFLAGS="-I$FFTW3_FLOATINCLUDE" LDFLAGS="-L$FFTW3_FLOATLIB"
+    :float_configure_prefix: CPPFLAGS="-I$FFTW3_FLOATINCLUDE" LDFLAGS="-L$FFTW3_FLOATLIB"
+    :double_configure_prefix: CPPFLAGS="-I$FFTW3_DOUBLEINCLUDE" LDFLAGS="-L$FFTW3_DOUBLELIB"
     :fft: fftw3
   intel:
-    :configure_prefix: CPPFLAGS="-I$FFTW3_FLOATINCLUDE" LDFLAGS="-L$FFTW3_FLOATLIB"
+    :float_configure_prefix: CPPFLAGS="-I$FFTW3_FLOATINCLUDE" LDFLAGS="-L$FFTW3_FLOATLIB"
+    :double_configure_prefix: CPPFLAGS="-I$FFTW3_DOUBLEINCLUDE" LDFLAGS="-L$FFTW3_DOUBLELIB"
     :fft: fftw3
 :compile: |
   cp -r <%= src_dir %> <%= src_dir %>.mpi
-  <%= compiler[:configure_prefix] %> ./configure \
+  <% if variant_name == 'default' %>
+  cp -r <%= src_dir %> <%= src_dir %>.double
+  cp -r <%= src_dir %> <%= src_dir %>.double_mpi
+  <% end %>
+
+  <%= compiler[:"#{variant[:default_precision]}_configure_prefix"] %> ./configure \
     --prefix=<%= dest_dir %> \
     --enable-shared \
+    <%= variant[:default_precision_configure_flags] %> \
     --with-fft=<%= compiler[:fft] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
+
   cd <%= src_dir %>.mpi
-  <%= compiler[:configure_prefix] %> ./configure \
+  <%= compiler[:"#{variant[:default_precision]}_configure_prefix"] %> ./configure \
     --prefix=<%= dest_dir %> \
     --enable-shared \
     --enable-mpi \
-    --program-suffix=_mpi \
+    --program-suffix=<%= variant[:default_precision_mpi_program_suffix] %> \
+    <%= variant[:default_precision_configure_flags] %> \
     --with-fft=<%= compiler[:fft] %> <%= redirect(:configure) %>
   make mdrun <%= redirect(:make) %>
+
+  <% if variant_name == 'default' %>
+  cd <%= src_dir %>.double
+  <%= compiler[:double_configure_prefix] %> ./configure \
+    --prefix=<%= dest_dir %> \
+    --enable-shared \
+    --disable-float \
+    --with-fft=<%= compiler[:fft] %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+
+  cd <%= src_dir %>.double_mpi
+  <%= compiler[:double_configure_prefix] %> ./configure \
+    --prefix=<%= dest_dir %> \
+    --enable-shared \
+    --enable-mpi \
+    --disable-float \
+    --program-suffix=_d_mpi \
+    --with-fft=<%= compiler[:fft] %> <%= redirect(:configure) %>
+  make mdrun <%= redirect(:make) %>
+  <% end %>
 :install: |
   make install <%= redirect(:install) %>
   cd <%= src_dir %>.mpi
   make install-mdrun <%= redirect(:install) %>
+  <% if variant_name == 'default' %>
+  cd <%= src_dir %>.double
+  make install <%= redirect(:install) %>
+  cd <%= src_dir %>.double_mpi
+  make install-mdrun <%= redirect(:install) %>
+  <% end %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
