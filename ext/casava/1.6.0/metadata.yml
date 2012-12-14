@@ -40,7 +40,17 @@
 
     * CASAVA 1.6.0:
         alces packager install ext/casava/1.6.0 --compiler gcc/4.1.2 -m libs/boost/1.39.0 tarball=/path/to/tarball.tar.gz
+
+  Additionally, the Perl modules are not compatible with Perl versions
+  beyond the 5.10.x series, so it is recommended to install Perl
+  5.10.1:
+
+    * Perl 5.10.1:
+        alces packager install apps/perl/5.10.1
+
 :changelog: |
+  * Fri Dec 14 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added dependency on Perl <= 5.10.1
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: CASAVA_v1.6.0.tar.bz2
@@ -51,6 +61,8 @@
 # depends on ImageMagick and gnuplot at runtime
 :requirements:
   :tool: apps/cpanminus
+  :runtime:
+    - apps/perl <= 5.10.1
 :compilers:
   gcc:
 :params:
