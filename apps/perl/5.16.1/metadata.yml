@@ -50,9 +50,11 @@
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
-  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/perl5/
-  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/perl5/x86_64-linux/
-  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/site_perl/${version}/
-  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/site_perl/${version}/x86_64-linux/
+
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/perl5
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/perl5/x86_64-linux
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/site_perl/${version}
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/site_perl/${version}/x86_64-linux
+
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
