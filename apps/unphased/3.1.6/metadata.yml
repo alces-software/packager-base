@@ -21,6 +21,8 @@
     * Permutation tests allowing for multiple testing
 :group: Bioinformatics
 :changelog: |
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: unphased-3.1.6.zip
@@ -31,7 +33,7 @@
 :compile: |
   # sed #!s to use env
   for a in utilities/*.pl; do
-    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
   done
   cd src
   make <%= redirect(:make) %>

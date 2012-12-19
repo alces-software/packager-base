@@ -19,6 +19,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
   * Fri Oct 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: EIG3.0.tar.gz
@@ -44,7 +46,7 @@
   make all <%= redirect(:make) %>
   cd ..
   for a in bin/*.perl; do
-    sed -i -e 's|#!/usr/bin/perl|#!/usr/bin/env perl|g' $a  
+    sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a  
   done
 :install: |
   cd src

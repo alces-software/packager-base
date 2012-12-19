@@ -17,6 +17,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
   * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest version
     - Refactored to packager style
@@ -33,7 +35,7 @@
 :compile: |
   # sed #!s to use env
   for a in *.pl; do
-    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
   done
 :install: |
   mkdir <%= dest_dir %>/{bin,R}

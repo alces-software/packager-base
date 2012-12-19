@@ -16,6 +16,8 @@
   supplied.
 :group: Bioinformatics
 :changelog: |
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
   * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
     - Bumped to r5
@@ -31,7 +33,7 @@
   make <%= redirect(:make) %>
   # sed #!s to use env
   for a in misc/*.pl; do
-    sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
   done
 :install: |
   install -D -m 755 SNVMix2 <%= dest_dir %>/bin/SNVMix2

@@ -9,6 +9,8 @@
   build up a picture of where the sequences in your data originate.
 :group: Bioinformatics
 :changelog: |
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
   * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Wed Nov 30 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -28,7 +30,7 @@
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   cpanm GD::Graph <%= redirect(:cpanm) %>
-  sed -i -e 's|#!/usr/bin/perl|#!/usr/bin/env perl|g' fastq_screen
+  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' fastq_screen
 :install: |
   mkdir -p <%= dest_dir %>/doc
   mkdir -p <%= dest_dir %>/bin

@@ -16,6 +16,8 @@
   that can be used to visualize ordered and oriented contigs in ACT.
 :group: Bioinformatics
 :changelog: |
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
   * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style  
   * Mon Feb 21 2011 Steve Norledge
@@ -28,7 +30,7 @@
 :compile: |
   # no-op; this is a noarch distribution of a Perl application
 :install: |
-  sed -i -e 's|#!/usr/local/bin/perl|#!/usr/bin/env perl|g' abacas.1.3.1.pl.sic
+  sed -i -e 's|#!/usr/local/bin/perl.*|#!/usr/bin/env perl|g' abacas.1.3.1.pl.sic
   install -D -m 0755 abacas.1.3.1.pl.sic <%= dest_dir %>/bin/abacas.pl
 :module: |
   setenv ${appcaps}DIR ${appdir}
