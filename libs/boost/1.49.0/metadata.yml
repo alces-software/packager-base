@@ -13,6 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Tue Jan  8 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - require apps/python module at build time
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - refactored to use packager style
   * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -30,10 +32,9 @@
 :version: '1.49.0'
 :requirements:
   :runtime: mpi/openmpi
-  :build: mpi/openmpi
-#:modules: apps/%{compiler}/python mpi/%{compiler}/openmpi
-#:requires: alces-python alces-openmpi
-#:build_requires: alces-python alces-openmpi
+  :build: 
+    - mpi/openmpi
+    - apps/python
 :compilers:
   gcc:
 :compile: |

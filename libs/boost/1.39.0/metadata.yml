@@ -13,6 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Tue Jan  8 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - require apps/python module at build time
   * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - added older 1.39.0 version (for CASAVA 1.6.0 support)
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -33,7 +35,9 @@
 :version: '1.39.0'
 :requirements:
   :runtime: mpi/openmpi
-  :build: mpi/openmpi
+  :build: 
+    - mpi/openmpi
+    - apps/python
 :compilers:
   gcc:
 :compile: |
