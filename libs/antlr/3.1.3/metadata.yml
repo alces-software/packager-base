@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: ANother Tool for Language Recognition
+:license: BSD License
+:summary: Language tool that provides a framework for constructing interpreters, compilers, and translators
+:url: http://www.antlr.org
+:description: |
+  ANTLR, ANother Tool for Language Recognition, is a language tool
+  that provides a framework for constructing recognizers,
+  interpreters, compilers, and translators from grammatical
+  descriptions containing actions in a variety of target
+  languages. ANTLR provides excellent support for tree construction,
+  tree walking, translation, error recovery, and error reporting.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Tue Jan  8 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: antlr-3.1.3.tar.gz
+:src_dir: antlr-3.1.3
+:version: 3.1.3
+:compilers:
+  gcc:
+:compile: |
+  cd runtime/C
+  autoreconf -i <%= redirect(:autoreconf) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd runtime/C
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
