@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: Schrödinger Maestro
+:license: NONFREE - Free for academic use
+:summary: A powerful, all-purpose molecular modelling envirotnment
+:url: http://www.schrodinger.com/productpage/14/12/
+:description: |
+  Maestro is the unified interface for all Schrödinger
+  software. Impressive rendering capabilities, a powerful selection of
+  analysis tools, and an easy-to-use design combine to make Maestro a
+  versatile modeling environment for all researchers.
+:group: Chemistry
+:changelog: |
+  * Wed Jan  9 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Maestro.tar
+:src_dir: .
+:sources:
+  - schrodinger.hosts.append
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to Maestro tarball (tar format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('Maestro.tar') %>
+  <% else %>
+    wget -O <%= source('Maestro.tar') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  cd *Maestro*
+  version=$(echo maestro-v* | cut -f2 -d'-' | cut -c2-)
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:install: |
+  cd *Maestro*
+  SCRATCHDIR=/tmp
+  echo -e "\n<%= dest_dir %>\n\n\n\n$SCRATCHDIR\ny\n\n" | ./INSTALL <%= redirect(:install) %>
+  cat <%= source('schrodinger.hosts.append') %> >> <%= dest_dir %>/schrodinger.hosts
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}
+       setenv ${appcaps}DOC ${appdir}/docs
+
+       setenv SCHRODINGER ${appdir}
+
+       prepend-path PATH ${appdir}

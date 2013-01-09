@@ -1,0 +1,7 @@
+
+# MPI PE
+name:        mpi
+host:	     localhost
+queue: SGE
+qargs: -pe mpi %NPROC%
+processors: 24
