@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: Desmond
+:license: NONFREE - Free for non-commercial research
+:summary: High-speed molecular dynamics simulations of biological systems
+:url: http://www.deshawresearch.com/resources_desmond.html
+:description: |
+  Desmond is a software package developed at D. E. Shaw Research to
+  perform high-speed molecular dynamics simulations of biological
+  systems on conventional commodity clusters. The code uses novel
+  parallel algorithms and numerical techniques to achieve high
+  performance and accuracy on platforms containing a large number of
+  processors, but may also be executed on a single computer.
+:group: Chemistry
+:changelog: |
+  * Tue Jan  8 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Desmond.tar.gz
+:src_dir: .
+:sources:
+  - user-conf.py
+:type: ext
+:pkg_type: apps
+# depends: libpcre-devel scons
+:requirements:
+  :build:
+    - mpi/openmpi >= 1.4.3
+    - apps/python ~> 2.7.1
+    - libs/numpy >= 1.5.1
+    - libs/boost >= 1.45.0
+    - libs/antlr = 3.1.3
+  :runtime:
+    - mpi/openmpi >= 1.4.3
+    - apps/python ~> 2.7.1
+    - libs/numpy >= 1.5.1
+    - libs/boost >= 1.45.0
+    - libs/antlr = 3.1.3
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to Desmond tarball (tar.gz format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('Desmond.tar.gz') %>
+  <% else %>
+    wget -O <%= source('Desmond.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  version=$(echo Desmond-* | cut -f2 -d'-')
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:compile: |
+  cd Desmond-<%= version %>
+  SCONS=$(which scons)
+  python $SCONS --user-conf=<%= source('user-conf.py') %> <%= redirect(:compile) %>
+:install: |
+  cd Desmond-<%= version %>
+  SCONS=$(which scons)
+  python $SCONS --user-conf=<%= source('user-conf.py') %> install PREFIX=<%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}LIB ${appdir}/lib
+       setenv ${appcaps}INCLUDE ${appdir}/include
+       setenv ${appcaps}DOC ${appdir}/share/doc
+
+       setenv DESMOND_PLUGIN_PATH ${appdir}/lib/plugin
+
+       prepend-path PYTHONPATH ${appdir}/lib/python
+       prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+       prepend-path PATH ${appdir}/bin
