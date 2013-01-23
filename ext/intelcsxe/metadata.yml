@@ -1,0 +1,133 @@
+---
+:schema: 1
+:title: Intel Cluster Studio XE
+:license: Commercial
+:summary: High performance cluster tools to increase performance and scalability
+:url: http://software.intel.com/en-us/intel-cluster-studio-xe/
+:description: |
+  High Performance MPI Hybrid Cluster Development Suite to Scale
+  Forward & Scale Faster.
+
+    * Industry Leading Low Latency MPI Library
+    * High Performance C++ and Fortran Compilers
+    * Native Profiling and Tuning of MPI Applications Now Includes
+      Node Level Analysis
+    * Scale Up To 120K MPI Processes
+    * High Performance Advanced Parallel Programming Models For
+      Multicore & Many-core Architectures
+    * Rapid Performance Profiling for Identification of Application
+      Hotspots
+    * Threading and Memory Correctness Analysis at Every Node
+    * Innovative Threading Assistant Analyzes and Identifies Areas of
+      Code for Parallelization
+:group: HPC Suite
+:changelog: |
+  * Wed Jan 23 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: l_ics.tgz
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to Intel Cluster Studio XE tarball (tar.gz format) (pass 'skip' to use an existing download)"
+  :license: "Path to license file (pass 'trial' to configure for use with a trial license)"
+:sources:
+  - gridware.cfg
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('l_ics.tgz') %>
+  <% else %>
+    wget -O <%= source('l_ics.tgz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  version=$(echo l_ics_* | cut -f3 -d'_')
+  mpiversion=$(echo l_ics_*/rpm/intel-mpi-intel64-*.rpm | sed 's/.*intel64-\(.*\).x86.*/\1/g' | sed 's/p*-/./g')
+  mklversion=$(echo l_ics_*/rpm/intel-mkl-common*.rpm | sed 's/.*common-\(.*\)-1.noarch.*/\1/g' | sed 's/p*-/./g')
+  cproversion=$(echo l_ics_*/rpm/intel-compilerpro-common*.rpm | sed 's/.*common-\(.*\)-1.noarch.*/\1/g' | sed 's/p*-/./g')
+  if [[ "$version $mpiversion $mklversion $cproversion" == *\** ]]; then
+    echo "Version detection failed, got:" > /dev/stderr
+    cat >/dev/stderr <<-EOF
+      version: '$version'
+      intelmpi_version: '$mpiversion'
+      intelmkl_version: '$mklversion'
+      intel_version: '$cproversion'
+  EOF
+    exit 1
+  fi
+  cat <<-EOF
+    :version: '$version'
+    :intelmpi_version: '$mpiversion'
+    :intelmkl_version: '$mklversion'
+    :intel_version: '$cproversion'
+  EOF
+:install: |
+  cd l_ics_<%= version %>
+  cp <%= source('gridware.cfg') %> gridware.cfg
+  <% if param('license') == 'existing' %>
+    sed -i -e 's|ACTIVATION=trial_lic|ACTIVATION=exist_lic|g' gridware.cfg
+  <% elsif param('license') != 'trial' %>
+    mkdir -p <%= dest_dir %>/licenses
+    cp <%= param('license') %> <%= dest_dir %>/licenses
+    sed -i -e 's|ACTIVATION=trial_lic|ACTIVATION=license_file|g' gridware.cfg
+    sed -i -e 's|#PSET_LICENSE_FILE=/path/to/license.lic|PSET_LICENSE_FILE=<%= dest_dir %>/licenses/license.lic/g' gridware.cfg
+  <% end %>
+  sed -i -e 's|%DESTDIR%|<%= dest_dir %>|g' gridware.cfg
+  ./install.sh --silent gridware.cfg
+:modules:
+  - :type: compilers
+    :name: intel
+    :content:
+      :compiler: |
+        set appdir <%= File.join(Config.packages_dir,'apps','intelcsxe', analysis_opts[:version], 'bin') %>
+        setenv INTELROOT ${appdir}
+        setenv CC icc
+        setenv CXX icpc
+        setenv F77 ifort
+        setenv FC ifort
+        setenv F90 ifort
+        setenv F95 ifort
+        setenv BLASLIB ${appdir}/mkl/lib/intel64/libmkl_core.a
+
+        setenv ${appcaps}DIR ${appdir}
+        setenv ${appcaps}BIN ${appdir}/bin
+        setenv ${appcaps}LIB ${appdir}/lib/intel64
+        setenv ${appcaps}INCLUDE ${appdir}/include
+        setenv ${appcaps}MAN ${appdir}/man/en_US
+
+        prepend-path PATH ${appdir}/bin
+        prepend-path LD_LIBRARY_PATH ${appdir}/lib/intel64
+        prepend-path MANPATH ${appdir}/man/en_US
+      :runtime: |
+        set appdir <%= File.join(Config.packages_dir,'apps','intelcsxe', analysis_opts[:version], 'bin') %>
+        prepend-path LD_LIBRARY_PATH ${appdir}/lib/intel64
+  - :type: mpi
+    :name: intelmpi
+    :tag: bin
+    :content: |
+      set appdir <%= File.join(Config.packages_dir,'apps','intelcsxe', analysis_opts[:version], 'bin') %>
+      set impidir ${appdir}/impi/<%= analysis_opts[:intelmpi_version] %>
+
+      setenv INTELMPIDIR ${impidir}
+      setenv INTELMPILIB ${impidir}/lib64
+      setenv INTELMPIINCLUDE ${impidir}/include64
+
+      setenv MPI_HOME ${impidir}
+
+      prepend-path PATH ${impidir}/bin64
+      prepend-path LD_LIBRARY_PATH ${impidir}/lib64
+      prepend-path MANPATH ${impidir}/man
+  - :type: libs
+    :name: intelmkl
+    :tag: bin
+    :content: |
+      set appdir <%= File.join(Config.packages_dir,'apps','intelcsxe', analysis_opts[:version], 'bin') %>
+      set mkldir ${appdir}/mkl
+      setenv INTELMKLDIR ${mkldir}
+      setenv INTELMKLLIB ${mkldir}/lib/intel64
+      setenv INTELMKLINCLUDE ${mkldir}/include
+
+      prepend-path LD_LIBRARY_PATH ${mkldir}/lib/intel64
