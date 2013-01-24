@@ -40,13 +40,23 @@
 :params:
   :tarball: "Path or URL to Desmond tarball (tar.gz format) (pass 'skip' to use an existing download)"
 :prepare: |
+  err=0
   <% if param('tarball') == 'skip' %>
-    exit 0
+    # skip tarball retrieval
   <% elsif URI.parse(param('tarball')).scheme.nil? %>
     cp <%= param('tarball') %> <%= source('Desmond.tar.gz') %>
   <% else %>
     wget -O <%= source('Desmond.tar.gz') %> <%= param('tarball') %>
   <% end %>
+  if ! which scons &>/dev/null; then
+    echo "Unable to find 'scons' -- try 'yum install scons' or use the package manager for your platform" > /dev/stderr
+    err=1
+  fi
+  if [ ! -f /usr/include/pcre.h ]; then
+    echo "Unable to find '/usr/include/pcre.h' -- try 'yum install pcre-devel' or use the package manager for your platform" > /dev/stderr
+    err=1
+  fi
+  exit $err
 :analyse: |
   version=$(echo Desmond-* | cut -f2 -d'-')
   cat <<-EOF
