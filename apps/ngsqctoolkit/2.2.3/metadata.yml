@@ -13,6 +13,8 @@
   which are helpful in NGS data quality control and analysis.
 :group: Bioinformatics
 :changelog: |
+  * Mon Jan 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Install perl dependencies via cpanm
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Wed Jun 20 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -21,10 +23,16 @@
 :src_dir: NGSQCToolkit_v2.2.3
 :type: apps
 :version: '2.2.3'
+:requirements:
+  :tool: apps/cpanminus
 :compilers:
   noarch:
+# requires gd-devel on build host and gd on nodes to support GD::Graph
 :compile: |
-  # No-op; this is a noarch perl-based package
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm IO::Zlib String::Approx GD::Graph <%= redirect(:cpanm) %>
 :install: |
   mkdir -p <%= dest_dir %>/doc <%= dest_dir %>/bin
   for a in Format-converter Trimming QC Statistics; do
@@ -38,8 +46,13 @@
     sed -e 's|#!.*/usr/bin/perl|#!/usr/bin/env perl|g' -i $a
   done
   cp NGSQCToolkitv2.2.3_manual.pdf <%= dest_dir %>/doc
+  cp -rv perl <%= dest_dir %> <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
 
   prepend-path PATH ${appdir}/bin
