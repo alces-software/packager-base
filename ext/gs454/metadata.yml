@@ -1,0 +1,179 @@
+---
+:schema: 1
+:title: 454 Sequencing System Software
+:license: Commercial
+:summary: 454 Sequencing System Off-Instrument Software Applications suite
+:url: http://my454.com/products/analysis-software/index.php
+:description: |
+  The GS Data Analysis Software package includes the tools to
+  investigate complex genomic variation in samples including de novo
+  assembly, reference guided alignment and variant calling, and low
+  abundance variant identification and quantification. The suite of
+  software is provided with the GS Junior and GS FLX System at no
+  additional cost and allows researchers to begin interpreting
+  sequence data immediately, without the need to invest in complex and
+  expensive third party solution. Each of the software tools
+  incorporates flow and signal information into the sequence analysis
+  algorithms leading to higher confidence variant
+  calling. Additionally, researchers can interrogate sequence data
+  down to the flow-by-flow signal intensities used in base calling.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Data_Processing.tar.gz
+:src_dir: .
+:sources:
+  - Data_Analysis.tar.gz
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :analysis_tarball: "Path or URL to Data_Analysis tarball (tar.gz format) (pass 'skip' to use an existing download)"
+  :processing_tarball: "Path or URL to Data_Processing tarball (tar.gz format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('anlysis_tarball') != 'skip' %>
+    <% if URI.parse(param('analysis_tarball')).scheme.nil? %>
+      cp <%= param('analysis_tarball') %> <%= source('Data_Analysis.tar.gz') %>
+    <% else %>
+      wget -O <%= source('Data_Analysis.tar.gz') %> <%= param('analysis_tarball') %>
+    <% end %>
+  <% end %>
+  <% if param('processing_tarball') != 'skip' %>
+    <% if URI.parse(param('processing_tarball')).scheme.nil? %>
+      cp <%= param('processing_tarball') %> <%= source('Data_Processing.tar.gz') %>
+    <% else %>
+      wget -O <%= source('Data_Processing.tar.gz') %> <%= param('processing_tarball') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  version=$(echo packages/gsSeqTools-*.x86_64.rpm | cut -f2 -d'-')
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:install: |
+  TOPDIR="$(pwd)"
+
+  mkdir -p src/processing src/analysis
+  PROCESSINGDIR="${TOPDIR}/src/processing"
+  ANALYSISDIR="${TOPDIR}/src/analysis"
+  mv checksum_inst packages README RPM-GPG-KEY setup.sh src/processing
+  cd "${ANALYSISDIR}"
+  tar xzf "<%= source('Data_Analysis.tar.gz') %>"
+
+  cd "${TOPDIR}"
+  mkdir -p work/processing work/analysis
+
+  cd "${TOPDIR}/work/processing"
+  bash "$PROCESSINGDIR/setup.sh" --tar xf
+  bin/linux/x86_64/libc.so.6/lzma-decode subarch installer.tar
+  tar xf installer.tar
+
+  cd "${TOPDIR}/work/analysis"
+  bash "$ANALYSISDIR/setup.sh" --tar xf
+  bin/linux/x86_64/libc.so.6/lzma-decode subarch installer.tar
+  tar xf installer.tar
+
+  cd "${TOPDIR}"
+  OLDPATH="${PATH}"
+  export PATH="${TOPDIR}/work/processing/files_extra:$PATH"
+  
+  installRpm.sh ${PROCESSINGDIR}/packages/jre-linux-i586-oracle-2.8-1.noarch.rpm \
+                <%= dest_dir %>/apps/jre <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/jre/jre1.6.0_30=/
+
+  installRpm.sh ${PROCESSINGDIR}/packages/gsReporter-2.8-1.x86_64.rpm \
+                <%= dest_dir %>/apps/gsReporter <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/gsReporter/bin=/bin
+
+  installRpm.sh ${PROCESSINGDIR}/packages/gsRunProcessor-2.8-1.x86_64.rpm \
+                <%= dest_dir %>/apps/gsRunProcessor <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/gsRunProcessor/etc=/etc \
+                --relocate /opt/454/apps/gsRunProcessor/bin=/bin \
+                --relocate /opt/454/apps/gsRunProcessor/lib=/lib \
+                --relocate /opt/454/apps/gsRunProcessor/libexec=/libexec \
+                --relocate /opt/454/apps/gsRunProcessor/share=/share
+
+  installRpm.sh ${PROCESSINGDIR}/packages/gsRunBrowser-2.8-1.noarch.rpm \
+                <%= dest_dir %>/apps/gsRunBrowser <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/gsRunBrowser/bin=/bin \
+                --relocate /opt/454/apps/gsRunBrowser/config=/config \
+                --relocate /opt/454/apps/gsRunBrowser/jre=/jre \
+                --relocate /opt/454/apps/gsRunBrowser/lib=/lib \
+                --relocate /opt/454/apps/gsRunBrowser/libexec=/libexec \
+                --relocate /opt/454/apps/gsRunBrowser/share=/share
+
+  installRpm.sh ${PROCESSINGDIR}/packages/gsSupportTool-1.26-1.i386.rpm \
+                <%= dest_dir %>/apps/gsSupportTool <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/gsSupportTool/bin=/bin \
+                --relocate /opt/454/apps/gsSupportTool/libexec=/libexec \
+                --relocate /opt/454/apps/gsSupportTool/share=/share
+
+  # Not enabled for local installs
+  #installRpm.sh ${PROCESSINGDIR}/packages/gsRunProcessorManager-2.8-1.x86_64.rpm \
+  #              <%= dest_dir %>/apps/gsRunProcessorManager <%= dest_dir %> other   --force 
+
+  export PATH="${TOPDIR}/work/analysis/files_extra:${TOPDIR}/work/analysis/xdg-utils:${OLDPATH}"
+
+  installRpm.sh ${ANALYSISDIR}/packages/gsSeqTools-2.8-1.x86_64.rpm \
+                <%= dest_dir %>/apps/gsSeqTools <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/gsSeqTools/config=/config \
+                --relocate /opt/454/apps/gsSeqTools/bin=/bin
+
+  installRpm.sh ${ANALYSISDIR}/packages/gsAssembler-2.8-1.noarch.rpm \
+                <%= dest_dir %>/apps/gsAssembler <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/assembly/bin=/bin  \
+                --relocate /opt/454/apps/assembly/config=/config  \
+                --relocate /opt/454/apps/assembly/lib=/lib  \
+                --relocate /opt/454/apps/assembly/libexec=/libexec   \
+                --relocate /opt/454/apps/assembly/share=/share
+
+  installRpm.sh ${ANALYSISDIR}/packages/gsNewbler-2.8-1.x86_64.rpm \
+                <%= dest_dir %>/apps/gsNewbler <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/mapper/bin=/bin \
+                --relocate /opt/454/apps/mapper/config=/config \
+                --relocate /opt/454/apps/mapper/lib=/lib \
+                --relocate /opt/454/apps/mapper/libexec=/libexec \
+                --relocate /opt/454/apps/mapper/share=/share
+
+  installRpm.sh ${ANALYSISDIR}/packages/gsAmplicons-2.8-1.noarch.rpm \
+                <%= dest_dir %>/apps/gsAmplicons <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/amplicons/bin=/bin \
+                --relocate /opt/454/apps/amplicons/config=/config \
+                --relocate /opt/454/apps/amplicons/lib=/lib \
+                --relocate /opt/454/apps/amplicons/libexec=/libexec \
+                --relocate /opt/454/apps/amplicons/share=/share
+
+  installRpm.sh ${ANALYSISDIR}/packages/gsMapper-2.8-1.noarch.rpm \
+                <%= dest_dir %>/apps/gsMapper <%= dest_dir %> other \
+                --force \
+                --relocate /opt/454/apps/mapper/bin=/bin \
+                --relocate /opt/454/apps/mapper/config=/config \
+                --relocate /opt/454/apps/mapper/lib=/lib \
+                --relocate /opt/454/apps/mapper/libexec=/libexec \
+                --relocate /opt/454/apps/mapper/share=/share
+
+  mkdir -p <%= dest_dir %>/apps
+  star.x86_64 -oxz --nowarn C="<%= dest_dir %>/apps" f="${ANALYSISDIR}/packages/amplicons_CLI_2.8.i686.tgz"
+
+  export INSTALL_TYPE=local
+  RPM_INSTALL_PREFIX0=<%= dest_dir %>/apps/amplicons CREATE_LINKS=0 FILES_EXTRA=${TOPDIR}/work/analysis/files_extra/ ${TOPDIR}/work/analysis/files_extra/ava/gsAmpliconsPostInstall.sh
+
+  FILES_EXTRA_PATH=${TOPDIR}/work/analysis/files_extra/ SYSTEM_INSTALL_PATH=<%= dest_dir %> dataAnalysisPostInstall.sh
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
