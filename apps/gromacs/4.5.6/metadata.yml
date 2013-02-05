@@ -45,7 +45,7 @@
       :build: 
         - libs/fftw3_double
 :changelog: |
-  * Tue Feb  4 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+  * Tue Feb  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest 4.5 series, v4.5.6
   * Thu Dec  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Add variant logic to provide builds for double precision, single
