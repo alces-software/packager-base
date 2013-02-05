@@ -1,0 +1,93 @@
+---
+:schema: 1
+:title: HPCall
+:license: LGPL
+:summary: Improved base-calling for homopolymer-sensitive next-gen data
+:url: http://sourceforge.net/projects/hpcall/
+:description: |
+  HPCall is a software pipeline used for base-calling of Roche/454
+  sequencing experiments. It is specialized in producing very
+  informative quality scores that provide insight in possible under-
+  or overcall errors. This is especially important when base-calling
+  long homopolymers.
+
+  The base-calling method and pipeline is described in De Beuf et
+  al. (2012) – HPCall: Improved homopolymer base- calling of 454
+  pyrosequencing data using a Hurdle Poisson model (reference to be
+  added).
+:group: Bioinformatics
+:changelog: |
+  * Tue Feb  5 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: hpcall_0.4.zip
+:src_dir: hpcall_sourceforge
+:type: apps
+:version: '0.4'
+:compilers:
+  gcc:
+:patches:
+  - dbhost-parameter.patch1
+:requirements:
+  :tool:
+    - apps/cpanminus
+    - apps/R
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+    - libs/bioperl
+    - apps/R
+    - apps/gs454
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm DBI DBD::mysql Getopt::Long Data::Dumper <%= redirect(:cpanm) %>
+
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir $R_LIBS
+  cat <<EOF | R --no-save <%= redirect(:rlibs) %>
+  install.packages("VGAM", repos = "http://www.stat.auckland.ac.nz/~yee", lib = "<%= dest_dir %>/R")
+  install.packages("RMySQL", repos = "http://www.stats.bris.ac.uk/R/", type= "source", lib = "<%= dest_dir %>/R")
+  EOF
+
+  # Replace perl hashbang
+  sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i HpCall.pl
+:install: |
+  mkdir <%= dest_dir %>/{bin,share,doc}
+  cp -av *.pl *.R *.Rdata <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -av *.docx *.pdf *.Rdata <%= dest_dir %>/doc <%= redirect(:install) %>
+  cat <<"EOF" > <%= dest_dir %>/bin/hpcall
+  #!/bin/bash
+  if [ -z "$HPCALL_WDIR" ]; then
+    HPCALL_WDIR="$HOME/hpcall/$(date +%s)"
+  fi
+  if [ ! -d "$HPCALL_WDIR" ]; then
+    mkdir -p $HPCALL_WDIR
+    cp -r <%= dest_dir %>/share/* $HPCALL_WDIR
+  else
+    echo "$0: Working directory $HPCALL_WDIR already exists; please remove or update the \$HPCALL_WDIR environment variable to point elsewhere."
+    exit 1
+  fi
+  cd $HPCALL_WDIR
+  mkdir temp
+  ./HpCall.pl "$@"
+  cd - &>/dev/null
+  rm -rf $HPCALL_WDIR
+  EOF
+  chmod 755 <%= dest_dir %>/bin/hpcall
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path R_LIBS ${appdir}/R
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux-thread-multi
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
+
+

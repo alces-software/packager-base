@@ -1,0 +1,67 @@
+diff -ur hpcall_sourceforge.orig/HpCall.pl hpcall_sourceforge/HpCall.pl
+--- hpcall_sourceforge.orig/HpCall.pl	2013-02-05 15:03:46.489171187 +0000
++++ hpcall_sourceforge/HpCall.pl	2013-02-05 15:07:34.784931211 +0000
+@@ -62,6 +62,7 @@
+ $param->{"db"} = "HPCall";
+ $param->{"us"} = "hpcall";
+ $param->{"pw"} = "hpcall";
++$param->{"dbh"} = "localhost";
+ 
+ #####################################
+ ## Preparing everything            ##
+@@ -146,7 +147,7 @@
+ print "Starting statistical basecalling...\n";
+ 
+ # Do the actual basecalling
+-my $command = "R --slave --vanilla --args ".$param->{"cwf_bool"}." ".$param->{"training"}." ".$param->{"us"}." ".$param->{"pw"}." ".$param->{"db"}." < ".$R_file;
++my $command = "R --slave --vanilla --args ".$param->{"cwf_bool"}." ".$param->{"training"}." ".$param->{"us"}." ".$param->{"pw"}." ".$param->{"db"}." ".$param->{"dbh"}." < ".$R_file;
+ system($command);
+ 
+ #####################################
+@@ -213,7 +214,7 @@
+     if (@ARGV < 1){ usage () }
+     
+     # Wrong params
+-    if (! GetOptions('help|?' => \$help, 'sff=s' => \$sff, 'out=s' => \$out, 'cwf:s' => \$cwf, 'key_flow:i' => \$key_flow, 'flow_order:s' => \$flow_order, 'reference:s' => \$reference, 'ref_mid:s' => \$ref_mid, 'ref_count:i' => \$ref_count,'verbose:i' => \$verbose, 'debug:i' => \$debug, 'db:s' => \$db, 'us:s' => \$us, 'pw:s' => \$pw)){ usage () }
++    if (! GetOptions('help|?' => \$help, 'sff=s' => \$sff, 'out=s' => \$out, 'cwf:s' => \$cwf, 'key_flow:i' => \$key_flow, 'flow_order:s' => \$flow_order, 'reference:s' => \$reference, 'ref_mid:s' => \$ref_mid, 'ref_count:i' => \$ref_count,'verbose:i' => \$verbose, 'debug:i' => \$debug, 'db:s' => \$db, 'us:s' => \$us, 'pw:s' => \$pw, 'dbh:s' => \$dbh)){ usage () }
+     
+     # I Need help
+     if (defined $help){ usage () }
+@@ -243,6 +244,7 @@
+         print "| --db           Name of the database to work in; HPCall by default [STRING]  |\n";
+         print "| --us           User login of the database; hpcall by default      [STRING]  |\n";
+         print "| --pw           User password of the database; hpcall by default   [STRING]  |\n";
++        print "| --dbh          Hostname of the database; localhost by default     [STRING]  |\n";
+         print "|                                                                             |\n";
+         print "|    See the manual for more information !                                    |\n";
+         print "|                                                                             |\n";
+@@ -268,6 +270,7 @@
+     if (defined $db){$param->{"db"} = $db}
+     if (defined $us){$param->{"us"} = $us}
+     if (defined $pw){$param->{"pw"} = $pw}
++    if (defined $dbh){$param->{"dbh"} = $dbh}
+     
+     # Set training boolean & test
+     if ($param->{"reference"}){
+@@ -333,7 +336,8 @@
+     my $qdb  = $param->{"db"};
+     my $quser= $param->{"us"};
+     my $qpwd = $param->{"pw"};
+-    my $dbh  = DBI->connect("DBI:mysql:database=$qdb:localhost", $quser, $qpwd) || die "Connecting : $DBI::errstr\n ";
++    my $qhost = $param->{"dbh"};
++    my $dbh  = DBI->connect("DBI:mysql:database=$qdb:$dbh", $quser, $qpwd) || die "Connecting : $DBI::errstr\n ";
+     
+     # Return handler
+     return($dbh);
+diff -ur hpcall_sourceforge.orig/pipe_master.R hpcall_sourceforge/pipe_master.R
+--- hpcall_sourceforge.orig/pipe_master.R	2013-02-05 15:03:45.724037740 +0000
++++ hpcall_sourceforge/pipe_master.R	2013-02-05 15:08:53.807078848 +0000
+@@ -4,7 +4,7 @@
+ 
+ args <- (commandArgs(TRUE))
+ #print(args)
+-conn <- dbConnect(MySQL(),user=args[3],password=args[4],dbname=args[5])
++conn <- dbConnect(MySQL(),user=args[3],password=args[4],dbname=args[5],host=args[6])
+ #conn <- dbConnect(MySQL(),user='hpcall',password='biobix',dbname='homopol_test')
+ #conn <- dbConnect(MySQL(),user='DB_in',password='biobix',dbname='homopol_test',host='athos.ugent.be')
+ 
