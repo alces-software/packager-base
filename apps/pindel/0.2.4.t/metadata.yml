@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: Pindel
+:license: GPLv3
+:summary: Detection of breakpoints of structural variants at single-based resolution from next-gen sequence data
+:url: https://trac.nbic.nl/pindel/
+:description: |
+  Pindel can detect breakpoints of large deletions, medium sized
+  insertions, inversions, tandem duplications and other structural
+  variants at single-based resolution from next-gen sequence data. It
+  uses a pattern growth approach to identify the breakpoints of these
+  variants from paired-end short reads.
+:group: Bioinformatics
+:changelog: |
+  * Tue Feb  5 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: pindel024t.tar.gz
+:src_dir: pindel024t
+:type: apps
+:version: '0.2.4.t'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/samtools
+  :runtime:
+    - apps/samtools
+:compile: |
+  sed -e 's/-I$(SAMTOOLS)/-I$(SAMTOOLSINCLUDE)/g' -e 's/-L$(SAMTOOLS)/-L$(SAMTOOLSLIB)/g' -i src/Makefile
+  bash ./INSTALL $SAMTOOLSDIR <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,perl/Pindel/Bam}
+  cp -av pindel pindel2vcf sam2pindel <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av Adaptor.pm <%= dest_dir %>/perl/Pindel/Bam <%= redirect(:install) %>
+  cp -av RELEASE COPYING.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PERL5LIB ${appdir}/perl
+  prepend-path PATH ${appdir}/bin
+
