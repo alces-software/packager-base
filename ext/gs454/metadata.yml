@@ -27,6 +27,7 @@
   - Data_Analysis.tar.gz
 :type: ext
 :pkg_type: apps
+# requires: yum install libXaw.i686 zlib.i686 libXi.i686 libXtst.i686
 :compilers:
   bin:
 :params:
