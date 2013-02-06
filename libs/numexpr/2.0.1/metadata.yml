@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: numexpr
+:license: MIT License
+:summary: Fast numerical array expression evaluator for Python and NumPy
+:url: https://code.google.com/p/numexpr/
+:description: |
+
+  The numexpr package evaluates multiple-operator array expressions
+  many times faster than NumPy can. It accepts the expression as a
+  string, analyzes it, rewrites it more efficiently, and compiles it
+  on the fly into code for its internal virtual machine (VM). Due to
+  its integrated just-in-time (JIT) compiler, it does not require a
+  compiler at runtime.
+
+  Also, numexpr implements support for multi-threading computations
+  straight into its internal virtual machine, written in C. This
+  allows to bypass the GIL in Python, and allows near-optimal parallel
+  performance in your vector expressions, most specially on
+  CPU-bounded operations (memory-bounded ones were already the strong
+  point of numexpr).
+:group: Libraries
+:changelog: |
+  * Wed Feb  6 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: numexpr-2.0.1.tar.gz
+:src_dir: numexpr-2.0.1
+:type: libs
+:version: '2.0.1'
+:compilers:
+  gcc:
+:requirements:
+  :build: libs/numpy >= 1.6
+  :runtime: libs/numpy >= 1.6
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages

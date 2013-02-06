@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: PyTables
+:license: BSD License
+:summary: Hierarchical datasets
+:url: http://www.pytables.org/
+:description: |
+  PyTables is a package for managing hierarchical datasets and
+  designed to efficiently and easily cope with extremely large amounts
+  of data.
+
+  PyTables is built on top of the HDF5 library, using the Python
+  language and the NumPy package. It features an object-oriented
+  interface that, combined with C extensions for the
+  performance-critical parts of the code (generated using Cython),
+  makes it a fast, yet extremely easy to use tool for interactively
+  browse, process and search very large amounts of data. One important
+  feature of PyTables is that it optimizes memory and disk resources
+  so that data takes much less space (specially if on-flight
+  compression is used) than other solutions such as relational or
+  object oriented databases.
+:group: Libraries
+:changelog: |
+  * Wed Feb  6 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tables-2.4.0.tar.gz
+:src_dir: tables-2.4.0
+:type: libs
+:version: '2.4.0'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/cython >= 0.13
+  :build:
+    - apps/python
+    - libs/numexpr >= 1.4.1
+    - apps/hdf5_serial
+  :runtime: 
+    - apps/python
+    - libs/numexpr >= 1.4.1
+    - apps/hdf5_serial
+:compile: |
+  export HDF5_DIR="$HDF5_SERIALDIR"
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export HDF5_DIR="$HDF5_SERIALDIR"
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
