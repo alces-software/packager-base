@@ -9,6 +9,9 @@
   and provides powerful image processing and graphics capabilities.
 :group: Libraries
 :changelog: |
+  * Wed Feb  6 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add explicit dependency on gridware python
+    - Move bin/ directory for consistency with other python packages
   * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style  
   * Mon Aug 8 2011 Steve Norledge
@@ -20,6 +23,9 @@
 :src_dir: Imaging-1.1.7
 :type: libs
 :version: 1.1.7
+:requirements:
+  :build: apps/python
+  :runtime: apps/python
 :compilers:
   gcc:
 # BuildRequires:  readline readline-devel ncurses ncurses-devel gdbm gdbm-devel glibc-devel autoconf gcc unzip openssl-devel db4-devel byacc
@@ -27,10 +33,11 @@
   python setup.py build <%= redirect(:build) %>
 :install: |
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin  
 :module: |
   setenv ${appcaps}DIR ${appdir}
-  setenv ${appcaps}BIN ${appdir}/python/bin
+  setenv ${appcaps}BIN ${appdir}/bin
 
-  prepend-path PATH ${appdir}/python/bin
+  prepend-path PATH ${appdir}/bin
 
   prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
