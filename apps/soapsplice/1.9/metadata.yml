@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: 'SOAPsplice'
+:license: NONFREE - Free for academic use only
+:summary: Genome-wide ab initio detection of splice junction sites from RNA-Seq
+:url: http://soap.genomics.org.cn/soapsplice.html
+:description: |
+  SOAPsplice is a tool for genome-wide ab initio detection of splice
+  junction sites from RNA-Seq, a method using new generation
+  sequencing technologies to sequence the messenger RNA. The tool
+  performs better than the previous tools by detecting similar number
+  of true junctions with lower false positives as the best performing
+  tool in all different situations with different read lengths and
+  coverage. In particular, SOAPsplice performs better by predicting
+  more true junctions with low false positive rate when the coverage
+  is low, which is useful for detecting the junctions for those mRNAs
+  with relatively lower expression level.
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb  8 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SOAPsplice-v1.9.tar.gz
+:src_dir: SOAPsplice-v1.9
+:type: apps
+:version: '1.9'
+:compilers:
+  bin:
+:compile: |
+  # no compilation; this is a distribution of a binary package
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  for a in contact.txt readme.txt; do
+    mv <%= dest_dir %>/$a <%= dest_dir %>/doc
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

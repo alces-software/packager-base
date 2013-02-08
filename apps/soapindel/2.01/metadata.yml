@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: 'SOAPIndel'
+:license: Public Domain
+:summary: Call indels from next-generation paired-end sequencing data
+:url: http://soap.genomics.org.cn/soapindel.html
+:description: |
+  SOAPindel focuses on calling indels from next-generation paired-end
+  sequencing data.
+
+  SOAPindel needs two input data sources:
+
+    * The reference sequence file used to align the reads. It must be
+      in Fasta format.
+    * The files with read-alignments. SOAPindel accepts both SOAP and
+      SAM formats as input. When the input files are in SOAP format,
+      users must also provide the raw reads files in Fasta or Fastq
+      format. SOAPindel can guess the library insert sizes by itself,
+      but if users could provide the correct ones, it will save some
+      time.
+
+  Sequencing platform: Theoretically, SOAPindel is designed for all
+  paired-end sequencing data because it doesn’t consider any
+  qualities. While it works for both Ilumina GA data and 454 data, so
+  far it has only been tested on Ilumina GA data.
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb  8 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: indel_detection.release_20120926.zip
+:src_dir: indel_detection.release
+:sources:
+  - soapindel_manual_2.01.docx
+:type: apps
+:version: '2.01'
+:requirements:
+  :runtime: apps/samtools >= 0.1.18
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -v <%= source('soapindel_manual_2.01.docx') %> <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv * <%= dest_dir %>/bin <%= redirect(:install) %>
+  mv -v <%= dest_dir %>/bin/README <%= dest_dir %>/doc <%= redirect(:install) %>
+  for a in Makefile *.o *.cpp; do
+    rm <%= dest_dir %>/bin/$a
+  done
+  for a in $(find <%= dest_dir %>/bin -type d -name .svn); do
+    rm -rf $a
+  done
+  for a in $(find <%= dest_dir %>/bin -name '*.pl'); do
+    sed -e 's|^.?#!.*|#!/usr/bin/env perl|g' -i $a
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
