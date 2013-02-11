@@ -11,6 +11,8 @@
   supported.
 :group: Bioinformatics
 :changelog: |
+  * Mon Feb 11 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add configuration for java.io.tmpdir
   * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Wed Oct 12 2011 Mark J. Titorenko
@@ -31,7 +33,16 @@
 
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}_JAVA_MEM_MX 2g
-  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
 
   set-alias AddOrReplaceReadGroups "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/AddOrReplaceReadGroups.jar"
   set-alias BamIndexStats "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/BamIndexStats.jar"
