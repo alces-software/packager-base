@@ -12,6 +12,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Tue Feb 12 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ensure permissions granted to other users
   * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to v0.1.9
     - Refactored to packager style
@@ -26,9 +28,14 @@
   make <%= redirect(:make) %>
 :install: |
   mkdir <%= dest_dir %>/doc
-  cp -rv bin examples <%= dest_dir %>
-  cp -rv lib/perl5/site_perl <%= dest_dir %>/perl
-  cp -rv README.txt <%= dest_dir %>/doc
+  cp -Rv bin examples <%= dest_dir %>
+  chmod 755 <%= dest_dir %>/bin/*
+  chmod 644 <%= dest_dir %>/examples/*
+  chmod 755 <%= dest_dir %>/examples/perl-api-1.pl
+  cp -Rv lib/perl5/site_perl <%= dest_dir %>/perl
+  chmod 644 <%= dest_dir %>/perl/*
+  cp -Rv README.txt <%= dest_dir %>/doc
+  chmod 644 <%= dest_dir %>/doc/*
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
