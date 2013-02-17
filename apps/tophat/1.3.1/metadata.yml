@@ -37,6 +37,6 @@
   make install <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
-  setenv ${appcaps}BIN ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
 
-  prepend-path PATH ${appdir}
+  prepend-path PATH ${appdir}/bin
