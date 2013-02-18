@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: Vienna RNA
+:license: NONFREE - citation required; see http://bit.ly/133dWI9
+:summary: RNA Secondary Structure Prediction and Comparison
+:url: http://www.tbi.univie.ac.at/~ronny/RNA/ViennaRNA-2.1.1.tar.gz
+:description: |
+  The ViennaRNA Package consists of a C code library and several 
+  stand-alone programs for the prediction and comparison of RNA 
+  secondary structures:
+
+    * RNAfold -- predict minimum energy secondary structures and pair 
+      probabilities
+    * RNAeval -- evaluate energy of RNA secondary structures
+    * RNAheat -- calculate the specific heat (melting curve) of an 
+      RNA sequence
+    * RNAinverse -- inverse fold (design) sequences with predefined 
+      structure
+    * RNAdistance -- compare secondary structures
+    * RNApdist -- compare base pair probabilities
+    * RNAsubopt -- complete suboptimal folding
+    * RNAplot -- RNA structure drawings in PostScript, SVG, or GML
+    * RNAcofold -- predict hybrid structure of two sequences
+    * RNAduplex -- predict possible hybridization sites between two 
+      sequences
+    * RNAup -- predict RNA-RNA interaction sites using accessibilities
+    * RNAalifold -- predict the consensus structure of several aligned 
+      sequences
+    * RNAaliduplex -- comparative (multiple alignment) version of 
+      RNAduplex
+    * RNALfold -- predict locally stable structure of long sequences
+    * RNAplfold -- compute average pair probabilities for local base 
+      pairs in long sequences
+    * RNApaln -- fast structural alignment of RNA sequences using 
+      string alignments
+    * Several small but helpful Perl Utilities
+:group: Bioinformatics
+:changelog: |
+  * Mon 18 Feb 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: ViennaRNA-2.1.1.tar.gz
+:src_dir: ViennaRNA-2.1.1
+:type: apps
+:sources:
+  - perl-makefile.patch
+:version: '2.1.1'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/perl
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cat <%= source('perl-makefile.patch') %> | sed "s|%PERLDIR%|${PERLDIR}|g" | patch -p0
+  make install GRIDWARE_DEST=<%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
