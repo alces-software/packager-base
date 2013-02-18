@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: SuperHirn
+:license: Apache License 2.0
+:summary: Tool to quantitatively analyze multi-dimensional LC-MS data
+:url: http://proteomics.ethz.ch/muellelu/web/SuperHirn.php
+:description: |
+  SuperHirn is an open source program written in C++ for the 
+  quantitative analysis of liquid chromatography mass spectrometry
+  (LC-MS) data. The program is executed from command line and program 
+  parameters are read from parameter text files. SuperHirn is built 
+  in a modular manner reflecting the different LC-MS processing 
+  functionalities. In  particular, the workflow of the program
+  comprises following modules:
+
+    * Feature  extraction of LC-MS runs and integration of MS2
+      peptide identifications
+    * LC-MS similarity assessment
+    * Multiple LC-MS alignment to generate a MasterMap
+    * Intensity normalization of MS1 features in the MasterMap
+    * MS1 feature annotation of MasterMap
+    * Unsupervised feature profiling by Kmeans clustering
+    * Targeted peptide/protein profiling
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb 15 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: SuperHirn.0.03.zip
+:src_dir: .
+:type: apps
+:version: '0.03'
+:compilers:
+  gcc:
+:patches:
+  - modern-gcc-compat.patch1
+:compile: |
+  cd SuperHirnv03/make
+  make all <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v SuperHirnv03/make/SuperHirnv03 <%= dest_dir %>/bin <%= redirect(:install) %>
+  ln -s SuperHirnv03 <%= dest_dir %>/bin/SuperHirn
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
