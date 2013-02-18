@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: bam-readcount
+:license: Public Domain
+:summary: Generate metrics at single nucleotide positions
+:url: https://github.com/genome/bam-readcount
+:description: |
+  A tool to calculate the read count for each region in the input
+  list of regions from a BAM file, and output the normalized
+  read count as Read Per Million Mapped Reads per Kilobases (RPKM). To
+  correct for the bias of the read count due to GC bias, it will also
+  output the GC content of each region along with the total reads
+  mapped to the corresponding GC content bins. By providing this
+  statistic, the extent of GC bias can be investigated and if
+  excessive bias is observed this statistic can be used to correct the
+  global GC bias.
+
+  This tool was initially developed for RNA-seq data to quantify
+  gene/exon expression but can also be used for other purposes as
+  well.
+:group: Bioinformatics
+:requirements: 
+  :tool:
+    - apps/cmake
+  :build:
+    - apps/samtools
+:changelog: |
+  * Mon Feb 18 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bam-readcount-20120812.tgz
+:src_dir: genome-bam-readcount-c044123
+:sources:
+  - build-common.tgz
+:type: apps
+:version: '20120812'
+:compilers:
+  gcc:
+:compile: |
+  cd build-common
+  tar xzf <%= source('build-common.tgz') %>
+  mv genome-build-common-a7fcf8a/* .
+  rm -rf genome-build-common-a7fcf8a
+  cd ..
+  mkdir build
+  cd build
+  export SAMTOOLS_ROOT="${SAMTOOLSDIR}"
+  cmake .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  mv build/bin/bam-readcount <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
