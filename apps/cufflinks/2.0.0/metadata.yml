@@ -14,9 +14,9 @@
 :group: Bioinformatics
 :requirements: 
   :runtime:
-    - libs/boost >= 1.47.0
+    - libs/boost = 1.49.0
   :build:
-    - libs/boost >= 1.47.0
+    - libs/boost = 1.49.0
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0.5
 :changelog: |

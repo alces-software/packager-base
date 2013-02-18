@@ -1,0 +1,19 @@
+--- sparsePregraph/Makefile	2012-12-28 04:48:41.000000000 +0000
++++ sparsePregraph/Makefile	2013-02-18 15:38:23.463712749 +0000
+@@ -1,4 +1,4 @@
+-CC=             /opt/blc/gcc-4.5.0/bin/gcc #gcc
++#CC=             /opt/blc/gcc-4.5.0/bin/gcc #gcc
+ CFLAGS=         -O4 -fomit-frame-pointer #-static #-mcrc32 -march=core2 -msse4.1 -msse4.2
+ DFLAGS=         
+ OBJS=		build_graph.o build_edge.o multi_threads.o \
+--- standardPregraph/Makefile	2012-12-28 04:49:29.000000000 +0000
++++ standardPregraph/Makefile	2013-02-18 15:38:11.551883657 +0000
+@@ -5,7 +5,7 @@
+ #
+ ###################################
+ 
+-CC=             /opt/blc/gcc-4.5.0/bin/gcc #gcc
++#CC=             /opt/blc/gcc-4.5.0/bin/gcc #gcc
+ GCCVERSIONMAJOR := $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 4)
+ GCCVERSIONMINOR := $(shell expr `$(CC) -dumpversion | cut -f2 -d.` \>= 4)
+ CFLAGS=         -O4 -fomit-frame-pointer #-static #-mcrc32 -march=core2 -msse4.1 -msse4.2

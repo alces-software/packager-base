@@ -1,0 +1,62 @@
+diff -ur superhirn.orig/CPP_LIBRARYv03/GENERAL/CC/progress_bar.cc superhirn/CPP_LIBRARYv03/GENERAL/CC/progress_bar.cc
+--- superhirn.orig/CPP_LIBRARYv03/GENERAL/CC/progress_bar.cc	2008-12-01 15:09:24.000000000 +0000
++++ superhirn/CPP_LIBRARYv03/GENERAL/CC/progress_bar.cc	2013-02-18 14:36:47.962989306 +0000
+@@ -17,6 +17,7 @@
+ // **********************************************************************//
+ 
+ 
++#include <stdio.h>
+ #include "iostream"
+ #include "stdlib.h"
+ #include "math.h"
+diff -ur superhirn.orig/CPP_LIBRARYv03/GENERAL/include/GENERAL_USE.h superhirn/CPP_LIBRARYv03/GENERAL/include/GENERAL_USE.h
+--- superhirn.orig/CPP_LIBRARYv03/GENERAL/include/GENERAL_USE.h	2009-01-28 16:26:37.000000000 +0000
++++ superhirn/CPP_LIBRARYv03/GENERAL/include/GENERAL_USE.h	2013-02-18 14:38:12.918939946 +0000
+@@ -21,6 +21,7 @@
+ #ifndef __GENERAL_USE_H__
+ #define __GENERAL_USE_H__
+ 
++#include <cstring>
+ 
+ ///////////////////////////////////////////////////////////////////////////
+ // GLOBAL DEFINED VARIABLES:
+diff -ur superhirn.orig/CPP_LIBRARYv03/PEAK_DETECTION/FT/MS1Level/include/Deisotoper.h superhirn/CPP_LIBRARYv03/PEAK_DETECTION/FT/MS1Level/include/Deisotoper.h
+--- superhirn.orig/CPP_LIBRARYv03/PEAK_DETECTION/FT/MS1Level/include/Deisotoper.h	2008-03-11 09:31:42.000000000 +0000
++++ superhirn/CPP_LIBRARYv03/PEAK_DETECTION/FT/MS1Level/include/Deisotoper.h	2013-02-18 15:07:45.670952074 +0000
+@@ -15,6 +15,7 @@
+ 
+ #include <list>
+ #include <vector>
++#include <ostream>
+ 
+ using namespace std;
+ 
+@@ -56,4 +57,4 @@
+ 
+ ostream& operator<<(ostream&, Deisotoper&);
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -ur superhirn.orig/CPP_LIBRARYv03/PEAK_DETECTION/FT/MSProcessing/include/CentroidPeak.h superhirn/CPP_LIBRARYv03/PEAK_DETECTION/FT/MSProcessing/include/CentroidPeak.h
+--- superhirn.orig/CPP_LIBRARYv03/PEAK_DETECTION/FT/MSProcessing/include/CentroidPeak.h	2008-08-05 15:59:32.000000000 +0100
++++ superhirn/CPP_LIBRARYv03/PEAK_DETECTION/FT/MSProcessing/include/CentroidPeak.h	2013-02-18 14:47:57.924103382 +0000
+@@ -10,9 +10,10 @@
+ #ifndef _CENTROIDPEAK_H_
+ #define _CENTROIDPEAK_H_
+ using namespace std;
+-#include <ostream>;
++#include <ostream>
+ #include <cmath>
+ #include <vector>
++#include <stdio.h>
+ // Class for centroid peaks
+ class CentroidPeak{
+ public:
+@@ -114,4 +115,4 @@
+ ostream& operator<<(ostream&, DeconvPeak&);
+ 
+ 
+-#endif
+\ No newline at end of file
++#endif
