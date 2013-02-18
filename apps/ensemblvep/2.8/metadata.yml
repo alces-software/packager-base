@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: Ensembl Variant Effect Predictor
+:license: Public Domain
+:summary: Predict the functional consequences of known and unknown variants
+:url: http://www.ensembl.org/info/docs/variation/vep/index.html
+:description: |
+  Ensembl provides the facility to predict the functional consequences
+  of known and unknown variants using the Variant Effect Predictor
+  (VEP).
+
+  The VEP was formerly known as the SNP Effect Predictor, and was
+  published under this name. Please reference the following
+  publication:
+
+  McLaren W, Pritchard B, Rios D, Chen Y, Flicek P, Cunningham F.
+  Deriving the consequences of genomic variants with the Ensembl API
+  and SNP Effect Predictor.  BMC Bioinformatics26(16):2069-70(2010)
+  doi:10.1093/bioinformatics/btq330
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 18 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:src: variant_effect_predictor.tar.gz
+:src_dir: variant_effect_predictor
+:type: apps
+:version: '2.8'
+:compilers:
+  noarch:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm LWP::Simple DBI <%= redirect(:cpanm) %>
+  perl INSTALL.pl -d "${TOPDIR}/perl/lib/perl5" </dev/null <%= redirect(:fetcher) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,example}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  cp -v gtf2vep.pl variant_effect_predictor.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/*.pl
+  cp -v README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v example.vcf <%= dest_dir %>/example <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+  prepend-path PATH ${appdir}/bin
