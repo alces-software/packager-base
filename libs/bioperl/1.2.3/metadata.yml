@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: BioPerl
+:license: Perl Artistic License
+:summary: A community effort to produce Perl code which is useful in biology
+:url: http://www.bioperl.org/
+:description: |
+  BioPerl is a toolkit of perl modules useful in building
+  bioinformatics solutions in Perl. It is built in an object-oriented
+  manner so that many modules depend on each other to achieve a
+  task. The collection of modules in the bioperl-live repository
+  consist of the core of the functionality of bioperl.
+:group: Bioinformatics
+:changelog: |
+  * Thu Feb 14 2013 James Donohue <james.donohue@alces-software.com>
+    - Adapted for version 1.2.3
+  * Thu Oct  4 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bioperl-1.2.3.tar.gz
+:src_dir: bioperl-1.2.3
+:type: libs
+:version: '1.2.3'
+:requirements:
+  :tool: apps/cpanminus
+  :build:
+    - apps/perl
+:compilers:
+  gcc:
+:prereqs:
+  - Ace
+  - IO::Scalar
+  - SOAP::Lite
+  - GD
+  - XML::Parser
+  - IO::String
+  - XML::Twig
+  - HTTP::Request::Common
+  - Text::Shellwords
+  - XML::Parser::PerlSAX
+  - LWP::UserAgent
+  - XML::Writer
+  - HTML::Parser
+  - DBD::mysql
+  - Graph::Directed
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5:<%= dest_dir %>/perl/lib/perl5/x86_64-linux"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm Bundle::BioPerl <%= redirect(:cpanm) %>
+  for a in <%= package.prereqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  perl Makefile.PL PREFIX=<%= dest_dir %> < /dev/null
+  make <%= redirect(:make) %>
+:install: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5:<%= dest_dir %>/perl/lib/perl5/x86_64-linux"
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/lib/site_perl/5*/* <%= dest_dir %>/lib
+  rm -rf <%= dest_dir %>/lib/5* <%= dest_dir %>/lib/site_perl/5*
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/lib
+
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
