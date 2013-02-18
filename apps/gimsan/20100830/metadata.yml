@@ -1,0 +1,69 @@
+---
+:schema: 1
+:license: NONFREE - commercial use prohibited without consent; see http://www.cs.cornell.edu/~ppn3/gimsan/
+:title: GIMSAN
+:summary: GIbbsMarkov with Significance ANalysis
+:url: http://www.cs.cornell.edu/~ppn3/gimsan/
+:description: |
+  GIMSAN (GIbbsMarkov with Significance ANalysis) is a tool for de
+  novo motif discovery:
+
+    * Hybrid Gibbs sampler for motif finding that uses a Bayesian
+      prior on the percentage of sequences containing sites but uses a
+      maximum likelihood approach on the motif matrix
+    * Biologically realistic and reliable statistical significance
+      analysis
+    * Using a 3-Gamma approximation scheme
+    * Factoring local sequence composition information
+    * Reports an approximate 95% confidence interval of the point
+      estimator of the motif p-value
+    * Can be used to select the optimal width from a range of motif
+      widths based on our significance analysis
+    * Column pair dependency estimated using a Monte-Carlo scheme
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 18 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gimsan_cmdline_20100830.tar.gz
+:src_dir: gimsan_cmdline
+:type: apps
+:version: '20100830'
+:requirements:
+  :runtime:
+    - apps/perl
+    - apps/R
+:compilers:
+  gcc:
+:compile: |
+  cd gibbsmarkov/code
+  make <%= redirect(:make) %>
+  cd ../..
+  cd column_dependency_app/code
+  make <%= redirect(:make) %>
+  cd ../..
+  mkdir dist
+  mkdir dist/gibbsmarkov dist/column_dependency_app
+  cp gibbsmarkov/*.out dist/gibbsmarkov
+  cp column_dependency_app/*.out dist/column_dependency_app
+  cp -R bin dist
+  cd dist
+  tar xzf ../weblogo.2.8.2.tar.gz
+  cd ..
+  # sed #!s to use env
+  for a in *.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -Rv dist <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v *.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DOC ${appdir}/share
+
+  setenv GIMSAN ${appdir}/share
+  setenv R_BIN $::env(RBIN)
+  prepend-path PATH ${appdir}/bin
