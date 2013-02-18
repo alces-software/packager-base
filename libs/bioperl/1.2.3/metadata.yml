@@ -22,8 +22,8 @@
 :version: '1.2.3'
 :requirements:
   :tool: apps/cpanminus
-  :build:
-    - apps/perl
+  :build: apps/perl
+  :runtime: apps/perl
 :compilers:
   gcc:
 :prereqs:

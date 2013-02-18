@@ -49,6 +49,8 @@
 :requirements:
   :build:
     - apps/perl
+  :runtime:
+    - apps/perl
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
