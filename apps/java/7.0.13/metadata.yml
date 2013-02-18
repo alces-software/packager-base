@@ -25,6 +25,7 @@
 :install: | 
   mkdir -p <%= dest_dir %>
   cp -pav * <%= dest_dir %>
+  chown root:root -R <%= dest_dir %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
