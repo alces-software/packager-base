@@ -1,0 +1,34 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: RAD tools for guppies (Poecilia reticulata)
+:url: http://guppy.weigelworld.org/weigeldatabases/radMarkers/
+:description: # No detailed description available
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Feb 21 2012 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: RApiD_v0.6.tar.gz
+:src_dir: RApiD
+:version: '0.6'
+:requirements:
+  :runtime: 
+    - apps/locas
+:compilers:
+  noarch:
+:compile: |
+  # Replace perl hashbang
+  for a in *.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/doc <%= dest_dir %>/bin
+  cp -v gpl-3.0.txt RApiD_Manual.pdf RApiD_manual.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  # Do not install RApiD's LOCASopt; prefer version provided by apps/locas
+  cp -v *.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
