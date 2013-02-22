@@ -1,0 +1,48 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: Package for finding repeat families from biological sequences
+:url: http://selab.janelia.org/recon.html
+:description: |
+  Proper identification of repetitive sequences is an essential step
+  in genome analysis. The RECON package performs de novo
+  identification and classification of repeat sequence families from
+  genomic sequences.  The underlying algorithm is based on extensions
+  to the usual approach of single linkage clustering of local pairwise
+  alignments between genomic sequences. Specifically, our extensions
+  use multiple alignment information to define the boundaries of
+  individual copies of the repeats and to distinguish homologous but
+  distinct repeat element families. RECON should be useful for
+  first-pass automatic classification of repeats in newly sequenced
+  genomes.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb 22 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: RECON1.05.tar.gz
+:src_dir: RECON1.05
+:version: '1.05'
+:requirements:
+  :runtime:
+    - apps/perl
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cd src
+  cp -v edgeredef eledef eleredef famdef imagespread <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd ../scripts
+  # Set path to binaries
+  sed -i -e 's#path = ""#path = "<%= dest_dir %>/bin"#g' recon.pl
+  cp -v recon.pl MSPCollect.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd ..
+  cp -v 00README COPYRIGHT INSTALL LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
