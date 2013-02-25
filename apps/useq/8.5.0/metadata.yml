@@ -1,0 +1,102 @@
+---
+:schema: 1
+:license: BSD License
+:title: USeq
+:summary: Collection of software tools for analysis of sequencing data from the Solexa, SOLiD, and 454 platforms
+:url: http://useq.sourceforge.net/
+:description: |
+  USeq is a collection of software tools for both low and high level
+  analysis of next generation, ultra high throughput signature
+  sequencing data from the Solexa, SOLiD, and 454 platforms. Initial
+  emphasis: chIP-seq and RNA-Seq with FDR estimations. USeq is under
+  continuous development at the Huntsman Cancer Institute in the Utah
+  Bioinformatics Shared Resource Center.
+
+  A description of the statistics and comparison of methods used in
+  USeq is now published, see Nix DA, Courdy SJ, Boucher KM: Empirical
+  methods for controlling false positives and estimating confidence in
+  chIP-seq peaks. BMC Bioinformatics. 2008 Dec 5;9(1):523. Note, USeq
+  now makes use of the DESeq R package to calculate p-values from a
+  negative binomial distribution for differential enrichment/
+  reduction. See Anders S, Huber W: Differential expression analysis
+  for sequence count data. Nature Precedings. 2010 Jan
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: USeq_8.5.0.zip
+:src_dir: .
+:type: apps
+:version: '8.5.0'
+:requirements:
+  :runtime:
+    - apps/R
+    - libs/bioconductor
+  :build:
+    - apps/R
+    - libs/bioconductor
+:compilers:
+  # While useq itself is noarch, the R libraries it depends upon are compiled.
+  gcc:
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # requires Q-Value and DESeq R libraries
+  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(c("DESeq","qvalue"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,java}
+  cp -Rv GWrap_GUI_ClickMe.jar LibraryJars Apps <%= dest_dir %>/java <%= redirect(:install) %>
+  cp -Rv Documentation/* <%= dest_dir %>/doc
+  cat <<\EOF > <%= dest_dir %>/bin/useq
+  #!/bin/bash
+  n=$(basename $0)
+  if [ "$n" == 'useq' ]; then
+    n=$1
+    shift
+  fi
+  if [ -z "$n" ]; then
+    echo "Usage: $0 <application> [<parameters>]"
+  elif [ -f "<%= dest_dir %>/java/Apps/$n" ]; then
+    exec java `eval echo $USEQ_JAVA_OPTS` -jar "<%= dest_dir %>/java/Apps/$n" "$@"
+  else
+    echo "useq: Unable to locate USeq application: $n"
+  fi
+  exit 1
+  EOF
+  chmod 755 <%= dest_dir %>/bin/useq
+  for a in <%= dest_dir %>/java/Apps/*; do
+    ln -s useq <%= dest_dir %>/bin/$(basename $a)
+  done
+  cat <<\EOF > <%= dest_dir %>/bin/useq-gui
+  #!/bin/bash
+  java `eval echo $USEQ_JAVA_OPTS` -jar <%= dest_dir %>/java/GWrap_GUI_ClickMe.jar
+  EOF
+  chmod 755 <%= dest_dir %>/bin/useq-gui
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}R ${appdir}/R
+
+  prepend-path R_LIBS_SITE ${appdir}/R
+
+  prepend-path PATH ${appdir}/bin
