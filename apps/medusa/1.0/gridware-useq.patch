@@ -1,0 +1,19 @@
+--- medusa.pl.orig	2013-02-25 12:09:36.332663813 +0000
++++ medusa.pl	2013-02-25 12:16:02.980937374 +0000
+@@ -29,6 +29,7 @@
+ use Config::Simple;
+ use Getopt::Std;
+ use Parallel::ForkManager;
++use Env qw($USEQJAVA);
+ 
+ my ($config_file, $treats, $controls);
+ 
+@@ -129,7 +130,7 @@
+ my $path2repeats_list = $paths->{path2repeats_list};
+ my $path2annotation_output = $paths->{path2annotation_output};
+ my $path2dmr = $paths->{path2dmr};
+-my $path2useqJava = $paths->{path2useqJava};
++my $path2useqJava = $paths->{path2useqJava} || $USEQJAVA . '/Apps';
+ 
+ my $genomes = $cfg->param(-block=>'GENOMES');
+ my $bwa_genome = $genomes->{bwa_genome};

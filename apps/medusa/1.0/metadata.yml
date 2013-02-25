@@ -1,0 +1,92 @@
+---
+:schema: 1
+:license: GPLv3
+:title: MeDUSA - Methylated DNA Utility for Sequence Analysis
+:summary: Computational pipeline to perform a full analysis of MeDIP-seq data
+:url: http://www.ucl.ac.uk/cancer/medical-genomics/analysispipeline
+:description: |
+  MeDUSA is a computational pipeline bringing together numerous
+  software packages to perform a full analysis of MeDIP-seq data,
+  including sequence alignment, quality control (QC), and
+  determination and annotation of DMRs.
+
+  It utilizes many applications in order to perform this task. From
+  alignment (BWA) and subsequent filtering (SAMtools), through
+  generation of numerous quality control metrics (FastQC and MEDIPS),
+  DMR identification (using USeq and in turn DESeq) and finally
+  preliminary annotation of the DMRs (utilizing the capabilities of
+  BEDTools).
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: medusa_v1_0.tar.gz 
+:src_dir: medusa_v1_0
+:patches:
+  - gridware-useq.patch
+:sources:
+  - medusa.example.cfg.template
+:type: apps
+:version: '1.0'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl >= 5.10
+    - apps/R >= 2.14
+    #- libs/bioconductor >= 2.9
+    - libs/bioconductor >= 2.11
+    - apps/useq >= 8.2.1
+  :runtime:
+    - apps/perl >= 5.10
+    - apps/R >= 2.14
+    # XXX - these version restrictions should be re-enabled after
+    # semver comparisions are corrected in packager.
+    #- apps/bwa >= 0.5.8
+    - apps/bwa
+    # apps/samtools >= 0.1.9
+    - apps/samtools = 0.1.18
+    #- apps/fastqc >= 0.9.3
+    - apps/fastqc
+    - apps/useq >= 8.2.1
+    - apps/bedtools >= 2.10
+    #- libs/bioconductor >= 2.9
+    - libs/bioconductor >= 2.11
+:compilers:
+  # While medusa itself is noarch, the R libraries it depends upon are compiled.
+  gcc:
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in POSIX List::Util Config::Simple Getopt::Std Parallel::ForkManager; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  # install MEDIPS through bioconductr; DESeq and qvalue are already provided by dependency on useq
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(c("MEDIPS"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,etc,share,doc}
+  cp -Rv * <%= dest_dir %>/share <%= redirect(:install) %>
+  mv -v <%= dest_dir %>/share/README <%= dest_dir %>/doc <%= redirect(:install) %>
+  mv -v <%= dest_dir %>/share/medusa.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/medusa.pl
+  sed -e "s|%USEQAPPS%|${USEQJAVA}/Apps|g" -e "s|%MEDUSASHARE%|<%= dest_dir %>/share|g" <%= source('medusa.example.cfg.template') %> > <%= dest_dir %>/etc/medusa.example.cfg
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}R ${appdir}/R
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path R_LIBS_SITE ${appdir}/R
+
+  prepend-path PATH ${appdir}/bin
+

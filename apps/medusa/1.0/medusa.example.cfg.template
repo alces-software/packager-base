@@ -1,0 +1,56 @@
+# select the parts of the pipeline to run
+[PIPE]
+part0=1
+part1=1
+part2=1
+part3=1
+part4=1
+part5=1
+
+# select the number of cores to use simultaneously - if you don't have a multi-core machine keep this as 1 - but it will take longer!!
+[FORKS]
+max_forks=6
+
+# set paths to required directories. All should be full paths except dmr_dir (just name of directory). path2filtered, dmr_dir and path2annotation_output are created in the pipeline
+[PATHS]
+path2reads=/data/reads
+path2genome_dir=/data/genome
+path2alignment=/data/medusa/aligns
+path2filtered=/data/medusa/aligns/filtered
+path2dmr=/data/medusa/aligns/filtered/norm_dmrs_d_vs_c
+path2annotation_output=/data/medusa/aligns/filtered/norm_dmrs_d_vs_c/annoOut
+
+path2scripts=%MEDUSASHARE%
+path2features_dir=%MEDUSASHARE%/annotation_files/mouse_ncbi37_b62
+path2features_list=%MEDUSASHARE%/annotation_files/mouse_ncbi37_b62/features.list
+path2repeats_list=%MEDUSASHARE%/annotation_files/mouse_ncbi37_b62/repeat_families.txt
+# If path2useqJava is left unset, it will default to the $USEQJAVA/Apps
+#path2useqJava=%USEQAPPS%
+
+# genome info
+[GENOMES]
+bwa_genome=mouse_genome.fa
+fasta_genome=mouse_genome.fa
+# species could be Mouse, Human, Dog, Chimp or Macaca
+species=Mouse
+ref_name=mm9
+max_chrom=19
+
+# read info
+[READS]
+max_insert=150
+read_length=36
+
+# thresholds used during dmr calling and annotation
+[THRESHOLDS]
+minimum_read_depth=10
+minimum_fdr=0.5
+intersect_threshold=0.25
+upstream_nearest_gene_threshold=100000
+downstream_nearest_gene_threshold=50000
+
+# should fragment normalised data be used? if so, what prefix?
+[FRAGMENT_LENGTH]
+normalised=0
+prefix=normalised
+
