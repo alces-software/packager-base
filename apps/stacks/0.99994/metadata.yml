@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: Stacks
+:license: GPLv3
+:summary: Software pipeline for building loci from short-read sequences
+:url: http://creskolab.uoregon.edu/stacks/
+:description: |
+  Stacks is a software pipeline for building loci from short-read
+  sequences, such as those generated on the Illumina platform. Stacks
+  was developed to work with restriction enzyme-based data, such as
+  RAD-seq, for the purpose of building genetic maps and conducting
+  population genomics and phylogeography.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: stacks-0.99994.tar.gz
+:src_dir: stacks-0.99994
+:type: apps
+:version: '0.99994'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+    - apps/samtools
+  :runtime:
+    - apps/perl
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+    --enable-bam \
+    --with-bam-include-path=${SAMTOOLSINCLUDE} \
+    --with-bam-lib-path=${SAMTOOLSLIB} \
+    <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm DBI DBD::mysql Spreadsheet::WriteExcel <%= redirect(:cpanm) %>
+:install: |
+  make install <%= redirect(:install) %>
+  for a in <%= dest_dir %>/bin/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PERL ${appdir}/perl
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+  prepend-path PATH ${appdir}/bin
