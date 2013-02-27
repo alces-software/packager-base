@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: treeviewx
+:license: GPLv2
+:summary: Phylogeny tree viewer
+:url: https://code.google.com/p/treeviewx/
+:description: |
+  TreeView X is an open source program to display phylogenetic trees
+  on Linux, Unix, Mac OS X, and Windows platforms. It can read and
+  display NEXUS and Newick format tree files (such as those output by
+  PAUP, ClustalX, TREE-PUZZLE, and other programs). It has a subset of
+  the functionality of the version of TreeView available for the Mac
+  Classic and Windows (it is roughly equivalent to version 0.95 of
+  TreeView).
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tv-0.5.tar.gz
+:src_dir: tv-0.5
+:type: apps
+:version: '0.5'
+# requires wxGTK-devel on build host; wxGTK and wxBase on node
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
