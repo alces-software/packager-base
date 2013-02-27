@@ -1,7 +1,7 @@
 ---
 :schema: 1
 :title: EIGENSOFT
-:license: 
+:license: UNKNOWN
 :summary: Combines functionality from population genetics methods and EIGENSTRAT stratification method
 :url: http://genepath.med.harvard.edu/~reich/Software.htm
 :description: |
@@ -41,6 +41,7 @@
   chmod -R a-x POPGEN EIGENSTRAT CONVERTF
   chmod 755 POPGEN EIGENSTRAT CONVERTF
   chmod 755 bin/*
+  chmod 644 README
   cd src
   make clobber <%= redirect(:make) %>
   make all <%= redirect(:make) %>
@@ -55,8 +56,11 @@
   mkdir -p <%= dest_dir %>/example
   cp -av bin <%= dest_dir %> <%= redirect(:install) %>
   cp -av POPGEN EIGENSTRAT CONVERTF <%= dest_dir %>/example <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -v README <%= dest_dir %>/doc <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
 
   prepend-path PATH ${appdir}/bin
