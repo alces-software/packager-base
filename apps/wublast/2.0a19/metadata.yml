@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: WU BLAST
+:license: NONFREE - please see http://www.advbiocomp.com/blast/obsolete/INSTALL.html
+:summary: Washington University-produced alternative to NCBI BLAST
+:url: http://www.advbiocomp.com/blast/obsolete/INSTALL.html
+:description: |
+  This is version 2.0a19 of WU-BLAST (Washington University BLAST)
+  software for gene and protein identification through sensitive,
+  selective and rapid similarity searches of protein and nucleotide
+  sequence databases. WU-BLAST 2.0 builds upon WU-BLAST 1.4, which in
+  turn is based on the public domain NCBI-BLAST version 1.4 (Gish,
+  unpublished, 1994; Altschul et al., 1990; Gish and States,
+  1993). While NCBI-BLAST and WU-BLAST 1.4 are in the public domain,
+  WU-BLAST 2.0 contains significant new, full-featured and optimised
+  enhancements (outlined below) and is therefore copyrighted.
+
+  Markedly improved results are obtained with version 2.0 over the
+  previous version 1.4, primarily due to the introduction of gapped
+  alignments. Even better sensitivity/selectivity than Smith-Waterman
+  can be obtained in some cases, due to the evaluation of multiple
+  regions of similarity between a query and database sequence. The
+  complete suite of search programs (BLASTP, BLASTN, BLASTX, TBLASTN,
+  and TBLASTX) is provided, in addition to several support programs.
+
+  WU-BLAST 2.0 is copyrighted and may not be sold, redistributed or
+  modified in any form or manner without the express written consent
+  of the author or Washington University, Saint Louis.
+:group: Bioinformatics
+:changelog: |
+  * Tue Feb 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: blast2.linux-5.1.tar.gz
+:src_dir: .
+:type: apps
+:version: '2.0a19'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary package
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  cp -Rv * <%= dest_dir %>/bin <%= redirect(:install) %>
+  rm -f <%= dest_dir %>/bin/BLOSUM62
+  mv -v <%= dest_dir %>/bin/{matrix,filter} <%= dest_dir %>/share <%= redirect(:install) %>
+  mv -v <%= dest_dir %>/bin/{README,HISTORY} <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  setenv BLASTMAT ${appdir}/share/matrix
+  setenv BLASTFILTER ${appdir}/share/filter
+
+  prepend-path PATH ${appdir}/bin
+
