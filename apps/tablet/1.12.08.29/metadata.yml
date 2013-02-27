@@ -1,7 +1,7 @@
 ---
 :schema: 1
 :title: Tablet
-:license: Modified BSD License
+:license: Modified BSD License; see http://bioinf.scri.ac.uk/tablet/licence.html
 :summary: Lightweight, high-performance graphical viewer for next generation sequence assemblies and alignements
 :url: http://bioinf.scri.ac.uk/tablet
 :description: |
@@ -22,6 +22,8 @@
       information.
 :group: Bioinformatics
 :changelog: |
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Supply '2' to install script in case there's an existing version installed
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: tablet_linux_x64_1_12_08_29.sh.sic
@@ -34,12 +36,13 @@
   # no-op; this is a binary distribution
 :install: |
   # o - OK (to install)
+  # 2 - don't update existing version
   # ENTER, 1 - accept license
   # dest_dir - where to install
   # y - yes, it's ok that the directory already exists
   # n - no, don't do any symlinking
   # n - no, don't launch the app now
-  echo -e "o\n\n1\n<%= dest_dir %>\ny\nn\nn\n" | sh ./tablet_linux_x64_1_12_08_29.sh.sic
+  echo -e "o\n2\n\n1\n<%= dest_dir %>\ny\nn\nn\n" | sh ./tablet_linux_x64_1_12_08_29.sh.sic
   rm <%= dest_dir %>/uninstall
 :module: |
   setenv ${appcaps}DIR ${appdir}
