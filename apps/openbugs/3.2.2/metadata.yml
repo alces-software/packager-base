@@ -1,0 +1,44 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: Software for performing Bayesian inference Using Gibbs Sampling
+:url: http://www.openbugs.info/w.cgi/FrontPage
+:description: |
+  BUGS is a software package for performing Bayesian inference Using
+  Gibbs Sampling. The user specifies a statistical model, of (almost)
+  arbitrary complexity, by simply stating the relationships between
+  related variables. The software includes an 'expert system', which
+  determines an appropriate MCMC (Markov chain Monte Carlo) scheme
+  (based on the Gibbs sampler) for analysing the specified model. The
+  user then controls the execution of the scheme and is free to choose
+  from a wide range of output types.
+
+  The specified model belongs to a class known as Directed Acyclic
+  Graphs (DAGs), for which there exists an elegant underlying
+  mathematical theory. This allows us to break down the analysis of
+  arbitrarily large and complex structures into a sequence of
+  relatively simple computations. BUGS includes a range of algorithms
+  that its expert system can assign to each such computational task.
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 25 2013 - James Donohue <james.donohue@alces-software.com>
+     - First created
+:src: OpenBUGS-3.2.2.tar.gz
+:src_dir: OpenBUGS-3.2.2
+:type: apps
+:version: '3.2.2'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
