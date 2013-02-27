@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: Trans-ABySS
+:license: BCCA License; see http://www.bcgsc.ca/platform/bioinfo/license/bcca_2010
+:summary: Analyze ABySS multi-k-assembled shotgun transcriptome data
+:url: http://www.bcgsc.ca/platform/bioinfo/software/trans-abyss
+:description: |
+  Trans-ABySS is a software pipeline for analyzing ABySS-assembled
+  contigs from shotgun transcriptome data. The pipeline accepts
+  assemblies that were generated across a wide range of k values in
+  order to address variable transcript expression levels. It first
+  filters and merges the multi-k assemblies, generating a much smaller
+  set of nonredundant contigs. It contains scripts that map assembled
+  contigs to known transcripts, currently supporting the Blat
+  contig-to-genome aligner. It identifies novel splicing events like
+  exon-skipping, novel exons, retained introns, novel introns, and
+  alternative splicing. Its scripts can also identify candidate
+  gene-fusions, single-nucleotide variants, insertions, deletions, and
+  inversions.
+
+  The pipeline can be used with other assembly versions, and with
+  other species, once genome and transcript annotation files are
+  available. However, ABySS and Trans-ABySS are general tools that can
+  be used when a reference genome and transcript annotations are
+  unavailable.
+
+  The pipeline is written in Python, and typically is used via Perl
+  and shell wrapper scripts.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: trans-ABySS-v1.4.4.tar.gz
+:src_dir: trans-ABySS-v1.4.4
+:type: apps
+:version: '1.4.4'
+:requirements:
+  :runtime:
+    - apps/perl
+    - apps/python
+    - apps/picard
+    - apps/abyss
+:compilers:
+  bin:
+:compile: |
+  sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i bin/getfaseq
+:install: |
+  mkdir -p <%= dest_dir %>/{python,bin,share,doc}
+  cp -Rv analysis utilities <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -Rv bin/* wrappers/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv annotations configs sample_output <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv ChangeLog <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  if { [info exists ::env(PICARDDIR)] } {
+    setenv PICARD_DIR $::env(PICARDDIR)
+  } {
+    setenv PICARD_DIR "\[picard module not loaded]"
+  }
+  if { [info exists ::env(ABYSSDIR)] } {
+    setenv ABYSSPATH $::env(ABYSSDIR)
+  } {
+    setenv ABYSSPATH "\[abyss module not loaded]"
+  }
+  prepend-path PYTHONPATH ${appdir}/python
+  setenv TRANSABYSS_VERSION ${version}
+  setenv TRANSABYSS_PATH ${appdir}
+
+  prepend-path PATH ${appdir}/bin
