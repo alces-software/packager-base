@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: Tablet
+:license: Modified BSD License; see http://bioinf.scri.ac.uk/tablet/licence.html
+:summary: Lightweight, high-performance graphical viewer for next generation sequence assemblies and alignements
+:url: http://bioinf.scri.ac.uk/tablet
+:description: |
+  Tablet is a lightweight, high-performance graphical viewer for next
+  generation sequence assemblies and alignments.
+
+  Tablet features:
+
+    * High-performance visualization and data navigation.
+    * Display of reads in both packed and stacked formats.
+    * File format support for ACE, AFG, MAQ, SOAP2, SAM, BAM, FASTA,
+      FASTQ, and GFF3.
+    * Import GFF3 features and quickly find/highlight/display them.
+    * Search and locate reads by name or subsequence across entire
+      data sets.
+    * Paired end visualization support (for SAM/BAM).
+    * Entire-contig overviews, showing data layout or coverage
+      information.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest available version v1.12.12.05
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tablet_linux_x64_1_12_12_05.sh.sic
+:src_dir: .
+:type: apps
+:version: '1.12.12.05'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution
+:install: |
+  # o - OK (to install)
+  # 2 - don't update existing version
+  # ENTER, 1 - accept license
+  # dest_dir - where to install
+  # y - yes, it's ok that the directory already exists
+  # n - no, don't do any symlinking
+  # n - no, don't launch the app now
+  echo -e "o\n2\n\n1\n<%= dest_dir %>\ny\nn\nn\n" | sh ./tablet_linux_x64_1_12_12_05.sh.sic
+  rm <%= dest_dir %>/uninstall
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  prepend-path PATH ${appdir}/utils
+  prepend-path PATH ${appdir}
