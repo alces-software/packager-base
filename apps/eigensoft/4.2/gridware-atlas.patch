@@ -1,0 +1,12 @@
+--- src/Makefile.orig	2011-08-30 18:50:34.000000000 +0100
++++ src/Makefile	2013-02-27 21:23:41.897629827 +0000
+@@ -11,8 +11,7 @@
+ NLIB = $(ND)/libnick.a
+ MATHLIB = -lm
+ 
+-LAPACK = -llapack
+-ATLAS_LAPACK = -L/usr/lib64/atlas -llapack -lf77blas -lcblas -latlas
++LAPACK = -L$(ATLASLIB) -lsatlas
+ 
+ EXE = convertf mergeit smartpca smartrel pcatoy smarteigenstrat twstats eigenstrat
+ 
