@@ -1,0 +1,59 @@
+---
+:license: GPLv3
+:summary: Evaluates the accuracy of a genome assembly using mapped paired end reads
+:url: http://www.sanger.ac.uk/resources/software/reapr/
+:description: |
+  REAPR is a tool that evaluates the accuracy of a genome assembly
+  using mapped paired end reads, without the use of a reference genome
+  for comparison. It can be used in any stage of an assembly pipeline
+  to automatically break incorrect scaffolds and flag other errors in
+  an assembly for manual inspection. It reports mis-assemblies and
+  other warnings, and produces a new broken assembly based on the
+  error calls.
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 25 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: Reapr_1.0.13.tar.gz
+:src_dir: Reapr_1.0.13
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/bamtools
+    - apps/tabixpp
+  :runtime: 
+    - apps/bamtools
+    - apps/tabixpp
+    - apps/samtools
+    - apps/snpomatic
+:type: apps
+:version: '1.0.13'
+:patches:
+  # Compile against gridware bamtools and tabixpp instead of bundled copies
+  - use-gridware-libs.patch
+:compilers:
+  gcc:
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm File::Basename File::Copy File::Spec File::Spec::Link Getopt::Long List::Util <%= redirect(:cpanm) %>
+  for a in src/*.pl; do
+    # Call binaries in the path, not at a specific location
+    sed -i -e "s|=\s\+File::Spec->catfile(\$scriptdir, \(.*\));|= \1;|g" $a
+    # Remove references to tabix subdirectory
+    sed -i -e "s#'tabix/\(tabix\|bgzip\)'#'\1'#g" $a
+  done
+  cd src/
+  make
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd src
+  cp -v *.pl task_score task_stats task_break bam2fragCov bam2insert bam2fcdEstimate make_plots fa2gaps fa2gc scaff2contig n50 task_gapresize task_fcdrate bam2perfect <%= dest_dir %>/bin <%= redirect(:install) %>
+  ln -s <%= dest_dir %>/bin/reapr.pl <%= dest_dir %>/bin/reapr <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5

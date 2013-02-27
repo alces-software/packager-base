@@ -1,0 +1,32 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Fast, stringent short-read mapping software
+:url: http://snpomatic.sourceforge.net/
+:description: |
+  High throughput sequencing technologies generate large amounts of
+  short reads. Mapping these to a reference sequence consumes large
+  amounts of processing time and memory, and read mapping errors can
+  lead to noisy or incorrect alignments. SNP-o-matic is a fast,
+  memory-efficient, and stringent read mapping tool offering a variety
+  of analytical output functions, with an emphasis on genotyping.
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 25 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: snpomatic-20121106.tar.gz
+:src_dir: snpomatic
+:type: apps
+:version: '20121106'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v findknownsnps <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

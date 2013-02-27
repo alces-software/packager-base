@@ -1,0 +1,11 @@
+--- tabixpp.orig/Makefile	2011-06-03 10:33:28.000000000 +0100
++++ tabixpp/Makefile	2013-02-26 19:32:37.404659488 +0000
+@@ -2,7 +2,7 @@
+ CPP= 		g++
+ CFLAGS=		-g -Wall -O2 -fPIC #-m64 #-arch ppc
+ DFLAGS=		-D_FILE_OFFSET_BITS=64 -D_USE_KNETFILE
+-LOBJS=		bgzf.o kstring.o knetfile.o index.o bedidx.o
++LOBJS=		bgzf.o kstring.o knetfile.o index.o bedidx.o tabix.o
+ AOBJS=		main.o
+ PROG=		tabix bgzip tabix++
+ INCLUDES=

@@ -1,0 +1,72 @@
+---
+:schema: 1
+:license: BSD License
+:title: Tabix++
+:summary: C++ wrapper to Tabix indexer for TAB-delimited genome position files
+:url: https://github.com/ekg/tabixpp
+:description: |
+  This is a fork of the tabix project which includes a C++ class wrapper 
+  for reading tabix-indexed files.
+
+  Tabix indexes a TAB-delimited genome position file in.tab.bgz and
+  creates an index file in.tab.bgz.tbi when region is absent from the
+  command-line. The input data file must be position sorted and
+  compressed by bgzip which has a gzip like interface. After indexing,
+  tabix is able to quickly retrieve data lines overlapping regions
+  specified in the format "chr:beginPos-endPos". Fast data retrieval
+  also works over network if URI is given as a file name and in this
+  case the index file will be downloaded if it is not present locally.
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 25 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created (metadata based on apps/tabix package)
+:src: tabixpp-20110603.zip
+:src_dir: tabixpp-fbdde774adfc79ca75a65b4321b89b67cd81b921
+:type: apps
+:version: '20110603'
+:patches:
+  # Add include guards to tabix.hpp to allow apps/reapr to compile against it
+  - tabixhpp-guards.patch1
+  - makefile-tabixo-in-lobjs.patch1
+:compilers:
+  gcc:
+:compile: |
+  sed -i -e 's/#-m64/-m64/g' Makefile
+  make <%= redirect(:make) %>
+  mkdir lib
+  if [ "$(uname -s)" = "Darwin" ]; then
+    make libtabix.1.dylib <%= redirect(:make) %>
+    mv libtabix.1.dylib lib/libtabix.dylib
+    ln -s libtabix.dylib libtabix.1.dylib
+  else
+    make libtabix.so.1 <%= redirect(:make) %>
+    mv libtabix.so.1 lib/libtabix.so
+    ln -s libtabix.so libtabix.so.1
+  fi
+  cd perl
+  perl Makefile.PL PREFIX=<%= dest_dir %>/perl <%= redirect(:perl_configure) %>
+  make <%= redirect(:perl_make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,lib,example,man,include}
+  cp -v bgzip tabix tabix++ tabix.py <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v ChangeLog NEWS <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v example.gtf* <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -pv *.a lib/* <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -v *.hpp *.h <%= dest_dir %>/include <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/man/man1
+  cp -v tabix.1 <%= dest_dir %>/man/man1 <%= redirect(:install) %>
+  cd perl
+  make install <%= redirect(:perl_install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path DYLD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
+  prepend-path PERL5LIB ${appdir}/perl

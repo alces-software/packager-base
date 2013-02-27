@@ -1,0 +1,73 @@
+diff -ur src/Makefile src.patched/Makefile
+--- src/Makefile	2012-08-17 10:52:09.000000000 +0100
++++ src.patched/Makefile	2013-02-26 19:36:37.790745644 +0000
+@@ -1,7 +1,6 @@
+-BAMTOOLS_ROOT = $(CURDIR)/bamtools
+ CC = g++
+-CFLAGS = -Wl,-rpath,$(BAMTOOLS_ROOT)/lib  -Wall -O3  -I $(BAMTOOLS_ROOT)/include -L $(BAMTOOLS_ROOT)/lib -lbamtools
+-TABIX = tabix/tabix.o  -lz -L./tabix -ltabix
++CFLAGS = -Wl,-rpath,$(BAMTOOLSDIR)/lib -Wall -O3  -I $(BAMTOOLSDIR)/include -L $(BAMTOOLSDIR)/lib -lbamtools -I $(TABIXPPINCLUDE)
++TABIX =  -lz -L$(TABIXPPLIB) -ltabix
+ STATS_OBJS =  trianglePlot.o coveragePlot.o fasta.o histogram.o utils.o
+ SCORE_OBJS = errorWindow.o utils.o histogram.o
+ BREAK_OBJS = fasta.o utils.o
+diff -ur src/task_break.cpp src.patched/task_break.cpp
+--- src/task_break.cpp	2012-12-17 09:01:14.000000000 +0000
++++ src.patched/task_break.cpp	2013-02-26 15:37:41.658184817 +0000
+@@ -10,7 +10,7 @@
+ #include <assert.h>
+ #include "fasta.h"
+ #include "utils.h"
+-#include "tabix/tabix.hpp"
++#include "tabix.hpp"
+ 
+ using namespace std;
+ 
+diff -ur src/task_fcdrate.cpp src.patched/task_fcdrate.cpp
+--- src/task_fcdrate.cpp	2012-07-23 13:17:42.000000000 +0100
++++ src.patched/task_fcdrate.cpp	2013-02-26 15:37:50.267822778 +0000
+@@ -9,7 +9,7 @@
+ 
+ #include "utils.h"
+ #include "histogram.h"
+-#include "tabix/tabix.hpp"
++#include "tabix.hpp"
+ 
+ using namespace std;
+ 
+diff -ur src/task_score.cpp src.patched/task_score.cpp
+--- src/task_score.cpp	2012-12-10 14:01:21.000000000 +0000
++++ src.patched/task_score.cpp	2013-02-26 15:37:53.528300242 +0000
+@@ -18,7 +18,7 @@
+ #include "histogram.h"
+ #include "api/BamMultiReader.h"
+ #include "api/BamReader.h"
+-#include "tabix/tabix.hpp"
++#include "tabix.hpp"
+ 
+ using namespace BamTools;
+ using namespace std;
+diff -ur src/task_stats.cpp src.patched/task_stats.cpp
+--- src/task_stats.cpp	2012-08-14 14:42:39.000000000 +0100
++++ src.patched/task_stats.cpp	2013-02-26 15:38:02.379599928 +0000
+@@ -18,7 +18,7 @@
+ #include "utils.h"
+ #include "api/BamMultiReader.h"
+ #include "api/BamReader.h"
+-#include "tabix/tabix.hpp"
++#include "tabix.hpp"
+ 
+ using namespace BamTools;
+ using namespace std;
+diff -ur src/utils.h src.patched/utils.h
+--- src/utils.h	2012-07-23 13:17:42.000000000 +0100
++++ src.patched/utils.h	2013-02-26 15:25:49.652807220 +0000
+@@ -11,7 +11,7 @@
+ 
+ #include "api/BamMultiReader.h"
+ #include "api/BamReader.h"
+-#include "tabix/tabix.hpp"
++#include "tabix.hpp"
+ 
+ const short INNIE = 1;
+ const short OUTTIE = 2;
