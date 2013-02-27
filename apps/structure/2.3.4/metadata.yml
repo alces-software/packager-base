@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: Structure
+:license: Public domain
+:summary: Use multi-locus genotype data to investigate population structure
+:url: http://pritch.bsd.uchicago.edu/structure.html
+:description: |
+  Structure is a free software package for using multi-locus genotype
+  data to investigate population structure. Its uses include inferring
+  the presence of distinct populations, assigning individuals to
+  populations, studying hybrid zones, identifying migrants and admixed
+  individuals, and estimating population allele frequencies in
+  situations where many individuals are migrants or admixed. It can be
+  applied to most of the commonly-used genetic markers, including
+  SNPS, microsatellites, RFLPs and AFLPs.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: structure_kernel_source.tar.gz
+:src_dir: structure_kernel_src
+:patches:
+  - paths-for-params-files.patch1
+:type: apps
+:version: '2.3.4'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share}
+  cp -v structure <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v *params <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin

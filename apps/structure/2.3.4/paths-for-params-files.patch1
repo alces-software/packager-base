@@ -1,0 +1,29 @@
+diff -u structure_kernel_src.orig/params.c structure_kernel_src/params.c
+--- structure_kernel_src.orig/params.c	2013-02-27 15:20:06.234629882 +0000
++++ structure_kernel_src/params.c	2013-02-27 15:19:26.804609043 +0000
+@@ -146,6 +146,7 @@
+   int i,j;
+ 
+   int shift = 0;
++  char* dir;
+ 
+   memset(filename,0,500);
+   for (i=0; i<argc-1; i++)
+@@ -173,9 +174,13 @@
+ 
+   if (!(found)) 
+     {
+-      if (strcmp(flag,"-m")==0) sprintf (filename, "%s","mainparams");
+-      else if (strcmp(flag,"-e")==0) sprintf (filename, "%s","extraparams");
+-      else if (strcmp(flag,"-s")==0) sprintf (filename, "%s","STRATparams");
++      dir = getenv("STRUCTURESHARE");
++      if ( dir == NULL ) {
++	dir = ".";
++      }
++      if (strcmp(flag,"-m")==0) sprintf (filename, "%s/%s",dir,"mainparams");
++      else if (strcmp(flag,"-e")==0) sprintf (filename, "%s/%s",dir,"extraparams");
++      else if (strcmp(flag,"-s")==0) sprintf (filename, "%s/%s",dir,"STRATparams");
+     }
+   
+ 
+
