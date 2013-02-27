@@ -1,0 +1,130 @@
+---
+:schema: 1
+:title: Genome Analysis Toolkit
+:license: Free for non-commercial use; registration required; see http://j.mp/TTba2N
+:summary: Software package developed at the Broad Institute to analyse next-generation resequencing data
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+
+  This package installes the full release of GATK for which
+  registration is required.  For the free edition, see apps/gatklite.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Jan 14 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest v2.2.16
+  * Fri Nov 22 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: GenomeAnalysisTK-2.2-16.tar.bz2
+:src_dir: GenomeAnalysisTK-2.2-16-g9f648cb
+:version: '2.2.16'
+:type: ext
+:pkg_type: apps
+:compilers:
+  noarch:
+:params:
+  :tarball: "Path or URL to GATK tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('GenomeAnalysisTK-2.2-16.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('GenomeAnalysisTK-2.2-16.tar.bz2') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       conflict apps/gatklite
+
+       setenv ${appcaps}DIR ${appdir}
+
+       set-alias GenomeAnalysisTK "java -jar ${appdir}/GenomeAnalysisTK.jar"
+       set-alias gatk "java -jar ${appdir}/GenomeAnalysisTK.jar"
+
+       set-alias gatk_AlignmentValidation "gatk -T AlignmentValidation"            
+       set-alias gatk_VariantAnnotator "gatk -T VariantAnnotator"              
+       set-alias gatk_BeagleOutputToVCF "gatk -T BeagleOutputToVCF"             
+       set-alias gatk_ProduceBeagleInput "gatk -T ProduceBeagleInput"            
+       set-alias gatk_VariantsToBeagleUnphased "gatk -T VariantsToBeagleUnphased"      
+       set-alias gatk_BaseRecalibrator "gatk -T BaseRecalibrator"              
+       set-alias gatk_CallableLoci "gatk -T CallableLoci"                 
+       set-alias gatk_CompareCallableLoci "gatk -T CompareCallableLoci"           
+       set-alias gatk_DepthOfCoverage "gatk -T DepthOfCoverage"               
+       set-alias gatk_GCContentByInterval "gatk -T GCContentByInterval"           
+       set-alias gatk_ErrorRatePerCycle "gatk -T ErrorRatePerCycle"              
+       set-alias gatk_ReadGroupProperties "gatk -T ReadGroupProperties"          
+       set-alias gatk_ReadLengthDistribution "gatk -T ReadLengthDistribution"        
+       set-alias gatk_DiffObjects "gatk -T DiffObjects"                   
+       set-alias gatk_CoverageBySample "gatk -T CoverageBySample"              
+       set-alias gatk_GATKPaperGenotyper "gatk -T GATKPaperGenotyper"            
+       set-alias gatk_FastaAlternateReferenceMaker "gatk -T FastaAlternateReferenceMaker"  
+       set-alias gatk_FastaReferenceMaker "gatk -T FastaReferenceMaker"            
+       set-alias gatk_FastaStats "gatk -T FastaStats"                    
+       set-alias gatk_VariantFiltration "gatk -T VariantFiltration"             
+       set-alias gatk_UnifiedGenotyper "gatk -T UnifiedGenotyper"
+       set-alias gatk_HaplotypeCaller "gatk -T HaplotypeCaller"               
+       set-alias gatk_HaplotypeResolver "gatk -T HaplotypeResolver"             
+       set-alias gatk_IndelRealigner "gatk -T IndelRealigner"                
+       set-alias gatk_LeftAlignIndels "gatk -T LeftAlignIndels"               
+       set-alias gatk_RealignerTargetCreator "gatk -T RealignerTargetCreator"        
+       set-alias gatk_SomaticIndelDetector "gatk -T SomaticIndelDetector"          
+       set-alias gatk_PhaseByTransmission "gatk -T PhaseByTransmission"           
+       set-alias gatk_ReadBackedPhasing "gatk -T ReadBackedPhasing"             
+       set-alias gatk_AssessReducedQuals "gatk -T AssessReducedQuals" 
+       set-alias gatk_CountBases "gatk -T CountBases"                    
+       set-alias gatk_CountIntervals "gatk -T CountIntervals"                
+       set-alias gatk_CountLoci "gatk -T CountLoci"                     
+       set-alias gatk_CountMales "gatk -T CountMales"                     
+       set-alias gatk_CountReadEvents "gatk -T CountReadEvents"               
+       set-alias gatk_CountReads "gatk -T CountReads"                    
+       set-alias gatk_CountRODs "gatk -T CountRODs"                     
+       set-alias gatk_CountRODsByRef "gatk -T CountRODsByRef"                
+       set-alias gatk_CountTerminusEvent "gatk -T CountTerminusEvent"            
+       set-alias gatk_QCRef "gatk -T QCRef"                         
+       set-alias gatk_ReadClippingStats "gatk -T ReadClippingStats"             
+       set-alias gatk_ValidatingPileup "gatk -T ValidatingPileup" 
+       set-alias gatk_CompareBAM "gatk -T CompareBAM"                    
+       set-alias gatk_ReduceReads "gatk -T ReduceReads"                   
+       set-alias gatk_DiagnoseTargets "gatk -T DiagnoseTargets"               
+       set-alias gatk_FindCoveredIntervals "gatk -T FindCoveredIntervals"          
+       set-alias gatk_GenotypeAndValidate "gatk -T GenotypeAndValidate"           
+       set-alias gatk_ValidationAmplicons "gatk -T ValidationAmplicons"           
+       set-alias gatk_ValidationSiteSelector "gatk -T ValidationSiteSelector"        
+       set-alias gatk_VariantEval "gatk -T VariantEval"                   
+       set-alias gatk_ApplyRecalibration "gatk -T ApplyRecalibration"            
+       set-alias gatk_VariantRecalibrator "gatk -T VariantRecalibrator"           
+       set-alias gatk_CombineVariants "gatk -T CombineVariants"               
+       set-alias gatk_FilterLiftedVariants "gatk -T FilterLiftedVariants"          
+       set-alias gatk_LeftAlignVariants "gatk -T LeftAlignVariants"             
+       set-alias gatk_LiftoverVariants "gatk -T LiftoverVariants"              
+       set-alias gatk_RandomlySplitVariants "gatk -T RandomlySplitVariants"          
+       set-alias gatk_SelectHeaders "gatk -T SelectHeaders"                 
+       set-alias gatk_SelectVariants "gatk -T SelectVariants"                
+       set-alias gatk_ValidateVariants "gatk -T ValidateVariants"              
+       set-alias gatk_VariantsToBinaryPed "gatk -T VariantsToBinaryPed"           
+       set-alias gatk_VariantsToTable "gatk -T VariantsToTable"               
+       set-alias gatk_VariantsToVCF "gatk -T VariantsToVCF"                 
+       set-alias gatk_VariantValidationAssessor "gatk -T VariantValidationAssessor" 
+       set-alias gatk_ClipReads "gatk -T ClipReads"                     
+       set-alias gatk_FlagStat "gatk -T FlagStat"                      
+       set-alias gatk_Pileup "gatk -T Pileup"                        
+       set-alias gatk_PrintReads "gatk -T PrintReads"                    
+       set-alias gatk_PrintRODs "gatk -T PrintRODs"                     
+       set-alias gatk_SplitSamFile "gatk -T SplitSamFile"                  
