@@ -1,0 +1,45 @@
+---
+:schema: 1
+:license: NONFREE - Unknown; see http://www.broadinstitute.org/software/scripture/home
+:summary: Java-based command-line tool for transcriptome reconstruction
+:url: http://www.broadinstitute.org/software/scripture/home
+:description: |
+  Scripture is a method for transcriptome reconstruction that relies
+  solely on RNA-Seq reads and an assembled genome to build a
+  transcriptome ab initio. The statistical methods to estimate read
+  coverage significance are also applicable to other sequencing data.
+  Scripture also has modules for ChIP-Seq peak calling.
+:group: Bioinformatics
+:changelog: |
+  * Wed 27 Feb 2013 - James Donohue <james.donohue@alces-software.com>
+     - First created
+:src: scripture-beta2.jar.sic
+:type: apps
+:version: 'beta2'
+:sources:
+  - dummy-bsub.sh
+:compilers: 
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Java application
+:install: |
+  mkdir -p <%= dest_dir %>/{java,bin}
+  cp -v scripture-beta2.jar.sic <%= dest_dir %>/java/scripture-beta2.jar <%= redirect(:install) %>
+  # Set up dummy LSF 'bsub' script (and others scripture may call)
+  install -m 755 <%= source("dummy-bsub.sh") %> <%= dest_dir %>/bin/bsub <%= redirect(:install) %>
+  cd <%= dest_dir %>/bin
+  for prog in lsid batch bjobs bmod btop; do 
+    ln -s bsub $prog <%= redirect(:install) %>
+  done
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias scripture "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/scripture-beta2.jar"
