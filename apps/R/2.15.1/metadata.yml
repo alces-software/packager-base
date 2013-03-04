@@ -70,7 +70,8 @@
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
-  prepend-path LD_LIBRARY_PATH ${appdir}/lib64/
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64/R/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
   prepend-path PKG_CONFIG_PATH ${appdir}/lib64/pkgconfig
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
