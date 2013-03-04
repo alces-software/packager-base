@@ -1,0 +1,48 @@
+---
+:schema: 1
+:license: R interface to Unidata's NetCDF library functions
+:summary: RNetCDF
+:url: http://cran.r-project.org/web/packages/RNetCDF/index.html
+:description: |
+  This package provides an interface to Unidata's NetCDF library
+  functions (version 3) and furthermore access to Unidata's UDUNITS
+  calendar conversions. The routines and the documentation follow the
+  NetCDF and UDUNITS C interface, so the corresponding manuals can be
+  consulted for more detailed information.
+:group: Libraries
+:changelog: |
+  * Mon Mar  4 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: RNetCDF_1.6.1-2.tar.gz
+:src_dir: RNetCDF
+:type: libs
+:version: '1.6.1.2'
+:requirements:
+  :build:
+    - apps/R
+    - libs/netcdf
+    - libs/udunits
+  :runtime:
+    - apps/R
+    - libs/netcdf
+    - libs/udunits
+:compilers:
+  gcc:
+:compile: |
+  # no-op
+:install: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  R CMD INSTALL --configure-args="--with-netcdf-include=${NETCDFINCLUDE} \
+    --with-netcdf-lib=${NETCDFLIB} \
+    --with-udunits-include=${UDUNITSINCLUDE} \
+    --with-udunits-lib=${UDUNITSLIB} \
+    " \
+    <%= source("RNetCDF_1.6.1-2.tar.gz") %> <%= redirect(:r) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}R ${appdir}/R
+
+  prepend-path R_LIBS_SITE ${appdir}/R
+
