@@ -1,7 +1,8 @@
 ---
 :schema: 1
-:license: Set of interfaces and libraries for array-oriented data access
-:summary: NetCDF Fortran
+:title: NetCDF Fortran
+:summary: Set of interfaces and libraries for array-oriented data access
+:license: Apache License 2.0
 :url: http://www.unidata.ucar.edu/software/netcdf/
 :description: |
   NetCDF (network Common Data Form) is a set of interfaces for
