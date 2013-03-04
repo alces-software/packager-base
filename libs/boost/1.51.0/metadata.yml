@@ -13,6 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Mon Mar  4 2013 Steve Norledge <steve.norledge@alces-software.com>
+    - include BOOST_ROOT, examples and binaries
   * Tue Jan  8 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - require apps/python module at build time
   * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -42,12 +44,20 @@
 :compile: |
   ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   echo "using mpi ;" >> project-config.jam
-  ./bjam stage <%= redirect(:stage) %>
-:install: |
-  ./bjam install <%= redirect(:install) %>
+  ./b2 stage <%= redirect(:stage) %>
+  ./b2 install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir%>/bin
+  cp -av b2 <%= dest_dir%>/bin/.
+  cp -av bjam <%= dest_dir%>/bin/.
+  cp -av tools/build/v2 <%=dest_dir%>/share
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
   setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
 
+  setenv BOOST_ROOT ${appdir}
+  setenv BOOST_BUILD_PATH ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
