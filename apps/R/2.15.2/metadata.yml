@@ -30,6 +30,8 @@
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Mon Mar  4 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Set up site library path; don't use user library path for root
   * Sat Nov 17 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v2.15.2
   * Wed Aug 22 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -66,6 +68,7 @@
   make install <%= redirect(:install) %>
 :module: |
   set r_user_libs $::env(HOME)/gridware/share/R/${version}
+  set r_site_libs <%= File.expand_path(Config.gridware) %>/share/R/${version}
 
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -74,10 +77,21 @@
   prepend-path PKG_CONFIG_PATH ${appdir}/lib64/pkgconfig
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
-  append-path R_LIBS_USER ${r_user_libs}
-  if { [module-info mode load] } {
-    # make the user libs directory if it doesn't exist
-    if { ! [file exists "${r_user_libs}"] } {
-      file mkdir "${r_user_libs}"
+
+  if { $::env(USER) != "root" } {
+    if { [module-info mode load] } {
+      # make the user libs directory if it doesn't exist
+      if { ! [file exists "${r_user_libs}"] } {
+        file mkdir "${r_user_libs}"
+      }
+    }
+    append-path R_LIBS_USER ${r_user_libs}
+  } {
+    if { [module-info mode load] } {
+      # make the site libs directory if it doesn't exist
+      if { ! [file exists "${r_site_libs}"] } {
+        file mkdir "${r_site_libs}"
+      }
     }
   }
+  append-path R_LIBS_SITE ${r_site_libs}
