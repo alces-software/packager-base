@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: GENSCAN
+:license: NONFREE - Freely available for academic use; see http://genes.mit.edu/GENSCAN.html
+:summary: Analyze genomic DNA sequences from a variety of organisms
+:url: http://genes.mit.edu/GENSCAN.html
+:description: |
+  GENSCAN is a general-purpose gene identification program which
+  analyzes genomic DNA sequences from a variety of organisms including
+  human, other vertebrates, invertebrates and plants.  For each
+  sequence, the program determines the most likely "parse" (gene
+  structure) under a probabilistic model of the gene structural and
+  compositional properties of the genomic DNA for the given organism.
+  This set of exons/genes is then printed to an output file (the text
+  output) together with the corresponding predicted peptide sequences.
+  A graphical (PostScript) output may also be created which displays
+  the location and DNA strand of each predicted exon.  Unlike the
+  majority of other currently available gene prediction programs, the
+  model treats the most general case in which the sequence may contain
+  no genes, one gene, or multiple genes on either or both DNA strands
+  and partial genes as well as complete genes are considered.  The
+  most important restrictions are that only protein coding genes are
+  considered (and not tRNA or rRNA genes, for example), and that
+  transcription units are assumed to be non-overlapping.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Mar  4 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: genscanlinux.tar.gz
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to GenScan tarball in tar.gz format (pass 'skip' to use an existing download)"
+:sources:
+  - genscan-wrapper.sh
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('genscanlinux.tar.gz') %>
+  <% else %>
+    wget -O <%= source('genscanlinux.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  # determine what version number to use by inspecting build time of binary
+  cat <<-EOF
+    :version: '<%= File.stat(File.join(src_dir,'genscan')).mtime.strftime('%Y%m%d') %>'
+  EOF
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share,doc,example}
+  cp -Rv *.smat <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv HUMRASH* <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -Rv genscan <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv README <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v <%= source('genscan-wrapper.sh') %> <%= dest_dir %>/bin/genscan-wrapper <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/genscan-wrapper
+  # Create symlinks to wrapper script for all available commands
+  for a in genvert genarab genmaiz; do
+    ln -s genscan-wrapper <%= dest_dir %>/bin/$a
+  done
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}SHARE ${appdir}/share
+       setenv ${appcaps}DOC ${appdir}/doc
+       setenv ${appcaps}EXAMPLE ${appdir}/example
+
+       prepend-path PATH ${appdir}/bin
