@@ -16,17 +16,27 @@
     * Various different methods for the dealing with imputed SNPs
 :group: Bioinformatics
 :changelog: |
+  * Wed Mar  6 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Provide parameter to allow installation of statically or dynamically linked distribution
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: snptest_v2.4.1_Linux_x86_64_dynamic.tgz
-:src_dir: snptest_v2.4.1_Linux_x86_64_dynamic
+:src: snptest_v2.4.1_Linux_x86_64_static.tgz
+:src_dir: snptest_v2.4.1_Linux_x86_64_static
+:sources:
+  - snptest_v2.4.1_Linux_x86_64_dynamic.tgz
 :type: apps
 :version: '2.4.1'
+:params:
+  :linking: "Specify whether to use statically or dynamically linked version [static|dynamic]"
 :compilers:
   bin:
 :compile: |
   # no-op; this is a binary distribution
 :install: |
+  <% if param(:linking).to_s.downcase == 'dynamic' %>
+    tar xzf <%= source('snptest_v2.4.1_Linux_x86_64_dynamic.tgz') %>
+    cd snptest_v2.4.1_Linux_x86_64_dynamic
+  <% end %>
   mkdir <%= dest_dir %>/{bin,doc}
   cp -v snptest_v2.4.1 <%= dest_dir %>/bin/snptest <%= redirect(:install) %>
   cp -rv example <%= dest_dir %> <%= redirect(:install) %>
