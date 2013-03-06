@@ -34,7 +34,7 @@
   cp -v *.fast[aq] <%= dest_dir %>/example <%= redirect(:install) %>
   cp -v *.jar <%= dest_dir %>/java <%= redirect(:install) %>
   find <%= dest_dir %> -type f -exec chmod a-x {} ';'
-  cat <<EOF > <%= dest_dir %>/bin/ArtificialFastqGenerator
+  cat <<\EOF > <%= dest_dir %>/bin/ArtificialFastqGenerator
   #!/bin/bash
   exec java `eval echo $ARTFASTQGEN_JAVA_OPTS` -jar "<%= dest_dir %>/java/ArtificialFastqGenerator.jar" "$@"  
   EOF
