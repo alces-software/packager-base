@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: Genome Analysis Toolkit Queue
+:license: Free for non-commercial use; registration required; see http://j.mp/TTba2N
+:summary: Command-line scripting framework for defining multi-stage genomic analysis pipelines 
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+
+  GATK-Queue is command-line scripting framework for defining
+  multi-stage genomic analysis pipelines combined with an execution
+  manager that runs those pipelines from end-to-end. Often processing
+  genome data includes several steps to produces outputs, for example
+  our BAM to VCF calling pipeline include among other things:
+
+    * Local realignment around indels
+    * Emitting raw SNP calls
+    * Emitting indels
+    * Masking the SNPs at indels
+    * Annotating SNPs using chip data
+    * Labeling suspicious calls based on filters
+    * Creating a summary report with statistics
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Mar  6 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.4.7
+  * Thu Feb 21 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped version to v2.3.9
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Queue-2.4-7.tar.bz2
+:src_dir: Queue-2.4-7-g5e89f01
+:version: '2.4.7'
+:type: ext
+:pkg_type: apps
+:requirements:
+  :runtime: apps/gatk ~> 2.4.7
+:compilers:
+  noarch:
+:params:
+  :tarball: "Path or URL to GATK-Queue tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('Queue-2.4-7.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('Queue-2.4-7.tar.bz2') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}EXAMPLES ${appdir}/resources
+
+       set-alias Queue "java -jar ${appdir}/Queue.jar"
+       set-alias gatk-queue "java -jar ${appdir}/Queue.jar"
+
