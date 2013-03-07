@@ -1,0 +1,58 @@
+---
+:scheme: 1
+:title: OpenMD
+:license: BSD
+:summary: Open source molecular dynamics engine
+:url: http://openmd.net/
+:description: |
+  OpenMD is an open source molecular dynamics engine which is capable of
+  efficiently simulating liquids, proteins, nanoparticles, interfaces,
+  and other complex systems using atom types with orientational degrees
+  of freedom (e.g. "sticky" atoms, point dipoles, and coarse-grained
+  assemblies). Proteins, zeolites, lipids, transition metals (bulk, flat
+  interfaces, and nanoparticles) have all been simulated using force
+  fields included with the code. OpenMD works on parallel computers
+  using the Message Passing Interface (MPI), and comes with a number of
+  analysis and utility programs that are easy to use and modify. An
+  OpenMD simulation is specified using a very simple meta-data language
+  that is easy to learn.
+:group: Chemistry
+:changelog: |
+  * Wed Mar  6 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.0
+  * Sat Nov 17 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: openmd-2.0.tar.gz
+:src_dir: openmd-2.0
+:type: apps
+:version: '2.0'
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - apps/qhull
+    - apps/openbabel
+    - libs/fftw3_double
+    - mpi/openmpi
+  :runtime:
+    - apps/qhull
+    - apps/openbabel
+    - libs/fftw3_double
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  CC=mpicc CXX=mpic++ cmake .. -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> -DOPENBABEL2_ROOT=$OPENBABELDIR -DQHULL_ROOT=$QHULLDIR -DFFTW3_ROOT=$FFTW3_DOUBLEDIR <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/{AUTHORS,LICENSE,README,INSTALL} <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
