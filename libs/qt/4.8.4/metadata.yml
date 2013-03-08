@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: Qt
+:license: LGPL
+:summary: A cross-platform application and UI framework
+:url: http://qt-project.org/
+:description: |
+  Qt is a full development framework with tools designed to streamline
+  the creation of applications and user interfaces for desktop,
+  embedded and mobile platforms.
+
+    * Qt Framework - intuitive APIs for C++ and CSS/JavaScript- like 
+      programming with Qt Quick for rapid UI creation
+    * Qt Creator IDE - powerful cross-platform integrated development 
+      environment, including UI designer tools and on-device debugging
+    * Tools and toolchains - internationalization support, embedded 
+      toolchains and more.
+
+  With Qt, you can reuse code efficiently to target multiple platforms
+  with one code base. The modular C++ class library and developer
+  tools easily enables developers to create applications for one
+  platform and easily build and run to deploy on another platform.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Tue Mar  5 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: qt-everywhere-opensource-src-4.8.4.tar.gz
+:src_dir: qt-everywhere-opensource-src-4.8.4
+:version: 4.8.4
+# Requires gstreamer-plugins-base-devel on build host
+:requirements:
+  :build: 
+  :runtime: 
+:compilers:
+  gcc:
+:compile: |
+  ./configure -opensource -confirm-license -prefix <%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
