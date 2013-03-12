@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: RMBlast
+:license: Public Domain
+:summary: NCBI Blast modified for use with RepeatMasker/RepeatModeler
+:url: http://www.repeatmasker.org/RMBlast.html
+:description: |
+  RMBlast is a RepeatMasker compatible version of the standard NCBI
+  BLAST suite. The primary difference between this distribution and
+  the NCBI distribution is the addition of a new program "rmblastn"
+  for use with RepeatMasker and RepeatModeler.
+
+  RMBlast supports RepeatMasker searches by adding a few necessary
+  features to the stock NCBI blastn program. These include:
+
+    * Support for custom matrices ( without KA-Statistics ).
+    * Support for cross_match-like complexity adjusted scoring. 
+      Cross_match is Phil Green's seeded smith-waterman search 
+      algorithm.
+    * Support for cross_match-like masklevel filtering.
+:group: Bioinformatics
+:changelog: |
+  * Mon Mar 11 2013 James Donohue <james.donohue@alces-software.com>
+    - First created (based on apps/ncbiblast package)
+:src: rmblast-2.2.27-src.tar.gz
+:src_dir: rmblast-2.2.27-src
+:type: apps
+:version: '2.2.27'
+:compilers:
+  gcc:
+:compile: |
+  cd c++
+  ./configure --without-boost --with-mt --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  sed -i -e 's|/usr/bin/touch|touch|g' GCC*-DebugMT64/build/Makefile.meta GCC*-DebugMT64/build/Makefile.mk
+  make <%= redirect(:make) %>
+:install: |
+  cd c++
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
