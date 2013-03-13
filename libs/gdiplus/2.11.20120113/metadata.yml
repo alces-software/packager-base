@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: libgdiplus
+:license: MPLv1.1 or GPL
+:summary: C-based implementation of the GDI+ API
+:url: http://www.unidata.ucar.edu/software/netcdf/
+:description: |
+  Libgdiplus is the Mono library that provide a GDI+ comptible API on
+  non-Windows operating systems. The implementation uses Cairo to do
+  most of the heavy lifting.
+
+  This library is part of the Mono project and is required when using
+  Windows.Forms.
+:group: Libraries
+:changelog: |
+  * Wed Mar 13 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: libgdiplus-2.11.20120113.tar.gz
+:src_dir: mono-libgdiplus-3ddf7ff
+:type: libs
+:version: '2.11.20120113'
+:compilers:
+  gcc:
+:compile: |
+  ./autogen.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc
+  cp -Rv AUTHORS ChangeLog* NEWS LICENSE MPL-1.1.html README <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
