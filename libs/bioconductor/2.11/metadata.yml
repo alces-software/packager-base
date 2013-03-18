@@ -58,4 +58,4 @@
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}R ${appdir}/R
 
-  prepend-path R_LIBS_SITE ${appdir}/R
+  append-path R_LIBS_SITE ${appdir}/R
