@@ -41,9 +41,24 @@
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
+  # Create site-wide distutils config file
+  cat <<EOF > <%= dest_dir %>/lib/python2.7/distutils/distutils.cfg
+  [install]
+  prefix=<%= File.expand_path(Config.gridware) %>/share/python/<%= version %>
+  EOF
+  # Create basic non-root user distutils config file
+  cat <<EOF > <%= dest_dir %>/lib/python2.7/distutils/pydistutils-tmpl.cfg
+  [install]
+  prefix=~/gridware/share/python/<%= version %>
+  EOF
 :module: |
-  set python_user_libs $::env(HOME)/gridware/share/python/${version}
-  set python_site_libs <%= File.expand_path(Config.gridware) %>/share/python/${version}
+  set python_user_libs $::env(HOME)/gridware/share/python/${version}/lib/python2.7/site-packages
+  set python_user_bin $::env(HOME)/gridware/share/python/${version}/bin
+  set python_site_libs <%= File.expand_path(Config.gridware) %>/share/python/${version}/lib/python2.7/site-packages
+  set python_site_bin <%= File.expand_path(Config.gridware) %>/share/python/${version}/bin
+
+  set distutils_usercfg $::env(HOME)/.pydistutils.cfg
+  set distutils_usercfg_template ${appdir}/lib/python2.7/distutils/pydistutils-tmpl.cfg
 
   setenv PYTHONDIR ${appdir}
   setenv PYTHONBIN ${appdir}/bin
@@ -51,6 +66,7 @@
   setenv PYTHONINCLUDE ${appdir}/include
 
   prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${python_site_bin}
   prepend-path MANPATH ${appdir}/share/man
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/lib/python2.7
@@ -63,8 +79,13 @@
       if { ! [file exists "${python_user_libs}"] } {
         file mkdir "${python_user_libs}"
       }
+      # copy basic non-root distutils config file if one doesn't exist
+      if { ! [file exists "${distutils_usercfg}"] } {
+        file copy "${distutils_usercfg_template}" "${distutils_usercfg}"
+      }
     }
     append-path PYTHONPATH ${python_user_libs}
+    prepend-path PATH ${python_user_bin}
   } {
     if { [module-info mode load] } {
       # make the site libs directory if it doesn't exist
