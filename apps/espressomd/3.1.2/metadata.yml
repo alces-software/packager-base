@@ -1,0 +1,55 @@
+---
+:schema: 1
+:title: ESPResSo
+:license: GPLv3
+:summary: Extensible Simulation Package for Research on Soft matter
+:url: http://espressomd.org/
+:description: |
+  ESPResSo is a highly versatile software package for performing and
+  analyzing scientific Molecular Dynamics many-particle simulations of
+  coarse-grained atomistic or bead-spring models as they are used in
+  soft-matter research in physics, chemistry and molecular biology. It
+  can be used to simulate systems such as polymers, liquid crystals,
+  colloids, ferrofluids and biological systems, for example DNA and
+  lipid membranes.
+
+  ESPResSo is free, open-source software published under the GNU
+  General Public License (GPL). It is parallelized and can be employed
+  on desktop machines, convenience clusters as well as on
+  supercomputers with hundreds of CPUs. The parallel code is
+  controlled via the scripting language Tcl, which gives the software
+  its great flexibility.
+
+  ESPResSo is used in scientific working groups all over the world
+  both as a production platform as well as a research platform for
+  developing new algorithms and methods for coarse-grained
+  simulations.  It is mainly developed at the Institute for
+  Computational Physics of the University of Stuttgart, but has
+  contributors from all over the world.
+:group: Chemistry
+:changelog: |
+  * Tue Mar 19 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: espresso-3.1.2.tar.gz
+:src_dir: espresso-3.1.2
+:type: apps
+:version: '3.1.2'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - libs/fftw3_double
+    - mpi/openmpi
+  :runtime:
+    - libs/fftw3_double
+    - mpi/openmpi
+:compile: |
+  ./configure --prefix=<%= dest_dir %> --with-fftw CPPFLAGS="-I$FFTW3_DOUBLEINCLUDE" LDFLAGS="-L$FFTW3_DOUBLELIB" <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
