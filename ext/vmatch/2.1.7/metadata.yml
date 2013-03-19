@@ -1,0 +1,79 @@
+---
+:schema: 1
+:title: Vmatch
+:license: Free for non-commercial use; license required; see http://www.vmatch.de
+:summary: Software tool for efficiently solving large scale sequence matching tasks
+:url: http://www.vmatch.de/
+:description: |
+  Vmatch is a versatile software tool for efﬁciently solving large
+  scale sequence matching tasks. Vmatch subsumes the software tool
+  REPuter but is much more general, with a very ﬂexible user
+  interface, and improved space and time requirement.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Mar 19 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: vmatch-2.1.7-x86_64-unknown-linux-gnu-64-bit.tar.gz
+:src_dir: vmatch.distribution
+:sources:
+  - vmatch.lic
+:version: '2.1.7'
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to Vmatch tarball in tar.gz format (pass 'skip' to use an existing download)"
+  :license: "Path or URL to Vmatch license file (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('vmatch-2.1.7-x86_64-unknown-linux-gnu-64-bit.tar.gz') %>
+    <% else %>
+      wget -O <%= source('vmatch-2.1.7-x86_64-unknown-linux-gnu-64-bit.tar.gz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+  <% if param('license') != 'skip' %>
+    <% if URI.parse(param('license')).scheme.nil? %>
+      cp <%= param('license') %> <%= source('vmatch.lic') %>
+    <% else %>
+      wget -O <%= source('vmatch.lic') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  cp -R SELECT SELECT.build
+  cd SELECT.build
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,lib,share}
+  cp -Rv README.* *.pdf CHANGELOG <%= dest_dir %>/doc <%= redirect(:install) %>
+  for a in dynamic/*; do
+    if readelf -d $a | grep -q 'NEEDED.*bz2.so.1.0'; then 
+      perl -pi -e 's/libbz2.so.1.0/libbz2.so.1\x0\x0/g' $a
+    fi
+  done
+  cp -Rv *.sh *.pl dynamic/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v SELECT.build/*.so <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -Rv SELECT TRANS <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v <%= source('vmatch.lic') %> <%= dest_dir %>/bin <%= redirect(:install) %>
+  chmod 644 <%= dest_dir %>/bin/vmatch.lic
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/doc
+       setenv ${appcaps}LIB ${appdir}/lib
+       setenv ${appcaps}SHARE ${appdir}/share
+
+       prepend-path MKVTREESMAPDIR ${appdir}/share/TRANS
+       prepend-path PATH ${appdir}/bin
+
