@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: MuTect
+:license: Commercial
+:summary: Reliable and accurate identification of somatic point mutations
+:url: http://www.broadinstitute.org/cancer/cga/mutect
+:description: |
+  MuTect is a method developed at the Broad Institute for the reliable
+  and accurate identification of somatic point mutations in next
+  generation sequencing data of cancer genomes.
+
+  For complete details, please see the publication in Nature Biotechnology:
+
+  Cibulskis, K. et al. Sensitive detection of somatic point mutations
+  in impure and heterogeneous cancer samples. Nat Biotechnology
+  (2013).doi:10.1038/nbt.2514
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr  3 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: muTect.zip
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :zipfile: "Path or URL to muTect archive (zip format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('zipfile') != 'skip' %>
+    <% if URI.parse(param('zipfile')).scheme.nil? %>
+      cp <%= param('zipfile') %> <%= source('muTect.zip') %>
+    <% else %>
+      wget -O <%= source('muTect.zip') %> <%= param('zipfile') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  version=$(basename muTect-*.jar .jar | cut -f2 -d'-')
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,java,doc}
+  cp -v muTect-*.jar <%= dest_dir %>/java/muTect.jar <%= redirect(:install) %>
+  cp -v LICENSE.TXT version.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/muTect
+  #!/bin/bash
+  java `eval echo $MUTECT_JAVA_OPTS` -jar <%= dest_dir %>/java/muTect.jar "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/muTect
+  ln -s muTect <%= dest_dir %>/bin/mutect
+:modules:
+   - :type: apps
+     :content: |
+       set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/doc
+       setenv ${appcaps}JAVA ${appdir}/java
+
+       setenv ${appcaps}_JAVA_MEM_MX 2g
+
+       if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+       } elseif { [info exists ::env(TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+       } else { 
+         setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+       }
+
+       setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+       prepend-path PATH ${appdir}/bin
