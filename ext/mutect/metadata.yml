@@ -1,7 +1,7 @@
 ---
 :schema: 1
 :title: MuTect
-:license: Commercial
+:license: NONFREE - Free for academic non-commercial research purposes only; see http://j.mp/10q7Mmv
 :summary: Reliable and accurate identification of somatic point mutations
 :url: http://www.broadinstitute.org/cancer/cga/mutect
 :description: |
