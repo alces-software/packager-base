@@ -1,0 +1,62 @@
+---
+:schema: 1
+:license: GPLv1 (or later) or Artistic License
+:summary: A highly capable, feature-rich programming language with over 24 years of development
+:url: http://www.perl.org/
+:description: |
+  Perl is a general-purpose programming language originally developed
+  for text manipulation and now used for a wide range of tasks
+  including system administration, web development, network
+  programming, GUI development, and more.
+
+  The language is intended to be practical (easy to use, efficient,
+  complete) rather than beautiful (tiny, elegant, minimal). Its major
+  features are that it's easy to use, supports both procedural and
+  object-oriented (OO) programming, has powerful built-in support for
+  text processing, and has one of the world's most impressive
+  collections of third-party modules.
+:group: Languages
+:changelog: |
+  * Fri Apr  5 2013 - James Donohue <james.donohue@alces-software.com>
+    - Updated to v5.16.3
+  * Tue Nov 13 2012 - Steve Norledge
+    - Added CPAN install dirs to PERL5LIB via module
+  * Tue Aug 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v5.16.1
+    - Refactored to packager style
+  * Tue Dec 6 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to use latest macros
+    - Incorporate CPAN configuration file and site-local perl directory setup
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: perl-5.16.3.tar.bz2
+:type: apps
+:version: '5.16.3'
+:sources:
+  - CPAN-Config.pm
+:compilers:
+  gcc:
+:compile: |
+  if [ "$(uname -s)" == 'Darwin' ]; then
+    # remove obsolete Darwin flag
+    sed -i -e 's|-no-cpp-precomp||g' hints/darwin.sh
+  fi
+  sed -i -e 's|command line|command[- ]line|g' makedepend.SH
+  ./configure.gnu --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  perl -i~ -nle 'print unless /<(built-in|command.line)>/' makefile x2p/makefile
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  install -D -m 644 <%= source('CPAN-Config.pm') %> <%= dest_dir %>/lib/<%= version %>/CPAN/Config.pm
+  sed -e "s|%GRIDWARE%|<%= File.expand_path(Config.gridware) %>|g;s|%VERSION%|<%= version %>|g" -i <%= dest_dir %>/lib/<%= version %>/CPAN/Config.pm
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/perl5
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/perl5/x86_64-linux
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/site_perl/${version}
+  append-path PERL5LIB <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib/site_perl/${version}/x86_64-linux
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
