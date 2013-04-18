@@ -1,0 +1,10 @@
+--- lib/galaxy/jobs/runners/drmaa.py.orig	2013-04-15 15:14:45.363538494 +0100
++++ lib/galaxy/jobs/runners/drmaa.py	2013-04-15 15:19:54.828517560 +0100
+@@ -45,6 +45,7 @@
+ #  - execute the command
+ #  - take the command's exit code ($?) and write it to a file.
+ drm_template = """#!/bin/sh
++module load apps/galaxy
+ GALAXY_LIB="%s"
+ if [ "$GALAXY_LIB" != "None" ]; then
+     if [ -n "$PYTHONPATH" ]; then

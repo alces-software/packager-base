@@ -1,0 +1,7 @@
+Please note: in order for Galaxy to operate, it is necessary to
+perform some additional configuration tasks after installation,
+For full information and instructions, see:
+  /path/to/README.alces.txt
+
+To prevent this notice from displaying, delete this file:
+  /path/to/unconfigured-notice.txt

@@ -1,0 +1,300 @@
+---
+:schema: 1
+:license: AFL v3.0; see http://opensource.org/licenses/AFL-3.0
+:title: Galaxy
+:summary: Open, web-based platform for data intensive biomedical research
+:url: http://galaxyproject.org/
+:description: |
+  Galaxy is an open, web-based platform for accessible, reproducible,
+  and transparent computational biomedical research.
+
+    * Accessible: Users without programming experience can easily
+    specify parameters and run tools and workflows.
+
+    * Reproducible: Galaxy captures information so that any user can
+    repeat and understand a complete computational analysis.
+
+    * Transparent: Users share and publish analyses via the web and
+    create Pages, interactive, web-based documents that describe a
+    complete analysis.
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr  9 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:requirements:
+  :build:
+    - apps/python < 3.0.0
+  :runtime:
+    - apps/python < 3.0.0
+:src: galaxy-20130408.tar.bz2
+:src_dir: galaxy-galaxy-dist-d7f37a2fe690
+:type: apps
+:version: '20130408'
+:params:
+  :datadir: "Base directory for Galaxy data sets, cache and temp files (must be writable by process owner)"
+  :logdir: "Base directory for Galaxy log and PID file (must be writable by process owner; may be the same as datadir)"
+  :fetcheggs: "Pre-fetch required Python eggs during install [true|false]"
+  :runtools: "Run Galaxy tools on local system or via SGE [local|sge]"
+:patches:
+  - config-network.patch
+  - config-disabledebug.patch
+  - config-database.patch
+  - initscript.patch
+:sources:
+  - job_conf.xml
+  - sgerunner-addenv.patch
+  - galaxy.sysconfig
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Python application
+:install: |
+  echo "Preparing config files..." <%= redirect(:install) %>
+  for sample in community_wsgi.ini.sample datatypes_conf.xml.sample external_service_types_conf.xml.sample migrated_tools_conf.xml.sample reports_wsgi.ini.sample shed_tool_conf.xml.sample tool_conf.xml.sample shed_tool_data_table_conf.xml.sample tool_data_table_conf.xml.sample tool_sheds_conf.xml.sample data_manager_conf.xml.sample shed_data_manager_conf.xml.sample openid_conf.xml.sample universe_wsgi.ini.sample tool-data/shared/ncbi/builds.txt.sample tool-data/shared/ensembl/builds.txt.sample tool-data/shared/ucsc/builds.txt.sample tool-data/shared/ucsc/publicbuilds.txt.sample tool-data/shared/igv/igv_build_sites.txt.sample tool-data/shared/rviewer/rviewer_build_sites.txt.sample tool-data/*.sample static/welcome.html.sample; do 
+    file=`echo $sample | sed -e 's/\.sample$//'`
+    if [ ! -f "$file" -a -f "$sample" ]; then
+      cp -v $sample $file <%= redirect(:install) %>
+    fi
+  done
+
+  <% if param(:fetcheggs).to_s.downcase == 'true' %>
+  echo "Downloading Python eggs..." <%= redirect(:install) %>
+  python ./scripts/fetch_eggs.py <%= redirect(:install) %>
+  <% end %>
+
+  # Additional configuration for SGE runner support only
+  <% if param(:runtools).to_s.downcase == 'sge' %>
+    cp -v <%= source('job_conf.xml') %> . <%= redirect(:install) %>
+    patch -p0 < <%= source('sgerunner-addenv.patch') %> <%= redirect(:install) %>
+    <% if param(:fetcheggs).to_s.downcase == 'true' %>
+      pyver=$(python -c 'import sys; print sys.version[:3]')
+      if ! echo $pyver | grep -q 2.[567]; then
+        echo "Galaxy is not compatible with Python $pyver (only 2.5, 2.6, 2.7)"
+        exit 1
+      fi
+      eggname=$(grep drmaa eggs.ini | sed -e 's/ = /-/')-py$pyver.egg
+      wget -P eggs http://eggs.galaxyproject.org/drmaa/$eggname <%= redirect(:install) %>
+    <% end %>
+  <% end %>
+
+  # Prepare configuration files and init script
+  cp <%= source('galaxy.sysconfig') %> . <%= redirect(:install) %>
+  sed -i galaxy.sysconfig \
+    -e 's#/path/to/pidfile#<%= param(:logdir) %>/galaxy.pid#' \
+    -e 's#/path/to/logfile#<%= param(:logdir) %>/galaxy.log#'
+  <% mysql_pw = Digest::MD5.hexdigest(rand.to_s).to_i(16).to_s(36)[0..8] %>
+  sed -i universe_wsgi.ini -e 's/galaxy:galaxy/galaxy:<%= mysql_pw %>/'
+  chmod 600 universe_wsgi.ini
+  mkdir bin
+  cd bin
+  ln -s ../contrib/galaxy.fedora-init galaxy
+  cd ..
+  chmod a+x contrib/galaxy.fedora-init
+
+  cp -r * <%= dest_dir %> <%= redirect(:install) %>
+
+  # Set up symlinks for directories/files that application writes to
+  datadir=<%= param(:datadir) %>
+  for dirname in database static/genetrack/plots tool-data/shared/jars; do
+    mkdir -p $datadir/$dirname
+    rm -fr <%= dest_dir %>/$dirname
+    ln -s $datadir/$dirname <%= dest_dir %>/$dirname
+  done
+  ln -s $datadir/integrated_tool_panel.xml <%= dest_dir %>
+
+  cat > <%= dest_dir %>/unconfigured-notice.txt <<EOT
+
+  Please note: in order for Galaxy to operate, it is necessary to
+  perform some additional configuration tasks after installation,
+  For full information and instructions, see:
+  <%= dest_dir%>/README.alces.txt
+
+  To prevent this notice from displaying whenever the Galaxy module
+  loads, delete this file:
+  <%= dest_dir %>/unconfigured-notice.txt
+  EOT
+  cat > <%= dest_dir %>/README.alces.txt <<EOT
+  ----------------------------------------------------
+  Galaxy: notes for Alces Software HPC Stack for Linux
+  ----------------------------------------------------
+
+  /etc/sysconfig/galaxy
+  =====================
+
+  Before Galaxy can be started, an appropriate /etc/sysconfig/galaxy
+  file must be created containing definitions for all required
+  environment variables. A default file, based on environment modules
+  was created at installation time at this location:
+  
+    <%= dest_dir %>/galaxy.sysconfig
+
+  This file should be copied to /etc/sysconfig/galaxy and customised
+  by the site administrator if required. For example:
+  
+    # cp <%= dest_dir %>/galaxy.sysconfig /etc/sysconfig/galaxy
+  
+  See the file itself for information about the individual environment
+  variables.
+
+
+  Galaxy User Account
+  ===================
+  
+  As recommended by the Galaxy developers, before the application can
+  run a separate (non-root) user must be created to own the Galaxy
+  process. This package and these instructions assume said user will
+  be called 'galaxy'. If a different user name is required, the value
+  of GALAXYUSER in /etc/sysconfig/galaxy must be edited accordingly.
+
+  Additionally, if Galaxy has been installed with the intention of
+  running its tools via SGE (runtools=sge), the 'galaxy' user account
+  must also exist on all compute nodes.
+
+  The user account can be created with the the 'alces usermanager'
+  command (NB on some older systems this must be invoked as
+  'alces-user-manager') as follows:
+
+    # alces usermanager --action CREATE --type CLUSTER \\
+       --username galaxy
+
+  If prompted, enter a password for the new 'galaxy' account. 
+
+
+  File and Directory Permissions
+  ==============================
+
+  The directories specified during installation with the 'datadir' and
+  'logdir' parameters are created during installation and used by
+  Galaxy to store data sets, logs and other temporary files. These
+  directories must be writable by the 'galaxy' user. For example:
+
+    # chown -R galaxy:clusterusers <%= param(:datadir) %>
+
+  where <%= param(:datadir) %> is the argument given for 'datadir'
+  (and/or 'logdir') during installation.
+
+  Additionally, if Galaxy's tools are being run on a cluster via SGE
+  (runtools=sge), these directories must also be accessible and
+  writable on all compute nodes.
+
+  As it contains the database password, the configuration file
+  universe_wsgi.ini in Galaxy's install directory file should be set
+  to be owned by the 'galaxy' user and not readable by anyone else.
+  For example: 
+
+    # chown galaxy <%= dest_dir %>/universe_wsgi.ini
+    # chmod 600 <%= dest_dir %>/universe_wsgi.ini
+
+  Unless the database password has been changed (see below), ensure
+  that this file (README.alces.txt) is also only readable only by root
+  or galaxy, to maintain the security of the password.
+
+
+  MySQL Configuration
+  ===================
+
+  MySQL must be installed and configured before Galaxy can be started.
+  Galaxy has currently been tested with MySQL version 5.1.61.
+
+  The supplied configuration file for Galaxy (universe_wsgi.ini)
+  assumes that MySQL is installed on the same host as Galaxy and can
+  be accessed via the UNIX socket file /var/lib/mysql/mysql.sock . If
+  MySQL is installed on a different host or is accessible via another
+  socket name, universe_wsgi.ini must be modified as described at the
+  end of this section.
+
+  By default, Galaxy will connect with the MySQL user account 'galaxy'
+  and password '<%= mysql_pw %>'. You may use this password (a pseudorandom 
+  value which was generated during installation) by following these
+  instructions, or specify your own. Please note that specifying your
+  own password also requires that you modify universe_wsgi.ini.
+  
+  To create the 'galaxy' database enter:
+
+    # mysql -u admin -p -e "CREATE DATABASE galaxy"
+
+  where 'admin' is the username of an existing MySQL user with
+  permission to create databases. You will be prompted to enter this
+  user's password.
+  
+  The MySQL user account for Galaxy should be created with the 'alces
+  usermanager' command (NB on some older systems this must be invoked
+  as 'alces-user-manager') as follows:
+
+    # alces usermanager --action CREATE --type MYSQL \\
+      --username galaxy --parameters usertype=dbadmin,database=galaxy
+
+  When prompted for the new account password, enter '<%= mysql_pw %>'.
+  To confirm that the user account and database have been created
+  correctly, enter:
+
+    # mysql -u galaxy -p galaxy
+
+  and enter the password previously entered for the galaxy account. If
+  no errors are displayed, MySQL configuration is complete. Type
+  'quit' to exit the MySQL client.
+
+  To further customise the MySQL connection settings and user account
+  details, open the file:
+  <%= dest_dir %>/universe_wsgi.ini 
+  and edit the following line:
+
+    database_connection = mysql://galaxy:<%= mysql_pw %>@localhost/galaxy?unix_socket=/var/lib/mysql/mysql.sock
+
+  This setting has the format mysql://username:password@hostname/database
+
+  If MySQL is accessible via a different socket file, modify the
+  unix_socket parameter accordingly. If MySQL is running on a
+  different host to Galaxy, the word 'localhost' should be replaced
+  with the hostname or IP address of the MySQL server, and the
+  unix_socket parameter should be removed.
+
+  
+  Starting and Stopping Galaxy
+  ============================
+
+  The init script contrib/galaxy.fedora-init, designed to start Galaxy
+  as a background daemon process, is modified during installation to
+  use the settings specified in /etc/sysconfig/galaxy.  A symbolic
+  link to this script is created as \$GALAXYBIN/galaxy
+
+  This script must be run either as the galaxy user, or as root (in
+  which case 'su' will be used to start the process as galaxy).
+
+  To start Galaxy as a background daemon (after having loaded the
+  apps/galaxy environment module):
+
+    # galaxy start
+
+  To stop Galaxy:
+
+    # galaxy stop
+
+  Finally, this init script may be copied into /etc/init.d to
+  facilitate automatic startup. On systems that support it,
+  chkconfig(8) may be used to add symbolic links to start and stop the
+  service in the relevant runlevels, as follows:
+
+    # cp \$GALAXYBIN/galaxy /etc/init.d
+    # chkconfig --add galaxy
+
+  NB: By default, the Galaxy service will use its internal web server
+  to handle requests, binding to all interfaces on port 8080. This can
+  be changed by customising the value of the 'host' setting in
+  \$GALAXYDIR/universe_wsgi.ini
+  EOT
+  chmod 600 <%= dest_dir %>/README.alces.txt
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  if { [module-info mode load] } {
+    if { [file exists "${appdir}/unconfigured-notice.txt"] } {
+      set fp [open "${appdir}/unconfigured-notice.txt" r]
+      set message [read $fp]
+      close $fp
+      puts stderr $message
+    }
+  }

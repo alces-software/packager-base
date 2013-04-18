@@ -1,0 +1,20 @@
+--- universe_wsgi.ini.sample	2013-04-11 16:41:47.030603756 +0100
++++ universe_wsgi.ini	2013-04-11 16:41:47.038630857 +0100
+@@ -89,7 +89,7 @@
+ # may use a SQLAlchemy connection string to specify an external database
+ # instead.  This string takes many options which are explained in detail in the
+ # config file documentation.
+-#database_connection = sqlite:///./database/universe.sqlite?isolation_level=IMMEDIATE
++database_connection = mysql://galaxy:galaxy@localhost/galaxy?unix_socket=/var/lib/mysql/mysql.sock
+ 
+ # If the server logs errors about not having enough database pool connections,
+ # you will want to increase these values, or consider running more Galaxy
+@@ -108,7 +108,7 @@
+ 
+ # Create only one connection to the database per thread, to reduce the
+ # connection overhead.  Recommended when not using SQLite:
+-#database_engine_option_strategy = threadlocal
++database_engine_option_strategy = threadlocal
+ 
+ # Log all database transactions, can be useful for debugging and performance
+ # profiling.  Logging is done via Python's 'logging' module under the qualname
