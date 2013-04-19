@@ -1,10 +1,55 @@
---- lib/galaxy/jobs/runners/drmaa.py.orig	2013-04-15 15:14:45.363538494 +0100
-+++ lib/galaxy/jobs/runners/drmaa.py	2013-04-15 15:19:54.828517560 +0100
-@@ -45,6 +45,7 @@
+--- lib/galaxy/jobs/runners/drmaa.py.orig	2013-04-19 11:58:03.450889662 +0100
++++ lib/galaxy/jobs/runners/drmaa.py	2013-04-19 12:01:17.204720556 +0100
+@@ -44,19 +44,43 @@
+ #  - move to the job wrapper's working directory
  #  - execute the command
  #  - take the command's exit code ($?) and write it to a file.
- drm_template = """#!/bin/sh
-+module load apps/galaxy
- GALAXY_LIB="%s"
- if [ "$GALAXY_LIB" != "None" ]; then
-     if [ -n "$PYTHONPATH" ]; then
+-drm_template = """#!/bin/sh
+-GALAXY_LIB="%s"
+-if [ "$GALAXY_LIB" != "None" ]; then
+-    if [ -n "$PYTHONPATH" ]; then
++drm_template = """#!/bin/bash
++if [ -f /opt/alces/etc/profile.d/alces-symphony.sh ]; then
++  . /opt/alces/etc/profile.d/alces-symphony.sh
++elif [ -f /etc/profile.d/alces-profiles.sh ]; then
++  . /etc/profile.d/alces-profiles.sh
++elif [ -f /etc/profile.d/modules.sh ]; then
++  . /etc/profile.d/modules.sh
++else
++  false
++fi
++if [ $? == 0 ]; then
++  ALCES_MODULES_LOAD=$(mktemp)
++  GALAXY_MODULE=%GALAXY_MODULE%
++  if module load $GALAXY_MODULE &>$ALCES_MODULES_LOAD; echo ":$LOADEDMODULES:" | grep -q ":$GALAXY_MODULE:"; then
++    rm -f $ALCES_MODULES_LOAD
++    GALAXY_LIB="%s"
++    if [ "$GALAXY_LIB" != "None" ]; then
++      if [ -n "$PYTHONPATH" ]; then
+         PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"
+-    else
++      else
+         PYTHONPATH="$GALAXY_LIB"
++      fi
++      export PYTHONPATH
+     fi
+-    export PYTHONPATH
++    %s
++    cd %s
++    %s
++  else
++    echo "Failed to load modulefile: $GALAXY_MODULE" >>/dev/stderr
++    cat $ALCES_MODULES_LOAD >>/dev/stderr
++    rm -f $ALCES_MODULES_LOAD
++    false
++  fi
++else
++  echo "Unable to locate environment modules initialization script." >>/dev/stderr
++  false
+ fi
+-%s
+-cd %s
+-%s
+ echo $? > %s
+ """
+ 

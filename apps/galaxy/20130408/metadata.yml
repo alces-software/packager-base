@@ -66,6 +66,7 @@
   <% if param(:runtools).to_s.downcase == 'sge' %>
     cp -v <%= source('job_conf.xml') %> . <%= redirect(:install) %>
     patch -p0 < <%= source('sgerunner-addenv.patch') %> <%= redirect(:install) %>
+    sed -i -e 's|%GALAXY_MODULE%|<%= modulefile_name %>|g' lib/galaxy/jobs/runners/drmaa.py
     <% if param(:fetcheggs).to_s.downcase == 'true' %>
       pyver=$(python -c 'import sys; print sys.version[:3]')
       if ! echo $pyver | grep -q 2.[567]; then
