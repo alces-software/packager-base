@@ -138,6 +138,20 @@
   variables.
 
 
+  local-env.sh
+  ============
+
+  If Galaxy has been installed with SGE support (runtools=sge) and the
+  file $GALAXYDIR/etc/local-env.sh exists, its contents will be
+  sourced as part of the job script that executes on the compute nodes
+  before the Galaxy tool itself runs.
+
+  The purpose of this is to allow you to define any site-specific
+  environment variables required by Galaxy. For example, local-env.sh
+  could define a value for HTTP_PROXY to ensure that Galaxy 'Get Data'
+  requests are able to connect to remote servers.
+
+
   Galaxy User Account
   ===================
   
