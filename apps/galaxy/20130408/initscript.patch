@@ -1,6 +1,6 @@
---- contrib/galaxy.fedora-init.orig	2013-04-16 15:26:11.328597261 +0100
-+++ contrib/galaxy.fedora-init	2013-04-17 14:09:57.184846065 +0100
-@@ -10,43 +10,53 @@
+--- contrib/galaxy.fedora-init.orig	2013-04-24 16:09:54.625700092 +0100
++++ contrib/galaxy.fedora-init	2013-04-24 16:08:26.582993765 +0100
+@@ -10,43 +10,56 @@
  
  #--- config
  
@@ -8,6 +8,9 @@
 -RUN_AS="galaxy"
 -RUN_IN="/path/to/galaxy-dist"
 +if [ -f /etc/sysconfig/galaxy ]; then
++  # HOME and USER are unset by /sbin/service but required to initialize modules
++  export HOME=/root
++  export USER=root
 +  . /etc/sysconfig/galaxy
 +else
 +  # LSB status: program is not configured
@@ -67,7 +70,7 @@
  			exit 1
  	esac
  	
-@@ -54,10 +64,10 @@
+@@ -54,10 +67,10 @@
  }
  
  status() {
@@ -80,7 +83,7 @@
  			echo "started"
  			return 0
  		fi
-@@ -67,11 +77,11 @@
+@@ -67,11 +80,11 @@
  }
  
  notsupported() {
