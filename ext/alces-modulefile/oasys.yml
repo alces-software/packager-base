@@ -1,0 +1,33 @@
+---
+:schema: 1
+:name: oasys
+:version: '11.0'
+:type: apps
+:title: Oasys Software Suite
+:license: Commercial
+:summary: Pre- and post- processing of LS-DYNA models
+:url: http://www.oasys-software.com/dyna/en/
+:description: |
+  The Oasys Suite of software, exclusively written for LS-DYNA, is at
+  the leading edge of the pre- and post-processing markets and is used
+  worldwide by many of the largest LS-DYNA customers.
+
+  The Oasys Suite provides the user with tools and functions to reduce
+  the amount of time needed to build and check a LS-DYNA model,
+  allowing the engineer to concentrate more on the actual problem in
+  hand rather than just the task getting a model up and running in
+  LS-DYNA.
+:group: Engineering
+:changelog: |
+  * Mon Apr 29 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:params:
+  :license_file: "FlexLM license file path (in <port>@<server> format)"
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  setenv OASYS_LICENSE_FILE <%= param('license_file') %>
+
+  prepend-path PATH ${appdir}
