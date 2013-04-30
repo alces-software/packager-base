@@ -54,6 +54,18 @@
     name = param('name') == 'default' ? metadata[:name] : param('name')
     version = param('version') == 'default' ? metadata[:version] : param('version')
     if param('root') != 'default'
+      def interactive_preflight(skip_build_dir = false)
+        begin
+          preflight
+        rescue ModulefileError, BuildDirectoryError
+          # We expect to recieve one of these exceptions if there is no package root directory.
+        end
+      rescue InstallDirectoryError
+        # We expect to receive the exception if the package root directory exists.
+      else
+        raise InstallDirectoryError, "Package root directory does not exist: #{dest_dir}"
+      end
+
       def dest_dir
         File.expand_path(param('root'))
       end
