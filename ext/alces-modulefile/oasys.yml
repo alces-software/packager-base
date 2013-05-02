@@ -19,7 +19,7 @@
   LS-DYNA.
 :group: Engineering
 :changelog: |
-  * Mon Apr 29 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+  * Mon Apr 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :params:
   :license_file: "FlexLM license file path (in <port>@<server> format)"
