@@ -1,0 +1,32 @@
+---
+:schema: 1
+:name: abaqus
+:version: '6.12'
+:type: apps
+:title: SIMULIA Abaqus FEA
+:license: Commercial
+:summary: Software suite for finite element analysis and computer-aided engineering
+:url: http://www.3ds.com/products/simulia/portfolio/abaqus/
+:description: |
+  The Abaqus Unified FEA product suite offers powerful and complete
+  solutions for both routine and sophisticated engineering problems
+  covering a vast spectrum of industrial applications. In the
+  automotive industry engineering work groups are able to consider
+  full vehicle loads, dynamic vibration, multibody systems,
+  impact/crash, nonlinear static, thermal coupling, and
+  acoustic-structural coupling using a common model data structure and
+  integrated solver technology. Best-in-class companies are taking
+  advantage of Abaqus Unified FEA to consolidate their processes and
+  tools, reduce costs and inefficiencies, and gain a competitive
+  advantage.
+:group: Engineering
+:changelog: |
+  * Thu May  2 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}ROOT ${appdir}
+  setenv ${appcaps}DIR ${appdir}/${version}-1
+  setenv ${appcaps}BIN ${appdir}/Commands
+
+  prepend-path PATH ${appdir}/Commands
