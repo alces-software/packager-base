@@ -1,0 +1,58 @@
+---
+:schema: 1
+:license: BSD
+:summary: Fundamental package for scientific computing in Python
+:url: http://numpy.scipy.org/
+:description: |
+  NumPy is the fundamental package for scientific computing with
+  Python. It contains among other things:
+
+    * a powerful N-dimensional array object
+    * sophisticated (broadcasting) functions
+    * tools for integrating C/C++ and Fortran code
+    * useful linear algebra, Fourier transform, and random number
+      capabilities
+
+  Besides its obvious scientific uses, NumPy can also be used as an
+  efficient multi-dimensional container of generic data. Arbitrary
+  data-types can be defined. This allows NumPy to seamlessly and
+  speedily integrate with a wide variety of databases.
+:type: libs
+:group: Mathematics
+:changelog: |
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.7.1
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.6.2
+    - Refactored to packager style
+  * Thu Jul 7 2011 Steve Norledge
+    - First created
+:src: numpy-1.7.1.tar.gz
+:version: '1.7.1'
+:compilers:
+  gcc:
+    :blas_dir: '$ATLASDIR'
+    :lapack_dir: '$ATLASDIR'
+    :atlas_dir: '$ATLASDIR'
+    :requirements:
+      :build: libs/atlas
+:requirements:
+  :build: apps/python ~> 2.7.0
+  :runtime: apps/python ~> 2.7.0
+:compile: |
+  export BLAS=<%= compiler[:blas_dir] %>
+  export LAPACK=<%= compiler[:lapack_dir] %>
+  export ATLAS=<%= compiler[:atlas_dir] %>
+  python setup.py build --fcompiler=gnu95 <%= redirect(:build) %>
+:install: |
+  export BLAS=<%= compiler[:blas_dir] %>
+  export LAPACK=<%= compiler[:lapack_dir] %>
+  export ATLAS=<%= compiler[:atlas_dir] %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
