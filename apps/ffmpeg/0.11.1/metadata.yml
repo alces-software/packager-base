@@ -38,3 +38,4 @@
 
   prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
   prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
