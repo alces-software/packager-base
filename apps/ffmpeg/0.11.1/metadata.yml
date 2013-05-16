@@ -26,7 +26,7 @@
 :compilers:
   gcc:
 :compile: |
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  ./configure --enable-shared --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %> 
