@@ -44,5 +44,9 @@
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}LIB ${appdir}/lib
 
+  prepend-path GDFONTPATH /usr/share/fonts/dejavu
+  setenv GNUPLOT_DEFAULT_GDFONT DejaVuSans
+
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
