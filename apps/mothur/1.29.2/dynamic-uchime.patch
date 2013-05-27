@@ -1,0 +1,12 @@
+--- uchime_src/mk.orig	2013-03-14 19:43:32.157130823 +0000
++++ uchime_src/mk	2013-03-14 19:04:36.444328367 +0000
+@@ -14,9 +14,6 @@
+ done
+ 
+ LINK_OPTS= 
+-if [ `uname -s` == Linux ] ; then
+-    LINK_OPTS=-static
+-fi
+ g++ $LINK_OPTS $ENV_LINK_OPTS -g -o uchime $ObjNames >> mk.stdout 2>> tmp.stderr
+ cat tmp.stderr
+ cat tmp.stderr >> mk.stderr

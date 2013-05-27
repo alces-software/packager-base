@@ -1,0 +1,69 @@
+################################################################################
+# (c) Copyright 2013 Alces Software Ltd & Stephen F Norledge.                  #
+#                                                                              #
+# HPC Cluster Toolkit                                                          #
+#                                                                              #
+# This file/package is part of the HPC Cluster Toolkit                         #
+#                                                                              #
+# This is free software: you can redistribute it and/or modify it under        #
+# the terms of the GNU Affero General Public License as published by the Free  #
+# Software Foundation, either version 3 of the License, or (at your option)    #
+# any later version.                                                           #
+#                                                                              #
+# This file is distributed in the hope that it will be useful, but WITHOUT     #
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or        #
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License #
+# for more details.                                                            #
+#                                                                              #
+# You should have received a copy of the GNU Affero General Public License     #
+# along with this product.  If not, see <http://www.gnu.org/licenses/>.        #
+#                                                                              #
+# For more information on Alces Software, please visit:                        #
+# http://www.alces-software.org/                                               #
+#                                                                              #
+################################################################################
+# Set up environment variables required for galaxy
+
+# By default we use the environment modules if they are available:
+
+if [ -f /opt/alces/etc/profile.d/alces-symphony.sh ]; then
+  . /opt/alces/etc/profile.d/alces-symphony.sh
+elif [ -f /etc/profile.d/alces-profiles.sh ]; then
+  . /etc/profile.d/alces-profiles.sh
+elif [ -f /etc/profile.d/modules.sh ]; then
+  . /etc/profile.d/modules.sh
+else
+  echo "Unable to locate environment modules initialization script."
+  exit 1
+fi
+
+module purge &> /dev/null
+module load services/gridscheduler &> /dev/null
+module load apps/galaxy &> /dev/null
+
+# If environment modules are not available on your system, please
+# configure this file to set this environment variable:
+#
+# GALAXYDIR
+#
+# If Galaxy SGE runner support is required, the following variables 
+# must also be set:
+#
+# GRIDSCHEDULERDIR
+# SGE_ROOT
+# SGE_CELL
+# SGE_CLUSTER_NAME
+# SGE_QMASTER_PORT
+# SGE_EXECD_PORT
+
+# Path to the DRMAA library (only required for SGE runner support)
+export DRMAA_LIBRARY_PATH=$GRIDSCHEDULERDIR/lib/linux-x64/libdrmaa.so
+
+# Operating system user as which Galaxy process will be run
+export GALAXYUSER=galaxy
+
+# PID file for Galaxy daemon
+export GALAXYPIDFILE=/path/to/pidfile
+
+# Logfile for Galaxy daemon
+export GALAXYLOGFILE=/path/to/logfile

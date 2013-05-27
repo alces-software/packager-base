@@ -26,12 +26,22 @@
     :configure_flags: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
 :params:
   :qlogic: "Specify whether to use Qlogic Infinipath PSM libs [true|false]"
-  :torque: "Specify whether to enable Torque Support [true|false]"
+  :torque: "Specify whether to enable Torque Support [false|/path/to/torque]"
   :sge: "Specify where to enable SGE Support [true|false]"
 :sources:
   - examples.sge.openmpi.template
 :compile: |
-  ./configure <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> <%= '--with-tm=$TORQUEDIR' if param(:torque).to_s.downcase == 'true' %> <%= '--with-psm' if param(:qlogic).to_s.downcase == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  <% if param(:torque) != 'false' %>
+    if [ ! -d "<%= param(:torque) %>" ]; then
+      echo "Unable to find Torque directory: <%= param(:torque) %>" >/dev/stderr
+      exit 1
+    else
+      TORQUEPARAMS="--with-tm=<%= param(:torque) %>"
+    fi
+  <% else %>
+    TORQUEPARAMS=""
+  <% end %>
+  ./configure <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> ${TORQUEPARAMS} <%= '--with-psm' if param(:qlogic).to_s.downcase == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
@@ -56,6 +66,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path MANPATH ${appdir}/share/man
 :changelog: |
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Changed torque parameter to require path to Torque directory or false
   * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added open64 support; incorporated qlogic parameter
   * Wed Jun  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>

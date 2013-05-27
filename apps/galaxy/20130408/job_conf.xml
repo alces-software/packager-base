@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<job_conf>
+<plugins>
+<plugin id="drmaa" type="runner" load="galaxy.jobs.runners.drmaa:DRMAAJobRunner"/>
+</plugins>
+<handlers default="main">
+<handler id="main"/>
+</handlers>
+<destinations default="sge_default">
+<destination id="sge_default" runner="drmaa"/>
+</destinations>
+</job_conf>

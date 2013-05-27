@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: HTSlib
+:license: OTHER - See http://samtools.sourceforge.net/
+:summary: C library for high-throughput sequencing data formats
+:url: https://github.com/samtools/htslib
+:description: |
+  HTSlib is an experimental implementation of a unified C library for
+  accessing common file formats, such as SAM and VCF, used for
+  high-throughput sequencing data. The library is contained in the
+  htslib subdirectory. Each command-line tool is implemented in one C
+  source code file in the toplevel directory. HTSlib only depends on
+  zlib. It is known to be compatible with gcc, g++ and clang.
+
+  HTSlib implements a generalized BAM index. The command-line tools
+  bamidx and tabix write the old index by default, but can also write
+  a new index with file extension .csi (coordinate-sorted index). The
+  HTSlib file reader first looks for the new index and then for the
+  old if the new index is absent.
+
+  HTSlib is unfinished. It has not been tested on large-scale real
+  data. Some useful APIs are missing.
+:group: Bioinformatics
+:changelog: |
+  * Wed Mar 20 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: samtools-htslib-078817b.tar.gz
+:src_dir: samtools-htslib-078817b
+:type: apps
+:version: '20130319'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,lib,include}
+  install -m 755 htscmd misc/plot-vcfcheck <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v htslib/libhts.a <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -v htslib/*.h <%= dest_dir %>/include <%= redirect(:install) %>
+  cp -v README.md doc/* <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin

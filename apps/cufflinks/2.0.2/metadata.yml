@@ -15,11 +15,14 @@
 :requirements: 
   :runtime:
     - libs/boost = 1.49.0
+    - apps/samtools ~> 0.1.18
   :build:
     - libs/boost = 1.49.0
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0.5
 :changelog: |
+  * Fri May 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - depend on apps/samtools at runtime for libbam.so
   * Wed Aug 15 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - make requirements more stringent
     - build against 0.1.18 of samtools

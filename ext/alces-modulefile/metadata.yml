@@ -1,0 +1,91 @@
+---
+:schema: 1
+:title: Alces Software manual modulefile installer
+:license: CC BY-NC-SA 3.0
+:summary: Manual modulefile installer to allow creation/registration of manually installed gridware packages
+:description: |
+  This meta-package has been created by Alces Software to facilitate
+  the process of installation of complex applications, allowing a
+  modulefile to be generated based on a YAML-formatted parameters file
+  containing packager metadata.
+
+  After an application has been manually installed, it is possible to
+  use this meta-package to create and register a Gridware-aware
+  modulefile in the Symphony packager database to bring the benefits
+  of Alces Gridware to applications for which it would not usually be
+  possible.
+:changelog: |
+  * Mon Apr 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:type: ext
+:pkg_type: apps
+:src: manual.yml.sic
+:src_dir: .
+:compilers:
+  noarch:
+:params:
+  :parameter_file: "Name of distributed file (with or without .yml extension), path or URL to a parameters file (YAML format)"
+  :root: "Directory in which package is installed (pass 'default' to use standard location)"
+  :version: "Version of package (pass 'default' to use version defined in parameter file)"
+  :name: "Name of package (pass 'default' to use name defined in parameter file)"
+:prepare: |
+  <% if URI.parse(param('parameter_file')).scheme.nil? %>
+    <%
+      f = if param('parameter_file')[0] =~ /\W/ 
+        param('parameter_file')
+      else
+        fname = param('parameter_file')
+        fname += '.yml' unless fname[-4..-1] == '.yml'
+        source(fname) 
+      end
+      unless File.exists?(f)
+        raise "Parameter file not found: #{f}"
+      end
+    %>
+    cp <%= f %> <%= source('manual.yml.sic') %>
+  <% else %>
+    wget -O <%= source('manual.yml.sic') %> <%= param('parameter_file') %>
+  <% end %>
+:analyse: |
+  <%
+    yaml = File.read(source('manual.yml.sic'), encoding: 'utf-8')
+    metadata = YAML.load(yaml)
+    checksum = Digest::MD5.hexdigest(yaml)
+    name = param('name') == 'default' ? metadata[:name] : param('name')
+    version = param('version') == 'default' ? metadata[:version] : param('version')
+    if param('root') != 'default'
+      def interactive_preflight(skip_build_dir = false)
+        begin
+          preflight
+        rescue ModulefileError, BuildDirectoryError
+          # We expect to recieve one of these exceptions if there is no package root directory.
+        end
+      rescue InstallDirectoryError
+        # We expect to receive the exception if the package root directory exists.
+      else
+        raise InstallDirectoryError, "Package root directory does not exist: #{dest_dir}"
+      end
+
+      def dest_dir
+        File.expand_path(param('root'))
+      end
+      def compiler_type
+        package.metadata[:compiler]
+      end
+      package_root = param('root')
+      Alces::Packager::Package::ModuleFileRenderer.send(:define_method,:package_dir) do
+        File.expand_path(package_root)
+      end
+    end
+    if metadata[:params]
+      missing_params = {}
+      metadata[:params].each do |k,v|
+        missing_params[k] = "#{k}: #{v}" unless param(k.to_s)
+      end
+      raise InvalidParameterError, "No values specified for required parameters: #{missing_params.keys.join(', ')}\n\n  #{missing_params.values.join("\n  ")}" if missing_params.any?
+    end
+    self.package = Metadata.new(name, version, metadata, checksum, nil)
+  %>
+  cat <<-EOF
+    :version: '<%= version %>'
+  EOF

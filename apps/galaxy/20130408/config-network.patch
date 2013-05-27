@@ -1,0 +1,11 @@
+--- universe_wsgi.ini.sample	2013-04-11 16:30:29.656603302 +0100
++++ universe_wsgi.ini	2013-04-11 16:34:06.442479296 +0100
+@@ -31,7 +31,7 @@
+ # The address on which to listen.  By default, only listen to localhost (Galaxy
+ # will not be accessible over the network).  Use '0.0.0.0' to listen on all
+ # available network interfaces.
+-#host = 127.0.0.1
++host = 0.0.0.0
+ 
+ # Use a threadpool for the web server instead of creating a thread for each
+ # request.

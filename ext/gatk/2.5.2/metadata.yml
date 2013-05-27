@@ -1,0 +1,90 @@
+---
+:schema: 1
+:title: Genome Analysis Toolkit
+:license: Free for non-commercial use; registration required; see http://j.mp/TTba2N
+:summary: Software package developed at the Broad Institute to analyse next-generation resequencing data
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+
+  This package installes the full release of GATK for which
+  registration is required.  For the free edition, see apps/gatklite.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue May 21 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.5.2
+  * Tue Mar  6 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.4.7
+  * Mon Mar  4 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.4.3
+    - Modified to use script wrappers rather than aliases
+  * Thu Feb 22 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.3.9
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: GenomeAnalysisTK-2.5-2.tar.bz2
+:src_dir: GenomeAnalysisTK-2.5-2-gf57256b
+:version: '2.5.2'
+:type: ext
+:pkg_type: apps
+:compilers:
+  noarch:
+:params:
+  :tarball: "Path or URL to GATK tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('GenomeAnalysisTK-2.5-2.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('GenomeAnalysisTK-2.5-2.tar.bz2') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/bin
+  cp -v <%= source('gatk-wrapper.sh') %> <%= dest_dir %>/bin/gatk <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/gatk
+  ln -s gatk <%= dest_dir %>/bin/GenomeAnalysisTK
+
+  # Create symlinks to wrapper script for all available commands
+  export GATKDIR=<%= dest_dir %>
+  for a in $(<%= dest_dir %>/bin/gatk 2>/dev/null | grep '^   [A-Z]' | cut -f4 -d' ' | xargs); do
+    ln -s gatk <%= dest_dir %>/bin/gatk_$a
+  done
+:modules:
+   - :type: apps
+     :content: |
+       conflict apps/gatklite
+
+       set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       setenv ${appcaps}_JAVA_MEM_MX 2g
+
+       if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+       } elseif { [info exists ::env(TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+       } else { 
+         setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+       }
+
+       setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+       prepend-path PATH ${appdir}/bin

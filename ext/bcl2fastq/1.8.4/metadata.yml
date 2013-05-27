@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: Bcl2FastQ
+:license: NONFREE - Proprietary Commercial
+:summary: A tool to handle bcl conversion and demultiplexing
+:url: http://support.illumina.com/downloads/bcl2fastq_conversion_software_184.ilmn
+:description: |
+  The Bcl2FastQ conversion software is a tool to handle bcl conversion
+  and demultiplexing. Version 1.8.4 has added ability to mask multiple
+  adapter sequences per read, has standard Illumina adapter sequences
+  included in the bcl2fastq installation, and the stringency of the
+  adapter masking feature is now configurable
+:group: Bioinformatics
+:changelog: |
+  * Tue May  7 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bcl2fastq-1.8.4.tar.bz2
+:src_dir: bcl2fastq
+:type: ext
+:pkg_type: apps
+:requirements:
+  :tool: apps/cpanminus
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to Bcl2FastQ tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('bcl2fastq-1.8.4.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('bcl2fastq-1.8.4.tar.bz2') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  cat <<-EOF
+    :version: '1.8.4'
+  EOF
+:compile: |
+  export TOPDIR=$(pwd)
+  mkdir build
+  cd build
+  ../src/configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm XML::Simple <%= redirect(:cpanm) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd ..
+  cp -rv perl <%= dest_dir %>
+  cd <%= dest_dir %>
+  # fix bad ownerships
+  chown -R root:root .
+  # fix bad directory permissions
+  find -type d -exec chmod 755 {} ';'
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+       prepend-path MANPATH ${appdir}/perl/man
+       prepend-path PATH ${appdir}/perl/bin
+
+       prepend-path PATH ${appdir}/bin

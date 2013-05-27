@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: Software for Tomographic Image Reconstruction (STIR)
+:license: LGPL, GPL, PARAPET License; see http://j.mp/10q7Y53
+:summary: Multi-platform object-oriented framework for data manipulations in tomographic imaging
+:url: http://stir.sourceforge.net/
+:description: |
+  STIR is Open Source software for use in tomographic imaging. Its aim
+  is to provide a Multi-Platform Object-Oriented framework for all
+  data manipulations in tomographic imaging. Currently, the emphasis
+  is on (iterative) image reconstruction in PET, but other application
+  areas and imaging modalities can and might be added.
+
+  STIR is the successor of the PARAPET software library
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr  3 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: STIR.zip
+:src_dir: STIR
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/cmake
+  :compile:
+    - libs/boost
+:params:
+  :zipfile: "Path or URL to STIR archive (zip format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('zipfile') != 'skip' %>
+    <% if URI.parse(param('zipfile')).scheme.nil? %>
+      cp <%= param('zipfile') %> <%= source('STIR.zip') %>
+    <% else %>
+      wget -O <%= source('STIR.zip') %> <%= param('zipfile') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  version=$(cat STIR/VERSION.txt)
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}LIB ${appdir}/lib
+
+       prepend-path PATH ${appdir}/bin

@@ -18,6 +18,8 @@
   BEDTools).
 :group: Bioinformatics
 :changelog: |
+  * Thu Apr 18 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correct permissions on scripts in share/medusa_pipeline directory
   * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: medusa_v1_0.tar.gz 
@@ -76,6 +78,7 @@
   mv -v <%= dest_dir %>/share/medusa.pl <%= dest_dir %>/bin <%= redirect(:install) %>
   chmod 755 <%= dest_dir %>/bin/medusa.pl
   sed -e "s|%USEQAPPS%|${USEQJAVA}/Apps|g" -e "s|%MEDUSASHARE%|<%= dest_dir %>/share|g" <%= source('medusa.example.cfg.template') %> > <%= dest_dir %>/etc/medusa.example.cfg
+  chmod 755 <%= dest_dir %>/share/medusa_pipeline/*
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin

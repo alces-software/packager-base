@@ -1,0 +1,32 @@
+---
+:schema: 1
+:name: starccm
+:version: '7.04.011'
+:type: apps
+:title: STAR-CCM+
+:license: Commercial
+:summary: Engineering process for solving problems involving flow (of fluids or solids), heat transfer and stress
+:url: http://www.cd-adapco.com/products/star_ccm_plus/
+:description: |
+  STAR-CCM+ provides the world's most comprehensive engineering
+  simulation inside a single integrated package. Much more than just a
+  CFD solver, STAR-CCM+ is an entire engineering process for solving
+  problems involving flow (of fluids or solids), heat transfer and
+  stress.
+:group: Engineering
+:changelog: |
+  * Mon Apr 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:params:
+  :license_file: "FlexLM license file path (in <port>@<server> format)"
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}ROOT ${appdir}
+  setenv ${appcaps}DIR ${appdir}/STAR-CCM+${version}
+  setenv ${appcaps}BIN ${appdir}/STAR-CCM+${version}/star/bin
+  setenv STARVIEWDIR ${appdir}/STAR-View+${version}
+
+  setenv CDLMD_LICENSE_FILE <%= param('license_file') %>
+  
+  prepend-path PATH ${appdir}/STAR-VIEW+${version}
+  prepend-path PATH ${appdir}/STAR-CCM+${version}/star/bin

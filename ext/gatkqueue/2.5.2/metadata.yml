@@ -1,0 +1,95 @@
+---
+:schema: 1
+:title: Genome Analysis Toolkit Queue
+:license: Free for non-commercial use; registration required; see http://j.mp/TTba2N
+:summary: Command-line scripting framework for defining multi-stage genomic analysis pipelines
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+
+  GATK-Queue is command-line scripting framework for defining
+  multi-stage genomic analysis pipelines combined with an execution
+  manager that runs those pipelines from end-to-end. Often processing
+  genome data includes several steps to produces outputs, for example
+  our BAM to VCF calling pipeline include among other things:
+
+    * Local realignment around indels
+    * Emitting raw SNP calls
+    * Emitting indels
+    * Masking the SNPs at indels
+    * Annotating SNPs using chip data
+    * Labeling suspicious calls based on filters
+    * Creating a summary report with statistics
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue May 21 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.5.2
+    - Refactored to use wrapper script style rather than aliases
+  * Wed Mar  6 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.4.7
+  * Thu Feb 21 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped version to v2.3.9
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Queue-2.5-2.tar.bz2
+:src_dir: Queue-2.5-2-gf57256b
+:version: '2.5.2'
+:type: ext
+:pkg_type: apps
+:requirements:
+  :runtime: apps/gatk ~> 2.5.2
+:compilers:
+  noarch:
+:params:
+  :tarball: "Path or URL to GATK-Queue tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('Queue-2.5-2.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('Queue-2.5-2.tar.bz2') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:install: |
+  mkdir -p <%= dest_dir %>/{java,bin}
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/Queue
+  #!/bin/bash
+  java `eval echo $GATKQUEUE_JAVA_OPTS` -jar <%= dest_dir %>/Queue.jar "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/Queue
+  ln -s Queue <%= dest_dir %>/bin/gatk-queue
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}EXAMPLES ${appdir}/resources
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       setenv ${appcaps}_JAVA_MEM_MX 2g
+
+       if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+       } elseif { [info exists ::env(TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+       } else {
+         setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+       }
+
+       setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+       prepend-path PATH ${appdir}/bin

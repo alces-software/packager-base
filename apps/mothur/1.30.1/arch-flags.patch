@@ -1,0 +1,20 @@
+--- makefile.orig	2013-03-14 19:42:16.691156431 +0000
++++ makefile	2013-03-14 18:44:42.874192578 +0000
+@@ -28,7 +28,7 @@
+ 	#CXX = g++44
+ 	
+ 	#if you are a mac user use the following line
+-	TARGET_ARCH += -arch x86_64
++	#TARGET_ARCH += -arch x86_64
+ 	
+ 	#if you using cygwin to build Windows the following line
+ 	#CXX = x86_64-w64-mingw32-g++
+@@ -37,7 +37,7 @@
+  	#TARGET_ARCH += -m64 -static
+ 
+ 	#if you are a linux user use the following line
+-	#CXXFLAGS += -mtune=native -march=native -m64
++	CXXFLAGS += -mtune=native -march=native -m64
+ 	
+ 	CXXFLAGS += -DBIT_VERSION 
+     	FORTRAN_FLAGS = -m64

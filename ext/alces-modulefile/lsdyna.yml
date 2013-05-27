@@ -1,0 +1,39 @@
+---
+:schema: 1
+:name: lsdyna
+:version: '6.1.1'
+:type: apps
+:title: LS-DYNA
+:license: Commercial
+:summary: General-purpose finite element program capable of simulating complex real world problems
+:url: http://www.lstc.com/products/ls-dyna
+:description: |
+  LS-DYNA is a general-purpose finite element program capable of
+  simulating complex real world problems. It is used by the
+  automobile, aerospace, construction, military, manufacturing, and
+  bioengineering industries. LS-DYNA is optimized for shared and
+  distributed memory Unix, Linux, and Windows based, platforms, and it
+  is fully QA'd by LSTC. The code's origins lie in highly nonlinear,
+  transient dynamic finite element analysis using explicit time
+  integration.
+:group: Engineering
+:changelog: |
+  * Mon Apr 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:params:
+  :license_file: "FlexLM license file path (in <port>@<server>, or </path/to/file> format)"
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  <% if param('license_file') =~ /@/ %>
+  setenv LSTC_LICENSE network
+  setenv LSTC_LICENSE_SERVER <%= param('license_file') %>
+  setenv LSTC_INTERNAL_CLIENT off
+  <% else %>
+  setenv LSTC_LICENSE local
+  setenv LSTC_FILE <%= param('license_file') %>
+  <% end %>
+
+  prepend-path PATH ${appdir}

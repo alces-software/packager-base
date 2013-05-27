@@ -1,0 +1,99 @@
+--- contrib/galaxy.fedora-init.orig	2013-04-24 16:09:54.625700092 +0100
++++ contrib/galaxy.fedora-init	2013-04-24 16:08:26.582993765 +0100
+@@ -10,43 +10,56 @@
+ 
+ #--- config
+ 
+-SERVICE_NAME="galaxy"
+-RUN_AS="galaxy"
+-RUN_IN="/path/to/galaxy-dist"
++if [ -f /etc/sysconfig/galaxy ]; then
++  # HOME and USER are unset by /sbin/service but required to initialize modules
++  export HOME=/root
++  export USER=root
++  . /etc/sysconfig/galaxy
++else
++  # LSB status: program is not configured
++  echo 'Could not find /etc/sysconfig/galaxy -- this file is required to set up environment variables for Galaxy. See $GALAXYDIR/README.alces.txt for more information.'
++  exit 6
++fi
++
++if [ -z "$GALAXYDIR" -o -z "$GALAXYUSER" -o -z $GALAXYPIDFILE -o -z $GALAXYLOGFILE ]; then
++  # LSB status: program is not configured
++  echo 'Could not find required environment variables -- make sure all environment variables are defined in /etc/sysconfig/galaxy. See $GALAXYDIR/README.alces.txt for more information.'
++  exit 6
++fi
+ 
+ #--- main actions
+ 
+ start() {
+-	echo "Starting $SERVICE_NAME... "
+-	cmd="cd $RUN_IN && sh run.sh --daemon"
++	echo "Starting galaxy... "
++	cmd="cd $GALAXYDIR && sh run.sh --daemon --pid-file=$GALAXYPIDFILE --log-file=$GALAXYLOGFILE"
+ 	case "$(id -un)" in
+-		$RUN_AS)
++		$GALAXYUSER)
+ 			eval "$cmd"
+ 			;;
+ 		root)
+-			su - $RUN_AS -c "$cmd"
++			su $GALAXYUSER -c "$cmd"
+ 			;;
+ 		*)
+-			echo "*** ERROR *** must be $RUN_AS or root in order to control this service" >&2
++			echo "*** ERROR *** must be $GALAXYUSER or root in order to control this service" >&2
+ 			exit 1
+ 	esac
+ 	echo "...done."
+ }
+ 
+ stop() {
+-	echo -n "Stopping $SERVICE_NAME... "
++	echo -n "Stopping galaxy... "
+ 	
+-	cmd="cd $RUN_IN && sh run.sh --stop-daemon"
++	cmd="cd $GALAXYDIR && sh run.sh --stop-daemon --pid-file=$GALAXYPIDFILE"
+ 
+ 	case "$(id -un)" in
+-		$RUN_AS)
++		$GALAXYUSER)
+ 			eval "$cmd"
+ 			;;
+ 		root)
+-			su - $RUN_AS -c "$cmd"
++			su $GALAXYUSER -c "$cmd"
+ 			;;
+ 		*)
+-			echo "*** ERROR *** must be $RUN_AS or root in order to control this service" >&2
++			echo "*** ERROR *** must be $GALAXYUSER or root in order to control this service" >&2
+ 			exit 1
+ 	esac
+ 	
+@@ -54,10 +67,10 @@
+ }
+ 
+ status() {
+-	echo -n "$SERVICE_NAME status: "
++	echo -n "galaxy status: "
+ 	
+ 	while read pid; do
+-		if [ "$(readlink -m /proc/$pid/cwd)" = "$(readlink -m $RUN_IN)" ]; then
++		if [ "$(readlink -m /proc/$pid/cwd)" = "$(readlink -m $GALAXYDIR)" ]; then
+ 			echo "started"
+ 			return 0
+ 		fi
+@@ -67,11 +80,11 @@
+ }
+ 
+ notsupported() {
+-	echo "*** ERROR*** $SERVICE_NAME: operation [$1] not supported"
++	echo "*** ERROR*** galaxy: operation [$1] not supported"
+ }
+ 
+ usage() {
+-	echo "Usage: $SERVICE_NAME start|stop|restart|status"
++	echo "Usage: galaxy start|stop|restart|status"
+ }
+ 
+ 
