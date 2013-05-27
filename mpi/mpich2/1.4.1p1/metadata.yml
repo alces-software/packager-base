@@ -36,7 +36,7 @@
     :configure_prefix:
     :configure_flags: '--with-pm=hydra:mpd:gforker --enable-shared'
   intel:
-    :configure_prefix: "CC='icc -i-dynamic' CXX='icpc -i-dynamic' FC='ifort -i-dynamic' F90=''"
+    :configure_prefix: "CC='icc -i-dynamic' CXX='icpc -i-dynamic' FC='ifort -i-dynamic'"
     :configure_flags: '--with-pm=hydra:mpd:gforker --enable-shared --enabled-sharedlibs=gcc'
 :sources:
   - examples.sge.mpich2.template
