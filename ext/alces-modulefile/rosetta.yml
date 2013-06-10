@@ -1,0 +1,34 @@
+---
+:schema: 1
+:name: rosetta
+:version: '3.5'
+:type: apps
+:title: Rosetta
+:license: NONFREE - Free for academic and non-profit users
+:summary: Software suite for modeling macromolecular structures
+:url: http://www.rosettacommons.org/
+:description: |
+  Rosetta is the premier software suite for modeling macromolecular
+  structures. As a flexible, multi-purpose application, it includes
+  tools for structure prediction, design, and remodeling of proteins
+  and nucleic acids. Since 1998, Rosetta web servers have run billions
+  of structure prediction and protein design simulations.
+
+  Researchers use Rosetta to better understand treatments of
+  infectious diseases, cancers, and autoimmune disorders. Further
+  applications involve the development of vaccines, new materials,
+  targeted protein binders, and enzyme design.
+:group: Chemistry
+:changelog: |
+  * Mon Jun 10 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+# alces-modulefile 'compiler' parameter only supports 'bin' and
+# 'noarch' atm, so stick with 'bin' for this, even though it must be
+# built and so, strictly, should be 'gcc'
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}ROOT ${appdir}
+  setenv ${appcaps}DIR ${appdir}/rosetta_source
+  setenv ${appcaps}BIN ${appdir}/rosetta_source/bin
+
+  prepend-path PATH ${appdir}/rosetta_source/bin

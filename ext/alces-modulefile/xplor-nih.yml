@@ -1,0 +1,22 @@
+---
+:schema: 1
+:name: xplor-nih
+:version: '2.33'
+:type: apps
+:title: XPLOR-NIH
+:license: NONFREE - registration required
+:summary: Structure determination program which builds on the X-PLOR program
+:url: http://nmr.cit.nih.gov/xplor-nih/
+:description: |
+  XPLOR-NIH is a structure determination program which builds on the
+  X-PLOR program, including additional tools developed at the NIH.
+:group: Chemistry
+:changelog: |
+  * Mon Jun 10 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

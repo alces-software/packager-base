@@ -1,0 +1,31 @@
+---
+:schema: 1
+:name: ecce
+:version: '6.4'
+:type: apps
+:title: ECCE - Extensible Computational Chemistry Environment
+:license: ECL 2.0 - registration required
+:summary: Visualization tools and data management framework for computational chemistry
+:url: http://nmr.cit.nih.gov/xplor-nih/
+:description: |
+  The Extensible Computational Chemistry Environment (ECCE, pronounced
+  "etch-a") provides a sophisticated graphical user interface,
+  scientific visualization tools, and the underlying data management
+  framework enabling scientists to efficiently set up calculations and
+  store, retrieve, and analyze the rapidly growing volumes of data
+  produced by computational chemistry studies.
+:group: Chemistry
+:changelog: |
+  * Mon Jun 10 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}ROOT ${appdir}
+  setenv ${appcaps}SERVER ${appdir}/server
+  setenv ${appcaps}APPS ${appdir}/apps
+  setenv ${appcaps}DIR ${appdir}/apps
+  setenv ${appcaps}BIN ${appdir}/apps/scripts
+
+  setenv ECCE_HOME ${appdir}/apps
+
+  prepend-path PATH ${appdir}/apps/scripts
