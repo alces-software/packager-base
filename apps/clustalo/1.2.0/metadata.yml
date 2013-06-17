@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: Clustal Omega
+:license: GPLv2
+:summary: Multiple alignment of nucleic acid and protein sequences
+:url: http://www.clustal.org/omega/
+:description: |
+  Clustal Omega is the latest addition to the Clustal family. It
+  offers a significant increase in scalability over previous versions,
+  allowing hundreds of thousands of sequences to be aligned in only a
+  few hours. It will also make use of multiple processors, where
+  present. In addition, the quality of alignments is superior to
+  previous versions, as measured by a range of popular benchmarks.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Jun 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: clustal-omega-1.2.0.tar.gz
+:src_dir: clustal-omega-1.2.0
+:version: '1.2.0'
+# requires: argtable-devel (epel)
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/share/doc/clustal-omega <%= dest_dir %>/doc
+  cp -v AUTHORS ChangeLog COPYING TODO <%= dest_dir %>/doc <%= redirect(:install) %>
+  # tidy up empty directory
+  rm -rf <%= dest_dir %>/share
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+
+  prepend-path PATH ${appdir}/bin
