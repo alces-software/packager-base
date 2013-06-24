@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: HTSeq
+:license: GPLv3+
+:summary: Process data from high-throughput sequencing assays
+:url: http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html
+:description: |
+  HTSeq is a Python package that provides infrastructure to process
+  data from high-throughput sequencing assays.  Common analysis tasks
+  that can be performed with HTSeq include:
+
+    * Getting statistical summaries about the base-call quality scores
+      to study the data quality
+    * Calculating a coverage vector and exporting it for visualization
+      in a genome browser
+    * Reading in annotation data from a GFF file
+    * Assigning aligned reads from an RNA-Seq experiments to exons and
+      genes
+:group: Bioinformatics
+:changelog: |
+  * Mon Jun 24 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v0.5.4p2
+  * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: HTSeq-0.5.4p2.tar.gz
+:src_dir: HTSeq-0.5.4p2
+:type: apps
+:version: '0.5.4p2'
+:requirements:
+  :build:
+    - apps/python
+    - libs/numpy
+  :runtime:
+    - apps/python
+    - libs/numpy
+:compilers:
+  gcc:
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  # PYTHONDEPSDIR=$(pwd)/python
+  # export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  # mkdir $PYTHONDEPSDIR
+  # easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %>
+:install: |
+  # PYTHONDEPSDIR=$(pwd)/python
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
