@@ -1,0 +1,79 @@
+---
+:schema: 1
+:title: PAGIT
+# Website indicates GPL although provenance of some bundled tools doubtful
+:license: GPL
+:summary: Post Assembly Genome Improvement Toolkit
+:url: http://www.sanger.ac.uk/resources/software/pagit/
+:description: |
+  With the advent of next generation sequencing a lot of effort was
+  put into developing software for mapping or aligning short reads and
+  performing genome assembly. For genome assembly the problem of
+  generating a draft assembly (i.e. a set of unordered contigs) has
+  now been very well addressed - but for users who need high quality
+  assemblies for their analyses there are still unresolved issues:
+  this is where PAGIT is used.
+
+  PAGIT addresses the need for software to generate high quality draft
+  genomes. It is based on a series of programs that we developed:
+
+   * ABACAS, that is able to contiguate contigs from a de novo
+     assembly against a closely related reference.
+
+   * IMAGE, an iterative approach for closing gaps in assembled
+     genomes using mate pair information. It is able to close gaps left
+     open by the assembler in a draft genome, even when using the same
+     data sets as used by the original assembler.
+
+   * iCORN, that enables errors in the consensus sequence to be
+     corrected by iteratively mapping reads to the current assembly.
+
+   * RATT, a tool to transfer the annotation from a reference genome,
+     or an earlier assembly, onto the latest assembly.
+
+  PAGIT bundles these software and makes them more accessible for users.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jul 03 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: PAGIT.V1.64bit.tgz
+:src_dir: .
+:type: apps
+:version: 1
+:compilers:
+  bin:
+:requirements:
+  :runtime:
+    - apps/samtools
+:compile: |
+  # no-op; this is a distribution of a binary package
+  # NB re-creation from source possible but difficult given number of
+  # tools and helper scripts bundled in PAGIT environment.
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,lib}
+  cp -Rv PAGIT/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v PAGIT/lib/*.pm <%= dest_dir %>/lib <%= redirect(:install) %>
+  # Bundled samtools gives library error; use gridware dep instead
+  rm -vf <%= dest_dir %>/bin/bin/samtools <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  setenv PAGIT_HOME ${appdir}/bin
+  setenv PILEUP_HOME ${appdir}/bin/bin/pileup_v0.5
+  setenv ICORN_HOME ${appdir}/bin/ICORN
+  setenv SNPOMATIC_HOME ${appdir}/bin/bin
+  setenv RATT_HOME ${appdir}/bin/RATT
+  setenv RATT_CONFIG ${appdir}/bin/RATT/RATT.config
+
+  prepend-path PERL5LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin/RATT
+  prepend-path PATH ${appdir}/bin/ICORN
+  prepend-path PATH ${appdir}/bin/ABACAS
+  prepend-path PATH ${appdir}/bin/IMAGE
+  prepend-path PATH ${appdir}/bin/bin/pileup_v0.5
+  prepend-path PATH ${appdir}/bin/bin/pileup_v0.5/ssaha2
+  prepend-path PATH ${appdir}/bin/bin

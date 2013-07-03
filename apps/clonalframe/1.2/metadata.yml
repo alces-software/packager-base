@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: ClonalFrame
+:license: GPLv2
+:summary: Inference of bacterial microevolution using multilocus sequence data
+:url: http://www.xavierdidelot.xtreemhost.com/clonalframe.htm
+:description: |
+  In a nutshell, ClonalFrame identifies the clonal relationships
+  between the members of a sample, while also estimating the
+  chromosomal position of homologous recombination events that have
+  disrupted the clonal inheritance.
+
+  ClonalFrame can be applied to any kind of sequence data, from a
+  single fragment of DNA to whole genomes. It is well suited for the
+  analysis of MLST data, where 7 gene fragments have been sequenced,
+  but becomes progressively more powerful as the sequenced regions
+  increase in length and number up to whole genomes. However, it
+  requires the sequences to be aligned. If you have genomic data that
+  is not aligned, we recommend using Mauve which produces alignment of
+  whole bacterial genomes in exactly the format required for analysis
+  with ClonalFrame.
+
+  The methods used in ClonalFrame are presented in the paper
+  "Inference of bacterial microevolution using multilocus sequence
+  data" by Didelot and Falush (2007), which is the appropriate
+  citation for this program.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Jul 03 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: ClonalFrame-1.2.tar.gz
+:src_dir: ClonalFrame
+:version: '1.2'
+# requires: qmake (distro version or other)
+:compilers:
+  gcc:
+:compile: |
+  qmake <%= redirect(:make) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -v bin/ClonalFrame <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp COPYING <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
