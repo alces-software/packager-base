@@ -17,6 +17,8 @@
   collections of third-party modules.
 :group: Languages
 :changelog: |
+  * Fri Jul  5 2013 - James Donohue <james.donohue@alces-software.com>
+    - Fixed residual references to python
   * Tue Jun 25 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added MyConfig.pm and associated configuration to allow per-user installation of libraries from CPAN
   * Fri Dec 14 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -75,8 +77,8 @@
   if { $::env(USER) != "root" } {
     if { [module-info mode load] } {
       # make the user libs base directory if it doesn't exist
-      if { ! [file exists "${python_user_base}"] } {
-        file mkdir "${python_user_base}"
+      if { ! [file exists "${perl_user_base}"] } {
+        file mkdir "${perl_user_base}"
       }
       # copy basic non-root distutils config file if one doesn't exist
       if { ! [file exists "${cpan_usercfg}"] } {
@@ -89,7 +91,7 @@
     append-path PERL5LIB ${perl_user_libs}/site_perl/${version}
     append-path PERL5LIB ${perl_user_libs}/site_perl/${version}/x86_64-linux
     prepend-path PATH ${perl_user_bin}
-    prepend-path MANPATH ${perl_user_bin}
+    prepend-path MANPATH ${perl_user_man}
   }
 
   append-path PERL5LIB ${perl_site_libs}/perl5
