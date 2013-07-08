@@ -23,6 +23,8 @@
   39: 1261-5.
 :group: Bioinformatics
 :changelog: |
+  * Mon Jul  8 2013 James Donohue <james.donohue@alces-software.com>
+    - Enable MPI support
   * Fri Jul  5 2013 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: PyCogent-1.5.3.tgz
@@ -34,9 +36,11 @@
 :requirements:
   :build: 
     - libs/numpy
+    - libs/mpi4py
     - apps/python
   :runtime: 
     - libs/numpy
+    - libs/mpi4py
     - apps/python
 :compile: |
   python setup.py build <%= redirect(:build) %>
