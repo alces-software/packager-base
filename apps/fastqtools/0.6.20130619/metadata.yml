@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: fastq-tools
+:license: MIT License
+:summary: Small utilities for working with fastq sequence files
+:url: https://github.com/dcjones/fastq-tools
+:description: |
+  A number of small and efficient programs to perform common tasks
+  with high throughput sequencing data in the FASTQ format. All of the
+  programs work with typical FASTQ files as well as gzipped FASTQ
+  files.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jul 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fastq-tools-0.6.20130619.tar.gz
+:src_dir: fastq-tools-63ab5aff4685ba7502fcc0c1a0045ce88a250af1
+:type: apps
+:version: '0.6.20130619'
+:compilers:
+  gcc:
+:compile: |
+  # Create m4/ directory if it doesn't exist otherwise autogen.sh fails
+  mkdir -p m4
+  ./autogen.sh <%= redirect(:autogen) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
