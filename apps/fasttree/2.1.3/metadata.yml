@@ -25,16 +25,19 @@
   (these are the same as PhyML 3's "SH-like local supports").
 :group: Bioinformatics
 :changelog: |
+  * Wed Jul 17 2013 James Donohue <james.donohue@alces-software.com>
+      - Change metadata to be more version- and compiler-agnostic 
   * Tue Jul 16 2013 James Donohue <james.donohue@alces-software.com>
       - First created
-:src: FastTree-2.1.3.c.sic
+:src: FastTree.c.sic
 :type: apps
 :version: '2.1.3'
 :compilers:
   gcc:
+    :compile_flags: '-Wall -O3 -finline-functions -funroll-loops'
 :compile: |
-  mv -v FastTree-2.1.3.c.sic FastTree.c <%= redirect(:compile) %>
-  gcc -Wall -O3 -finline-functions -funroll-loops -o FastTree -lm FastTree.c <%= redirect(:compile) %>
+  mv -v FastTree.c.sic FastTree.c <%= redirect(:compile) %>
+  $CC <%= compiler[:compile_flags] %> -o FastTree -lm FastTree.c <%= redirect(:compile) %>
 :install: |
   mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v FastTree <%= dest_dir %>/bin <%= redirect(:install) %>
