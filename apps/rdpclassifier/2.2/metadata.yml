@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: RDP Classifier
+:license: GPLv2
+:summary: Naive Bayesian classifier that can rapidly and accurately provides taxonomic assignments from domain to genus.
+:url: http://rdp-classifier.sourceforge.net/
+:description: |
+  The RDP Classifier is a naive Bayesian classifier which was
+  developed to provide rapid taxonomic placement based on rRNA
+  sequence data. The RDP Classifier can rapidly and accurately
+  classify bacterial 16s rRNA sequences into the new higher-order
+  taxonomy proposed by Bergey's Trust. It provides taxonomic
+  assignments from domain to genus, with confidence estimates for each
+  assignment. The RDP Classifier is not limited to using the bacterial
+  taxonomy proposed by the Bergey's Manual. It worked equally well
+  when trained on the NCBI taxonomy. The RDP Classifier likely can be
+  adapted to additional phylogenetically coherent bacterial
+  taxonomies.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jul 17 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: rdp_classifier_2.2.zip
+:src_dir: rdp_classifier_2.2
+:type: apps
+:version: 2.2
+:compilers:
+  noarch:
+:requirements:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  mkdir -p <%= dest_dir %>/{java,bin,share,doc}
+  cp -v *.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  # Main JAR looks for 3rd party JARs in 'lib' subdir relative to itself
+  cp -rv lib <%= dest_dir %>/java <%= redirect(:install) %>
+  cp -v COPYRIGHT README <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv docs <%= dest_dir %>/doc/java <%= redirect(:install) %>
+  cp -rv sampledata <%= dest_dir %>/share <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/rdpclassifier
+  #!/bin/bash
+  exec java `eval echo $RDPCLASSIFIER_JAVA_OPTS` -jar "<%= dest_dir %>/java/rdp_classifier-2.2.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/rdpclassifier
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 1g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+  setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}JAVA ${appdir}/java
+
+  prepend-path PATH ${appdir}/bin
