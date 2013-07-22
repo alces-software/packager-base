@@ -1,0 +1,45 @@
+---
+:schema: 1
+:title: tax2tree
+:license: GPL 
+:summary: Assists in decorating an existing taxonomy onto a phylogenetic tree with overlapping tip names
+:url: http://tax2tree.sourceforge.net/
+:description: |
+  tax2tree assists in decorating an existing taxonomy onto a
+  phylogenetic tree with overlapping tip names.
+
+  The tax2tree software package was developed in collaboration with
+  Greengenes for the purpose of transferring a taxonomy from one tree
+  to another. Specifically, the motivation was to reduce the manual
+  curation effort necessary for each release of Greengenes by
+  automating the decoration of taxonomy.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul 22 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: tax2tree-v1.0.tar.gz
+:src_dir: tax2tree-v1.0
+:type: apps
+:version: '1.0'
+:compilers:
+  noarch:
+:requirements:
+  :build: 
+    - apps/python
+    - apps/pycogent
+  :runtime: 
+    - apps/python
+    - apps/pycogent
+:compile: |
+  # No-op; this is a distribution of a python application.
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv -v <%= dest_dir %>/python/bin <%= dest_dir %> <%= redirect(:install) %>
+  cp -v scripts/reroot scripts/t2t_workflow <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path PATH ${appdir}/bin
