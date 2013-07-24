@@ -18,6 +18,8 @@
   taxonomies.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jul 24 2013 - James Donohue <james.donohue@alces-software.com>
+    - Added RDP_JAR_PATH environment variable for Qiime
   * Wed Jul 17 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: rdp_classifier_2.2.zip
@@ -62,5 +64,7 @@
   setenv ${appcaps}DOC ${appdir}/doc
   setenv ${appcaps}SHARE ${appdir}/share
   setenv ${appcaps}JAVA ${appdir}/java
+
+  setenv RDP_JAR_PATH ${appdir}/java/rdp_classifier-2.2.jar
 
   prepend-path PATH ${appdir}/bin
