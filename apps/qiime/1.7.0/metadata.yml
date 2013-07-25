@@ -42,6 +42,11 @@
     - apps/fasttree >= 2.1.3
     - apps/tax2tree >= 1.0
     # Also requires jre1.6.0_05
+    # NB Because Qiime uses PyCogent, it inherits PyCogent's support for
+    # MPI via libs/mpi4py (if installed). If mpi4py is in the PYTHONPATH, 
+    # some Qiime tools will give MPI_INIT errors unless they are run via
+    # mpi4run. PyCogent's loading of mpi4py can be disabled by setting 
+    # DONT_USE_MPI=1 before running any tools.
 :compile: |
   # Download matplotlib (only required for visualisation, but used in tutorial)
   python setup.py build <%= redirect(:build) %>
