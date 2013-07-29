@@ -1,0 +1,115 @@
+---
+:schema: 1
+:name: starcd
+:version: '4.20.006'
+:type: apps
+:title: STAR-CD
+:license: Commercial
+:summary: Computational Fluid Dynamics code that uses proprietary numerical schemes for steady and transient simulations
+:url: http://www.cd-adapco.com/products/star-cd
+:description: |
+  STAR-CD is a Computational Fluid Dynamics code that uses proprietary
+  numerical schemes for steady and transient simulations. It can
+  accept almost any mesh structure and/or cell shape making it ideal
+  for adaptive meshing. Other specialist options include rotating
+  systems, buoyancy-driven flows and combustion
+  modelling. User-supplied subroutines are also available
+:group: Engineering
+:changelog: |
+  * Mon Jul 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:params:
+  :license_file: "FlexLM license file path (in <port>@<server> format)"
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}ROOT ${appdir}
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv CDLMD_LICENSE_FILE <%= param('license_file') %>
+  setenv LM_LICENSE_FILE <%= param('license_file') %>
+
+  setenv STARDIR ${appdir}
+  setenv STARINI Default
+  setenv REMOTETASK ""
+  setenv REMOTECOPY ""
+  set flexlmdir ${appdir}/FLEXLM/11.9.1.0C
+  setenv FLEXLMTOP ${flexlmdir}
+  set hpmpidir NOHPMPI
+  setenv HPMPITOP ${hpmpidir}
+  set ibmmpidir ${appdir}/IBMMPI/8.3.0.2isv
+  setenv IBMMPITOP ${ibmmpidir}
+  set icedir ${appdir}/ICE/4.20.006
+  setenv ICETOP ${icedir}
+  set intelmpidir ${appdir}/INTELMPI/4.1.0.030
+  setenv INTELMPITOP ${intelmpidir}
+  set lamdir NOLAM
+  setenv LAMTOP ${lamdir}
+  set mpichdir NOMPICH
+  setenv MPICHTOP ${mpichdir}
+  set openmpidir ${appdir}/OPENMPI/1.6.2
+  setenv OPENMPITOP ${openmpidir}
+  set pcmpidir ${appdir}/PCMPI/8.1.1.0
+  setenv PCMPITOP ${pcmpidir}
+  setenv PEMFC NOPEMFC
+  set prostardir ${appdir}/PROSTAR/4.20.001
+  setenv PROSTARTOP ${prostardir}
+  setenv RUNTIME NONE
+  setenv SOFC NOSOFC
+  setenv STARCDMAN ${appdir}/STARCDMAN/4.20.021/generic
+  setenv STARDATA ${appdir}/STARDATA/3.00.002/generic
+  set stardir ${appdir}/STAR/4.20.006
+  setenv STARTOP ${stardir}
+  setenv STARNET ${appdir}/STARNET/3.00.024/generic
+  setenv STARPLUGIN_AERO NOSTARPLUGIN_AERO
+  setenv STARPLUGIN_AFTER ${appdir}/AFTER/4.10.012
+  setenv STARPLUGIN_DARSCFD ${appdir}/DARSCFD/2.05.005
+  setenv STARPLUGIN_DARSTABLE ${appdir}/DARSTABLE/4.20.006
+  setenv STARPLUGIN_DARSTIF ${appdir}/DARSTIF/2.08.011
+  setenv STARPLUGIN_DEMCFD NOSTARPLUGIN_DEMCFD
+  setenv STARPLUGIN_DOLFA NOSTARPLUGIN_DOLFA
+  setenv STARPLUGIN_GTPOWER ${appdir}/STARGTPOWER/7.02.001
+  setenv STARPLUGIN_ICE ${appdir}/STARICE/4.20.006
+  setenv STARPLUGIN_PEMFC NOSTARPLUGIN_PEMFC
+  setenv STARPLUGIN_SOFC NOSTARPLUGIN_SOFC
+  setenv STARPLUGIN_SOOTNOX ${appdir}/SOOTNOX/1.04.005
+  setenv STARPLUGIN_VTM NOSTARPLUGIN_VTM
+  setenv STARPLUGIN_WAVE ${appdir}/WAVE/2.14.004
+  setenv STARFLAGS ""
+  setenv ABSOFT /opt/absoft
+  setenv INTEL /opt/intel
+  setenv PGI /opt/pgi
+  setenv RAMPICH /usr/mpich/mpich-1.2.6-pgi614
+  setenv XTMPI /opt/cray/mpt/default/gni/mpich2-gnu/47/lib
+  setenv FLEXLM ${flexlmdir}/linux64_2.6-x86-glibc_2.3.4
+  setenv HPMPI ${hpmpidir}/linux64_2.4-x86-glibc_2.2.5
+  setenv IBMMPI ${ibmmpidir}/linux64_2.6-x86-glibc_2.3.4
+  setenv INTELMPI ${intelmpidir}/linux64_2.6-x86_glibc_2.3.4
+  setenv ICE ${icedir}/linux64_2.6-x86-glibc_2.3.4-gcc_4.4.3-ifort_11.0
+  setenv LAMHOME ${lamdir}/linux64_2.4-gcc_3.2.2-glibc_2.2.5-dso
+  setenv MPICH ${mpichdir}/linux64_2.4-gcc_3.2.2-glibc_2.2.5-dso
+  setenv OPENMPI ${openmpidir}/linux64_2.6-gcc_3.4.6-glibc_2.3.4
+  setenv PCMPI ${pcmpidir}/linux64_2.6-x86-glibc_2.3.4
+  setenv PROSTAR ${prostardir}/linux64_2.6-x86-glibc_2.3.4-gcc_4.4.3-ifort_11.0
+  setenv STAR ${stardir}/linux64_2.6-ifort_13.1-glibc_2.5
+
+  setenv PNP_JOBSTAGE 1
+
+  set-alias exit_on_error {echo; echo "*** JOB STAGE $PNP_JOBSTAGE COMPLETED ***"; echo; if [ "$1" != 0 ]; then echo "***ERROR*** Exit code $1 received."; exit $1; fi; PNP_JOBSTAGE=`expr $PNP_JOBSTAGE + 1`; export PNP_JOBSTAGE}
+
+  unsetenv PNP_MANAGER
+  unsetenv PNP_RMINIT
+  unsetenv PNP_STARNET
+  unsetenv PNP_RESOURCE
+  unsetenv PNP_JOBID
+  unsetenv PNP_NODES
+  unsetenv PNP_CHKTIME
+  unsetenv PNP_CHKDIR
+  unsetenv PNP_TRACKER
+  unsetenv PNP_AUTORESTART
+  unsetenv PNP_RESUBMIT
+  unsetenv PNP_RESTARTED
+
+  set-alias setstar "${appdir}/etc/starenv -sh $$ -menu; . /tmp/starenv.$$; rm -f /tmp/starenv.$$"
+
+  prepend-path PATH ${appdir}/bin
