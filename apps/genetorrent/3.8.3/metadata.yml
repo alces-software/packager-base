@@ -1,0 +1,45 @@
+---
+:schema: 1
+:title: GeneTorrent
+:license: BSD License
+:summary: Transfer genomic data reliably across a network
+:url: https://cghub.ucsc.edu/software/downloads.html
+:description: |
+  GeneTorrent is a file transfer client application designed for the
+  optimal transfer of genomic data across a computer network. File
+  transfers using GeneTorrent are designed to be authenticated,
+  secure, reliable, and efficient.
+:group: Bioinformatics
+:changelog: |
+  * Fri Aug  2 2013 - James Donohue <james.donohue@alces-software.com>
+    - Updated to latest version 3.8.3 and revised build process
+  * Thu Nov 15 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: GeneTorrent-3.8.3.tar.gz
+:src_dir: GeneTorrent-3.8.3
+:type: apps
+:version: '3.8.3'
+# depends on xqilla
+:requirements:
+  # Pin to 1.49.0 of boost as 1.51.0 series does not contain required header files (haven't checked 1.50.0)
+  :build: 
+    - apps/python
+    - libs/boost ~> 1.49.0
+  :runtime: 
+    - apps/python
+    - libs/boost ~> 1.49.0
+:compilers:
+  gcc:
+:compile: |
+  ./configure --with-boost=${BOOSTDIR} --prefix=<%= dest_dir %> CFLAGS="-g -O2 -Wall" CXXFLAGS="-g -O2 -Wall" <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
