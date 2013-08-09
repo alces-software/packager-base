@@ -1,0 +1,237 @@
+--- metis-5.0pre2.orig/GKlib/trunk/dlmalloc.c	2007-04-06 15:37:41.000000000 +0100
++++ metis-5.0pre2/GKlib/trunk/dlmalloc.c	2012-11-21 12:19:35.109128545 +0000
+@@ -70,18 +70,21 @@
+ #endif /* LACKS_FCNTL_H */
+ #endif /* HAVE_MMAP */
+ #if HAVE_MORECORE
+-#ifndef LACKS_UNISTD_H
++
++// #ifndef LACKS_UNISTD_H
+ #include <unistd.h>     /* for sbrk */
+-#else /* LACKS_UNISTD_H */
+-#if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
+-extern void*     sbrk(ptrdiff_t);
+-#endif /* FreeBSD etc */
+-#endif /* LACKS_UNISTD_H */
++// #else /* LACKS_UNISTD_H */
++// #if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
++// extern void*     sbrk(ptrdiff_t);
++// #endif /* FreeBSD etc */
++// #endif /* LACKS_UNISTD_H */
++
++
+ #endif /* HAVE_MMAP */
+ 
+ /* START of GK additions */
+ #include <stddef.h>
+-extern void *sbrk(ptrdiff_t increment);
++// extern void *sbrk(ptrdiff_t increment);
+ /* END of GK additions */
+ 
+ 
+diff -ur metis-5.0pre2.orig/GKlib/trunk/error.c metis-5.0pre2/GKlib/trunk/error.c
+--- metis-5.0pre2.orig/GKlib/trunk/error.c	2007-03-06 23:11:52.000000000 +0000
++++ metis-5.0pre2/GKlib/trunk/error.c	2012-11-21 12:19:35.110093630 +0000
+@@ -16,11 +16,19 @@
+ #include <GKlib.h>
+ 
+ 
++
+ /* This is the jmp_buf for the graceful exit in case of severy error */
++#ifdef __linux__
+ __thread jmp_buf gk_return_to_entry;
++#else
++jmp_buf gk_return_to_entry;
++#endif
+ 
+ /* These are the holders of the old singal handlers for the trapped signals */
+ typedef void (*sighandler_t)(int);  /* this should be in signals.h, but is not there */
++
++
++#ifdef __linux__
+ static __thread sighandler_t old_SIGFPE_handler;
+ static __thread sighandler_t old_SIGILL_handler;
+ static __thread sighandler_t old_SIGSEGV_handler;
+@@ -31,6 +39,22 @@
+ static __thread sighandler_t old_SIGMEM_handler;  /* Custom signal */
+ static __thread sighandler_t old_SIGERR_handler;  /* Custom signal */
+ 
++#else
++
++static  sighandler_t old_SIGFPE_handler;
++static  sighandler_t old_SIGILL_handler;
++static  sighandler_t old_SIGSEGV_handler;
++#ifndef WIN32
++static  sighandler_t old_SIGBUS_handler;
++#endif
++static  sighandler_t old_SIGABRT_handler;
++static  sighandler_t old_SIGMEM_handler;  /* Custom signal */
++static  sighandler_t old_SIGERR_handler;  /* Custom signal */
++
++#endif
++
++
++
+ 
+ /*************************************************************************
+ * This function prints an error message and exits 
+@@ -125,7 +149,11 @@
+ /**************************************************************************/
+ char *gk_strerror(int errnum)
+ {
++#ifdef __linux__
+   static __thread char buf[1024];
++#else
++  static char buf[1024];
++#endif
+ 
+   strerror_r(errnum, buf, 1024);
+ 
+diff -ur metis-5.0pre2.orig/GKlib/trunk/gk_externs.h metis-5.0pre2/GKlib/trunk/gk_externs.h
+--- metis-5.0pre2.orig/GKlib/trunk/gk_externs.h	2007-03-27 22:17:33.000000000 +0100
++++ metis-5.0pre2/GKlib/trunk/gk_externs.h	2012-11-21 12:26:42.073988378 +0000
+@@ -10,12 +10,19 @@
+ #ifndef _GK_EXTERNS_H_
+ #define _GK_EXTERNS_H_
+ 
++/* #include <metis.h> */
+ 
+ /*************************************************************************
+ * Extern variable definition. Hopefully, the __thread makes them thread-safe.
+ **************************************************************************/
+ #ifndef _GK_ERROR_C_
++
++#ifdef __linux__
+ extern __thread jmp_buf gk_return_to_entry; /* declared in error.c */
++#else
++extern jmp_buf gk_return_to_entry; /* declared in error.c */
++#endif
++
+ #endif
+ 
+ #endif
+diff -ur metis-5.0pre2.orig/GKlib/trunk/GKlib.h metis-5.0pre2/GKlib/trunk/GKlib.h
+--- metis-5.0pre2.orig/GKlib/trunk/GKlib.h	2007-04-07 18:53:07.000000000 +0100
++++ metis-5.0pre2/GKlib/trunk/GKlib.h	2012-11-21 12:19:35.109128545 +0000
+@@ -18,7 +18,7 @@
+ #if defined(__ICC)
+ #define __ICC__
+ #endif
+-
++#include <signal.h>
+ 
+ #include <gk_arch.h> /*!< This should be here, prior to the includes */
+ 
+@@ -37,7 +37,7 @@
+ #include <time.h>
+ #include <string.h>
+ #include <limits.h>
+-#include <signal.h>
++
+ #include <setjmp.h>
+ #include <assert.h>
+ #include <sys/stat.h>
+diff -ur metis-5.0pre2.orig/GKlib/trunk/Makefile metis-5.0pre2/GKlib/trunk/Makefile
+--- metis-5.0pre2.orig/GKlib/trunk/Makefile	2007-03-27 22:34:29.000000000 +0100
++++ metis-5.0pre2/GKlib/trunk/Makefile	2012-11-21 12:23:47.079988285 +0000
+@@ -60,7 +60,7 @@
+       #Compiler information
+       CC = gcc
+       OPTFLAGS = -O6
+-      COPTIONS = -DLINUX -D_FILE_OFFSET_BITS=64 -Wall -std=c99 -pedantic
++      COPTIONS = -DLINUX -D_FILE_OFFSET_BITS=64 -Wall -std=c99 -pedantic -fPIC
+ 
+       #Linker information
+       LDOPTIONS =
+diff -ur metis-5.0pre2.orig/GKlib/trunk/memory.c metis-5.0pre2/GKlib/trunk/memory.c
+--- metis-5.0pre2.orig/GKlib/trunk/memory.c	2007-04-07 21:06:19.000000000 +0100
++++ metis-5.0pre2/GKlib/trunk/memory.c	2012-11-21 12:19:35.109128545 +0000
+@@ -17,7 +17,11 @@
+ 
+ #ifdef GKMSPACE
+ /* This is the mspace for all the gk_malloc() calls. This is a thread local allocation */
++#ifdef __linux__
+ static __thread mspace gk_mspace = 0;
++#else
++static  mspace gk_mspace = 0;
++#endif
+ 
+ /* This function is mostly for debugging */
+ void gk_printmspaceaddr() { printf("mspace: %p\n", (void *)gk_mspace); }
+@@ -142,6 +146,7 @@
+ **************************************************************************/
+ void *gk_malloc(size_t nbytes, char *msg)
+ {
++  return malloc(nbytes);
+   void *ptr;
+ 
+   if (nbytes == 0)
+@@ -185,6 +190,7 @@
+ **************************************************************************/
+ void *gk_realloc(void *oldptr, size_t nbytes, char *msg)
+ {
++  return realloc(oldptr, nbytes);
+   void *ptr;
+ 
+   if (nbytes == 0) {
+@@ -234,22 +240,14 @@
+   void **ptr;
+ 
+   if (*ptr1 != NULL)
+-#ifdef GKMSPACE
+-    mspace_free(gk_mspace, *ptr1);
+-#else
+-    dlfree(*ptr1);
+-#endif
++    free(*ptr1);
+   *ptr1 = NULL;
+ 
+   va_start(plist, ptr1);
+ 
+   while ((ptr = va_arg(plist, void **)) != LTERM) {
+     if (*ptr != NULL)
+-#ifdef GKMSPACE
+-      mspace_free(gk_mspace, *ptr);
+-#else
+-      dlfree(*ptr);
+-#endif
++      free(*ptr);
+     *ptr = NULL;
+   }
+ 
+Only in metis-5.0pre2.orig/GKlib/trunk: test
+diff -ur metis-5.0pre2.orig/libmetis/metislib.h metis-5.0pre2/libmetis/metislib.h
+--- metis-5.0pre2.orig/libmetis/metislib.h	2007-04-06 15:34:23.000000000 +0100
++++ metis-5.0pre2/libmetis/metislib.h	2012-11-21 11:34:57.907957701 +0000
+@@ -45,6 +45,6 @@
+ 
+ 
+ #if defined(COMPILER_GCC)
+-extern char* strdup (const char *);
++extern char *(strdup)(const char *);
+ #endif
+ 
+diff -ur metis-5.0pre2.orig/Makefile.in metis-5.0pre2/Makefile.in
+--- metis-5.0pre2.orig/Makefile.in	2007-04-08 05:01:04.000000000 +0100
++++ metis-5.0pre2/Makefile.in	2012-11-21 10:57:32.522957014 +0000
+@@ -91,7 +91,7 @@
+       #Compiler information
+       CC = gcc
+       OPTFLAGS = -O6 
+-      COPTIONS += -DLINUX -D_FILE_OFFSET_BITS=64 
++      COPTIONS = -DUNIX -pedantic -std=gnu99 -DLINUX -D_FILE_OFFSET_BITS=64 -fPIC
+     endif
+   endif
+ 
+Only in metis-5.0pre2: make.out
+diff -ur metis-5.0pre2.orig/programs/metisbin.h metis-5.0pre2/programs/metisbin.h
+--- metis-5.0pre2.orig/programs/metisbin.h	2007-04-06 15:34:23.000000000 +0100
++++ metis-5.0pre2/programs/metisbin.h	2012-11-21 12:21:08.780098103 +0000
+@@ -44,6 +44,6 @@
+ 
+ 
+ #if defined(COMPILER_GCC)
+-extern char* strdup (const char *);
++extern char *(strdup)(const char *);
+ #endif
+ 

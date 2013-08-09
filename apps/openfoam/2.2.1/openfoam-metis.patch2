@@ -1,0 +1,20 @@
+--- src.orig/OpenFOAM-2.2.1.orig/src/parallel/decompose/metisDecomp/metisDecomp.C	2013-06-11 10:33:58.476257191 +0100
++++ src/OpenFOAM-2.2.1/src/parallel/decompose/metisDecomp/metisDecomp.C	2013-08-08 10:06:21.691789040 +0100
+@@ -328,7 +328,7 @@
+     }
+ 
+     CompactListList<label> cellCells;
+-    calcCellCells(mesh, identity(mesh.nCells()), mesh.nCells(), cellCells);
++    calcCellCells(mesh, identity(mesh.nCells()), mesh.nCells(), true, cellCells);
+ 
+     // Decompose using default weights
+     labelList decomp;
+@@ -362,7 +362,7 @@
+     //   xadj(celli) : start of information in adjncy for celli
+ 
+     CompactListList<label> cellCells;
+-    calcCellCells(mesh, agglom, agglomPoints.size(), cellCells);
++    calcCellCells(mesh, agglom, agglomPoints.size(), true, cellCells);
+ 
+     // Decompose using default weights
+     labelList finalDecomp;
