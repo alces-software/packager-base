@@ -1,0 +1,62 @@
+---
+:schema: 1
+:name: intelcp-fortran
+:version: '2013.1.117'
+:type: ext
+:title: Intel Fortran Composer XE
+:license: Commercial
+:summary: High performance Fortran compiler and tools
+:url: http://software.intel.com/en-us/intel-composer-xe/
+:description: |
+  High Performance MPI Hybrid Cluster Development Suite to Scale
+  Forward & Scale Faster.
+
+  * Industry Leading Low Latency MPI Library
+  * High Performance C++ and Fortran Compilers
+  * Native Profiling and Tuning of MPI Applications Now Includes
+    Node Level Analysis
+  * Scale Up To 120K MPI Processes
+  * High Performance Advanced Parallel Programming Models For
+    Multicore & Many-core Architectures
+  * Rapid Performance Profiling for Identification of Application
+    Hotspots
+  * Threading and Memory Correctness Analysis at Every Node
+  * Innovative Threading Assistant Analyzes and Identifies Areas of
+    Code for Parallelization
+
+:group: Compilers
+:changelog: |
+  * Fri Aug 9 2013 - Wil Mayers <wil.mayers@alces-software.com>
+    - First created
+:compiler: 'bin'
+:pkg_type: 'apps'
+:modules:
+  - :type: compilers
+    :name: intelcp-fortran
+    :content:
+      :compiler: |
+        setenv INTELROOT ${appdir}
+        setenv F77 ifort
+        setenv FC ifort
+        setenv F90 ifort
+        setenv F95 ifort
+        setenv BLASLIB ${appdir}/mkl/lib/intel64/libmkl_core.a
+        #setenv INTEL_LICENSE_FILE port@hostname
+
+        setenv ${appcaps}DIR ${appdir}
+        setenv ${appcaps}BIN ${appdir}/bin
+        setenv ${appcaps}LIB ${appdir}/lib/intel64
+        setenv ${appcaps}INCLUDE ${appdir}/include
+        setenv ${appcaps}MAN ${appdir}/man/en_US
+
+        prepend-path PATH ${appdir}/bin
+        prepend-path LD_LIBRARY_PATH ${appdir}/lib/intel64
+        prepend-path MANPATH ${appdir}/man/en_US
+      :runtime: |
+        prepend-path LD_LIBRARY_PATH ${appdir}/lib/intel64
+  - :type: libs
+    :name: intelcp-fortran-mkl
+    :tag: bin
+    :content: |
+      set mkldir ${appdir}/mkl
+      setenv INTELMKLDIR ${mkldir}
