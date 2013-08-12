@@ -1,0 +1,45 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: A short read de novo assembly tool
+:url: http://soap.genomics.org.cn/
+:description: |
+  SOAPdenovo is a novel short-read assembly method that can build a de
+  novo draft assembly for the human-sized genomes. The program is
+  specially designed to assemble Illumina GA short reads. It creates
+  new opportunities for building reference sequences and carrying out
+  accurate analyses of unexplored genomes in a cost effective way.
+
+  SOAPdenovo aims for large plant and animal genomes, although it also
+  works well on bacteria and fungi genomes. It runs on 64-bit/32-bit
+  Linux/MAC OS systems with a minimum of 5G physical memory. For big
+  genomes like human, about 150 GB memory would be required.
+:group: Bioinformatics
+:changelog: |
+  * Mon Aug 12 2013 - Steve Norledge
+    - Updated to 2r240
+  * Mon Feb 18 2013 - Steve Norledge
+    - Updated to 2r223
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Feb 23 2011 Steve Norledge
+    - First created
+:src: SOAPdenovo2-src-r240.tgz
+:src_dir: SOAPdenovo2-src-r240
+:type: apps
+:version: '2r240'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  mkdir <%= dest_dir %>/doc
+  cp -rv SOAPdenovo-127mer <%= dest_dir %>/bin/. <%= redirect(:install) %>
+  cp -rv SOAPdenovo-63mer <%= dest_dir %>/bin/. <%= redirect(:install) %>
+  cp -v LICENSE MANUAL <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
