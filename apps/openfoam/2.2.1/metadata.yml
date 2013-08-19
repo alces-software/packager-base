@@ -19,6 +19,8 @@
     - libs/scotch
     - libs/mgridgen
 :changelog: |
+  * Mon Aug 19 2013 - James Donohue <james.donohue@alces-software.com>
+    - Fixed typo in compiler check output
   * Mon Aug  5 2013 - James Donohue <james.donohue@alces-software.com>
     - Bumped to v2.2.1
     - Removed incomplete ParaView setup
@@ -62,7 +64,7 @@
   gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
   gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
   if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "5") ]]; then 
-    echo GCC version is $gcc_major.$gcc.minor but OpenFOAM requires at least v4.5.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    echo GCC version is $gcc_major.$gcc_minor but OpenFOAM requires at least v4.5.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
     exit 1
   fi
 
