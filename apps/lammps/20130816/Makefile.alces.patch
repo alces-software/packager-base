@@ -1,0 +1,15 @@
+--- src/MAKE/Makefile.openmpi.orig	2013-08-14 10:19:55.957471921 +0100
++++ src/MAKE/Makefile.openmpi	2013-08-14 11:31:07.894944916 +0100
+@@ -49,9 +49,9 @@
+ # PATH = path for FFT library
+ # LIB = name of FFT library
+ 
+-FFT_INC =       -DFFT_FFTW3
+-FFT_PATH = 
+-FFT_LIB =	-lfftw
++FFT_INC =       -DFFT_FFTW3 -I$(FFTW3_DOUBLEINCLUDE)
++FFT_PATH =      -L$(FFTW3_DOUBLELIB)
++FFT_LIB =	-lfftw3
+ 
+ # JPEG library, OPTIONAL
+ # see discussion in doc/Section_start.html#2_2 (step 7)
