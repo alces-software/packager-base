@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: BIONJ
+:license: Free for academic use; registration required; see http://bit.ly/172b8Aa
+:summary: An improved version of the NJ algorithm based on a simple model of sequence data
+:url: http://www.atgc-montpellier.fr/bionj/
+:description: |
+  A distance based phylogeny reconstruction algorithm. BIONJ is well
+  suited for distances estimated from DNA or protein sequences. BIONJ
+  has better topological accuracy than NJ in all evolutionary
+  conditions; its superiority becomes important when the substitution
+  rates are high and varying among lineages. However, BIONJ and NJ
+  trees are often close or identical, notably when the number of taxa
+  is low. BIONJ retains the speed of NJ and can be applied to very
+  large data sets (> 1000 taxa). BIONJ can be run on several matrices
+  to build bootstrap trees. As usual, distances should be corrected,
+  e.g. using DNADIST or PROTDIST from PHYLIP. 
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug 20 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: BIONJ.c.sic
+:src_dir: .
+:version: '1'
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :sourcefile: "Path or URL to BIONJ.c source file (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('sourcefile') != 'skip' %>
+    <% if URI.parse(param('sourcefile')).scheme.nil? %>
+      cp <%= param('sourcefile') %> <%= source('BIONJ.c.sic') %>
+    <% else %>
+      wget -O <%= source('BIONJ.c.sic') %> <%= param('sourcefile') %>
+    <% end %>
+  <% end %>
+:compile: |
+  # Using same name as in distributed binaries for compatibility
+  mv -v BIONJ.c.sic BIONJ.c
+  gcc -o BIONJ_linux BIONJ.c <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v BIONJ_linux <%= dest_dir %>/bin <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
