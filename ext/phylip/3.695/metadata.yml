@@ -1,0 +1,69 @@
+---
+:schema: 1
+:title: PHYLIP
+:license: Free for non-commercial use; registration required; see http://bit.ly/19vgpAI
+:summary: A free package of programs for inferring phylogenies
+:url: http://evolution.gs.washington.edu/phylip.html
+:description: |
+  PHYLIP (the PHYLogeny Inference Package) is a package of programs
+  for inferring phylogenies (evolutionary trees). It is available free
+  over the Internet, and written to work on as many different kinds of
+  computer systems as possible. The source code is distributed (in C),
+  and executables are also distributed. In particular,
+  already-compiled executables are available for Windows
+  (95/98/NT/2000/me/xp/Vista), Mac OS X, and Linux systems. Older
+  executables are also available for Mac OS 8 or 9 systems. Complete
+  documentation is available on documentation files that come with the
+  package.
+
+  Methods that are available in the package include parsimony,
+  distance matrix, and likelihood methods, including bootstrapping and
+  consensus trees. Data types that can be handled include molecular
+  sequences, gene frequencies, restriction sites and fragments,
+  distance matrices, and discrete characters.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug 20 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: phylip-3.695.tar.gz
+:src_dir: phylip-3.695
+:version: '3.695'
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to PHYLIP tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('phylip-3.695.tar.gz') %>
+  <% else %>
+    wget -O <%= source('phylip-3.695.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  cd src
+  mv -v Makefile.unx Makefile <%= redirect(:make) %>
+  make install <%= redirect(:make) %>
+  cd ..
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -Rv exe/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv doc phylip.html <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/doc
+
+       prepend-path PATH ${appdir}/bin
