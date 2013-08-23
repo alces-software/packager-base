@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: CASTEP
+:license: Free for UK academic use; license required; see http://www.castep.org/CASTEP/GettingCASTEP
+:summary: A leading code for calculating the properties of materials from first principles
+:url: http://www.castep.org/CASTEP/CASTEP
+:description: |
+  CASTEP is a full-featured materials modelling code based on a
+  first-principles quantum mechanical description of electrons and
+  nuclei. It uses the robust methods of a plane-wave basis set and
+  pseudopotentials.
+
+  The code is developed by the Castep Developers Group (CDG) who are
+  all UK based academics.
+:type: apps
+:group: Physics
+:changelog: |
+  * Thu Aug 22 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: CASTEP-6.11.tar.gz
+:src_dir: CASTEP-6.11
+:version: '6.11'
+:type: ext
+:pkg_type: apps
+:patches:
+  - Makefile.patch
+:requirements:
+  :build:
+    - libs/fftw3_double
+    - mpi/openmpi
+  :runtime:
+    - libs/fftw3_double
+    - mpi/openmpi
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to CASTEP tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('CASTEP-6.11.tar.gz') %>
+    <% else %>
+      wget -O <%= source('CASTEP-6.11.tar.gz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  mkdir -p obj/`bin/arch -a`
+  echo $FFTW3_DOUBLELIB > obj/`bin/arch -a`/fftlibdir.fftw3
+  make INSTALL_DIR=<%= dest_dir %>/bin FFT=fftw3 COMMS_ARCH=mpi <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  make INSTALL_DIR=<%= dest_dir %>/bin FFT=fftw3 COMMS_ARCH=mpi <%= redirect(:make) %> install install-tools <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin

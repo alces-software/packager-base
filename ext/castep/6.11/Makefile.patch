@@ -1,0 +1,12 @@
+--- Makefile.orig	2013-08-23 17:54:32.330232580 +0100
++++ Makefile	2013-08-23 17:54:41.579232499 +0100
+@@ -383,8 +383,7 @@
+ CP      := cp
+ 
+ $(OBJ_DIR)/exists:
+-	if [ -d $(OBJ_DIR) ]; then mv  $(OBJ_DIR)  $(OBJ_DIR).bak; fi
+-	mkdir $(OBJ_DIR)  $(OBJ_DIR)/dependencies
++	mkdir $(OBJ_DIR)/dependencies
+ 	$(CP) obj/Makefile $(OBJ_DIR)
+ 	$(CP) obj/platforms/$(BASE_ARCH).mk  obj/$(ARCH).mk
+ 	touch $(OBJ_DIR)/exists
