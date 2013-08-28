@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: GMAP/GSNAP
+:license: MIT License
+:summary: Genomic mapping and alignment and short-read nucleotide alignment programs 
+:url: http://research-pub.gene.com/gmap
+:description: |
+  GMAP: A Genomic Mapping and Alignment Program for mRNA and EST
+  Sequences, and GSNAP: Genomic Short-read Nucleotide Alignment
+  Program
+:group: Bioinformatics
+:changelog: |
+  * Wed Aug 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest release, 2013-08-19
+  * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to lates release, 2012-11-21
+    - Prune empty share directory
+  * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gmap-gsnap-2013-08-19.tar.gz
+:src_dir: gmap-2013-08-19
+:type: apps
+:version: '20130819'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  rmdir <%= dest_dir %>/share
+  cp -v AUTHORS COPYING ChangeLog README <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
