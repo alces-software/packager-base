@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: DARWIN
+:license: NONFREE - requires licence acceptance; see http://bit.ly/18HULbs
+:summary: Data Analysis and Retrieval With Indexed Nucleotide/peptide sequences
+:url: http://www.cbrg.ethz.ch/darwin
+:description: |
+  Darwin stands for Data Analysis and Retrieval With Indexed
+  Nucleotide/peptide sequences.
+
+  Darwin is a programming environment with its own, modern language
+  and a growing library of functions for sequence management and
+  analysis, statistics, numerics, graphics, parallel execution and
+  more.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Aug 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added version detection and installation sections
+  * Tue Aug 20 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: darwin.linux64.tar.gz
+:src_dir: darwin
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to DARWIN tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('darwin.linux64.tar.gz') %>
+  <% else %>
+    wget -O <%= source('darwin.linux64.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  # determine what version number to use by inspecting build time of binary
+  cat <<-EOF
+    :version: '<%= File.stat(File.join(src_dir,'darwin')).mtime.strftime('%Y%m%d') %>'
+  EOF
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -p darwin <%= dest_dir %>/bin
+  cp -r lib <%= dest_dir %>/lib
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
