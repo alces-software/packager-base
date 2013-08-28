@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: DL_POLY
+:license: NONFREE - requires licence acceptance; see http://j.mp/15jgh2f
+:summary: General purpose classical molecular dynamics (MD) simulation
+:url: http://www.stfc.ac.uk/CSE/randd/ccg/software/DL_POLY/25526.aspx
+:description: |
+  DL_POLY_4 general design provides scalable performance from a single
+  processor workstation to a high performance parallel computer.  It
+  is supplied in source form under licence and can be compiled as a
+  serial application code, using only a Fortran90 compiler, or as a
+  parallel application code, provided an MPI2 instrumentation is
+  available on the parallel machine.
+:type: apps
+:group: Chemistry
+:changelog: |
+  * Wed Aug 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: dl_poly.tar.gz
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:requirements:
+  :build: mpi/openmpi
+  :runtime: mpi/openmpi
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to DL_POLY tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('dl_poly.tar.gz') %>
+  <% else %>
+    wget -O <%= source('dl_poly.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  # determine what version number to use by inspecting name of subdirectory
+  dl_poly_version=$(echo dl_poly_* | cut -f3 -d'_')
+  cat <<-EOF
+    :version: '$dl_poly_version'
+  EOF
+:compile: |
+  cd dl_poly_*
+  cp build/Makefile_MPI source/Makefile
+  cd source
+  make hpc <%= redirect(:build) %>
+  cd ../java
+  ./build
+:install: |
+  cd dl_poly_*
+  cp -Rv * <%= dest_dir %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/execute
+
+       prepend-path PATH ${appdir}/execute
