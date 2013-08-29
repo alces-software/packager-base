@@ -40,8 +40,8 @@
   for a in src/*.pl src/Toolbox/*.pl; do
     sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
     sed -e 's|\.\./bin/|$ENV{"HLAIMPBEBIN"}/|g' -i $a
-    sed -e 's|\.\./data/|$ENV{"HLAIMPBE_USERDATA"}/|g' -i $a
-    sed -e 's|\.\./tmp2/|$ENV{"HLAIMPBE_USERTMP"}/|g' -i $a
+    sed -e "s|'\.\./data/'|\"\$ENV{\\\\\"HLAIMPBE_USERDATA\\\\\"}/\"|g" -i $a
+    sed -e "s|'\.\./tmp2/'|\"\$ENV{\\\\\"HLAIMPBE_USERTMP\\\\\"}/\"|g" -i $a
   done
 :install: |
   mkdir <%= dest_dir %>/bin
