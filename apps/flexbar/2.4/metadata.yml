@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: Flexbar
+:license: GPLv3
+:summary: Flexible barcode and adapter removal for sequencing platforms
+:url: http://sourceforge.net/p/flexbar/wiki/Manual/
+:description: |
+  Flexbar is a software to preprocess high-throughput sequencing data
+  efficiently. It demultiplexes barcoded runs and removes adapter
+  sequences. Moreover, trimming and filtering features are
+  provided. Flexbar increases mapping rates and improves genome and
+  transcriptome assemblies. It supports next-generation sequencing
+  data from Illumina, Roche 454, and the SOLiD platform. Recognition
+  is based on exact overlap sequence alignment.
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: flexbar_v2.4_src.tgz
+:src_dir: flexbar_v2.4_src
+:type: apps
+:version: '2.4'
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - libs/tbb
+    - libs/seqan
+  :runtime:
+    - libs/tbb
+:patches:
+  - gridware-tbb-seqan.patch1
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp build/flexbar <%= dest_dir %>/bin
+  cp -R test <%= dest_dir %>
+  cp README.txt <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

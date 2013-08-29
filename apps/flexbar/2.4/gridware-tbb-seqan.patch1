@@ -1,0 +1,31 @@
+--- flexbar_v2.4_src/src/CMakeLists.txt.orig	2013-08-29 18:53:15.786679638 +0100
++++ flexbar_v2.4_src/src/CMakeLists.txt	2013-08-29 18:53:20.589914248 +0100
+@@ -3,6 +3,28 @@
+ # include_directories( ${FLEXBAR_SOURCE_DIR}/include )
+ # link_directories( ${FLEXBAR_SOURCE_DIR}/lib )
+ 
++set(TBB_INCLUDE_DIR $ENV{TBBINCLUDE} CACHE FILEPATH "Path to tbb includes")
++set(TBB_LIBRARY_DIR $ENV{TBBLIB} CACHE FILEPATH "Path to tbb libs")
++
++if(NOT EXISTS ${TBB_INCLUDE_DIR}/tbb/pipeline.h)
++  message(SEND_ERROR "Can't find tbb/pipeline.h in ${TBB_INCLUDE_DIR}")
++endif()
++
++if(NOT EXISTS ${TBB_LIBRARY_DIR}/libtbb.so)
++  message(SEND_ERROR "Can't find libtbb.so in ${TBB_LIBRARY_DIR}")
++endif()
++
++include_directories(${TBB_INCLUDE_DIR})
++link_directories(${TBB_LIBRARY_DIR})
++
++set(SEQAN_INCLUDE_DIR $ENV{SEQANINCLUDE} CACHE FILEPATH "Path to seqan includes")
++
++if(NOT EXISTS ${SEQAN_INCLUDE_DIR}/seqan/basic.h)
++  message(SEND_ERROR "Can't find seqan/basic.h in ${SEQAN_INCLUDE_DIR}")
++endif()
++
++include_directories(${SEQAN_INCLUDE_DIR})
++
+ add_executable( flexbar Flexbar.cpp )
+ target_link_libraries( flexbar tbb )
+ 
