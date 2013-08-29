@@ -11,6 +11,8 @@
   distribution of model parameters.
 :group: Bioinformatics
 :changelog: |
+  * Thu Aug 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added runtime dependency on libs/beagle
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: mrbayes-3.2.1.tar.gz
@@ -19,6 +21,7 @@
 :version: '3.2.1'
 :requirements:
   :build: libs/beagle
+  :runtime: libs/beagle
 :compilers:
   gcc:
 :compile: |
