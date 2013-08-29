@@ -1,0 +1,11 @@
+--- UNIX/PnP2Pipeline/src/interface/mQC.pl.orig	2011-09-05 19:32:46.000000000 +0100
++++ UNIX/PnP2Pipeline/src/interface/mQC.pl	2013-08-29 15:28:20.337679369 +0100
+@@ -2753,7 +2753,7 @@
+ 	my $recombination = join(' ', map {sprintf("%.6f", $_)} @{$recombination_map_and_more->{recombination_rate}});
+ 	
+ 	
+-	my $templatePhasing_executable = (-e '../../PnP2/bin/templatePhase') ? '../../PnP2/bin/templatePhase' : '..\\..\\PnP2\\bin\\templatePhase.exe';
++	my $templatePhasing_executable = $ENV{"HLAIMPFEBIN"} . '/templatePhase';
+ 	
+ 	my $num_of_genotype_lines = $#{$genotype_lines_aref} + 1;
+ 	my $partition_size = 100;

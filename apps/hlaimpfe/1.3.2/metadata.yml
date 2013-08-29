@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: HLA*IMP Front-End
+:license: GPLv3
+:summary: Impute HLA type information based on SNP genotypes
+:url: https://oxfordhla.well.ox.ac.uk/hla/
+:description: |
+  HLA*IMP will assist you by imputing HLA type information based on
+  SNP genotypes - in an accurate and reliable manner.
+
+  Generally speaking, dense and accurate SNP genotyping data from the
+  xMHC region will enable you to use HLA*IMP on your data.
+:group: Bioinformatics
+:changelog: |
+  * Wed Aug 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: UNIX.tar.gz
+:src_dir: UNIX
+:type: apps
+:version: '1.3.2'
+:patches:
+  - gridware-libs.patch1
+  - binary-from-env.patch1
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:compilers:
+  gcc:
+:compile: |
+  cd PnP2/src
+  mkdir ../obj
+  make -f HLA_IMP.make all <%= redirect(:build) %>
+  cd ../..
+
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm GD Alien::wxWidgets Wx Moose List::MoreUtils Wx::Perl::Packager Chart <%= redirect(:cpanm) %>
+
+  # Replace perl hashbangs
+  for a in PnP2Pipeline/src/interface.pl PnP2Pipeline/src/Toolbox/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir <%= dest_dir %>/{bin,share}
+  cp PnP2/bin/templatePhase <%= dest_dir %>/bin
+  cp -Rv PnP2Pipeline/src <%= dest_dir %>/share/PnP2Pipeline
+  chmod 755 <%= dest_dir %>/share/PnP2Pipeline/interface.pl
+  ln -s <%= dest_dir %>/share/PnP2Pipeline/interface.pl <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
+

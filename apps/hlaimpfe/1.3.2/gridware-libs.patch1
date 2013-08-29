@@ -1,0 +1,16 @@
+--- UNIX/PnP2/src/HLA_IMP.make.orig	2013-08-28 17:57:44.730150929 +0100
++++ UNIX/PnP2/src/HLA_IMP.make		2013-08-28 17:59:09.183340111 +0100
+@@ -1,10 +1,10 @@
+ # LIBRARY SETTINGS - SET AS NECESSARY
+
+-LIB_BOOST = /home/system/software/libs/boost-1_39_0
+-LIB_GSL   = /home/system/software/libs/gsl-1.9
++LIB_BOOST = $(BOOSTDIR)
++LIB_GSL   = /usr
+
+-INCS = -I$(LIB_BOOST)/include/boost-1_39 -I$(LIB_GSL)/include
+-LIBS = -L$(LIB_GSL)/lib -lgsl -lgslcblas
++INCS = -I$(LIB_BOOST)/include -I$(LIB_GSL)/include
++LIBS = -L$(LIB_GSL)/lib64 -lgsl -lgslcblas
+
+ # END LIBRARY SETTINGS

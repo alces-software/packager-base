@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: HLA*IMP Back-End
+:license: NONFREE - Academic Use License; see http://j.mp/19Q1j8X
+:summary: Impute HLA type information based on SNP genotypes
+:url: https://oxfordhla.well.ox.ac.uk/hla/
+:description: |
+  HLA*IMP will assist you by imputing HLA type information based on
+  SNP genotypes - in an accurate and reliable manner.
+
+  Generally speaking, dense and accurate SNP genotyping data from the
+  xMHC region will enable you to use HLA*IMP on your data.
+:group: Bioinformatics
+:changelog: |
+  * Wed Aug 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: IMP2source.zip
+:src_dir: IMP2
+:type: apps
+:version: '2'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make all <%= redirect(:build) %>
+  cd ..
+
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm List::MoreUtils Statistics::Distributions Statistics::Basic <%= redirect(:cpanm) %>
+
+  # Replace perl hashbangs
+  for a in src/*.pl src/Toolbox/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+    sed -e 's|\.\./bin/|$ENV{"HLAIMPBEBIN"}/|g' -i $a
+    sed -e 's|\.\./data/|$ENV{"HLAIMPBE_USERDATA"}/|g' -i $a
+    sed -e 's|\.\./tmp2/|$ENV{"HLAIMPBE_USERTMP"}/|g' -i $a
+  done
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp bin/PnPHaploGraph2 <%= dest_dir %>/bin
+  cp -Rv src/*.pl <%= dest_dir %>/bin
+  cp -Rv src/Toolbox <%= dest_dir %>/perl
+  chmod 755 <%= dest_dir %>/bin/*.pl <%= dest_dir %>/perl/Toolbox/*.pl
+  rm -rf <%= dest_dir %>/perl/.svn
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv ${appcaps}_USERDATA $::env(HOME)/hlaimp/data
+  setenv ${appcaps}_USERTMP $::env(HOME)/hlaimp/tmp
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl/Toolbox
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
+
