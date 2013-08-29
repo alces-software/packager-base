@@ -1,0 +1,33 @@
+---
+:schema: 1
+:title: SeqAn
+:license: BSD License
+:summary: Open source C++ library of efficient algorithms and data structures for the analysis of sequences
+:url: http://www.seqan.de/
+:description: |
+  SeqAn is an open source C++ library of efficient algorithms and data
+  structures for the analysis of sequences with the focus on
+  biological data. The library applies a unique generic design that
+  guarantees high performance, generality, extensibility, and
+  integration with other libraries. SeqAn is easy to use and
+  simplifies the development of new software tools with a minimal loss
+  of performance.
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: seqan-library-1.4.1.tar.bz2
+:src_dir: seqan-library-1.4.1
+:type: libs
+:version: '1.4.1'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of header files only
+:install: |
+  cp -R include <%= dest_dir %>
+  cp -R share/doc/seqan <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}DOC ${appdir}/doc
