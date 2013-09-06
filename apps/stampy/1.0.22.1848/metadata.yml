@@ -1,0 +1,42 @@
+---
+:schema: 1
+:license: NONFREE - No commercial purposes; see http://www.well.ox.ac.uk/~gerton/README.txt
+:summary: Maps short reads from Illumina sequencing machines on to a reference genome
+:url: http://www.well.ox.ac.uk/project-stampy
+:description: |
+  Stampy is a package for the mapping of short reads from Illumina
+  sequencing machines onto a reference genome. It's recommended for
+  most workflows, including those for genomic resequencing, RNA-Seq
+  and Chip-seq. Stampy excels in the mapping of reads containing that
+  contain sequence variation relative to the reference, in particular
+  for those containing insertions or deletions. It can map reads from
+  a highly divergent species to a reference genome for instance.
+  Stampy achieves high sensitivity and speed by using a fast hashing
+  algorithm and a detailed statistical model.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Sep  6 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 1.0.22r1848
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: stampy-1.0.22r1848.tgz
+:src_dir: stampy-1.0.22
+:version: '1.0.22.1848'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,python}
+  cp -rv Stampy ext maptools.so plugins <%= dest_dir %>/python
+  cp -v stampy.py <%= dest_dir %>/bin
+  ln -s stampy.py <%= dest_dir %>/bin/stampy
+  cp README.txt <%= dest_dir %>/doc
+  rm -rf <%= dest_dir %>/python/ext/readalign
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python
+  prepend-path PATH ${appdir}/bin
