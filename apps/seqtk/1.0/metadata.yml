@@ -1,0 +1,30 @@
+---
+:schema: 1
+:license: MIT License
+:title: Seqtk
+:summary: Toolkit for processing sequences in FASTA/Q formats
+:url: https://github.com/lh3/seqtk
+:description: |
+  Seqtk is a fast and lightweight tool for processing sequences in the
+  FASTA or FASTQ format. It seamlessly parses both FASTA and FASTQ
+  files which can also be optionally compressed by gzip.
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep  9 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: seqtk-1.0.tar.gz
+:src_dir: seqtk-1.0
+:type: apps
+:version: '1.0'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -v seqtk <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
