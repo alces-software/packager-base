@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: GEOS
+:summary: Geometry Engine, Open Source
+:license: LGPL
+:url: http://trac.osgeo.org/geos/
+:description: |
+  GEOS (Geometry Engine - Open Source) is a C++ port of the  Java
+  Topology Suite (JTS). As such, it aims to contain the complete
+  functionality of JTS in C++. This includes all the  OpenGIS Simple
+  Features for SQL spatial predicate functions and spatial operators,
+  as well as specific JTS enhanced topology functions.
+
+  GEOS is available under the terms of  GNU Lesser General Public
+  License (LGPL), and is a project of  OSGeo.
+
+  Capabilities Include:
+
+    * Geometries: Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection
+    * Predicates: Intersects, Touches, Disjoint, Crosses, Within, Contains, Overlaps, Equals, Covers
+    * Operations: Union, Distance, Intersection, Symmetric Difference, Convex Hull, Envelope, Buffer, Simplify, Polygon Assembly, Valid, Area, Length,
+    * Prepared geometries (pre-spatially indexed)
+    * STR spatial index
+    * OGC Well Known Text (WKT) and Well Known Binary (WKB) encoders and decoders.
+    * C and C++ API (C API gives long term ABI stability)
+    * Thread safe (using the reentrant API)
+:group: Libraries
+:changelog: |
+  * Fri Sep 20 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: geos-3.4.2.tar.bz2
+:src_dir: geos-3.4.2
+:type: libs
+:version: '3.4.2'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
