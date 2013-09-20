@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: JasPer
+:summary: Reference implementation of the JPEG-2000 Part-1 standard
+:license: MIT
+:url: http://www.ece.uvic.ca/~frodo/jasper/
+:description: |
+  The JasPer Project is an open-source initiative to provide a free
+  software-based reference implementation of the codec specified in
+  the JPEG-2000 Part-1 standard (i.e., ISO/IEC 15444-1). This project
+  was started as a collaborative effort between Image Power, Inc. and
+  the University of British Columbia. Presently, the ongoing
+  maintenance and development of the JasPer software is being
+  coordinated by its principal author, Michael Adams, who is
+  affiliated with the Digital Signal Processing Group (DSPG) in the
+  Department of Electrical and Computer Engineering at the University
+  of Victoria.
+
+  JasPer includes a software-based implementation of the codec
+  specified in the JPEG-2000 Part-1 standard (i.e., ISO/IEC 15444-1).
+  The JasPer software is written in the C programming language. More
+  details about this software can be found in the JasPer Software
+  Reference Manual.
+
+  The JasPer software has been included in the JPEG-2000 Part-5
+  standard (i.e., ISO/IEC 15444-5), as an official reference
+  implementation of the JPEG-2000 Part-1 codec. This software has also
+  been incorporated into numerous other software projects (some
+  commercial and some non-commercial).
+:group: Libraries
+:changelog: |
+  * Fri Sep 20 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: jasper-1.900.1.zip
+:src_dir: jasper-1.900.1
+:type: apps
+:version: '1.900.1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+              --enable-shared <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path MANPATH ${appdir}/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
