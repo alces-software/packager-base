@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: Developer's Image Library
+:license: LGPL
+:summary: Cross-platform image library utilizing a simple syntax to load, save, convert, manipulate, filter and display a variety of images with ease
+:url:
+:description: |
+  Developer's Image Library (DevIL) is a programmer's library to
+  develop applications with very powerful image loading capabilities,
+  yet is easy for a developer to learn and use. Ultimate control of
+  images is left to the developer, so unnecessary conversions,
+  etc. are not performed. DevIL utilizes a simple, yet powerful,
+  syntax. DevIL can load, save, convert, manipulate, filter and
+  display a wide variety of image formats.
+
+  Currently, DevIL can load .bmp, .cut, .dds, .doom, .exr, .hdr, .gif,
+  .ico, .jp2, .jpg,.lbm, .mdl, .mng, .pal, .pbm, .pcd, .pcx, .pgm,
+  .pic, .png, .ppm, .psd, .psp, .raw, .sgi, .tga and .tif files.
+  Formats supported for saving include .bmp, .dds, .h, .jpg, .pal,
+  .pbm, .pcx, .pgm, .png, .ppm, .raw, .sgi, .tga and .tif.
+:group: Graphics
+:changelog: |
+  * Mon Sep 30 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: DevIL.1.7.8.tar.gz
+:type: libs
+:version: '1.7.8'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path INFOPATH ${appdir}/share/info
