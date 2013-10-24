@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Thu Oct 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - add missing bcftools/vcfutils.pl to bin directory
   * Wed Nov 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - add $SAMTOOLSLIB to LD_LIBRARY_PATH
   * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -52,7 +54,7 @@
     ln -s libbam.so.1 libbam.so
   fi
   # sed #!s to use env
-  for a in misc/*.pl; do
+  for a in misc/*.pl bcftools/*.pl; do
     sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
   done
   for a in misc/*.py; do
@@ -61,7 +63,7 @@
 :install: |
   mkdir -p <%= dest_dir %>/include <%= dest_dir %>/doc <%= dest_dir %>/lib <%= dest_dir %>/bin <%= dest_dir %>/man/man1
   cp ChangeLog AUTHORS COPYING NEWS <%= dest_dir %>/doc
-  cp samtools bcftools/bcftools misc/*.pl misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/seqtk misc/varfilter.py misc/wgsim <%= dest_dir %>/bin
+  cp samtools bcftools/bcftools bcftools/*.pl misc/*.pl misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/seqtk misc/varfilter.py misc/wgsim <%= dest_dir %>/bin
   cp samtools.1 <%= dest_dir %>/man/man1
   cp *.a <%= dest_dir %>/lib
   shopt -s nullglob
