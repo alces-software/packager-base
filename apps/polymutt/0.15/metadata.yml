@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: Polymutt
+:license: NONFREE - modification granted; distribution of modifications prohibited
+:summary: Calls single nucleotide variants and detects de novo point mutation events in families for next-generation sequencing data
+:url: http://genome.sph.umich.edu/wiki/Polymutt
+:description: |
+  Polymutt is a likelihood-based framework for calling single
+  nucleotide variants and detecting de novo point mutation events in
+  families for next-generation sequencing data.
+  
+  The program takes as input genotype likelihood format (GLF) files
+  which can be generated following the Creation of GLF files
+  instruction and outputs the result in the VCF format. Alternatively
+  polymutt can also take the VCF format input in which either the PL
+  or the GL field are present. Commonly used variant calling
+  algorithms such as GATK and samtools by default generate PL values
+  in the VCF files. Current version works only on biallelic variants
+  and non-biallelic variants in the VCF files will be ignored.
+:group: Bioinformatics
+:changelog: |
+  * Mon Oct 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Polymutt.0.15.tar.gz
+:src_dir: polymutt.0.15
+:type: apps
+:version: '0.15'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+  cat <<'EOF' > example/example.sh
+  #!/bin/bash
+  OUTDIR=$(pwd)
+  cd $POLYMUTTEXAMPLE
+  EOF
+  sed -e 's|../bin/||g' -e 's|out_vcf |out_vcf $OUTDIR/|' example/run.sh >> example/example.sh
+  mv example/example.sh example/run.sh
+:install: |
+  mkdir -p <%= dest_dir %>/doc
+  chmod 755 bin example
+  chmod -R a+r example
+  chmod 755 example/run.sh
+
+  cp -Rv bin <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv example <%= dest_dir %> <%= redirect(:install) %>
+  cp -v license.txt changelog.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
