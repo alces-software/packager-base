@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: FamSeq
+:license: Public Domain
+:summary: A computational tool for calculating probability of variants in family-based sequencing data
+:url: http://odin.mdacc.tmc.edu/~wwang7/FamSeqIndex.html
+:description: |
+  It is still challenging to call rare variants. In family-based
+  sequencing studies, information from all family members should be
+  utilized to more accurately identify new germline mutations. FamSeq
+  serves this purpose by providing the probability of an individual
+  carrying a variant given his/her entire family's raw
+  measurements. FamSeq accommodates de novo mutations and can perform
+  variant calling at chrX.
+
+  FamSeq takes both likelihood and the widely used vcf files as input.
+:group: Bioinformatics
+:changelog: |
+  * Mon Oct 28 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: FamSeq1.0.0-2.tar
+:src_dir: FamSeq
+:type: apps
+:version: '1.0.0-2'
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{doc,bin,sample}
+  cp -v src/FamSeq <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v 'sample data'/* <%= dest_dir %>/sample <%= redirect(:install) %>
+  cp -v 'Manual For FamSeq.pdf' <%= dest_dir %>/doc/manual.pdf <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SAMPLE ${appdir}/sample
+
+  prepend-path PATH ${appdir}/bin
