@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: Strelka
+:license: NONFREE - Illumina Open Source Source License
+:summary: Somatic variant calling workflow for matched tumor-normal samples
+:url: https://sites.google.com/site/strelkasomaticvariantcaller/
+:description: |
+
+  Strelka is an analysis package designed to detect somatic SNVs and
+  small indels from the aligned sequencing reads of matched
+  tumor-normal samples.
+
+  The method itself is described in the following publication:
+
+  Strelka: Accurate somatic small-variant calling from sequenced
+  tumor-normal sample pairs.  Christopher T. Saunders; Wendy Wong;
+  Sajani Swamy; Jennifer Becq; Lisa J. Murray; R. Keira Cheetham
+  Bioinformatics 2012; doi: 10.1093/bioinformatics/bts271
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 31 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: strelka_workflow.tar.gz
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to Strelka tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('strelka_workflow.tar.gz') %>
+  <% else %>
+    wget -O <%= source('strelka_workflow.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  version=$(echo strelka_workflow-* | cut -f2 -d'-')
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:compile: |
+  cd strelka_workflow-*
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make test <%= redirect(:compile) %>
+:install: |
+  cd strelka_workflow-*
+  make install <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
