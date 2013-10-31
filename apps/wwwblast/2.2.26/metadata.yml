@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: wwwblast
+:license: Public Domain
+:summary: A suite of standalone BLAST programs produced by NCBI for use on the web
+:url: http://www.ncbi.nlm.nih.gov/staff/tao/URLAPI/wwwblast/
+:description: |
+  The wwwblast package contains a suite of standalone programs that
+  perform various similarity searches using the BLAST heuristic
+  algorithm. Similar to the NCBI BLAST server
+  http://www.ncbi.nlm.nih.gov/blast/. wwwblast provides a graphic user
+  interface (GUI) through the use of web forms. Individual program
+  takes the user inputs from the web form and returns the search
+  result to a browser window. There are different web forms for
+  different BLAST programs. For example, 'Regular BLAST' is for
+  running the traditional 'blastn/blastp/blastx/tblastn/tblastx'
+  seraches. Various web forms incorporate commonly used BLAST
+  parameters found in standalone commandline BLAST programs and the
+  results are similar to, but not the same as, those obtained from the
+  NCBI BLAST server.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: wwwblast-2.2.26-x64-linux.tar.gz
+:src_dir: .
+:type: apps
+:version: '2.2.26'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary package
+:install: |
+  cp -R blast <%= dest_dir %>/htdocs
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}HTDOCS ${appdir}/htdocs
