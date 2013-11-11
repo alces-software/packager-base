@@ -20,6 +20,8 @@
 :type: libs
 :group: Mathematics
 :changelog: |
+  * Mon Nov 11 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added serial variant
   * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v1.7.1
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -36,18 +38,31 @@
     :atlas_dir: '$ATLASDIR'
     :requirements:
       :build: libs/atlas
+:variants:
+  default:
+  serial:
 :requirements:
   :build: apps/python ~> 2.7.0
   :runtime: apps/python ~> 2.7.0
 :compile: |
+  <% if variant_name == 'default' %>
   export BLAS=<%= compiler[:blas_dir] %>
   export LAPACK=<%= compiler[:lapack_dir] %>
   export ATLAS=<%= compiler[:atlas_dir] %>
+  <% elsif variant_name == 'serial' %>
+  cat <<EOF > site.cfg
+  [atlas]
+  library_dirs = <%= compiler[:atlas_dir] %>
+  atlas_libs = lapack, f77blas, cblas, atlas
+  EOF
+  <% end %>
   python setup.py build --fcompiler=gnu95 <%= redirect(:build) %>
 :install: |
+  <% if variant_name == 'default' %>
   export BLAS=<%= compiler[:blas_dir] %>
   export LAPACK=<%= compiler[:lapack_dir] %>
   export ATLAS=<%= compiler[:atlas_dir] %>
+  <% end %>
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
