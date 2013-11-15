@@ -1,0 +1,78 @@
+---
+:schema: 1
+:title: The Shogun Machine Learning Toolbox
+:license: GPLv3+
+:summary: A large scale machine learning toolbox
+:url: http://shogun-toolbox.org/
+:description: |
+  The machine learning toolbox's focus is on large scale kernel
+  methods and especially on Support Vector Machines (SVM). It provides
+  a generic SVM object interfacing to several different SVM
+  implementations, among them the state of the art OCAS, Liblinear,
+  LibSVM, SVMLight, SVMLin and GPDT. Each of the SVMs can be combined
+  with a variety of kernels. The toolbox not only provides efficient
+  implementations of the most common kernels, like the Linear,
+  Polynomial, Gaussian and Sigmoid Kernel but also comes with a number
+  of recent string kernels as e.g. the Locality Improved, Fischer,
+  TOP, Spectrum, Weighted Degree Kernel (with shifts). For the latter
+  the efficient LINADD optimizations are implemented. For linear SVMs
+  the COFFIN framework allows for on-demand computing feature spaces
+  on-the-fly, even allowing to mix sparse, dense and other data
+  types. Furthermore, SHOGUN offers the freedom of working with custom
+  pre-computed kernels. One of its key features is the combined kernel
+  which can be constructed by a weighted linear combination of a
+  number of sub-kernels, each of which not necessarily working on the
+  same domain. An optimal sub-kernel weighting can be learned using
+  Multiple Kernel Learning. Currently SVM one-class, 2-class and
+  multiclass classification and regression problems can be dealt
+  with. However SHOGUN also implements a number of linear methods like
+  Linear Discriminant Analysis (LDA), Linear Programming Machine
+  (LPM), (Kernel) Perceptrons and features algorithms to train hidden
+  markov models. The input feature-objects can be dense, sparse or
+  strings and of type int/short/double/char and can be converted into
+  different feature types. Chains of preprocessors (e.g. substracting
+  the mean) can be attached to each feature object allowing for
+  on-the-fly pre-processing.
+
+  SHOGUN is implemented in C++ and interfaces to Matlab(tm), R, Octave
+  and Python and is proudly released as Machine Learning Open Source
+  Software.
+:group: Mathematics
+:requirements:
+  :build:
+    - libs/atlas
+    - apps/hdf5_serial
+    - libs/eigen >= 3.1.2
+  :tool:
+    - apps/cmake
+:changelog: |
+  * Fri Nov 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: shogun-3.0.0.tar.bz2
+:sources:
+  - FindAtlas.cmake
+:type: apps
+:version: '3.0.0'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cp <%= source('FindAtlas.cmake') %> ../cmake
+  cmake .. \
+    -DCmdLineStatic=ON \
+    -DEIGEN_INCLUDE_DIR=$EIGENINCLUDE \
+    -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:cmake) %>
+  make -j4 <%= redirect(:build) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
