@@ -1,0 +1,36 @@
+---
+:schema: 1
+:license: ARTISTIC
+:summary: Ultrafast memory-efficient short read aligner
+:url: http://bowtie-bio.sourceforge.net/index.shtml
+:description: |
+  Bowtie is an ultrafast, memory-efficient short read aligner. It
+  aligns short DNA sequences (reads) to the human genome at a rate of
+  over 25 million 35-bp reads per hour. Bowtie indexes the genome with
+  a Burrows-Wheeler index to keep its memory footprint small:
+  typically about 2.2 GB for the human genome (2.9 GB for paired-end).
+:group: Bioinformatics
+:changelog: |
+  * Sat Sep  8 2012 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version v1.0.0
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version v0.12.8
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: bowtie-1.0.0-src.zip
+:type: apps
+:version: '1.0.0'
+:compilers:
+  gcc:
+:compile: |
+  make all <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>
+  cp -pav * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  prepend-path PATH ${appdir}
