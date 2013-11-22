@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: FFmpeg
+:license: LGPL or GPL - see http://www.ffmpeg.org/legal.html
+:summary: A complete, cross-platform solution to record, convert and stream audio and video
+:url: http://www.ffmpeg.org/
+:description: |
+  FFmpeg is the leading multimedia framework, able to decode, encode,
+  transcode, mux, demux, stream, filter and play pretty much anything
+  that humans and machines have created. It supports the most obscure
+  ancient formats up to the cutting edge. No matter if they were
+  designed by some standards committee, the community or a
+  corporation. It contains libavcodec, libavutil, libavformat,
+  libavfilter, libavdevice, libswscale and libswresample which can be
+  used by applications, as well as ffmpeg, ffserver, ffplay and
+  ffprobe which can be used by end users for transcoding, streaming
+  and playing.
+:group: Multimedia
+:changelog: |
+  * Fri Nov 22 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 0.11.3
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+# distro-requires: yasm
+:src: ffmpeg-0.11.3.tar.bz2
+:type: apps
+:version: '0.11.3'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --enable-shared --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %> 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
