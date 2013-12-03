@@ -1,0 +1,11 @@
+--- lib/panseq.pl~	2013-12-03 12:30:15.238188547 +0000
++++ lib/panseq.pl	2013-12-03 12:48:46.299291249 +0000
+@@ -19,7 +19,7 @@
+ tie *STDERR, "Tie::Log4perl";
+ 
+ my $panseq = Modules::Setup::Panseq->new($settings);
+-Log::Log4perl->init("$FindBin::Bin/log4p.conf");
++Log::Log4perl->init("$FindBin::Bin/../etc/log4p.conf");
+ 
+ $panseq->run();
+ 

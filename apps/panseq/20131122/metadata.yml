@@ -1,0 +1,87 @@
+---
+:schema: 1
+:title: Panseq
+:license: Public Domain
+:summary: Determine the core and accessory regions among a collection of genomic sequences
+:url: https://github.com/chadlaing/Panseq
+:description: |
+  Panseq determines the core and accessory regions among a collection
+  of genomic sequences based on user-defined parameters. It readily
+  extracts regions unique to a genome or group of genomes, identifies
+  SNPs within shared core genomic regions, constructs files for use in
+  phylogeny programs based on both the presence/absence of accessory
+  regions and SNPs within core regions.
+
+  It also provides a loci selector that efficiently computes the most
+  discriminatory loci from a tab-delimited dataset.
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec  3 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: panseq.tar.gz
+:src_dir: chadlaing-Panseq-3c9b8c7
+:type: apps
+:version: '20131122'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/R
+    - apps/mummer
+    - apps/ncbiblast
+    - apps/muscle
+  :runtime:
+    - libs/bioperl
+    - apps/R
+    - apps/mummer
+    - apps/ncbiblast
+    - apps/muscle
+:compilers:
+  noarch:
+:patches:
+  - tests.patch
+  - configdir.patch
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in DBD::SQLite Test::Pretty Archive::Zip Parallel::ForkManager Log::Log4perl Role::Tiny Tie::Log4perl Statistics::R; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,etc,doc,share}
+  cp -v lib/*.pl <%= dest_dir %>/bin
+  cp -v lib/*.conf <%= dest_dir %>/etc
+  chmod 755 <%= dest_dir %>/bin/*.pl
+  cp -Rv lib/Interface lib/Modules lib/Roles <%= dest_dir %>/perl
+  cp -v README.md <%= dest_dir %>/doc
+  cp -Rv t <%= dest_dir %>/share
+  cat <<EOF > <%= dest_dir %>/etc/settings.ex
+  queryDirectory  /path/to/queryDirectory/
+  referenceDirectory  /path/to/referenceDirectory/
+  baseDirectory   /path/to/outputDirectory/
+  numberOfCores   $(cat /proc/cpuinfo | grep 'processor\s:' | wc -l)
+  mummerDirectory $MUMMERBIN/
+  blastDirectory  $NCBIBLASTBIN/
+  minimumNovelRegionSize  500
+  novelRegionFinderMode   no_duplicates
+  muscleExecutable    $MUSCLEBIN/muscle
+  fragmentationSize   500
+  percentIdentityCutoff   85
+  coreGenomeThreshold 2
+  runMode     pan
+  storeAlleles    1
+  nameOrId    name
+  EOF
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl
+  prepend-path MANPATH ${appdir}/perl/man
+
+  prepend-path PATH ${appdir}/bin
+
