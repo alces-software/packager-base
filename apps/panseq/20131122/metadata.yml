@@ -44,7 +44,7 @@
 :compile: |
   export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
   export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
-  for a in DBD::SQLite Test::Pretty Archive::Zip Parallel::ForkManager Log::Log4perl Role::Tiny Tie::Log4perl Statistics::R; do
+  for a in DBI DBD::SQLite Test::Pretty Archive::Zip Parallel::ForkManager Log::Log4perl Role::Tiny Tie::Log4perl Statistics::R; do
     cpanm $a <%= redirect(:cpanm) %>
   done
 :install: |
