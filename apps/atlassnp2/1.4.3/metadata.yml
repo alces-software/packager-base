@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: Atlas-SNP2
+:license: BSD License
+:summary: Next-generation sequencing suite of variant analysis tools
+:url: https://www.hgsc.bcm.edu/software/atlas2
+:description: |
+  Atlas-SNP2 is a SNP discovery tool developed for next generation
+  sequencing platforms such as Roche 454 and Illumina. It is
+  implemented in Ruby at HGSC.
+:group: Bioinformatics
+:changelog: |
+  * Thu Dec  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.4.3
+  * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Thu Sep 8 2011 Steve Norledge
+    - First created
+:src: Atlas2_v1.4.3.zip
+:src_dir: Atlas2_v1.4.3/Atlas-SNP2
+:type: apps
+:version: 1.4.3
+:requirements:
+  :runtime:
+    - apps/ruby >= 1.9.1
+:compilers:
+  noarch:
+:compile: |
+  chmod 755 *.rb
+:install: |
+  mkdir <%= dest_dir %>/{bin,share}
+  cp -v Atlas-SNP2.rb <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv Auxiliary <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
