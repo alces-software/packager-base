@@ -30,6 +30,7 @@
   # no-op; this is a binary distribution
 :install: |
   mkdir <%= dest_dir %>/{bin,doc}
+  chmod 755 chiamo
   cp -v chiamo <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v LICENCE <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -Rv example <%= dest_dir %> <%= redirect(:install) %>
