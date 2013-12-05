@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: LoFreq
+:license: BSD License
+:summary:  fast and sensitive variant-caller for inferring SNVs from high-throughput sequencing data
+:url: http://sourceforge.net/p/lofreq/wiki/Home/
+:description: |
+  LoFreq is a fast and sensitive variant-caller for inferring
+  single-nucleotide variants (SNVs) from high-throughput sequencing
+  data. It is designed to robustly call low-frequency variants by
+  exploiting base-call quality values. LoFreq has been used to call
+  rare variants in viral and bacterial sequencing datasets and can be
+  used to study mitochondrial heteroplasmy and rare somatic mutations
+  in heterogeneous tumors.
+
+  LoFreq makes full use of base-call qualities (and versions >=0.5
+  also use read mapping qualities) which are usually ignored by other
+  methods or only used for filtering. It is very sensitive; most
+  notably, it is able to predict variants below the average base-call
+  quality (i.e. sequencing error rate). Each SNV call is assigned a
+  p-value which allows for rigorous false positive control. Even
+  though it uses no approximations or heuristics, it is very efficient
+  due to several runtime optimizations. LoFreq is generic and fast
+  enough to be applied to high-coverage data and large genomes. It
+  takes a minute to analyze Dengue genome sequencing data with nearly
+  4000X coverage, roughly one hour to call SNVs on a 600X coverage
+  E.coli genome and 1.5 hours to run on a 100X coverage human exome
+  dataset.
+:group: Bioinformatics
+:changelog: |
+  * Thu Dec  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: lofreq-0.6.1.tar.gz
+:type: apps
+:version: 0.6.1
+:requirements:
+  :build:
+    - apps/python ~> 2.7
+  :runtime:
+    - apps/python ~> 2.7
+:compilers:
+  gcc:
+:compile: |
+  sed -i -e 's/GATK_DIR/LOFREQ_GATKDIR/g' src/helper_scripts/base_qual_calib_wrapper.sh
+  sed -i -e 's/PICARDDIR/LOFREQ_PICARDDIR/g' src/helper_scripts/bwa_unique.sh
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/python
+  mv <%= dest_dir %>/lib <%= dest_dir %>/python
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  if { [info exists ::env(PICARDDIR)] } {
+     setenv ${appcaps}_PICARDDIR $::env(PICARDDIR)/java
+  }
+
+  if { [info exists ::env(GATKDIR)] } {
+     setenv ${appcaps}_GATKDIR $::env(GATKDIR)
+  }
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  
