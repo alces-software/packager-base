@@ -31,6 +31,8 @@
 :install: |
   mkdir <%= dest_dir %>/{bin,doc}
   chmod 755 chiamo
+  chmod 644 LICENCE
+  chmod 644 example/*
   cp -v chiamo <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v LICENCE <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -Rv example <%= dest_dir %> <%= redirect(:install) %>
