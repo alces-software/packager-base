@@ -10,6 +10,8 @@
   mapping results to identify splice junctions between exons.
 :group: Bioinformatics
 :changelog: |
+  * Mon Dec 16 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added missing runtime dependencies on samtools and boost
   * Thu Nov 21 2013 - James Donohue <james.donohue@alces-software.com>
     - Bumped to version 2.0.10 and updated samtools patches
   * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -24,6 +26,9 @@
 :version: '2.0.10'
 :requirements:
   :build:
+    - apps/samtools >= 0.1.17
+    - libs/boost
+  :runtime:
     - apps/samtools >= 0.1.17
     - libs/boost
 :patches:

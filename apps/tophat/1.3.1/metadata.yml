@@ -10,6 +10,8 @@
   mapping results to identify splice junctions between exons.
 :group: Bioinformatics
 :changelog: |
+  * Mon Dec 16 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added missing runtime dependency on samtools
   * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Thu Jul 14 2011 Steve Norledge
@@ -24,6 +26,8 @@
   :build:
     - apps/samtools >= 0.1.17
     - libs/boost
+  :runtime:
+    - apps/samtools >= 0.1.17
 :patches:
   - gridware-samtools.patch1
 :compilers:
