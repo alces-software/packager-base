@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: ARAGORN
+:license: GPLv2
+:summary: Detect tRNA genes and tmRNA genes in nucleotide sequences
+:url: http://mbio-serv2.mbioekol.lu.se/ARAGORN/
+:description: |
+  A computer program, ARAGORN, identifies tRNA and tmRNA genes. The
+  program employs heuristic algorithms to predict tRNA secondary
+  structure, based on homology with recognized tRNA consensus
+  sequences and ability to form a base‐paired cloverleaf. tmRNA genes
+  are identified using a modified version of the BRUCE
+  program. ARAGORN achieves a detection sensitivity of 99% from a set
+  of 1290 eubacterial, eukaryotic and archaeal tRNA genes and detects
+  all complete tmRNA sequences in the tmRNA database, improving on the
+  performance of the BRUCE program. Recently discovered tmRNA genes in
+  the chloroplasts of two species from the ‘green’ algae lineage are
+  detected. The output of the program reports the proposed tRNA
+  secondary structure and, for tmRNA genes, the secondary structure of
+  the tRNA domain, the tmRNA gene sequence, the tag peptide and a list
+  of organisms with matching tmRNA peptide tags.
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: aragorn1.2.36.tgz
+:src_dir: aragorn1.2.36
+:type: apps
+:version: '1.2.36'
+:compilers:
+  gcc:
+:compile: |
+  gcc -O3 -ffast-math -finline-functions -o aragorn aragorn1.2.36.c
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= dest_dir %>/man/man1
+  cp -v aragorn <%= dest_dir %>/bin
+  cp -v aragorn.1 <%= dest_dir %>/man/man1
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
