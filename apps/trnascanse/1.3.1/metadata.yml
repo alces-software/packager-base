@@ -1,0 +1,63 @@
+---
+:schema: 1
+:title: trRNAscan-SE
+:license: GPLv2+
+:summary: Improved detection of transfer RNA genes in genomic sequence
+:url: http://lowelab.ucsc.edu/tRNAscan-SE/
+:description: |
+  tRNAscan-SE identifies transfer RNA genes in genomic DNA or RNA
+  sequences. It combines the specificity of the Cove probabilistic RNA
+  prediction package (Eddy & Durbin, 1994) with the speed and
+  sensitivity of tRNAscan 1.3 (Fichant & Burks, 1991) plus an
+  implementation of an algorithm described by Pavesi and colleagues
+  (1994) which searches for eukaryotic pol III tRNA promoters (our
+  implementation referred to as EufindtRNA). tRNAscan and EufindtRNA
+  are used as first-pass prefilters to identify "candidate" tRNA
+  regions of the sequence. These subsequences are then passed to Cove
+  for further analysis, and output if Cove confirms the initial tRNA
+  prediction. In this way, tRNAscan-SE attains the best of both
+  worlds:
+
+    * a false positive rate of less than one per 15 billion
+      nucleotides of random sequence
+    * the combined sensitivities of tRNAscan and EufindtRNA (detection
+      of 99% of true tRNAs)
+    * search speed 1,000 to 3,000 times faster than Cove analysis and
+      30 to 90 times faster than the original tRNAscan 1.3
+      (tRNAscan-SE uses both a code-optimized version of tRNAscan 1.3
+      which gives a 650-fold increase in speed, and a fast C
+      implementation of the Pavesi et al. algorithm).
+
+  This program and results of its analysis of a number of genomes have
+  been published in Lowe & Eddy, Nucleic Acids Research 25: 955-964
+  (1997).
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:patches:
+  - gridware-makefile.patch1
+:requirements:
+  :runtime: apps/infernal >= 1.0
+:src: tRNAscan-SE.tar.gz
+:src_dir: tRNAscan-SE-1.3.1
+:type: apps
+:version: '1.3.1'
+:compilers:
+  gcc:
+:compile: |
+  export TRNASCANSEDIR="<%= dest_dir %>"
+  make <%= redirect(:compile) %>
+:install: |
+  export TRNASCANSEDIR="<%= dest_dir %>"
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/perl
+  mv <%= dest_dir %>/bin/tRNAscanSE <%= dest_dir %>/perl
+  sed -i -e 's|#!.*perl.*|#!/usr/bin/env perl|g' <%= dest_dir %>/bin/tRNAscan-SE
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
+  prepend-path PERL5LIB ${appdir}/perl
