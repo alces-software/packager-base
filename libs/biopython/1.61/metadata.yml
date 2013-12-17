@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: Biopython
+:license: Biopython License (see http://www.biopython.org/DIST/LICENSE)
+:summary: Set of freely available tools for biological computation written in Python
+:url: http://biopython.org/
+:description: |
+  The Biopython Project is an international association of developers
+  of freely available Python (http://www.python.org) tools for
+  computational molecular biology. Python is an object oriented,
+  interpreted, flexible language that is becoming increasingly popular
+  for scientific computing. Python is easy to learn, has a very clear
+  syntax and can easily be extended with modules written in C, C++ or
+  FORTRAN.
+
+  The Biopython web site (http://www.biopython.org) provides an online
+  resource for modules, scripts, and web links for developers of
+  Python-based software for bioinformatics use and
+  research. Basically, the goal of Biopython is to make it as easy as
+  possible to use Python for bioinformatics by creating high-quality,
+  reusable modules and classes. Biopython features include parsers for
+  various Bioinformatics file formats (BLAST, Clustalw, FASTA,
+  Genbank,...), access to online services (NCBI, Expasy,...),
+  interfaces to common and not-so-common programs (Clustalw, DSSP,
+  MSMS...), a standard sequence class, various clustering modules, a
+  KD tree data structure etc. and even documentation.
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:requirements:
+  :tool: apps/setuptools
+  :build:
+    - apps/python ~> 2.7
+    - libs/numpy
+  :runtime:
+    - apps/python ~> 2.7
+    - libs/numpy
+:src: biopython-1.61.tar.gz
+:type: libs
+:version: '1.61'
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR ReportLab <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR MySQL-python <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR psycopg2 <%= redirect(:python) %>
+  python setup.py build <%= redirect(:compile) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
