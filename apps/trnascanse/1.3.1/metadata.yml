@@ -53,6 +53,7 @@
   make install <%= redirect(:install) %>
   mkdir <%= dest_dir %>/perl
   mv <%= dest_dir %>/bin/tRNAscanSE <%= dest_dir %>/perl
+  chmod 755 perl/tRNAscanSE
   sed -i -e 's|#!.*perl.*|#!/usr/bin/env perl|g' <%= dest_dir %>/bin/tRNAscan-SE
 :module: |
   setenv ${appcaps}DIR ${appdir}
