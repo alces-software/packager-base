@@ -1,0 +1,61 @@
+---
+:schema: 1
+:license: AFL
+:title: DREEP
+:summary: Detecting low-level mutations by utilizing the RE-sequencing Error Profile of the data
+:url: http://dmcrop.sourceforge.net/
+:description: |
+  A collection of Perl scripts for detecting low-level mutations by
+  utilizing the re-sequencing error profile of the data.
+:group: Bioinformatics
+:changelog: |
+  * Thu Dec 19 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: dreep.sic
+:sources:
+  - Normal.pm
+  - Dreep_result_filter_indel.pl
+  - error_profile_emp.pl
+  - error_profile_pois.pl
+  - filter_and_summary.pl
+  - Pois_emp_overlap.pl
+  - sam_to_pileup.py
+  - Dreep_result_filter.pl
+  - Dreep_poisson.pl
+  - Dreep_fisher.pl
+  - Dreep_emp.pl
+:type: apps
+:version: '0.7'
+:requirements:
+  :tool:
+    - apps/cpanminus
+:compilers:
+  noarch:
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm Statistics::Descriptive Statistics::PointEstimation \
+        Statistics::TTest Math::CDF Text::NSP <%= redirect(:cpanm) %>
+  mkdir bin
+  <% package.sources.each do |s| %>
+    cp -v <%= source(s) %> bin <%= redirect(:prepare) %>
+  <% end %>
+  mkdir -p perl/lib/perl5/Statistics/Distrib
+  mv bin/Normal.pm perl/lib/perl5/Statistics/Distrib
+  for a in bin/*.pl; do
+    sed -i -e 's|#!.*perl.*|#!/usr/bin/env perl|g' $a
+  done
+  chmod 755 bin/*
+:install: |
+  cp -Rv bin perl <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux-thread-multi
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
