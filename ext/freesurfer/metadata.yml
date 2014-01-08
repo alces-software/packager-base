@@ -1,0 +1,115 @@
+---
+:schema: 1
+:title: FreeSurfer
+:license: NONFREE; registration required, see http://surfer.nmr.mgh.harvard.edu/fswiki/Registration
+:summary: An open source software suite for processing and analyzing (human) brain MRI images
+:url: http://surfer.nmr.mgh.harvard.edu/
+:description: |
+  FreeSurfer is a set of tools for analysis and visualization of
+  structural and functional brain imaging data. FreeSurfer contains a
+  fully automatic structural imaging stream for processing cross
+  sectional and longitudinal data.
+
+  FreeSurfer provides many anatomical analysis tools, including:
+  representation of the cortical surface between white and gray
+  matter, representation of the pial surface, segmentation of white
+  matter from the rest of the brain, skull stripping, B1 bias field
+  correction, nonlinear registration of the cortical surface of an
+  individual with a stereotaxic atlas, labeling of regions of the
+  cortical surface, statistical analysis of group morphometry
+  differences, and labeling of subcortical brain structures and much
+  more.
+:group: Medicine
+:changelog: |
+  * Wed Jan  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: freesurfer-Linux.tar.gz
+:sources:
+  - freesurfer.lic 
+:src_dir: freesurfer
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to FreeSurfer tarball (tar.gz format) (pass 'skip' to use an existing download)"
+  :license: "Path or URL to license file (pass 'skip' to continue without a license)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('freesurfer-Linux.tar.gz') %>
+    <% else %>
+      wget -O <%= source('freesurfer-Linux.tar.gz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+  <% if param('license') != 'skip' %>
+    <% if URI.parse(param('license')).scheme.nil? %>
+      cp <%= param('license') %> <%= source('freesurfer.lic') %>
+    <% else %>
+      wget -O <%= source('freesurfer.lic') %> <%= param('license') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  version=$(cat freesurfer/build-stamp.txt | cut -d'-' -f6 | cut -c2-)
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  <% if param('license') != 'skip' %>
+    cp -v <%= source('freesurfer.lic') %> <%= dest_dir %>/.license <%= redirect(:install) %>
+    chmod 644 <%= dest_dir %>/.license
+  <% end %>
+  mkdir -p <%= dest_dir %>/examples
+  cat <<EOF > <%= dest_dir %>/examples/startup.m
+  %------------ FreeSurfer -----------------------------%
+  fshome = getenv('FREESURFER_HOME');
+  fsmatlab = sprintf('%s/matlab',fshome);
+  if (exist(fsmatlab) == 7)
+      path(path,fsmatlab);
+  end
+  clear fshome fsmatlab;
+  %-----------------------------------------------------%
+  
+  %------------ FreeSurfer FAST ------------------------%
+  fsfasthome = getenv('FSFAST_HOME');
+  fsfasttoolbox = sprintf('%s/toolbox',fsfasthome);
+  if (exist(fsfasttoolbox) == 7)
+      path(path,fsfasttoolbox);
+  end
+  clear fsfasthome fsfasttoolbox;
+  %-----------------------------------------------------%  
+  EOF
+:modules:
+   - :type: apps
+     :content: |
+       set mnidir ${appdir}/mni
+
+       setenv FREESURFER_HOME ${appdir}
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/docs
+
+       setenv FIX_VERTEX_AREA ""
+       setenv FMRI_ANALYSIS_DIR ${appdir}/fsfast
+       setenv FSFAST_HOME ${appdir}/fsfast
+       setenv FSF_OUTPUT_FORMAT nii.gz
+       setenv FS_OVERRIDE 0
+       setenv FUNCTIONALS_DIR ${appdir}/sessions
+       setenv LOCAL_DIR ${appdir}/local
+
+       setenv MINC_BIN_DIR ${mnidir}/bin
+       setenv MINC_LIB_DIR ${mnidir}/lib
+       setenv MNI_DATAPATH ${mnidir}/data
+       setenv MNI_DIR ${mnidir}
+       setenv MNI_PERL5LIB ${mnidir}/lib/perl5/5.8.5
+
+       setenv OS Linux
+       setenv SUBJECTS_DIR ${appdir}/subjects
+
+       prepend-path PERL5LIB ${mnidir}/lib/perl5/5.8.5
+       prepend-path PATH ${mnidir}/bin
+       prepend-path PATH ${appdir}/tktools
+       prepend-path PATH ${appdir}/fsfast/bin
+       prepend-path PATH ${appdir}/bin
