@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: FreeSurfer
+:license: NONFREE; registration required, see http://fsl.fmrib.ox.ac.uk/fsldownloads/
+:summary: A comprehensive library of analysis tools for FMRI, MRI and DTI brain imaging data
+:url: http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FSL
+:description: |
+  FSL is a comprehensive library of analysis tools for FMRI, MRI and
+  DTI brain imaging data. It runs on Apple and PCs (both Linux, and
+  Windows via a Virtual Machine), and is very easy to install. Most of
+  the tools can be run both from the command line and as GUIs
+  ("point-and-click" graphical user interfaces). 
+:group: Medicine
+:changelog: |
+  * Thu Jan  9 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: fsl-5.0.6-sources.tar.gz
+:src_dir: fsl
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to FSL tarball (tar.gz format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('fsl-5.0.6-sources.tar.gz') %>
+    <% else %>
+      wget -O <%= source('fsl-5.0.6-sources.tar.gz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  version=$(cat fsl/etc/fslversion)
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:compile: |
+  # Use distro tcl/tk instead of bundled
+  #sed -i -e 's|tcl tk ||' extras/build
+  sed -i -e 's|#\(FSLCONFDIR=\)|\1|' -e 's|#\(FSLMACHTYPE=\)|\1|' -e 's|#\(export FSLCONFDIR FSLMACHTYPE\)|\1|' etc/fslconf/fsl.sh
+
+  export FSLDIR=`pwd`
+  . $FSLDIR/etc/fslconf/fsl.sh
+  ./build
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       # Based on defaults in etc/fslconf/fsl.sh
+       setenv FSLOUTPUTTYPE NIFTI_GZ
+       setenv FSLMULTIFILEQUIT TRUE
+       setenv FSLGECUDAQ cuda.q
+       setenv FSLTCLSH ${appdir}/bin/fsltclsh
+       setenv FSLWISH ${appdir}/bin/fslwish
+
+       prepend-path PATH ${appdir}/bin
