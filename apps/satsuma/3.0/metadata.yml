@@ -1,0 +1,32 @@
+---
+:schema: 1
+:title: Satsuma
+:license: LGPLv2
+:summary: High-sensitivity alignments through cross-correlation
+:url: http://www.broadinstitute.org/ftp/distribution/software/spines/
+:description: |
+  Satsuma aligns two fasta sequences exhaustively. SatsumaSynteny
+  aligns two fasta sequences in a battleship fashion syntenically. 
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 10 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: satsuma-3.0.tar.gz
+:src_dir: satsuma-code-0
+:type: apps
+:version: '3.0'
+:compilers:
+  gcc:
+:compile: |
+  make clean <%= redirect(:compile) %>
+  make <%= redirect(:compile) %>
+:install: |  
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v BlockDisplaySatsuma ChainMatches FilterGridSeeds HomologyByXCorr HomologyByXCorrSlave MergeXCorrMatches MicroSyntenyPlot ReverseSatsumaOut Satsuma SatsumaPop SatsumaProt SatsumaStruct SatsumaSummary SatsumaSynteny SatsumaToFasta TestSComm <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv samples <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SAMPLES ${appdir}/samples
+
+  prepend-path PATH ${appdir}/bin
