@@ -34,6 +34,8 @@
 :variants:
   default:
     :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
     :requirements:
       :tool: apps/setuptools
       :build: 
@@ -44,6 +46,8 @@
         - libs/numpy
   python3:
     :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
     :requirements:
       :tool: apps/setuptools_python3
       :build: 
@@ -67,23 +71,15 @@
   easy_install --install-dir $PYTHONDEPSDIR MySQL-python <%= redirect(:python) %>
   <% end %>
   easy_install --install-dir $PYTHONDEPSDIR psycopg2 <%= redirect(:python) %>
-  <% if variant_name == 'python3' %>python3 <% else %>python <% end %>setup.py build <%= redirect(:compile) %>
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:compile) %>
 :install: |
   PYTHONDEPSDIR=$(pwd)/python
-  <% if variant_name == 'python3' %>python3 <% else %>python <% end %>setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
-  <% if variant_name == 'default' %>
-  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
-  <% elsif variant_name == 'python3' %>
-  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python3.3/site-packages <%= redirect(:install) %>
-  <% end %>
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/python/bin
 
   prepend-path PATH ${appdir}/python/bin
 
-  <% if variant_name == 'default' %>
-  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
-  <% elsif variant_name == 'python3' %>
-  prepend-path PYTHONPATH ${appdir}/python/lib/python3.3/site-packages
-  <% end %>
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages

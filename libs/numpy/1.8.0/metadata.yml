@@ -41,11 +41,15 @@
 :variants:
   default:
     :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
     :requirements:
       :build: apps/python ~> 2.7.0
       :runtime: apps/python ~> 2.7.0
   python3:
     :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
     :requirements:
       :build: apps/python3 ~> 3.3.0
       :runtime: apps/python3 ~> 3.3.0
@@ -53,20 +57,16 @@
   export BLAS=<%= compiler[:blas_dir] %>
   export LAPACK=<%= compiler[:lapack_dir] %>
   export ATLAS=<%= compiler[:atlas_dir] %>
-  <% if variant_name == 'python3' %>python3 <% else %>python <% end %>setup.py build --fcompiler=gnu95 <%= redirect(:build) %>
+  <%= variant[:python_bin] %> setup.py build --fcompiler=gnu95 <%= redirect(:build) %>
 :install: |
   export BLAS=<%= compiler[:blas_dir] %>
   export LAPACK=<%= compiler[:lapack_dir] %>
   export ATLAS=<%= compiler[:atlas_dir] %>
-  <% if variant_name == 'python3' %>python3 <% else %>python <% end %>setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/python/bin
 
   prepend-path PATH ${appdir}/python/bin
 
-  <% if variant_name == 'default' %>
-  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
-  <% elsif variant_name == 'python3' %>
-  prepend-path PYTHONPATH ${appdir}/python/lib/python3.3/site-packages
-  <% end %>
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
