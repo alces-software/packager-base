@@ -23,6 +23,8 @@
     * embeddable within applications as a scripting interface
 :group: Languages
 :changelog: |
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v3.3.3 and migrated to separate python3 package
   * Fri Mar 15 2013 - James Donohue <james.donohue@alces-software.com>
     - Add site-wide and user-specific dirs to PYTHONPATH
   * Tue Aug 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -30,10 +32,10 @@
     - Refactored to packager style
   * Fri Feb 18 2011 Steve Norledge
     - First created
-:src: Python-3.2.3.tar.bz2
-:src_dir: Python-3.2.3
+:src: Python-3.3.3.tar.bz2
+:src_dir: Python-3.3.3
 :type: apps
-:version: '3.2.3'
+:version: '3.3.3'
 :compilers:
   gcc:
 :compile: |
@@ -42,23 +44,23 @@
 :install: |
   make install <%= redirect(:install) %>
   # Create site-wide distutils config file
-  cat <<EOF > <%= dest_dir %>/lib/python3.2/distutils/distutils.cfg
+  cat <<EOF > <%= dest_dir %>/lib/python3.3/distutils/distutils.cfg
   [install]
   prefix=<%= File.expand_path(Config.gridware) %>/share/python/<%= version %>
   EOF
   # Create basic non-root user distutils config file
-  cat <<EOF > <%= dest_dir %>/lib/python3.2/distutils/pydistutils-tmpl.cfg
+  cat <<EOF > <%= dest_dir %>/lib/python3.3/distutils/pydistutils-tmpl.cfg
   [install]
   prefix=~/gridware/share/python/<%= version %>
   EOF
 :module: |
-  set python_user_libs $::env(HOME)/gridware/share/python/${version}/lib/python3.2/site-packages
+  set python_user_libs $::env(HOME)/gridware/share/python/${version}/lib/python3.3/site-packages
   set python_user_bin $::env(HOME)/gridware/share/python/${version}/bin
-  set python_site_libs <%= File.expand_path(Config.gridware) %>/share/python/${version}/lib/python3.2/site-packages
+  set python_site_libs <%= File.expand_path(Config.gridware) %>/share/python/${version}/lib/python3.3/site-packages
   set python_site_bin <%= File.expand_path(Config.gridware) %>/share/python/${version}/bin
 
   set distutils_usercfg $::env(HOME)/.pydistutils.cfg
-  set distutils_usercfg_template ${appdir}/lib/python3.2/distutils/pydistutils-tmpl.cfg
+  set distutils_usercfg_template ${appdir}/lib/python3.3/distutils/pydistutils-tmpl.cfg
 
   setenv PYTHONDIR ${appdir}
   setenv PYTHONBIN ${appdir}/bin
@@ -69,7 +71,7 @@
   prepend-path PATH ${python_site_bin}
   prepend-path MANPATH ${appdir}/share/man
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
-  prepend-path LD_LIBRARY_PATH ${appdir}/lib/python3.2
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/python3.3
   prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
   prepend-path LIBRARY_PATH ${appdir}/lib
 
