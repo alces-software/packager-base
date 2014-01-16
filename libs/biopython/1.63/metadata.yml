@@ -1,0 +1,89 @@
+---
+:schema: 1
+:title: Biopython
+:license: Biopython License (see http://www.biopython.org/DIST/LICENSE)
+:summary: Set of freely available tools for biological computation written in Python
+:url: http://biopython.org/
+:description: |
+  The Biopython Project is an international association of developers
+  of freely available Python (http://www.python.org) tools for
+  computational molecular biology. Python is an object oriented,
+  interpreted, flexible language that is becoming increasingly popular
+  for scientific computing. Python is easy to learn, has a very clear
+  syntax and can easily be extended with modules written in C, C++ or
+  FORTRAN.
+
+  The Biopython web site (http://www.biopython.org) provides an online
+  resource for modules, scripts, and web links for developers of
+  Python-based software for bioinformatics use and
+  research. Basically, the goal of Biopython is to make it as easy as
+  possible to use Python for bioinformatics by creating high-quality,
+  reusable modules and classes. Biopython features include parsers for
+  various Bioinformatics file formats (BLAST, Clustalw, FASTA,
+  Genbank,...), access to online services (NCBI, Expasy,...),
+  interfaces to common and not-so-common programs (Clustalw, DSSP,
+  MSMS...), a standard sequence class, various clustering modules, a
+  KD tree data structure etc. and even documentation.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v1.63 and added python3 variant
+  * Tue Dec 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:requirements:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :requirements:
+      :tool: apps/setuptools
+      :build: 
+        - apps/python ~> 2.7.0
+        - libs/numpy
+      :runtime: 
+        - apps/python ~> 2.7.0
+        - libs/numpy
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :requirements:
+      :tool: apps/setuptools_python3
+      :build: 
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+      :runtime: 
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+:src: biopython-1.63.tar.gz
+:type: libs
+:version: '1.63'
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  <% if variant_name == 'default' %>
+  # ReportLab and MySQL-python are not currently compatible with Python 3
+  easy_install --install-dir $PYTHONDEPSDIR ReportLab <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR MySQL-python <%= redirect(:python) %>
+  <% end %>
+  easy_install --install-dir $PYTHONDEPSDIR psycopg2 <%= redirect(:python) %>
+  <% if variant_name == 'python3' %>python3 <% else %>python <% end %>setup.py build <%= redirect(:compile) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  <% if variant_name == 'python3' %>python3 <% else %>python <% end %>setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  <% if variant_name == 'default' %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  <% elsif variant_name == 'python3' %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python3.3/site-packages <%= redirect(:install) %>
+  <% end %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  <% if variant_name == 'default' %>
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  <% elsif variant_name == 'python3' %>
+  prepend-path PYTHONPATH ${appdir}/python/lib/python3.3/site-packages
+  <% end %>
