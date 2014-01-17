@@ -1,0 +1,55 @@
+---
+:schema: 1
+:license: GPLv3
+:title: Copy Number Analysis for Targeted Resequencing
+:summary: Tool for copy number variation (CNV) detection for targeted resequencing data
+:url: http://contra-cnv.sourceforge.net/
+:description: |
+  CONTRA is a tool for copy number variation (CNV) detection for
+  targeted resequencing data such as those from whole-exome capture
+  data. CONTRA calls copy number gains and losses for each target
+  region with key strategies include the use of base-level log-ratios
+  to remove GC-content bias, correction for an imbalanced library size
+  effect on log-ratios, and the estimation of log-ratio variations via
+  binning and interpolation. It takes standard alignment formats
+  (BAM/SAM) and output in variant call format (VCF 4.0) for easy
+  integration with other next generation sequencing analysis package.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 17 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added SamTools runtime dependency
+    - Pinned bedtools to 2.11.x series
+    - Bumped to latest v2.0.4
+  * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected permissions
+  * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CONTRA.v2.0.4.tar.gz
+:src_dir: CONTRA.v2.0.4
+:type: apps
+:version: '2.0.4'
+:requirements:
+  :runtime:
+    - apps/bedtools ~> 2.11.2
+    - apps/python
+    - apps/R
+    - apps/samtools
+:compilers:
+  noarch:
+:compile: |
+  # No-op; this is a distribution of a python application.
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v *.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv *.py scripts <%= dest_dir %>/bin <%= redirect(:install) %>
+  for a in <%= dest_dir %>/bin/*.py; do
+    sed -i -e 's|^#!.*|#!/usr/bin/env python|g' $a
+  done
+  chmod 644 <%= dest_dir %>/bin/scripts/*
+  chmod 755 <%= dest_dir %>/bin/*.py
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
