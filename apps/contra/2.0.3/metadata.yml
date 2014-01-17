@@ -16,6 +16,9 @@
   integration with other next generation sequencing analysis package.
 :group: Bioinformatics
 :changelog: |
+  * Fri Jan 17 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added SamTools runtime dependency
+    - Pinned bedtools to 2.11.x series
   * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Corrected permissions
   * Fri Feb 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -26,9 +29,10 @@
 :version: '2.0.3'
 :requirements:
   :runtime:
-    - apps/bedtools
+    - apps/bedtools ~> 2.11.2
     - apps/python
     - apps/R
+    - apps/samtools
 :compilers:
   noarch:
 :compile: |
