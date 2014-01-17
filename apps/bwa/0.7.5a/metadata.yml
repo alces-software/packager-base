@@ -1,0 +1,46 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Aligns relatively short nucleotide sequences against a long reference sequence such as the human genome
+:url: http://bio-bwa.sourceforge.net/
+:description: |
+  Burrows-Wheeler Aligner (BWA) is an efficient program that aligns
+  relatively short nucleotide sequences against a long reference
+  sequence such as the human genome. It implements two algorithms,
+  bwa-short and BWA-SW. The former works for query sequences shorter
+  than 200bp and the latter for longer sequences up to around
+  100kbp. Both algorithms do gapped alignment. They are usually more
+  accurate and faster on queries with low error rates.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 17 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.7.5a
+  * Thu May  2 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v0.7.4
+  * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - correct sed hashbang lines for perl scripts to remove trailing options
+  * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v0.6.2
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: bwa-0.7.5a.tar.bz2
+:version: '0.7.5a'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+  # sed #!s to use env
+  for a in *.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v COPYING ChangeLog NEWS README.md <%= dest_dir %>
+  cp -v *.pl bwa <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
