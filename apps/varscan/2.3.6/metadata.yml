@@ -1,0 +1,40 @@
+---
+:schema: 1
+:license: NONFREE - free for non-commercial use; see http://genome.wustl.edu/software/varscan
+:summary: Mutation caller for targeted, exome, and whole-genome resequencing data
+:url: http://genome.wustl.edu/software/varscan
+:description: |
+  VarScan is a platform-independent, technology-independent software
+  tool for identifying SNPs and indels in massively parallel
+  sequencing of individual and pooled samples. Given data for a single
+  sample, VarScan identifies and filters germline variants based on
+  read counts, base quality, and allele frequency. Given data for a
+  tumor-normal pair, VarScan also determines the somatic status of
+  each variant (Germline, Somatic, or LOH) by comparing read counts
+  between samples.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan 21 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to v2.3.6
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: VarScan.v.2.3.6.jar.sic
+:version: '2.3.6'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Java application
+:install: |
+  mkdir <%= dest_dir %>/java
+  cp VarScan.v.2.3.6.jar.sic <%= dest_dir %>/java/VarScan.v.2.3.6.jar
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
+
+  set-alias VarScan "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/VarScan.v.2.3.6.jar"
