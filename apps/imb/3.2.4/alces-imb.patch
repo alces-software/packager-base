@@ -1,0 +1,9 @@
+--- src/make_mpich.orig	2011-02-19 10:53:07.000000000 +0000
++++ src/make_mpich	2011-02-19 10:54:10.000000000 +0000
+@@ -1,5 +1,5 @@
+ # Enter root directory of mpich install
+-MPI_HOME=
++#MPI_HOME=
+ 
+ MPICC=$(shell find ${MPI_HOME} -name mpicc -print)
+ 
