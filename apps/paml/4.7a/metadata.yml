@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: PAML
+:license: NONFREE - Free for academic use only
+:summary: Phylogenetic Analysis by Maximum Likelihood
+:url: http://abacus.gene.ucl.ac.uk/software/paml.html
+:description: |
+  PAML is a package of programs for phylogenetic analyses of DNA or
+  protein sequences using maximum likelihood. It is maintained and
+  distributed for academic use free of charge by Ziheng Yang. ANSI C
+  source codes are distributed for UNIX/Linux/Mac OSX, and
+  executables are provided for MS Windows. PAML is not good for tree
+  making. It may be used to estimate parameters and test hypotheses
+  to study the evolutionary process, when you have reconstructed
+  trees using other programs such as PAUP*, PHYLIP, MOLPHY, PhyML,
+  RaxML, etc.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 23 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: paml4.7a.tgz
+:src_dir: paml4.7a
+:type: apps
+:version: '4.7a'
+:compilers:
+  gcc:
+:compile: |
+  rm -fv bin/*.exe <%= redirect(:compile) %>
+  cd src
+  make <%= redirect(:compile) %>
+:install: |  
+  mkdir -v <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v src/baseml src/basemlg src/codeml src/pamp src/evolver src/mcmctree src/yn00 src/chi2 <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
