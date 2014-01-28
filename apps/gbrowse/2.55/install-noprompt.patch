@@ -1,0 +1,24 @@
+diff -uNr install_util/GBrowseInstall.pm install_util.alces/GBrowseInstall.pm
+--- install_util/GBrowseInstall.pm	2013-07-10 15:50:05.000000000 +0100
++++ install_util.alces/GBrowseInstall.pm	2014-01-27 12:51:03.917324782 +0000
+@@ -190,7 +190,6 @@
+ sub ACTION_build {
+     my $self = shift;
+     $self->depends_on('config');
+-    $self->depends_on('register') unless $self->registration_done;
+     $self->SUPER::ACTION_build;
+     mkdir './htdocs/tmp';
+     chmod 0777,'./htdocs/tmp';
+@@ -530,12 +529,6 @@
+ 	system 'sudo','chmod','go-rwx',File::Spec->catfile($install_path,'default','gbrowse-aws-balancer');
+     }
+ 
+-    if (Module::Build->y_n(
+-	    "It is recommended that you restart Apache. Shall I try this for you?",'y'
+-	)) {
+-	system "sudo /etc/init.d/apache2 restart";
+-    }
+-    
+     print STDERR "\n***INSTALLATION COMPLETE***\n";
+     print STDERR "Load http://localhost/$base for demo and documentation.\n";
+     print STDERR "Visit the http://gmod.org for more information on setting up databases for users and custom tracks.\n";

@@ -1,0 +1,118 @@
+---
+:schema: 1
+:license: GPLv2 or Artistic License
+:title: GBrowse
+:summary: The Generic Genome Browser
+:url: http://gmod.org/wiki/GBrowse
+:description: |
+  GBrowse is a combination of database and interactive web pages for
+  manipulating and displaying annotations on genomes. Features
+  include:
+
+  * Simultaneous bird's eye and detailed views of the genome.
+
+  * Scroll, zoom, center.
+
+  * Use a variety of premade glyphs or create your own.
+
+  * Attach arbitrary URLs to any annotation.
+
+  * Order and appearance of tracks are customizable by administrator
+    and end-user.
+
+  * Search by annotation ID, name, or comment.
+
+  * Supports third party annotation using GFF formats.
+
+  * Settings persist across sessions.
+
+  * DNA and GFF dumps.
+
+  * Connectivity to different databases, including BioSQL and Chado.
+
+  * Multi-language support.
+
+  * Third-party feature loading.
+
+  * Customizable plug-in architecture (e.g. run BLAST, dump & import
+    many formats, find oligonucleotides, design primers, create
+    restriction maps, edit features)
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 24 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: GBrowse-2.55.tar.gz
+:src_dir: GBrowse-2.55
+:version: '2.55'
+:requirements:
+  :tool: apps/cpanminus
+  :build: apps/perl
+  :runtime: apps/perl
+:compilers:
+  gcc:
+:patches:
+  - install-noprompt.patch
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm Module::Build DBD::SQLite <%= redirect(:extra_deps) %>
+  cpanm $(perl Build.PL --install_base=<%= dest_dir %> \
+    --cgibin=<%= dest_dir %>/cgi-bin \
+    --conf=<%= dest_dir %>/conf \
+    --htdocs=<%= dest_dir %>/htdocs \
+    --persistent=<%= dest_dir %>/var \
+    --databases=<%= dest_dir %>/var/databases \
+    --tmp=<%= dest_dir %>/var/tmp \
+    --wwwuser=$(whoami) \
+    --installconf=n \
+    --installetc=n 2>&1 |sed -n 's/.*!  \(.*\) is not installed.*/\1/p') \
+    <%= redirect(:configure) %>
+:install: |
+  ./Build install <%= redirect(:install) %>
+  ./Build apache_conf > <%= dest_dir %>/conf/apache-example.conf 2>/dev/null
+  cat > <%= dest_dir %>/unconfigured-notice.txt <<EOT
+  Please note: in order for GBrowse to operate, it is necessary to
+  perform some additional configuration tasks after installation:
+
+  - Configure Apache to serve GBrowse content, for example by adding 
+    the following directive to httpd.conf:
+
+      Include <%= dest_dir %>/conf/apache-example.conf
+
+  - The directories under \$GBROWSEVAR must be writeable by the 
+    Apache process. One way to achieve this is to move \$GBROWSEVAR
+    to another location with appropriate ownership/permissions and 
+    symlink it back to its original location.
+
+  - If users need to be able to configure their own data sources,
+    the directory \$GBROWSECONF may also need to be writeable.
+
+  Note that this package currently only supports file-based data
+  sources. Slave process rendering is also unconfigured by default.
+
+  To prevent this notice from displaying whenever this module 
+  loads, delete \$GBROWSEDIR/unconfigured-notice.txt
+  EOT
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PERL ${appdir}/perl
+  setenv ${appcaps}CONF ${appdir}/conf
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}VAR ${appdir}/var
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path MANPATH ${appdir}/man
+  prepend-path PATH ${appdir}/perl/bin
+  prepend-path PATH ${appdir}/bin
+
+  if { [module-info mode load] } {
+    if { [file exists "${appdir}/unconfigured-notice.txt"] } {
+      set fp [open "${appdir}/unconfigured-notice.txt" r]
+      set message [read $fp]
+      close $fp
+      puts stderr $message
+    }
+  }
