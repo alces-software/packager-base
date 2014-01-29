@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: PROCHECK
+:license: Free to use; confidentiality agreement required - see http://bit.ly/1ne1qmf
+:summary: Stereochemical protein structure quality analysis
+:url: http://www.ebi.ac.uk/thornton-srv/software/PROCHECK/index.html
+:description: |
+  PROCHECK checks the stereochemical quality of a protein structure,
+  producing a number of PostScript plots analysing its overall and
+  residue-by-residue geometry. It includes PROCHECK-NMR for checking
+  the quality of structures solved by NMR.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan 28 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: procheck.tar.gz
+:src_dir: procheck
+:version: '3.5.4'
+:type: ext
+:pkg_type: apps
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to PROCHECK tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('procheck.tar.gz') %>
+    <% else %>
+      wget -O <%= source('procheck.tar.gz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+:compile: |
+  sed -i -e 's/csh -v -x/csh -vx/' procomp.scr
+  ./procomp.scr <%= redirect(:make) %>
+:install: |
+  mkdir -v <%= dest_dir %>/{bin,doc} <%= redirect(:install) %>
+  cp -v anglen clean rmsdev secstr gfac2pdb pplot bplot tplot mplot vplot viol2pdb wirplot nb procheck.dat procheck.prm resdefs.data *.scr <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v maninst.ps README <%= dest_dir %>/doc <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv prodir ${appdir}/bin
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/doc
+
+       prepend-path PATH ${appdir}/bin
+
+       set aliases [list "procheck" "procheck_comp" "procheck_nmr" "proplot" "proplot_comp" "proplot_nmr" "gfac2pdb" "viol2pdb" "wirplot"]
+       foreach item $aliases {
+         set-alias $item ${appdir}/bin/$item.scr
+       }
