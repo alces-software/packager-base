@@ -1,0 +1,124 @@
+---
+:schema: 1
+:title: PSIPRED
+:license: NONFREE - no commercial use; see http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/LICENSE
+:summary: Accurate protein secondary structure prediction
+:url: http://bioinf.cs.ucl.ac.uk/psipred/
+:description: |
+  PSIPRED is a simple and accurate secondary structure prediction
+  method, incorporating two feed-forward neural networks which
+  perform an analysis on output obtained from PSI-BLAST (Position
+  Specific Iterated - BLAST). Using a very stringent cross
+  validation method to evaluate the method's performance, PSIPRED
+  3.2 achieves an average Q[3] score of 81.6%.            
+
+  Predictions produced by PSIPRED were also submitted to the CASP4
+  evaluation and assessed during the CASP4 meeting, which took place
+  in December 2000 at Asilomar. PSIPRED 2.0 achieved an average Q[3]
+  score of 80.6% across all 40 submitted target domains with no
+  obvious sequence similarity to structures present in PDB, which
+  ranked PSIPRED top out of 20 evaluated methods (an earlier version
+  of PSIPRED was also ranked top in CASP3 held in 1998).            
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 23 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: psipred3.4.tar.gz
+:src_dir: psipred
+:type: apps
+:version: '3.4'
+:compilers:
+  gcc:
+:sources:
+  - ncbi.tar.gz
+:compile: |
+  rm -fv bin/* <%= redirect(:compile) %>
+  cd src
+  make <%= redirect(:compile) %>
+  make install <%= redirect(:compile) %>
+
+  # PSIPRED's support for BLAST+ is experimental so we build 'classic'
+  # BLAST and bundle required executables and data
+  cd ..
+  tar -zxf <%= source('ncbi.tar.gz') %> <%= redirect(:extradeps) %>
+  ncbi/make/makedis.csh <%= redirect(:extradeps) %>
+:install: |  
+  sed -i -e 's/\(set datadir =\).*/\1 $PSIPREDDATA/' \
+    -e 's/\(set ncbidir =.*\)/#\1/' \
+    -e 's/\(set execdir =.*\)/#\1/' \
+    -e 's/$ncbidir\///' \
+    -e 's/$execdir\///' \
+    runpsipred runpsipred_single
+  mkdir -v <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v runpsipred runpsipred_single bin/* <%= dest_dir%>/bin <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/doc <%= redirect(:install) %>
+  cp -v LICENSE README VERSION <%= dest_dir%>/share/doc <%= redirect(:install) %>
+  cp -Rv data example <%= dest_dir%>/share <%= redirect(:install) %>
+
+  cp -v ncbi/build/blastpgp ncbi/build/makemat ncbi/build/formatdb <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv ncbi/data <%= dest_dir %>/share/blastmat <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/share/blastdb <%= redirect(:install) %>
+
+  cat > <%= dest_dir %>/unconfigured-notice.txt <<EOT
+  Please note: in order for PSIPRED to operate, it is necessary to
+  perform some additional configuration tasks after installation,
+  For full information and instructions, see:
+  <%= dest_dir%>/share/doc/README.alces.txt
+
+  To prevent this notice from displaying whenever the PSIPRED module
+  loads, delete this file:
+  <%= dest_dir %>/unconfigured-notice.txt
+  EOT
+
+  cat > <%= dest_dir %>/share/doc/README.alces.txt <<EOT
+  -----------------------------------------------------
+  PSIPRED: notes for Alces Software HPC Stack for Linux
+  -----------------------------------------------------
+
+  PSIPRED is configured to use a 'uniref90filt' BLAST database for
+  the PSI-BLAST search. This database must be installed and
+  configured before using the runpsipred and runpsipred_single
+  tools, otherwise they will abort with a blastpgp error.
+
+  At the time of writing the compressed download is 4.7 GiB and
+  results in nearly 10 GiB after processing. Additionally, at least
+  19 GiB temporary free space is required to prepare the PSIPRED
+  database.
+  
+  To install the database, first load the apps/psipred module
+  and change to a directory on a filesystem with sufficient spare
+  capacity. Then run the following commands:
+
+    $ wget ftp://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref90/uniref90.fasta.gz
+    $ gunzip -v uniref90.fasta.gz
+    $ pfilt uniref90.fasta > uniref90filt
+    $ formatdb -t uniref90filt -i uniref90filt
+    $ mv uniref90filt.* \$PSIPREDBLASTDB
+
+  This will move the generated files into the \$PSIPREDBLASTDB
+  directory. Once complete, the remaining temporary files can be
+  deleted.
+  EOT
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/share/doc
+  setenv ${appcaps}DATA ${appdir}/share/data
+  setenv ${appcaps}BLASTMAT ${appdir}/share/blastmat
+  setenv ${appcaps}BLASTDB ${appdir}/share/blastdb
+  setenv ${appcaps}EXAMPLE ${appdir}/share/example
+
+  setenv BLASTDB ${appdir}/share/blastdb
+  setenv BLASTMAT ${appdir}/share/blastmat
+
+  prepend-path PATH ${appdir}/bin
+
+  if { [module-info mode load] } {
+    if { [file exists "${appdir}/unconfigured-notice.txt"] } {
+      set fp [open "${appdir}/unconfigured-notice.txt" r]
+      set message [read $fp]
+      close $fp
+      puts stderr $message
+    }
+  }
