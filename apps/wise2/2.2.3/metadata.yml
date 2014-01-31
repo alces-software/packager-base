@@ -1,0 +1,45 @@
+---
+:schema: 1
+:title: Wise2
+:license: BSD/GPL; free to use - see LICENSE file
+:summary: Program for aligning proteins or protein HMMs to DNA
+:url: http://www.ebi.ac.uk/~birney/wise2/
+:description: |
+  The Wise2 package is now a rather stately bioinformatics package
+  that has be around for a while. Its key programs are genewise, a
+  program for aligning proteins or protein HMMs to DNA, and dynamite
+  a rather cranky "macro language" which automates the production of
+  dynamic programming.  Wise2 is maintained by Ewan Birney. I had
+  thought that most of Wise2 development would have stopped around 3
+  years ago due to the developed of Guy Slater's excellent exonerate
+  package which handles many of the problems the Wise2 package does
+  but around 1,000 fold faster.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 31 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: wise2.2.3-rc7.tar.gz
+:src_dir: wise2.2.3-rc7
+:type: apps
+:version: '2.2.3'
+# Requires glib and glib-devel
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  sed -i 's/getline/getline_new/' HMMer2/sqio.c
+  make clean <%= redirect(:compile) %>
+  make all <%= redirect(:compile) %>
+:install: |
+  rm -fr wisecfg/CVS test_data/CVS docs/CVS
+  cp -Rv src/bin wisecfg test_data docs <%= dest_dir %> <%= redirect(:install) %>
+  cp -v INSTALL LICENSE README <%= dest_dir %>/docs <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/docs
+  setenv ${appcaps}TESTDATA ${appdir}/test_data
+
+  setenv WISECONFIGDIR ${appdir}/wisecfg
+
+  prepend-path PATH ${appdir}/bin
