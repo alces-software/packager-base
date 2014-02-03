@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: CEGMA
+:license: GPLv2
+:summary: Building sets of gene annotations in eukaryotic genomes
+:url: http://korflab.ucdavis.edu/datasets/cegma/
+:description: |
+  CEGMA (Core Eukaryotic Genes Mapping Approach) is a pipeline for
+  building a set of high reliable set of gene annotations in
+  virtually any eukaryotic genome. The strategy relies on a simple
+  fact: some highly conserved proteins are encoded in essentially
+  all eukaryotic genomes. We use the KOGs database to build a set of
+  these highly conserved ubiquitous proteins. We define a set of 458
+  core proteins, and the protocol, CEGMA, to find orthologs of the
+  core proteins in new genomes and to determine their exon-intron
+  structures.
+
+  A local version of CEGMA can be installed on UNIX platforms and it
+  requires pre-installation of PERL, NCBI BLAST+, HMMER, GeneWise
+  and geneid. The procedure uses information from the core genes of
+  six model organisms by first using TBLASTN to identify candidate
+  regions in a new genome. It then proposes and redefines gene
+  structures using a combination of GeneWise, HMMER and geneid. The
+  system includes the use of a profile for each core protein to
+  ensure the reliability of the gene structure.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 31 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: cegma_v2.4.010312.tar.gz
+:src_dir: cegma_v2.4.010312
+:type: apps
+:version: '2.4.010312'
+:compilers:
+  noarch:
+:requirements:
+  :build:
+    - apps/perl
+  :runtime: 
+    - apps/perl
+    - apps/wise2
+    - apps/ncbiblast
+    - apps/geneid
+    - apps/hmmer
+:compile: |
+  make <%= redirect(:compile) %>
+  for a in bin/*; do
+    sed -i -e '1 s|#!.*/perl.*|#!/usr/bin/env perl\nuse warnings;|g' $a  
+  done
+:install: |
+  cp -Rv bin data sample <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/perl/lib/perl5 <%= redirect(:install) %>
+  cp -Rv lib/* <%= dest_dir %>/perl/lib/perl5 <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v README GNU-GPL <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DATA ${appdir}/data
+  setenv ${appcaps}SAMPLE ${appdir}/sample
+
+  setenv CEGMA ${appdir}
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PATH ${appdir}/bin
