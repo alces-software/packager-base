@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: Corset
+:license: GPLv3
+:summary: Software for clustering de novo assembled transcripts and counting overlapping reads
+:url: https://code.google.com/p/corset-project/
+:description: |
+  Corset is a command-line software program to go from a de novo
+  transcriptome assembly to gene-level counts. Our software takes a
+  set of reads that have been multi-mapped to the transcriptome
+  (where multiple alignments per read were reported) and
+  hierarchically clusters the transcripts based on the proportion of
+  shared reads and expression patterns. It will report the clusters
+  and gene-level counts for each sample, which are easily tested for
+  differential expression with count based tools such as edgeR and
+  DESeq.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jan 31 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: corset-0.94.tar.gz
+:src_dir: corset-0.94
+:type: apps
+:version: '0.94'
+:compilers:
+  gcc:
+:requirements:
+  :build: apps/samtools
+  :runtime: apps/samtools
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+    --with-bam_inc=$SAMTOOLSINCLUDE \
+    --with-bam-lib=$SAMTOOLSLIB \
+    <%= redirect(:compile) %>
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -v <%= dest_dir %>/bin <%= redirect(:install) %>
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+   
+  prepend-path PATH ${appdir}/bin
