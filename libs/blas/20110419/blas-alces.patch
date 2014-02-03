@@ -1,0 +1,26 @@
+--- make.inc	2007-03-21 21:25:22.000000000 +0000
++++ make.inc.alces	2011-02-18 13:54:02.000000000 +0000
+@@ -7,7 +7,7 @@
+ #
+ #  The machine (platform) identifier to append to the library names
+ #
+-PLAT = _LINUX
++PLAT = _LINUX_ALCES
+ #  
+ #  Modify the FORTRAN and OPTS definitions to refer to the
+ #  compiler and desired compiler options for your machine.  NOOPT
+@@ -16,11 +16,11 @@
+ #  desired load options for your machine.
+ #
+ FORTRAN  = gfortran
+-OPTS     = -O3
++OPTS     = -O3 -m64 -fPIC
+ DRVOPTS  = $(OPTS)
+-NOOPT    =
++NOOPT    = -m64 -fPIC
+ LOADER   = gfortran
+-LOADOPTS =
++LOADOPTS = $(OPTS)
+ #
+ #  The archiver and the flag(s) to use when building archive (library)
+ #  If you system has no ranlib, set RANLIB = echo.
