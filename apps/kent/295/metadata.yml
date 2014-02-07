@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: Kent source utilities
+:license: NONFREE - personal, academic, and non-profit use
+:summary: Jim Kent and the UCSC Genome Bioinformatics Group program suite
+:url: http://genomewiki.ucsc.edu/index.php/Kent_source_utilities
+:description: |
+  Jim Kent and the UCSC Genome Bioinformatics Group's suite of
+  biological analysis and web display programs.  All files are
+  copyrighted, but license is granted for personal, academic, and
+  non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb  7 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest v295
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Dec 7 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: jksrc.v295.tar.gz
+:src_dir: .
+:type: apps
+:version: '295'
+:compilers:
+  gcc:
+:compile: |
+  OUTDIR="$(pwd)"
+  mkdir -p out/bin out/htdocs out/cgi-bin-root out/${OUTDIR}/out/cgi-bin-root/ out/${OUTDIR}/out/cgi-bin-root/loader
+  cd kent/src
+  make USE_SSL=1 \
+       DESTDIR=${OUTDIR}/out \
+       DOCUMENTROOT=${OUTDIR}/out/htdocs \
+       CGI_BIN=${OUTDIR}/out/cgi-bin \
+       BINDIR=${OUTDIR}/out/bin \
+       MACHTYPE=x86_64 \
+       MYSQLINC=/usr/include/mysql \
+       MYSQLLIBS="$(mysql_config --libs)" <%= redirect(:make) %>
+:install: |
+  OUTDIR="$(pwd)"
+  cp -rv out/bin <%= dest_dir %> <%= redirect(:install) %>
+  cp -rv out/${OUTDIR}/out/bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/www/cgi-bin 
+  cp -rv out/cgi-bin-root/* <%= dest_dir %>/www/cgi-bin <%= redirect(:install) %>
+  cp -rv out/${OUTDIR}/out/cgi-bin-root/* <%= dest_dir %>/www/cgi-bin <%= redirect(:install) %>
+  cp -rv out/htdocs <%= dest_dir %>/www <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
