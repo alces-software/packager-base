@@ -11,11 +11,13 @@
   non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
 :group: Bioinformatics
 :changelog: |
+  * Fri Feb  7 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Fix install script issue; retrieve source from gitweb
   * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Wed Dec 7 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: jksrc.v259.zip
+:src: jksrc.v259.tar.gz
 :src_dir: .
 :type: apps
 :version: '259'
@@ -34,6 +36,7 @@
        MYSQLINC=/usr/include/mysql \
        MYSQLLIBS="$(mysql_config --libs)" <%= redirect(:make) %>
 :install: |
+  OUTDIR="$(pwd)"
   cp -rv out/bin <%= dest_dir %> <%= redirect(:install) %>
   cp -rv out/${OUTDIR}/out/bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
   mkdir -p <%= dest_dir %>/www/cgi-bin 
