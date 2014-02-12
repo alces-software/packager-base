@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: EC2 API Tools
+:license: NONFREE - Amazon Software License; see http://aws.amazon.com/asl/
+:summary: Command-line tools for managing EC2 instances
+:url: http://aws.amazon.com/developertools/351
+:description: |
+  The API tools serve as the client interface to the Amazon EC2 web
+  service. Use these tools to register and launch instances,
+  manipulate security groups, and more.
+:group: Tools
+:changelog: |
+  * Wed Feb 12 2014 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: ec2-api-tools-1.6.12.2.zip
+:src_dir: ec2-api-tools-1.6.12.2
+:type: apps
+:version: 1.6.12.2
+:compilers:
+  noarch:
+# Requires Java >= 1.6 on nodes
+:requirements:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  sed -i -e 's|^JAVA_HOME=|#\0|' \
+         -e 's|"${JAVA_HOME}/bin/java"|java|' bin/ec2-cmd
+  mkdir -v <%= dest_dir %>/{bin,doc} <%= redirect(:install) %>
+  cp -Rv lib <%= dest_dir %> <%= redirect(:install) %>
+  find bin -type f -not -name '*.cmd' \
+           -exec cp -v {} <%= dest_dir %>/bin \; <%= redirect(:install) %>
+  cp -v *.txt *.TXT <%= dest_dir %>/doc <%= redirect(:install) %>
+  
+  # NB for easy of use the user should set AWS_ACCESS_KEY and AWS_SECRET_KEY:
+  # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SettingUp_CommandLine.html
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  setenv EC2_HOME ${appdir}
+
+  prepend-path PATH ${appdir}/bin
