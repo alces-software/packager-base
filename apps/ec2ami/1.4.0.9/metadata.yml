@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: EC2 AMI Tools
+:license: NONFREE - Amazon Software License; see http://aws.amazon.com/asl/
+:summary: Command-line tools to create and manage Amazon Machine Images
+:url: http://aws.amazon.com/developertools/368
+:description: |
+  The Amazon EC2 AMI Tools are command-line utilities to help bundle
+  an Amazon Machine Image (AMI), create an AMI from an existing
+  machine or installed volume, and upload a bundled AMI to Amazon
+  S3.
+:group: Tools
+:changelog: |
+  * Wed Feb 12 2014 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: ec2-ami-tools-1.4.0.9.zip
+:src_dir: ec2-ami-tools-1.4.0.9
+:type: apps
+:version: 1.4.0.9
+:compilers:
+  noarch:
+:requirements:
+  :runtime:
+    - apps/ruby
+:compile: |
+  # no-op; this is a binary distribution of a Ruby application
+:install: |
+  mkdir -v <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv bin etc lib <%= dest_dir %> <%= redirect(:install) %>
+  cp -v *.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  setenv EC2_AMITOOL_HOME ${appdir}
+
+  prepend-path PATH ${appdir}/bin
