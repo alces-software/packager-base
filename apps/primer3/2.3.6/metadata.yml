@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: Primer3
+:license: GPLv2+
+:summary: PCR primer design tool
+:url: http://abacas.sourceforge.net/
+:description: |
+  Primer3 is a widely used program for designing PCR primers (PCR =
+  "Polymerase Chain Reaction"). PCR is an essential and ubiquitous
+  tool in genetics and molecular biology. Primer3 can also design
+  hybridization probes and sequencing primers.
+
+  PCR is used for many different goals. Consequently, primer3 has many
+  different input parameters that you control and that tell primer3
+  exactly what characteristics make good primers for your goals.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 26 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: primer3-src-2.3.6.tar.gz
+:type: apps
+:version: 2.3.6
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,share}
+  cp -Rv test <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v cmp_settings.pl *.txt example <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v COPYING.txt primer3_manual.htm <%= dest_dir %>/doc <%= redirect(:install) %>
+  cd src
+  cp -v ntdpal oligotm primer3_core long_seq_tm_test ntthal <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
