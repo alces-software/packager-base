@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: CONTIGuator
+:license: GPLv3+
+:summary: A bacterial genomes finishing tool for structural insights on draft genomes
+:url: http://contiguator.sourceforge.net/
+:description: |
+  CONTIGuator is a Python script for Linux environments whose purpose
+  is to speed-up the bacterial genome finishing process and to obtain
+  a first insight of the genome structure using the well-known artemis
+  comparison tool (ACT), as well as gap-closing PCR primers using
+  primer3.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 26 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CONTIGuator_v2.7.tar.gz
+:src_dir: CONTIGuator_v2.7.3
+:version: '2.7.3'
+:requirements:
+  :compile:
+    - apps/python
+  :runtime:
+    - apps/python
+    - libs/biopython
+    - apps/ncbiblast
+    - apps/primer3
+    - apps/artemis
+    - apps/mummer
+:patches:
+  - gridware-primer3.patch
+  - gridware-act.patch
+:compilers:
+  noarch:
+:compile: |
+  sed -e 's|#!.*/usr/bin/python.*|#!/usr/bin/env python|g' -i CONTIGuator.py
+  sed -e 's|#!/usr/local/bin/perl.*|#!/usr/bin/env perl|g' -i abacas
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v LICENSE Manual.pdf icon.png <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v *.py <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v abacas <%= dest_dir %>/bin/abacas.contiguator <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/*.py
+  cp -Rv examples <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin

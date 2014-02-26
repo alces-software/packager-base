@@ -1,0 +1,16 @@
+--- CONTIGuator.py.orig	2014-02-26 10:32:27.262711879 +0000
++++ CONTIGuator.py	2014-02-26 11:24:21.743810727 +0000
+@@ -3519,6 +3505,13 @@
+     sys.stdout.write(strftime("%H:%M:%S")+
+                         ' Searching the ACT executable in your system\n')
+     
++    actpath = os.getenv("ARTEMISBIN",'') + '/act'
++    if os.path.isfile(actpath):
++        mylog.WriteLog('WRN', 'ACT binary: '+actpath)
++        sys.stdout.write(strftime("%H:%M:%S")+
++                    ColorOutput(' ACT binary: '+actpath+'\n','DEV'))
++        return actpath
++
+     p = subprocess.Popen('locate artemis/act',shell=(sys.platform!="win32"),
+             stdin=subprocess.PIPE,stdout=subprocess.PIPE,
+             stderr=subprocess.PIPE)

@@ -1,0 +1,51 @@
+--- CONTIGuator.py.orig	2014-02-26 10:32:27.262711879 +0000
++++ CONTIGuator.py	2014-02-26 11:24:21.743810727 +0000
+@@ -3423,28 +3423,14 @@
+     p = subprocess.Popen('primer3_core -about',shell=(sys.platform!="win32"),
+                     stdin=subprocess.PIPE,stdout=subprocess.PIPE,
+                     stderr=subprocess.PIPE)
+-    if p.communicate()[0]!='':
++    if p.communicate()[0]=='':
+         #debug
+-        mylog.WriteLog('INF', 'Recent primer3 version detected! Modifing ABACAS...')
+-        sys.stdout.write(strftime("%H:%M:%S")+
+-                ColorOutput(' Recent primer3 version detected! Modifing ABACAS...\n','WRN'))
+-        for f in os.listdir('/'.join(os.path.realpath(__file__).split('/')[:-1])):
+-            if 'abacas' in f.lower():
+-                a=[]
+-                try:
+-                    for l in open(f):
+-                        if 'PRIMER_SEQUENCE_ID=Starting_Pos $positions[$i]' in l:
+-                            l=l.replace('PRIMER_SEQUENCE_ID=Starting_Pos $positions[$i]',
+-                                        'SEQUENCE_ID=Starting_Pos $positions[$i]')
+-                        if 'SEQUENCE=$gappedSeq[$i]' in l:
+-                            l=l.replace('SEQUENCE=$gappedSeq[$i]',
+-                                        'SEQUENCE_TEMPLATE=$gappedSeq[$i]')
+-                        a.append(l)
+-                    f1=open(f,'w')
+-                    for l in a:
+-                        f1.write(l)
+-                    f1.close()
+-                except:pass
++        mylog.WriteLog('INF', 'Old primer3 version detected! Not compatible with bundled ABACAS, aborting...')
++        sys.stdout.write(strftime("%Y-%m-%d %H:%M:%S")+
++                            ColorOutput(' Stopping CONTIGuator\n','WRN'))
++        mylog.WriteLog('INF','Stopping CONTIGuator')
++        Notify('Incompatible (old) primer3 detected, exited.',True)
++        sys.exit(1)
+ 
+     return 0
+ 
+--- abacas.orig	2014-02-26 11:26:33.995928133 +0000
++++ abacas	2014-02-26 11:18:14.441835277 +0000
+@@ -1422,8 +1422,8 @@
+                     }
+ 				
+ #WARNING: indenting the following lines may cause problems in primer3 
+-print FILE "PRIMER_SEQUENCE_ID=Starting_Pos $positions[$i] 
+-SEQUENCE=$gappedSeq[$i]
++print FILE "SEQUENCE_ID=Starting_Pos $positions[$i] 
++SEQUENCE_TEMPLATE=$gappedSeq[$i]
+ PRIMER_OPT_SIZE=$opt
+ PRIMER_MIN_SIZE=$min
+ PRIMER_MAX_SIZE=$max
