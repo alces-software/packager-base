@@ -10,6 +10,8 @@
   mapping results to identify splice junctions between exons.
 :group: Bioinformatics
 :changelog: |
+  * Fri Feb 28 2014 - James Donohue <james.donohue@alces-software.com>
+    - Added simple example script and runtime dependency on Bowtie2
   * Mon Dec 16 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added missing runtime dependencies on samtools and boost
   * Thu Nov 21 2013 - James Donohue <james.donohue@alces-software.com>
@@ -31,6 +33,7 @@
   :runtime:
     - apps/samtools >= 0.1.17
     - libs/boost
+    - apps/bowtie2
 :patches:
   - gridware-samtools.patch1
 :compilers:
@@ -47,3 +50,32 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full TopHat usage information see:
+      #   http://tophat.cbcb.umd.edu/manual.html
+      # Test data may be downloaded from:
+      #   http://tophat.cbcb.umd.edu/downloads/test_data.tar.gz
+
+      # Output directory (default is 'tophat_out')
+      OUTPUT_DIR=tophat_output
+
+      # Base name of genome index to be searched (i.e. up to first period)
+      GENOME_INDEX_BASE=test_data/test_ref
+
+      # Comma-separated list of FASTQ/FASTA files of reads ('left')
+      READS_1=test_data/reads_1.fq
+
+      # Optional: comma-sep list of FASTQ/FASTA files of reads ('right')
+      READS_2=test_data/reads_2.fq
+
+      # Additional command-line options (tophat -h for a list)
+      TOPHAT_OPTIONS="-r 20"
+
+      tophat -o $OUTPUT_DIR $TOPHAT_OPTIONS $GENOME_INDEX_BASE $READS_1 $READS_2
