@@ -21,6 +21,8 @@
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0.5
 :changelog: |
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
   * Thu Nov 21 2013 James Donohue <james.donohue@alces-software.com>
     - bumped to version 2.1.1
   * Fri May 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -60,3 +62,26 @@
 
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full Cufflinks usage information see:
+      #   http://cufflinks.cbcb.umd.edu/manual.html
+      # Test data may be downloaded from:
+      #   http://cufflinks.cbcb.umd.edu/downloads/test_data.sam
+
+      # Output directory (default is '.')
+      OUTPUT_DIR=cufflinks_output
+
+      # Input file of RNA-Seq read alignments in the SAM format
+      ALIGNED_READS=test_data.sam
+
+      # Additional command-line options (cufflinks -h for list)
+      #CUFFLINKS_OPTIONS=
+
+      cufflinks -o $OUTPUT_DIR $CUFFLINKS_OPTIONS $ALIGNED_READS
