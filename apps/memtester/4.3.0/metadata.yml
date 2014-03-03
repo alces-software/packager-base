@@ -8,6 +8,8 @@
   non-deterministic faults. It has many tests to help catch borderline memory.
 :group: Benchmarks
 :changelog: |
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
   * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
     - Bumped version to 4.3.0
   * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
@@ -30,3 +32,24 @@
   setenv ${appcaps}BIN ${appdir}/bin/
 
   prepend-path PATH ${appdir}/bin/
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For more information about memtester see:
+      #   http://pyropus.ca/software/memtester/
+
+      # Amount of memory to test, with suffix B, K, M or G
+      MEMORY=1M
+
+      # Limit to number of runs (default: none)
+      RUNS=5
+
+      # Additional command-line options ('memtester' for list)
+      #MEMTESTER_OPTIONS=
+
+      memtester $MEMTESTER_OPTIONS $MEMORY $RUNS
