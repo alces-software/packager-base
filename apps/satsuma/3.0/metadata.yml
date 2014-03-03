@@ -9,6 +9,8 @@
   aligns two fasta sequences in a battleship fashion syntenically. 
 :group: Bioinformatics
 :changelog: |
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
   * Fri Jan 10 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: satsuma-3.0.tar.gz
@@ -30,3 +32,27 @@
   setenv ${appcaps}SAMPLES ${appdir}/samples
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full Satsuma usage information see:
+      #   http://www.broadinstitute.org/ftp/distribution/software/spines/SpinesManual.pdf
+
+      # Output directory
+      OUTPUT_DIR=satsuma_output
+
+      # Query FASTA sequence
+      QUERY_SEQUENCE=$SATSUMASAMPLES/human.X.part.short.fasta 
+
+      # Target FASTA sequence
+      TARGET_SEQUENCE=$SATSUMASAMPLES/dog.X.part.short.fasta
+
+      # Additional command-line options (Satsuma -h for list)
+      #SATSUMA_OPTIONS=
+
+      $SATSUMABIN/Satsuma -q $QUERY_SEQUENCE -t $TARGET_SEQUENCE -o $OUTPUT_DIR $SATSUMA_OPTIONS
