@@ -11,6 +11,8 @@
   between the two.
 :group: Bioinformatics
 :changelog: |
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: muscle3.8.31_src.tar.gz
@@ -35,3 +37,30 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full MUSCLE usage information see:
+      #   http://www.drive5.com/muscle/manual/
+      # NB no sample input data is supplied with MUSCLE. The file seqs.fa (or
+      # equivalent) must be supplied by the user
+
+      # Output directory
+      OUTPUT_DIR=muscle_output
+
+      # Input file in FASTA format
+      INPUT_FILE=seqs.fa
+
+      # Output alignment in FASTA format
+      OUTPUT_FILE=$OUTPUT_DIR/seqs.afa
+
+      # Additional command-line options ('muscle' for list)
+      #MUSCLE_OPTIONS=
+
+      mkdir -p $OUTPUT_DIR
+      muscle -in $INPUT_FILE -out $OUTPUT_FILE
