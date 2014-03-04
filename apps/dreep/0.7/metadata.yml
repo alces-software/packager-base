@@ -9,6 +9,8 @@
   utilizing the re-sequencing error profile of the data.
 :group: Bioinformatics
 :changelog: |
+  * Tue Mar  4 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added explicit dependency on Gridware perl
   * Thu Dec 19 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: dreep.sic
@@ -29,6 +31,8 @@
 :requirements:
   :tool:
     - apps/cpanminus
+  :build:
+    - apps/perl
 :compilers:
   noarch:
 :compile: |
@@ -54,7 +58,7 @@
   setenv ${appcaps}PERL ${appdir}/perl
 
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5
-  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux-thread-multi
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
   prepend-path MANPATH ${appdir}/perl/man
   prepend-path PATH ${appdir}/perl/bin
 
