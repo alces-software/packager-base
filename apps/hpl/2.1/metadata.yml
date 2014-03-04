@@ -9,6 +9,8 @@
   The HPL software package requires the availibility on your system of an implementation of the Message Passing Interface MPI (1.1 compliant). An implementation of either the Basic Linear Algebra Subprograms BLAS or the Vector Signal Image Processing Library VSIPL is also needed. Machine-specific as well as generic implementations of MPI, the BLAS and VSIPL are available for a large variety of systems.
 :group: Benchmarks
 :changelog: |
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
   * Wed Nov 21 2012 - Steve Norledge <steve.norledge@alces-software.com>
     - First created
 :src: hpl-2.1.tar.gz
@@ -37,3 +39,22 @@
 
   prepend-path PATH ${appdir}/bin/
   prepend-path MANPATH ${appdir}/man/
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:mpi-multislot'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For more information about configuring HPL see:
+      #   http://www.netlib.org/benchmark/hpl/
+
+      # Directory containing the HPL.dat input data file, tuned as required
+      # (A sample is supplied in the application's bin directory)
+      HPLDAT_DIR=$HPLDIR/bin
+
+      # Number of processes to start
+      NUM_PROCESSES=4
+
+      cd $HPLDAT_DIR && mpirun -np $NUM_PROCESSES xhpl
