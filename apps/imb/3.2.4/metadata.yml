@@ -11,6 +11,8 @@
   :build:
     - mpi/openmpi
 :changelog: |
+  * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Added MPI example script
   * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
     - Bumped to v3.2.4-updated
   * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
@@ -52,3 +54,25 @@
   setenv ${appcaps}DOC ${appdir}/doc/
 
   prepend-path PATH ${appdir}/bin/
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:mpi-multislot'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For more information about IMB options see:
+      #   http://www.intel.com/software/imb
+
+      # Output directory
+      OUTPUT_DIR=imb_output
+
+      # Number of processes to start
+      NUM_PROCESSES=4
+
+      # Additional command-line options ('IMB-MPI1 -help' for a list)
+      #IMB_OPTIONS=
+
+      mkdir -p $OUTPUT_DIR
+      mpirun -np $NUM_PROCESSES IMB-MPI1 $IMB_OPTIONS > $OUTPUT_DIR/IMB-MPI1.report 2>&1
