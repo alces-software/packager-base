@@ -17,6 +17,8 @@
   databases.
 :group: Bioinformatics
 :changelog: |
+  * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
   * Tue Jan 22 2014 James Donohue <james.donohue@alces-software.com>
     - Upgraded to latest v2.2.29
   * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -48,3 +50,45 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For detailed usage information for BLAST commands see:
+      #   http://www.ncbi.nlm.nih.gov/books/NBK1763/
+      #
+      # Example script for 'blastn' use case based on:
+      #   http://www.ncbi.nlm.nih.gov/books/NBK52640/#chapter1._Basic_use_1
+      # Requires test BLAST database (~1.9GB) downloaded and extracted from:
+      #   ftp://ftp.ncbi.nlm.nih.gov/blast/db/refseq_rna.00.tar.gz
+      #   ftp://ftp.ncbi.nlm.nih.gov/blast/db/refseq_rna.01.tar.gz
+      #   ftp://ftp.ncbi.nlm.nih.gov/blast/db/refseq_rna.02.tar.gz
+
+      # Output directory
+      OUTPUT_DIR=blast_output
+
+      # BLAST database name
+      DB_NAME=refseq_rna
+
+      # Comma-delimited search string(s) of sequence identifiers
+      DB_SEQ_IDS=nm_000249
+
+      # Query file name
+      QUERY_FILE=test_query.fa
+
+      # Alignment view option (7 = tabular with comment lines)
+      OUTPUT_FORMAT=7
+
+      # Show alignments for this number of database sequences
+      NUM_ALIGNS=2
+
+      # Additional command-line options (blastn -h for a list)
+      BLASTN_OPTIONS="-task blastn -dust no -num_alignments $NUM_ALIGNS"
+
+      mkdir -p $OUTPUT_DIR
+      blastdbcmd -db $DB_NAME -entry $DB_SEQ_IDS -out $OUTPUT_DIR/$QUERY_FILE \
+        && blastn -query $OUTPUT_DIR/$QUERY_FILE -db $DB_NAME -outfmt $OUTPUT_FORMAT $BLASTN_OPTIONS
