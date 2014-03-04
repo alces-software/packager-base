@@ -11,6 +11,8 @@
   aio_read, aio_write.
 :group: Benchmarks
 :changelog: |
+  * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Added MPI example script
   * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
     - Bumped version to 3.420
   * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
@@ -45,3 +47,18 @@
   setenv ${appcaps}BIN ${appdir}/bin/
 
   prepend-path PATH ${appdir}/bin/
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For detailed IOzone usage information see:
+      #   http://www.iozone.org/docs/IOzone_msword_98.pdf
+
+      # Command-line options ('iozone -h' for a list)
+      IOZONE_OPTIONS="-a"
+
+      iozone $IOZONE_OPTIONS
