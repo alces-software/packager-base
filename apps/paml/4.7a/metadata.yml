@@ -16,6 +16,8 @@
   RaxML, etc.
 :group: Bioinformatics
 :changelog: |
+  * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Added sample control files and example script
   * Thu Jan 23 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: paml4.7a.tgz
@@ -29,10 +31,33 @@
   cd src
   make <%= redirect(:compile) %>
 :install: |  
-  mkdir -v <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/{bin,data} <%= redirect(:install) %>
   cp -v src/baseml src/basemlg src/codeml src/pamp src/evolver src/mcmctree src/yn00 src/chi2 <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -vr *.ctl *.trees *.aa *.dat *.nuc dat examples paup* <%= dest_dir %>/data <%= redirect(:install) %>
+  chmod -R a+rx <%= dest_dir %>/data
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DATA ${appdir}/data
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For detailed PAML usage information see:
+      #   http://abacus.gene.ucl.ac.uk/software/pamlDOC.pdf
+      # This example script uses the sample control files supplied with PAML
+
+      # Output directory
+      OUTPUT_DIR=paml_output
+
+      mkdir -p $OUTPUT_DIR
+      cp -r $PAMLDATA/* $OUTPUT_DIR
+      cd $OUTPUT_DIR
+      codeml
+      baseml
