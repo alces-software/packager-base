@@ -12,6 +12,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script; replaced aliases with symlinks
   * Tue Jan 28 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: procheck.tar.gz
@@ -42,9 +44,15 @@
   sed -i -e 's/csh -v -x/csh -vx/' procomp.scr
   ./procomp.scr <%= redirect(:make) %>
 :install: |
-  mkdir -v <%= dest_dir %>/{bin,doc} <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/{bin,scripts,doc} <%= redirect(:install) %>
   cp -v anglen clean rmsdev secstr gfac2pdb pplot bplot tplot mplot vplot viol2pdb wirplot nb procheck.dat procheck.prm resdefs.data *.scr <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v maninst.ps README <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v *.scr <%= dest_dir %>/scripts <%= redirect(:install) %>
+  cd <%= dest_dir %>/scripts
+  # Prefer symlinks to aliases recommended by installation instructions
+  for file in procheck procheck_comp procheck_nmr proplot proplot_comp proplot_nmr gfac2pdb viol2pdb wirplot; do 
+    ln -vs $file.scr $file <%= redirect(:install) %>
+  done
 :modules:
    - :type: apps
      :content: |
@@ -52,11 +60,35 @@
 
        setenv ${appcaps}DIR ${appdir}
        setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}SCRIPTS ${appdir}/scripts
        setenv ${appcaps}DOC ${appdir}/doc
 
        prepend-path PATH ${appdir}/bin
+       prepend-path PATH ${appdir}/scripts
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For detailed PROCHECK usage information see:
+      #   http://www.ebi.ac.uk/thornton-srv/software/PROCHECK/manual/
+      # Note: example data files are not included with PROCHECK
 
-       set aliases [list "procheck" "procheck_comp" "procheck_nmr" "proplot" "proplot_comp" "proplot_nmr" "gfac2pdb" "viol2pdb" "wirplot"]
-       foreach item $aliases {
-         set-alias $item ${appdir}/bin/$item.scr
-       }
+      # Output directory
+      OUTPUT_DIR=procheck_output
+
+      # Full path to file containing protein structure in Brookhaven format
+      COORDINATE_FILE=/tmp/2HHB.pdb
+
+      # Optional: for multiple chain files when only one of the chains is to be analysed
+      #CHAIN_ID=
+
+      # Resolution at which the structure has been determined
+      RESOLUTION=2.0
+
+      mkdir -p $OUTPUT_DIR
+      cd $OUTPUT_DIR \
+        && procheck $COORDINATE_FILE $CHAIN_ID $RESOLUTION
