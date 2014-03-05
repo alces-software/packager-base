@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script
   * Thu Oct 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - add missing bcftools/vcfutils.pl to bin directory
   * Thu Apr  4 2013 James Donohue <james.donohue@alces-software.com>
@@ -73,6 +75,8 @@
   shopt -u nullglob
   cp -v *.h <%= dest_dir %>/include <%= redirect(:install) %>
   cp -rv examples <%= dest_dir %> <%= redirect(:install) %>
+  chmod a+rx <%= dest_dir %>/examples
+  chmod -R a+r <%= dest_dir %>/examples/*
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -83,3 +87,31 @@
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/man
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # samtools offers many different commands; this example script demonstrates
+      # using the 'view' command to convert a SAM file to a BAM file.
+      #
+      # For detailed samtools usage information see:
+      #   http://samtools.sourceforge.net/samtools.shtml
+
+      # Output directory
+      OUTPUT_DIR=samtools_output
+
+      # Input SAM file
+      INPUT_FILE=$SAMTOOLSDIR/examples/toy.sam
+
+      # Output BAM file
+      OUTPUT_FILE=$OUTPUT_DIR/toy.bam
+
+      # Additional command-line options (samtools -h for a list)
+      SAMTOOLS_OPTIONS="-bS"
+
+      mkdir -p $OUTPUT_DIR
+      samtools view $SAMTOOLS_OPTIONS $INPUT_FILE -o $OUTPUT_FILE
