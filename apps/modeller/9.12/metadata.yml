@@ -24,6 +24,8 @@
   Modeller in graphical or web interfaces or other frameworks.
 :group: Bioinformatics
 :changelog: |
+  * Thu Mar  6 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script
   * Mon Jan 27 2014 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: modeller-9.12.tar.gz
@@ -59,3 +61,23 @@
   setenv ${appcaps}EXAMPLES ${appdir}/examples
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For detailed MODELLER usage information see:
+      #  http://salilab.org/modeller/9.13/manual/
+
+      # Output directory
+      OUTPUT_DIR=modeller_output
+
+      mkdir -p $OUTPUT_DIR
+      cd $OUTPUT_DIR
+      cp -v $MODELLEREXAMPLES/automodel/model-default.py \
+        $MODELLEREXAMPLES/automodel/alignment.ali \
+        $MODELLEREXAMPLES/atom_files/* .
+      mod9.12 model-default.py > model-default.log
