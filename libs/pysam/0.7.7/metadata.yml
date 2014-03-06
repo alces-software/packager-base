@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: Pysam
+:license: MIT License
+:summary: Python module for reading and manipulating Samfiles
+:url: https://github.com/pysam-developers/pysam
+:description: |
+  Pysam is a python module for reading and manipulating files in the
+  SAM/BAM format. The SAM/BAM format is a way to store efficiently
+  large numbers of alignments (Li 2009
+  <http://www.ncbi.nlm.nih.gov/pubmed/19505943>), such as those
+  routinely are created by next-generation sequencing methods.
+
+  pysam lightweight wrapper of the samtools C-API. Pysam also includes
+  an interface for tabix.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: pysam-0.7.7.tar.gz
+:version: '0.7.7'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/setuptools
+    - apps/cython
+  :build: 
+    - apps/python
+  :runtime: 
+    - apps/python
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
