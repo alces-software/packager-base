@@ -12,10 +12,12 @@
   variants from paired-end short reads.
 :group: Bioinformatics
 :changelog: |
+  * Thu Mar  6 2014 - James Donohue <james.donohue@alces-software.com>
+    - Updated broken fetch URL and source directory
   * Tue Feb  5 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: pindel024t.tar.gz
-:src_dir: pindel024t
+:src_dir: pindel-r0.2.4t
 :type: apps
 :version: '0.2.4.t'
 :compilers:
