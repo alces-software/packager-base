@@ -43,6 +43,8 @@
       :build: 
         - libs/fftw3_double
 :changelog: |
+  * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script
   * Thu Jan 23 2014 - James Donohue <james.donohue@alces-software.com>
     - Bumped to latest version, v4.6.5
   * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -149,3 +151,41 @@
   }
 
   puts $completion_data
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # GROMACS offers many different commands; this example batch script uses
+      # pdb2gmx to generate a topology file from a sample PDB
+      #
+      # For full GROMACS documentation see:
+      #   http://www.gromacs.org/Documentation
+
+      # Output directory
+      OUTPUT_DIR=gromacs_output
+      mkdir -p $OUTPUT_DIR
+
+      # Demo molecule
+      MOL=cpeptide
+
+      # Input structure file: gro g96 pdb tpr etc.
+      INPUT_FILE=$MOL.pdb
+      cp -v $GMXDATA/gromacs/tutor/gmxdemo/$MOL.pdb $INPUT_FILE
+
+      # Output structure file
+      OUTPUT_STRUCTURE=$OUTPUT_DIR/$MOL.gro
+
+      # Output topology file
+      OUTPUT_TOPOLOGY=$OUTPUT_DIR/$MOL.top
+
+      # Output include file
+      OUTPUT_INCLUDE=$OUTPUT_DIR/posre.itp
+
+      pdb2gmx -f $INPUT_FILE -o $OUTPUT_STRUCTURE -p $OUTPUT_TOPOLOGY -i $OUTPUT_INCLUDE &> $OUTPUT_DIR/output.pdb2gmx <<EOT
+      1
+      1
+      EOT
