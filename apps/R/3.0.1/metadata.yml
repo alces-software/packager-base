@@ -29,6 +29,8 @@
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reinstate compilation of BLAS shared library
   * Wed Jul 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v3.0.1
   * Tue Apr 30 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -58,7 +60,8 @@
   ./configure --with-blas=$BLASDIR/libblas.a \
               --with-lapack=$LAPACKDIR/liblapack.a \
               --prefix=<%= dest_dir %> \
-              --enable-R-shlib <%= redirect(:configure) %>
+              --enable-R-shlib \
+              --enable-BLAS-shlib <%= redirect(:configure) %>
   make <%= redirect(:make) %>
   # make math lib
   cd src/nmath/standalone
