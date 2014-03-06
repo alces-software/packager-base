@@ -19,6 +19,8 @@
   variety of formats.
 :group: Bioinformatics
 :changelog: |
+  * Thu Mar  6 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script
   * Thu Jan 30 2014 - James Donohue <james.donohue@alces-software.com>
     - Rewritten for v5 series
   * Mon 18 Feb 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -45,3 +47,27 @@
   setenv ${appcaps}DIR ${appdir}
 
   prepend-path PATH ${appdir}
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For InterProScan usage information see:
+      #   https://code.google.com/p/interproscan/wiki/HowToRun
+
+      # Output directory
+      OUTPUT_DIR=iprscan_output
+
+      # Path to FASTA file that should be loaded on Master startup
+      # NB location must be writeable
+      INPUT_FILE=test_proteins.fasta
+      cp -v $IPRSCANDIR/test/test_proteins.fasta $INPUT_FILE
+
+      # Comma separated list of output formats
+      OUTPUT_FORMATS=tsv
+
+      mkdir -p $OUTPUT_DIR
+      interproscan.sh -i $INPUT_FILE -f $OUTPUT_FORMATS -d $OUTPUT_DIR
