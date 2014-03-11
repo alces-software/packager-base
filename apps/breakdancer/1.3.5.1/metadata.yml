@@ -18,10 +18,12 @@
 :requirements:
   :tool:
     - apps/cmake
-  :build: 
+  :build:
     - apps/samtools
     - libs/boost
 :changelog: |
+  * Tue Mar 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correction to perl library paths
   * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v1.3.5.1
     - Refactored to packager style
@@ -92,6 +94,8 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5/site_perl
+  prepend-path PERL5LIB ${appdir}/perl/share/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib64/perl5
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/perl/share/man

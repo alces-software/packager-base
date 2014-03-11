@@ -19,6 +19,8 @@
   :build: 
     - apps/samtools
 :changelog: |
+  * Tue Mar 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correction to perl library paths
   * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Thu Jul 14 2011 Steve Norledge
@@ -73,6 +75,8 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5/site_perl
+  prepend-path PERL5LIB ${appdir}/perl/share/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib64/perl5
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/perl/share/man
