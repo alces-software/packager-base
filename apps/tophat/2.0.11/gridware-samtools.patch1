@@ -1,0 +1,90 @@
+diff -uNr tophat-2.0.10/ax_bam.m4 tophat-2.0.10.alces/ax_bam.m4
+--- tophat-2.0.10/ax_bam.m4	2012-05-30 00:06:21.000000000 +0100
++++ tophat-2.0.10.alces/ax_bam.m4	2013-11-21 18:30:38.630140946 +0000
+@@ -102,7 +102,7 @@
+ 
+ 	AC_LANG_PUSH(C++)
+      	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+-	@%:@include <bam/bam.h>
++	@%:@include <bam.h>
+ 	]], [[
+ 	]])],[
+         AC_MSG_RESULT(yes)
+diff -uNr tophat-2.0.10/configure tophat-2.0.10.alces/configure
+--- tophat-2.0.10/configure	2013-11-13 16:49:49.000000000 +0000
++++ tophat-2.0.10.alces/configure	2013-11-21 18:30:38.631140752 +0000
+@@ -4203,7 +4203,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ 
+-	#include <bam/bam.h>
++	#include <bam.h>
+ 
+ int
+ main ()
+diff -uNr tophat-2.0.10/src/align_status.h tophat-2.0.10.alces/src/align_status.h
+--- tophat-2.0.10/src/align_status.h	2012-05-16 23:34:23.000000000 +0100
++++ tophat-2.0.10.alces/src/align_status.h	2013-11-21 18:30:38.633189834 +0000
+@@ -14,7 +14,7 @@
+ #include <cassert>
+ #include <cstring>
+ #include <seqan/sequence.h>
+-#include <bam/sam.h>
++#include <sam.h>
+ #include "common.h"
+ 
+ #include "bwt_map.h"
+diff -uNr tophat-2.0.10/src/bam2fastx.cpp tophat-2.0.10.alces/src/bam2fastx.cpp
+--- tophat-2.0.10/src/bam2fastx.cpp	2013-06-20 03:36:08.000000000 +0100
++++ tophat-2.0.10.alces/src/bam2fastx.cpp	2013-11-21 18:30:38.634189586 +0000
+@@ -5,8 +5,8 @@
+ #include <assert.h>
+ #include <string>
+ 
+-#include "bam/bam.h"
+-#include "bam/sam.h"
++#include "bam.h"
++#include "sam.h"
+ 
+ using namespace std;
+ 
+diff -uNr tophat-2.0.10/src/bwt_map.h tophat-2.0.10.alces/src/bwt_map.h
+--- tophat-2.0.10/src/bwt_map.h	2013-02-25 14:58:40.000000000 +0000
++++ tophat-2.0.10.alces/src/bwt_map.h	2013-11-21 18:30:38.635164040 +0000
+@@ -16,7 +16,7 @@
+ #include <algorithm>
+ #include <seqan/sequence.h>
+ 
+-#include <bam/sam.h>
++#include <sam.h>
+ using namespace std;
+ 
+ #include "common.h"
+diff -uNr tophat-2.0.10/src/common.h tophat-2.0.10.alces/src/common.h
+--- tophat-2.0.10/src/common.h	2013-11-12 04:09:15.000000000 +0000
++++ tophat-2.0.10.alces/src/common.h	2013-11-21 18:30:38.635164040 +0000
+@@ -15,8 +15,8 @@
+ #include <cstdio>
+ #include <string>
+ #include <vector>
+-#include "bam/bam.h"
+-#include "bam/sam.h"
++#include "bam.h"
++#include "sam.h"
+ 
+ #define MAX_READ_LEN 1024
+ 
+diff -uNr tophat-2.0.10/src/map2gtf.h tophat-2.0.10.alces/src/map2gtf.h
+--- tophat-2.0.10/src/map2gtf.h	2013-06-14 03:38:05.000000000 +0100
++++ tophat-2.0.10.alces/src/map2gtf.h	2013-11-21 18:30:38.637119282 +0000
+@@ -20,8 +20,8 @@
+ #include <sstream>
+ #include <vector>
+ 
+-#include <bam/bam.h>
+-#include <bam/sam.h>
++#include <bam.h>
++#include <sam.h>
+ 
+ #include <seqan/sequence.h>
+ 
