@@ -15,6 +15,10 @@
   areas between contigs.
 :group: Bioinformatics
 :changelog: |
+  * Thu Apr  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added categories parameter
+  * Thu Mar 27 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added maxkmerlength parameter
   * Fri Oct 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to version 1.2.08
     - Fix contributed perl script hashbangs
@@ -30,14 +34,30 @@
 :type: apps
 :version: '1.2.08'
 # requires tetex-latex for build
+:params:
+  :maxkmerlength: "Set the MAXKMERLENGTH compile time configuration variable [odd integer 31 <= x <= 201 or 'default' to use the default of 31]; please refer to the Velvet docs for notes on the effect."
+  :categories: "Set the CATEGORIES compile time configuration variable [integer >= 2 or 'default' to use the default of 2]; please refer to the Velvet docs for notes on the effect."
 :compilers:
   gcc:
 :compile: |
+  <%
+  l = param(:maxkmerlength).to_i
+  c = param(:categories).to_i
+  if param(:maxkmerlength) != 'default' && (l < 31 || l > 201 || l % 2 != 1 )
+  %>
+  echo "Error: invalid maxkmerlength (<%= l %>) was specified.  Must be an odd integer 31 <= x <= 201 or the string 'default'." > /dev/stderr
+  exit 1
+  <% elsif param(:categories) != 'default' && c < 2 %>
+  echo "Error: invalid categories (<%= c %>) was specified.  Must be an integer >= 2 or the string 'default'." > /dev/stderr
+  exit 1
+  <% else %>
+  MAKE_PARAMS="<%= l != 0 ? "MAXKMERLENGTH=#{l}" : '' %> <%= c != 0 ? "CATEGORIES=#{c}" : '' %>"
+  <% end %>
   if which pdflatex &>/dev/null; then
-    make <%= redirect(:make) %>
+    make $MAKE_PARAMS <%= redirect(:make) %>
   else
     # make without docs
-    make cleanobj zlib obj velveth velvetg <%= redirect(:make) %>
+    make $MAKE_PARAMS cleanobj zlib obj velveth velvetg <%= redirect(:make) %>
   fi
   for a in contrib/*/*.pl; do
     sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a
