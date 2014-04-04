@@ -24,11 +24,16 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added requirement for Gridware python 2.7.x
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: MACS-1.4.2.tar.gz
 :src_dir: MACS-1.4.2
 :version: '1.4.2'
+:requirements:
+  :build: apps/python ~> 2.7.3
+  :runtime: apps/python ~> 2.7.3
 :compilers:
   gcc:
 :compile: |
