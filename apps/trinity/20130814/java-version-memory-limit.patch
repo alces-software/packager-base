@@ -1,0 +1,11 @@
+--- Trinity.pl.orig	2014-04-04 10:59:29.565400836 +0100
++++ Trinity.pl	2014-04-04 11:14:10.842494841 +0100
+@@ -574,7 +574,7 @@
+ 
+ ## Check Java version:
+ unless ($NO_RUN_BUTTERFLY_FLAG || $NO_RUN_CHRYSALIS_FLAG) {
+-  my $java_version = `java -version 2>&1 `;
++  my $java_version = `java -Xmx64m -version 2>&1 `;
+   unless ($java_version =~ /(java|openjdk) version \"1\.[67]\./) {
+       die "Error, Trinity requires access to Java version 1.6 or 1.7.  Currently installed version is: $java_version";
+   }

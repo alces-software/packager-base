@@ -16,18 +16,27 @@
   tease apart transcripts derived from paralogous genes.
 :group: Bioinformatics
 :changelog: |
+  * Fri Apr  4 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tweaked environment variables to add MALLOC_ARENA_MAX=1
+    - Added runtime dependencies on Bowtie and Samtools
+    - Added patch to introduce Java memory requirement when version is requested
   * Tue Oct  1 2013 - James Donohue <james.donohue@alces-software.com>
     - Bumped to 2013-08-04 version
   * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - Refactored to packager style  
+    - Refactored to packager style
   * Fri Feb 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: trinityrnaseq_r2013_08_14.tgz
 :src_dir: trinityrnaseq_r2013_08_14
+:patches:
+  - java-version-memory-limit.patch
 :type: apps
 :version: 20130814
 :requirements:
   :tool: apps/cpanminus
+  :runtime:
+    - apps/bowtie
+    - apps/samtools
 :compilers:
   gcc:
 :compile: |
@@ -41,12 +50,20 @@
   make <%= redirect(:make) %>
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
-  cpanm IO::Compress::Base <%= redirect(:cpanm) %> 
+  cpanm IO::Compress::Base <%= redirect(:cpanm) %>
 :install: |
   cp -rv * <%= dest_dir %> <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}
+
+  # This variable tunes the virtual memory system to work better with
+  # abstracted languages, such as Java.  If you need this setting to
+  # be skipped, ensure the variable ALCES_SKIP_VMM_TWEAK is set and
+  # exported in your environment before loading the module.
+  if { [info exists ::env(ALCES_SKIP_VMM_TWEAK)] == 0 } {
+    setenv MALLOC_ARENA_MAX 1
+  }
 
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5
   prepend-path MANPATH ${appdir}/perl/man
