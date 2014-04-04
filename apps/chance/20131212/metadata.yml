@@ -1,0 +1,73 @@
+---
+:schema: 1
+:title: CHANCE
+:license: GPL
+:summary: Assess the quality of ChiP-seq experiments
+:url: http://song.igb.illinois.edu/chance.html
+:description: |
+  **Ch**IP-seq **An**alytics and **C**onfidence **E**stimation
+  (CHANCE) is a software for assessing the quality of ChIP-seq
+  experiments and providing feedback for the optimization of ChIP
+  and library generation protocols.
+
+  If you find this software useful please cite A. Diaz, A. Nellore,
+  J. S. Song, "CHANCE: comprehensive software for quality control and
+  validation of ChIP-seq data". Genome Biology. Vol. 13 Issue 10,
+  October 2012. For the theoretical analysis and technical
+  interpretation of the main statistical tests used by CHANCE, see
+  Diaz et al. Statistical Applications in Genetics and Molecular
+  Biology.11(3) March 2012.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CHANCE_Linux.zip
+:src_dir: .
+:version: '20131212'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution  
+:install: |
+  mkdir mcr
+  cd mcr
+  unzip ../MCRInstaller.zip <%= redirect(:mcr) %>
+  ./install -mode silent -agreeToLicense yes -destinationFolder <%= dest_dir %>/lib/mcr
+  cd ..
+  mkdir -p <%= dest_dir %>/{doc,bin}
+  cp -v TUTORIAL MANUAL <%= dest_dir %>/doc
+
+  cp -v chance_linux <%= dest_dir %>/lib
+  chmod 755 <%= dest_dir %>/lib/chance_linux
+
+  cat <<\EOF > <%= dest_dir %>/bin/chance
+  #!/bin/bash
+  args=
+  while [ $# -gt 0 ]; do
+      token=`echo "$1" | sed 's/ /\\\\ /g'`   # Add blackslash before each blank
+      args="${args} ${token}"
+      shift
+  done
+  $CHANCEDIR/lib/chance_linux $args  
+  EOF
+  chmod 755 <%= dest_dir %>/bin/chance
+  
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  set mcrroot ${appdir}/lib/mcr/v717
+  set mcrjre ${mcrroot}/sys/java/jre/glnxa64/jre/lib/amd64
+
+  prepend-path LD_LIBRARY_PATH ${mcrjre}
+  prepend-path LD_LIBRARY_PATH ${mcrjre}/client
+  prepend-path LD_LIBRARY_PATH ${mcrjre}/server
+  prepend-path LD_LIBRARY_PATH ${mcrjre}/native_threads
+  prepend-path LD_LIBRARY_PATH ${mcrroot}/sys/os/glnxa64
+  prepend-path LD_LIBRARY_PATH ${mcrroot}/bin/glnxa64
+  prepend-path LD_LIBRARY_PATH ${mcrroot}/runtime/glnxa64
+
+  setenv XAPPLRESDIR ${mcrroot}/X11/app-defaults
+
+  prepend-path PATH ${appdir}/bin
