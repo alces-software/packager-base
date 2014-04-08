@@ -1,0 +1,34 @@
+---
+:schema: 1
+:title: cdbfasta
+:license: OTHER - OSI certified; refer to README
+:summary: CDB (Constant DataBase) indexing and retrieval tools for FASTA files
+:url: http://sourceforge.net/projects/cdbfasta/
+:description: |
+  A couple of platform independent file-based hashing tools (cdbfasta and
+  cdbyank) that can be used for creating indices for quick retrieval of any
+  particular sequences from large multi-FASTA files.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr  4 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: cdbfasta.tar.gz
+:src_dir: cdbfasta
+:version: 0.99
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin/
+  mkdir -p <%= dest_dir %>/doc/
+  install -D -m 0755 cdbfasta <%= dest_dir %>/bin/
+  install -D -m 0755 cdbyank  <%= dest_dir %>/bin/
+  install -D -m 0644 README   <%= dest_dir %>/doc/
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
