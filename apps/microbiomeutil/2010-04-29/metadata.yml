@@ -1,0 +1,89 @@
+---
+:schema: 1
+:title: Microbiome Utilities
+:license: BSD
+:summary: |
+  A set of software utilities for processing and analyzing 16S rRNA genes
+  including generating NAST alignments, chimera checking, and assembling paired
+  16S rRNA reads according to reference sequence homology.
+:url: http://microbiomeutil.sourceforge.net/
+:description: |
+  The Human Microbiome Project (HMP) is an exciting Roadmap initiative funded
+  by the National Institutes of Health (NIH). The goal of the project is to
+  understand how the microbial communities inhabiting our bodies contribute to
+  normal human health, development, and disease (http://nihroadmap.nih.gov/hmp).
+
+  The Broad Institute (http://www.broadinstitute.org) was launched in 2004 with
+  the visionary philanthropic investment of Eli and Edythe Broad, who joined
+  with leaders at Harvard and its affiliated hospitals, MIT, and the Whitehead
+  Institute to pioneer a "new model" of collaborative science. The Broad
+  Institute is organized as a transparent infrastructure that allows biology-
+  and technology-focused scientists to work together to identify and overcome
+  the most critical obstacles to realizing the full promise of genomic
+  medicine.
+
+  The Broad Institute aggressively advances sequence-based technologies and the
+  bioinformatics necessary to characterize the vast complexity of the human
+  microbiome. In keeping with our mission, we make the microbiome analysis
+  utilities developed by the Broad Institute available to the community in
+  order to promote further innovation and collaborative research efforts. We
+  appreciate your feedback.
+
+  The utilities developed by the Broad Institute and provided here apply to a
+  range of challenges posed by the microbiome initiative, including:
+
+   * Sequence alignment (NAST-iEr)
+   * Chimera detection (ChimeraSlayer, WigeoN)
+   * Operational taxonomic unit OTU binning (TreeChopper)
+   * Sequence assembly (AmosCmp16Spipeline)
+
+  ChimeraSlayer, WigeoN, NAST-iEr, and the database of reference 16S sequences
+  are provided as a single co-dependent download. Sample data and usage
+  instructions are included.
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr  9 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: microbiomeutil_2010-04-29.tar.gz
+:src_dir: microbiomeutil_2010-04-29
+:sources:
+  - ncbi.tar.gz
+:type: apps
+:version: '2010-04-29'
+:compilers:
+  noarch:
+:requirements:
+  :runtime: 
+    - apps/cdbfasta ~> 0.99
+:compile: |
+  make <%= redirect(:compile) %>
+
+  # This old version of Microbiome Utils depends on an old version of ncbi
+  # classic blast. We bundle the required executables.
+  tar -zxf <%= source('ncbi.tar.gz') %> <%= redirect(:extradeps) %>
+  ncbi/make/makedis.csh <%= redirect(:extradeps) %>
+:install: |
+  mkdir -v <%= dest_dir %>/ncbibin <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/doc <%= redirect(:install) %>
+
+  # Copy almost everything to dest_dir. ChimeraSlayer et al require that
+  # certain runtime dependencies are at a particular relative path to the
+  # binary.
+  cp -vr ChimeraSlayer <%= dest_dir %> <%= redirect(:install) %>
+  cp -vr NAST-iEr <%= dest_dir %> <%= redirect(:install) %>
+  cp -vr WigeoN <%= dest_dir %> <%= redirect(:install) %>
+  cp -vr RESOURCES <%= dest_dir %> <%= redirect(:install) %>
+
+  cp -vr docs <%= dest_dir %>/doc
+  cp -v README <%= dest_dir%>/doc <%= redirect(:install) %>
+
+  # Copy the executables from ncbi which are required to ncbibin
+  cp -v ncbi/build/blastall ncbi/build/megablast ncbi/build/formatdb <%= dest_dir %>/ncbibin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/ncbibin
+  prepend-path PATH ${appdir}/ChimeraSlayer
+  prepend-path PATH ${appdir}/NAST-iEr
+  prepend-path PATH ${appdir}/WigeoN
