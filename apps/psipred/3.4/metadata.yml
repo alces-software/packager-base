@@ -21,6 +21,8 @@
   of PSIPRED was also ranked top in CASP3 held in 1998).            
 :group: Bioinformatics
 :changelog: |
+  * Wed Apr  9 2014 Ben Armston <ben.armston@alces-software.com>
+    - Updated URL for PSIPRED source code.
   * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
     - Added example script
   * Thu Jan 23 2014 James Donohue <james.donohue@alces-software.com>
