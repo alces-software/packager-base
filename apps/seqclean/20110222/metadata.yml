@@ -1,0 +1,91 @@
+---
+:schema: 1
+:title: SeqClean
+:license: The Artistic License
+:summary: The Gene Indices Sequence Cleaning and Validation script (SeqClean)
+:url: http://seqclean.sourceforge.net/
+:description: |
+  SeqClean is a tool for validation and trimming of DNA sequences from a flat
+  file database (FASTA format). SeqClean was designed primarily for "cleaning"
+  of EST databases, when specific vector and splice site data are not
+  available, or when screening for various contaminating sequences is desired.
+  The program works by processing the input sequence file and filtering its
+  content according to a few criteria: 
+
+   * percentage of undetermined bases
+   * polyA tail removal 
+   * overall low complexity analysis
+   * short terminal matches with various sequences used 
+     during the sequencing process (vectors, adapters)
+   * strong matches with other contaminants or unwanted sequences
+     (mitochondrial, ribosomal, bacterial, other species than the 
+     target organism etc.)
+    
+  The user is expected to provide the contaminant databases, they are not
+  included in this package.
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 10 2014 - Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: seqclean-x86_64.tgz
+:src_dir: seqclean-x86_64
+:type: apps
+:version: 20110222
+:compilers:
+  bin:
+:requirements:
+  :runtime:
+    - apps/ncbiblastlegacy
+:patches:
+  - env-perl.patch
+:compile: |
+  # no-op; this is a distribution of a Perl application with precompiled x86_64 binaries
+:install: |
+  mkdir -v <%= dest_dir %>/bin/     <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/doc/     <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/example/ <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/perl/    <%= redirect(:install) %>
+
+  install -D -m 0755 seqclean <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0755 cln2qual <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0755 bin/*    <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  # Remove conflicting tools - these are provided by the apps/ncbiblastlegacy module
+  rm -fv <%= dest_dir %>/bin/{formatdb,megablast} <%= redirect(:install) %>
+
+  install -D -m 0644 Mailer.pm <%= dest_dir %>/perl/ <%= redirect(:install) %>
+
+  install -D -m 0644 LICENSE README <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0644 <%= source('example/sample.fasta') %> <%= dest_dir %>/example <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PERL5LIB ${appdir}/perl/
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      # For more SeqClean usage information see:
+      #   http://sourceforge.net/projects/seqclean/files/
+
+      # Output directory
+      OUTPUT_DIR="seqclean/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # The EST file to clean.
+      EST_FILE="$SEQCLEANEXAMPLE/sample.fasta"
+
+      # Additional command-line options (seqclean -h for a list).
+      SEQCLEAN_OPTIONS=""
+
+      # Create output directory if it doesn't already exist
+      mkdir -p "$OUTPUT_DIR"
+      cd "$OUTPUT_DIR"
+
+      seqclean "$EST_FILE" $SEQCLEAN_OPTIONS

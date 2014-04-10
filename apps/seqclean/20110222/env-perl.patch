@@ -1,0 +1,18 @@
+diff -ur bin.orig/seqclean bin/seqclean
+--- seqclean.orig	2014-04-10 15:37:35.478269554 +0100
++++ seqclean	2014-04-10 15:57:02.298283054 +0100
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/usr/bin/env perl
+ use strict;
+ use Getopt::Std;
+ use FindBin;
+diff -ur bin.orig/seqclean.psx bin/seqclean.psx
+--- bin.orig/seqclean.psx	2014-04-10 15:37:35.494269554 +0100
++++ bin/seqclean.psx	2014-04-10 15:57:11.310283158 +0100
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/usr/bin/env perl
+ use strict;
+ use FindBin;
+ umask 0002;
