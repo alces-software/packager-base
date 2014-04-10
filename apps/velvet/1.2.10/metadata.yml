@@ -1,0 +1,79 @@
+---
+:schema: 1
+:license: GPL
+:summary: Sequence assembler for very short reads
+:url: http://www.ebi.ac.uk/~zerbino/velvet/
+:description: |
+  Velvet is a de novo genomic assembler specially designed for short
+  read sequencing technologies, such as Solexa or 454, developed by
+  Daniel Zerbino and Ewan Birney at the European Bioinformatics
+  Institute (EMBL-EBI), near Cambridge, in the United Kingdom.
+
+  Velvet currently takes in short read sequences, removes errors then
+  produces high quality unique contigs. It then uses paired-end read
+  and long read information, when available, to retrieve the repeated
+  areas between contigs.
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr  9 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 1.2.10
+  * Thu Apr  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added categories parameter
+  * Thu Mar 27 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added maxkmerlength parameter
+  * Fri Oct 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 1.2.08
+    - Fix contributed perl script hashbangs
+  * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Feb 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 1.2.03
+    - brought spec file into line with recent macro additions
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: velvet_1.2.10.tgz
+:src_dir: velvet_1.2.10
+:type: apps
+:version: '1.2.10'
+# requires tetex-latex for build
+:params:
+  :maxkmerlength: "Set the MAXKMERLENGTH compile time configuration variable [odd integer 31 <= x <= 201 or 'default' to use the default of 31]; please refer to the Velvet docs for notes on the effect."
+  :categories: "Set the CATEGORIES compile time configuration variable [integer >= 2 or 'default' to use the default of 2]; please refer to the Velvet docs for notes on the effect."
+:compilers:
+  gcc:
+:compile: |
+  <%
+  l = param(:maxkmerlength).to_i
+  c = param(:categories).to_i
+  if param(:maxkmerlength) != 'default' && (l < 31 || l > 201 || l % 2 != 1 )
+  %>
+  echo "Error: invalid maxkmerlength (<%= l %>) was specified.  Must be an odd integer 31 <= x <= 201 or the string 'default'." > /dev/stderr
+  exit 1
+  <% elsif param(:categories) != 'default' && c < 2 %>
+  echo "Error: invalid categories (<%= c %>) was specified.  Must be an integer >= 2 or the string 'default'." > /dev/stderr
+  exit 1
+  <% else %>
+  MAKE_PARAMS="<%= l != 0 ? "MAXKMERLENGTH=#{l}" : '' %> <%= c != 0 ? "CATEGORIES=#{c}" : '' %>"
+  <% end %>
+  if which pdflatex &>/dev/null; then
+    make $MAKE_PARAMS <%= redirect(:make) %>
+  else
+    # make without docs
+    make $MAKE_PARAMS cleanobj zlib obj velveth velvetg <%= redirect(:make) %>
+  fi
+  for a in contrib/*/*.pl; do
+    sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a
+  done
+:install: |
+  mkdir <%= dest_dir %>/build <%= dest_dir %>/bin <%= dest_dir %>/doc
+  cp -rv obj src <%= dest_dir %>/build <%= redirect(:install) %>
+  cp velvetg velveth <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp ChangeLog *.txt *.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv data contrib <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}BUILD ${appdir}/build
+  setenv ${appcaps}DATA ${appdir}/data
+
+  prepend-path PATH ${appdir}/bin
