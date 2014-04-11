@@ -22,29 +22,84 @@
       without running the interactive application
 :group: Bioinformatics
 :changelog: |
+  * Fri Apr 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added example script and example FASTQ file
   * Wed Oct 31 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: fastqc_v0.10.1.zip
+:sources:
+  - ilmn_example.fq
 :src_dir: FastQC
 :type: apps
 :version: '0.10.1'
 :compilers:
   noarch:
 :compile: |
-  # no-op; this is a distribution of a Perl/Java application
   sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i fastqc
   chmod 755 fastqc
 :install: |
-  mkdir -p <%= dest_dir %>/{app,bin,doc}
+  mkdir -p <%= dest_dir %>/{app,bin,doc,example}
   cp -av *.jar fastqc Contaminants Templates Help uk <%= dest_dir %>/app <%= redirect(:install) %>
   cp -av *.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -v -D -m 0644 <%= source('ilmn_example.fq') %> <%= dest_dir %>/example/ <%= redirect(:install) %>
   ln -s <%= dest_dir %>/app/fastqc <%= dest_dir %>/bin/fastqc
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}APP ${appdir}/app
   setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:smp-multislot'
+    name: 'Process an example FASTQ file'
+    description: 'Execute fastqc tool on a bundled example FASTQ file'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full FastQC usage information see:
+      #   http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+      #
+      # For command-line options, run: fastqc --help
 
+      # Input directory - from a previous velveth run
+      OUTPUT_DIR=fastqc/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
 
+      # Specify the number of files which can be processed
+      # simultaneously.  Each thread will be allocated 250MB of
+      # memory.
+      #   (For GridScheduler tasks, you should update the amount of
+      #   memory per core requested in the "-l h_vmem" scheduler
+      #   directive above to 250M.)
+      THREADS={{ fact.multislotNumSlots }}
+
+      # Specify the length of Kmer to look for in the Kmer content
+      # module. Specified Kmer length must be between 2 and 10. Default
+      # length is 5 if -k parameter is not specified.
+      KMER_LENGTH=5
+
+      # Input file (or files)
+      INPUT_FILES=("$FASTQCEXAMPLE/ilmn_example.fq")
+
+      # Command-line options (run oases with no options for a list).
+      #FASTQC_OPTIONS=""
+
+      # Create output directory if it doesn't already exist
+      mkdir -p "$OUTPUT_DIR"
+
+      # Execute velvetg
+      fastqc -o "$OUTPUT_DIR" \
+        -t $THREADS \
+        -k $KMER_LENGTH \
+        $FASTQC_OPTIONS \
+        "${INPUT_FILES[@]}"
+
+      echo ""
+      echo "------------------"
+      echo " fastqc completed"
+      echo "------------------"
+      echo " Output is available in: $OUTPUT_DIR"
