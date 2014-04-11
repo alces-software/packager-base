@@ -16,6 +16,8 @@
   genomes like human, about 150 GB memory would be required.
 :group: Bioinformatics
 :changelog: |
+  * Thu Apr 10 2014 - James Donohue <james.donohue@alces-software.com>
+    - Added example script
   * Mon Aug 12 2013 - Steve Norledge
     - Updated to 2r240
   * Mon Feb 18 2013 - Steve Norledge
@@ -43,3 +45,36 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # Note that to use SOAPdenovo requires both data files and a configuration
+      # file that tells the assembler where to find these files (not included)
+      #
+      # For full SOAPdenovo usage information see:
+      #   http://soap.genomics.org.cn/soapdenovo.html
+
+      # Output directory
+      OUTPUT_DIR="soapdenovo/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # SOAPdenovo executable to use (SOAPdenovo-63mer or SOAPdenovo-127mer)
+      SOAPDENOVO=SOAPdenovo-63mer
+
+      # SOAPdenovo command to run
+      COMMAND=all
+
+      # Path to configuration file
+      CONFIG_FILE="/path/to/config"
+
+      # Additional command-line options ('SOAPdenovo-63mer all' for a list)
+      #SOAPDENOVO_OPTIONS=
+
+      # Create output directory if it doesn't already exist
+      mkdir -p "$OUTPUT_DIR"
+
+      $SOAPDENOVO $COMMAND -s "$CONFIG_FILE" $SOAPDENOVO_OPTIONS
