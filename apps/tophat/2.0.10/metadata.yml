@@ -1,5 +1,6 @@
 ---
 :schema: 1
+:title: TopHat
 :license: Artistic License
 :summary: A spliced read mapper for RNA-Seq
 :url: http://tophat.cbcb.umd.edu/
