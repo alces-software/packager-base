@@ -44,7 +44,7 @@
       #   http://www.broadinstitute.org/ftp/distribution/software/spines/SpinesManual.pdf
 
       # Output directory
-      OUTPUT_DIR=satsuma_output
+      OUTPUT_DIR="satsuma/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Query FASTA sequence
       QUERY_SEQUENCE=$SATSUMASAMPLES/human.X.part.short.fasta 

@@ -54,7 +54,7 @@
       # This example script uses the sample control files supplied with PAML
 
       # Output directory
-      OUTPUT_DIR=paml_output
+      OUTPUT_DIR="paml/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       mkdir -p $OUTPUT_DIR
       cp -r $PAMLDATA/* $OUTPUT_DIR

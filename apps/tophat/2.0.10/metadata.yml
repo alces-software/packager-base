@@ -65,7 +65,7 @@
       #   http://tophat.cbcb.umd.edu/downloads/test_data.tar.gz
 
       # Output directory (default is 'tophat_out')
-      OUTPUT_DIR=tophat_output
+      OUTPUT_DIR="tophat/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Base name of genome index to be searched (i.e. up to first period)
       GENOME_INDEX_BASE=test_data/test_ref

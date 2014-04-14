@@ -59,7 +59,7 @@
       #   https://code.google.com/p/interproscan/wiki/HowToRun
 
       # Output directory
-      OUTPUT_DIR=iprscan_output
+      OUTPUT_DIR="iprscan/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Path to FASTA file that should be loaded on Master startup
       # NB location must be writeable

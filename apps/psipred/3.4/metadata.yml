@@ -141,7 +141,7 @@
       # for PSIPRED to operate. See $PSIPREDDOC/README.alces.txt for more info
 
       # Output directory
-      OUTPUT_DIR=psipred_output
+      OUTPUT_DIR="psipred/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Target sequence for runpsipred
       TARGET_SEQUENCE=$PSIPREDEXAMPLE/example.fasta

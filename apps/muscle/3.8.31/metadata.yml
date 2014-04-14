@@ -51,7 +51,7 @@
       # equivalent) must be supplied by the user
 
       # Output directory
-      OUTPUT_DIR=muscle_output
+      OUTPUT_DIR="muscle/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Input file in FASTA format
       INPUT_FILE=seqs.fa

@@ -76,7 +76,7 @@
       #   http://cufflinks.cbcb.umd.edu/downloads/test_data.sam
 
       # Output directory (default is '.')
-      OUTPUT_DIR=cufflinks_output
+      OUTPUT_DIR="cufflinks/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Input file of RNA-Seq read alignments in the SAM format
       ALIGNED_READS=test_data.sam

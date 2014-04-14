@@ -78,7 +78,7 @@
       # Note: example data files are not included with PROCHECK
 
       # Output directory
-      OUTPUT_DIR=procheck_output
+      OUTPUT_DIR="procheck/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Full path to file containing protein structure in Brookhaven format
       COORDINATE_FILE=/tmp/2HHB.pdb

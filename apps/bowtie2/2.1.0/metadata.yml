@@ -58,7 +58,7 @@
       #   http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml
 
       # Output directory
-      OUTPUT_DIR=bowtie2-output
+      OUTPUT_DIR="bowtie2/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Base name of index for reference genome (up to final .1.bt2 etc.)
       INDEX_BASE=$OUTPUT_DIR/lambda_virus

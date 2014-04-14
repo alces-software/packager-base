@@ -166,7 +166,7 @@
       #   http://www.gromacs.org/Documentation
 
       # Output directory
-      OUTPUT_DIR=gromacs_output
+      OUTPUT_DIR="gromacs/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
       mkdir -p $OUTPUT_DIR
 
       # Demo molecule

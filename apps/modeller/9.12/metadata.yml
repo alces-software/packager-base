@@ -73,7 +73,7 @@
       #  http://salilab.org/modeller/9.13/manual/
 
       # Output directory
-      OUTPUT_DIR=modeller_output
+      OUTPUT_DIR="modeller/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       mkdir -p $OUTPUT_DIR
       cd $OUTPUT_DIR

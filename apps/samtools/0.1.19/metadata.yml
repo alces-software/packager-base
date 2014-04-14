@@ -102,7 +102,7 @@
       #   http://samtools.sourceforge.net/samtools.shtml
 
       # Output directory
-      OUTPUT_DIR=samtools_output
+      OUTPUT_DIR="samtools/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
       # Input SAM file
       INPUT_FILE=$SAMTOOLSDIR/examples/toy.sam
