@@ -1,0 +1,137 @@
+---
+:schema: 1
+:title: Genome Analysis Toolkit + Queue
+:license: Free for non-commercial use; registration required; see http://j.mp/TTba2N
+:summary: Broad Institute package for analysing next-generation resequencing data; including command-line scripting framework for defining multi-stage genomic analysis pipelines
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+
+  GATK-Queue is command-line scripting framework for defining
+  multi-stage genomic analysis pipelines combined with an execution
+  manager that runs those pipelines from end-to-end. Often processing
+  genome data includes several steps to produces outputs, for example
+  our BAM to VCF calling pipeline include among other things:
+
+    * Local realignment around indels
+    * Emitting raw SNP calls
+    * Emitting indels
+    * Masking the SNPs at indels
+    * Annotating SNPs using chip data
+    * Labeling suspicious calls based on filters
+    * Creating a summary report with statistics
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Apr 14 2014 James Donohue <james.donohue@alces-software.com>
+    - First version, merged from separate gatk and gatkqueue packages
+:src: GenomeAnalysisTK.tar.bz2
+:src_dir: .
+:sources:
+  - Queue.tar.bz2
+:type: ext
+:pkg_type: apps
+:compilers:
+  noarch:
+:params:
+  :gatktarball: "Path or URL to GATK tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+  :gatkqueuetarball: "Path or URL to matching GATK-Queue tarball in tar.bz2 format (pass 'skip' to use an existing download)"
+  :tarversion: "Version of GATK+Queue being installed in 3.X.X format, for example 3.1.1"
+:prepare: |
+  <% if param('gatktarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('gatktarball')).scheme.nil? %>
+    cp <%= param('gatktarball') %> <%= source('GenomeAnalysisTK.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('GenomeAnalysisTK.tar.bz2') %> <%= param('gatktarball') %>
+  <% end %>
+  <% if param('gatkqueuetarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('gatkqueuetarball')).scheme.nil? %>
+    cp <%= param('gatkqueuetarball') %> <%= source('Queue.tar.bz2') %>
+  <% else %>
+    wget -O <%= source('Queue.tar.bz2') %> <%= param('gatkqueuetarball') %>
+  <% end %>
+:analyse: |
+  <% if param('tarversion') !~ /^3\.\d+\.\d+$/ %>
+    echo ":failure: tar version must be in 3.X.X format: <%= param('tarversion') %>" >/dev/stderr
+    exit 1
+  <% end %>
+  cat <<-EOF
+    :version: '<%= param('tarversion') %>'
+  EOF
+:install: |
+  tar -jxf <%= source('Queue.tar.bz2') %> <%= redirect(:install) %>
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/bin
+  cp -v <%= source('gatk-wrapper.sh') %> <%= dest_dir %>/bin/gatk <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/gatk
+  ln -s gatk <%= dest_dir %>/bin/GenomeAnalysisTK
+
+  # Create symlinks to wrapper script for all available commands
+  export GATKDIR=<%= dest_dir %>
+  for a in $(<%= dest_dir %>/bin/gatk --help 2>/dev/null | grep '^   [A-Z]' | cut -f4 -d' ' | xargs); do
+    ln -s gatk <%= dest_dir %>/bin/gatk_$a
+  done
+
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/Queue
+  #!/bin/bash
+  java `eval echo $GATKQUEUE_JAVA_OPTS` -jar <%= dest_dir %>/Queue.jar "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/Queue
+  ln -s Queue <%= dest_dir %>/bin/gatk-queue
+:modules:
+   - :type: apps
+     :name: gatk
+     :content: |
+       set appdir <%= File.join(Config.packages_dir,'apps','gatk+queue', analysis_opts[:version], 'noarch') %>
+
+       conflict apps/gatklite
+
+       set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       setenv ${appcaps}_JAVA_MEM_MX 2g
+
+       if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+       } elseif { [info exists ::env(TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+       } else {
+         setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+       }
+
+       setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+       prepend-path PATH ${appdir}/bin
+   - :type: apps
+     :name: gatkqueue
+     :content: |
+       set appdir <%= File.join(Config.packages_dir,'apps','gatk+queue', analysis_opts[:version], 'noarch') %>
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}EXAMPLES ${appdir}/resources
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       setenv ${appcaps}_JAVA_MEM_MX 2g
+
+       if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+       } elseif { [info exists ::env(TMPDIR)] } {
+         setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+       } else {
+         setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+       }
+
+       setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+       prepend-path PATH ${appdir}/bin
