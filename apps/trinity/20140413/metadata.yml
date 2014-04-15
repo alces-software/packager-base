@@ -53,6 +53,10 @@
   # preferred binary is found without the path prefix.
   CXX=$(basename "$CXX")
   make <%= redirect(:make) %>
+
+  # Ensure jellyfish is a binary not a libtool-generated shell script
+  cd trinity-plugins/jellyfish && make install
+
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   cpanm IO::Compress::Base <%= redirect(:cpanm) %>
@@ -76,6 +80,7 @@
 
   prepend-path PATH ${appdir}/util
   prepend-path PATH ${appdir}
+  prepend-path LD_LIBRARY_PATH ${appdir}/trinity-plugins/jellyfish/lib
 :example_scripts:
   - tags: ['script:type=batch']
     template: 'script:stub:smp-multislot'
