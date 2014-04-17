@@ -27,21 +27,29 @@
   :build:
     - mpi/openmpi
     - libs/atlas
+:sources:
+  - 4node_hpl.alces.dat
 :compile: |
   export TOPdir=`pwd`
   make arch=<%= compiler[:build_name]%> <%= redirect :make %> 
 :install: |
-  (cd bin && ln -snf <%=compiler[:build_name]%>/* .)
-  cp -pav . <%= dest_dir %>
+  (cd bin && ln -snf <%=compiler[:build_name]%>/* .) <%= redirect(:install) %>
+  cp -pav . <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/examples <%= redirect(:install) %>
+  cp -v <%= source('4node_hpl.alces.dat') %> <%= dest_dir %>/examples <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin/
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
 
   prepend-path PATH ${appdir}/bin/
   prepend-path MANPATH ${appdir}/man/
 :example_scripts:
   - tags: ['script:type=batch']
-    template: 'script:stub:mpi-multislot'
+    template: 'script:stub:mpi-multinode'
+    facts:
+      hardMemoryLimit: 64G
+      multinodeNumNodes: 4
     content: |
       #############################################
       # APPLICATION COMMANDS - change as required
@@ -51,10 +59,12 @@
       #   http://www.netlib.org/benchmark/hpl/
 
       # Directory containing the HPL.dat input data file, tuned as required
-      # (A sample is supplied in the application's bin directory)
-      HPLDAT_DIR=$HPLDIR/bin
+      # (An example is supplied in the HPLEXAMPLES directory)
+      HPLDAT_DIR="hpl"
+      mkdir -p "$HPLDAT_DIR"
+      cp "$HPLEXAMPLES/4node_hpl.alces.dat" "$HPLDAT_DIR/HPL.dat"
 
       # Number of processes to start
-      NUM_PROCESSES=4
+      NUM_PROCESSES=64
 
-      cd $HPLDAT_DIR && mpirun -np $NUM_PROCESSES xhpl
+      cd "$HPLDAT_DIR" && mpirun -np $NUM_PROCESSES xhpl
