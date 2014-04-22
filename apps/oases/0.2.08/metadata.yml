@@ -18,6 +18,8 @@
   available, to construct transcript isoforms.
 :group: Bioinformatics
 :changelog: |
+  * Tue Apr 22 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Derive MAXKMERLENGTH and CATEGORIES build parameters from velvet binary
   * Thu Apr 10 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Repointed URL at upstream gridware on
       download.alces-software.com due to changes to upstream 0.2.08
@@ -40,7 +42,8 @@
 :compilers:
   gcc:
 :compile: |
-  make VELVET_DIR=${VELVETBUILD} <%= redirect(:make) %>
+  MAKE_PARAMS=$(velveth | grep "Compilation settings:" -A2 | tail -n+2 | sed 's/ = /=/g' | xargs)
+  make VELVET_DIR=${VELVETBUILD} ${MAKE_PARAMS} <%= redirect(:make) %>
 :install: |
   mkdir <%= dest_dir %>/bin <%= dest_dir %>/doc
   cp oases scripts/oases_pipeline.py <%= dest_dir %>/bin <%= redirect(:install) %>
