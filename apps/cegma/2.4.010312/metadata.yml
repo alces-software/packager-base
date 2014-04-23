@@ -39,7 +39,7 @@
   :runtime: 
     - apps/perl
     - apps/wise2
-    - apps/ncbiblast
+    - apps/ncbiblast = 2.2.25
     - apps/geneid
     - apps/hmmer
 :compile: |
