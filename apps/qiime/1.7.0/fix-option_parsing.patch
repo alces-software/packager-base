@@ -1,0 +1,14 @@
+--- qiime/pycogent_backports/option_parsing.py.orig	2014-04-23 10:59:46.187181648 +0100
++++ qiime/pycogent_backports/option_parsing.py	2014-04-23 10:59:55.987183992 +0100
+@@ -47,8 +47,9 @@
+         values.append(v)
+     if len(paths) == 0:
+         raise OptionValueError(
+-            "No filepaths match pattern(s) passed via -i: %s" % 
+-            ','.join(opts.input_fps))
++            "No filepaths match pattern(s) passed via -i")
++            #"No filepaths match pattern(s) passed via -i: %s" % 
++            #','.join(opts.input_fps))
+     return values
+ 
+ def check_existing_dirpath(option, opt, value):
