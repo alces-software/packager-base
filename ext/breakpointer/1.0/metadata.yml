@@ -1,0 +1,93 @@
+---
+:schema: 1
+:title: BreakPointer
+:license: NONFREE - For academic non-commercial research purposes only
+:summary: Pinpoint rearrangement breakpoints using paired end reads
+:url: http://www.broadinstitute.org/cancer/cga/breakpointer
+:description: |
+  BreakPointer is a tool to pinpoint rearrangement breakpoints using
+  paired end reads.
+
+  In brief, BreakPointer consists of five steps:
+
+    1. dRanger predicts approximate somatic rearrangement.
+    2. BreakPointer fishes for reads that span both sides of a
+       putative breakpoint.
+    3. The reads are aligned by a modified Smith-Waterman algorithm.
+    4. Each breakpoint is called and assigned quality score, and the
+       segments are fused acorrdingly to deduce the cancer genome.
+    5. All the candidate split reads in the list are being aligned to
+       the newly fused sequence. Breakpoints, fused sequences and the
+       reads that support them are reported, and exported to IGV for
+       easy view.
+:group: Bioinformatics
+:changelog: |
+  * Fri May  2 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: BreakPointer_1.0.tar
+:src_dir: .
+:sources:
+  - MCR.7.10.tgz
+:type: ext
+:pkg_type: apps
+:version: '1.0'
+:requirements:
+  :runtime:
+    - apps/bwa
+    - apps/samtools
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to BreakPointer tarball (tar format) (pass 'skip' to use an existing download)"
+:prepare: |
+  err=0
+  <% if param('tarball') == 'skip' %>
+    # skip tarball retrieval
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('BreakPointer_1.0.tar') %>
+  <% else %>
+    wget -O <%= source('BreakPointer_1.0.tar') %> <%= param('tarball') %>
+  <% end %>
+  exit $err
+:install: |
+  mkdir mcr
+  cd mcr
+  tar xzf <%= source('MCR.7.10.tgz') %> <%= redirect(:mcr) %>
+  ./MCRInstaller.bin -silent -P installLocation="<%= dest_dir %>/lib/mcr" <%= redirect(:mcr) %>
+  cd ..
+  mkdir <%= dest_dir %>/{bin,doc,share}
+  install -v -D -m 0755 \
+    fh_BreakPointerScatter <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -v -D -m 0644 \
+    license.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv lib <%= dest_dir %>/share/ <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/BreakPointer.sh
+  #!/bin/bash
+  shift
+  <%= dest_dir %>/bin/BreakPointer "$@"
+  EOF
+  cat <<\EOF > <%= dest_dir %>/bin/BreakPointer
+  #!/bin/bash
+  <%= dest_dir %>/bin/fh_BreakPointerScatter "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/BreakPointer.sh <%= dest_dir %>/bin/BreakPointer
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       set mcrroot ${appdir}/lib/mcr/v710
+       set mcrjre ${mcrroot}/sys/java/jre/glnxa64/jre/lib/amd64
+
+       prepend-path LD_LIBRARY_PATH ${mcrjre}
+       prepend-path LD_LIBRARY_PATH ${mcrjre}/client
+       prepend-path LD_LIBRARY_PATH ${mcrjre}/server
+       prepend-path LD_LIBRARY_PATH ${mcrjre}/native_threads
+       prepend-path LD_LIBRARY_PATH ${mcrroot}/sys/os/glnxa64
+       prepend-path LD_LIBRARY_PATH ${mcrroot}/bin/glnxa64
+       prepend-path LD_LIBRARY_PATH ${mcrroot}/runtime/glnxa64
+
+       setenv XAPPLRESDIR ${mcrroot}/X11/app-defaults
+ 
+       prepend-path PATH ${appdir}/bin
