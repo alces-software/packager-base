@@ -29,6 +29,9 @@
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Mon May 12 2014 Ben Armston <ben.armston@alces-software.com>
+    - Added example scripts
+    - Added an example Rprofile to add brief instructions for example scripts
   * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Reinstate compilation of BLAS shared library
   * Wed Jul 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -72,12 +75,17 @@
   # install math lib
   cd src/nmath/standalone
   make install <%= redirect(:install) %>
+
+  # Install example files.
+  mkdir -v <%= dest_dir %>/example/ <%= redirect(:install) %>
+  install -D -m 0644 <%= source('example/Rprofile') %> <%= dest_dir %>/example <%= redirect(:install) %>
 :module: |
   set r_user_libs $::env(HOME)/gridware/share/R/${version}
   set r_site_libs <%= File.expand_path(Config.gridware) %>/share/R/${version}
 
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
 
   prepend-path LD_LIBRARY_PATH ${appdir}/lib64/R/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/lib64
@@ -102,3 +110,38 @@
     }
   }
   append-path R_LIBS_SITE ${r_site_libs}
+:example_scripts:
+  - tags: ['script:type=interactive', 'session:type=command-line']
+    name: 'CLI session running R'
+    description: 'Start an interactive CLI session running R. This session will not be able to plot any graphics but uses fewer resources than the graphical session so may become available sooner.'
+    template: 'script:stub:interactive:cli'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Set the startup file to use. The example startup file contains some
+      # instructions on how to demonstrate some of R's functionality.
+      export R_PROFILE_USER=$R_EXAMPLE/Rprofile
+
+      # Additional command-line options (R -h for a list).
+      R_OPTIONS=""
+
+      R $R_OPTIONS
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'Desktop session running R'
+    description: 'Start an interactive desktop session running R. This session will be able to plot graphics but uses more resources than the CLI session so may take longer to become available.'
+    template: 'script:stub:interactive:desktop'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Set the startup file to use. The example startup file contains some
+      # instructions on how to demonstrate some of R's functionality.
+      export R_PROFILE_USER=$R_EXAMPLE/Rprofile
+
+      # Additional command-line options (R -h for a list).
+      R_OPTIONS=""
+
+      {{ fact.interactiveTerminalEmulator }} -e "R $R_OPTIONS"
