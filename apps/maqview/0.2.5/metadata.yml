@@ -20,6 +20,8 @@
   quickly retrieve any region in an Maq alignment file.
 :group: Bioinformatics
 :changelog: |
+  * Mon May 12 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Added example script
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: maqview-0.2.5.tar.gz
@@ -35,10 +37,53 @@
   # version of libglut available on modern RHEL derivatives.
   sed -i -e 's|^GLLIBS =.*|GLLIBS = -lglut -Wl,-Bdynamic -lGL -lGLU -lm|g' Makefile
   make <%= redirect(:make) %>
+:sources:
+  - example_data.tar.gz
 :install: |
   make install <%= redirect(:install) %>
+  mkdir -v <%= dest_dir %>/example/ <%= redirect(:install) %>
+  install -D -m 0644 <%= source('example_data.tar.gz') %> <%= dest_dir %>/example <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    template: 'script:stub:interactive:desktop'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      # For more M.A.Q Viewer usage information see:
+      #   http://maq.sourceforge.net/maqview-man.shtml
+
+      # The example data used in this script was created by running the
+      # following commands.
+      #
+      #    wget http://tophat.cbcb.umd.edu/downloads/test_data.tar.gz
+      #    tar -xzf test_data.tar.gz
+      #    cd test_data
+      #    maq.pl easyrun test_ref.fa reads_1.fq reads_2.fq
+      #    mv easyrun example_data
+      #    tar -czf example_data.tar.gz example_data
+
+      # Output directory.
+      OUTPUT_DIR="maqview/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Create the output directory.
+      mkdir -p $OUTPUT_DIR
+
+      # Change to the output directory to ensure that any files will be
+      # created there.
+      cd $OUTPUT_DIR
+
+      # Copy the example data to the output directory.
+      tar -xzf $MAQVIEWEXAMPLE/example_data.tar.gz
+
+      # Index the example data.
+      maqindex -i example_data/all.map
+
+      # Launch maqview to visualize the data.
+      maqview example_data/all.map
