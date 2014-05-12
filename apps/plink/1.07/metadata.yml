@@ -15,8 +15,15 @@
   visualization, annotation and storage of results.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 13 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tweaked environment variables to add MALLOC_ARENA_MAX=1
+  * Mon May 12 2014 Ben Armston <ben.armston@alces-software.com>
+    - Added example scripts
+    - Converted alias for gplink to wrapper script form
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
+:sources:
+  - example_data.zip
 :src: plink-1.07-src.zip
 :src_dir: plink-1.07-src
 :type: apps
@@ -26,20 +33,108 @@
 :compile: |
   sed -i -e 's|^FORCE_DYNAMIC.*|FORCE_DYNAMIC = 1|g' Makefile
   make <%= redirect(:make) %>
+
+  cat > gplink <<\EOF
+  #!/bin/sh
+  java `eval echo $PLINK_JAVA_OPTS` -jar <%= dest_dir %>/java/gPLINK.jar
+  EOF
 :install: |
   mkdir <%= dest_dir %>/{bin,doc,java}
   cp -v COPYING.txt README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -v plink <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v gPLINK.jar <%= dest_dir %>/java <%= redirect(:install) %>
+
+  install -D -m 0755 gplink <%= dest_dir %>/bin <%= redirect(:install) %>
+
+  mkdir -v <%= dest_dir %>/example/ <%= redirect(:install) %>
+  install -D -m 0644 <%= source('example_data.zip') %> <%= dest_dir %>/example <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
 
   set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  # This variable tunes the virtual memory system to work better with
+  # abstracted languages, such as Java.  If you need this setting to
+  # be skipped, ensure the variable ALCES_SKIP_VMM_TWEAK is set and
+  # exported in your environment before loading the module.
+  if { [info exists ::env(ALCES_SKIP_VMM_TWEAK)] == 0 } {
+    setenv MALLOC_ARENA_MAX 1
+  }
 
   setenv ${appcaps}_JAVA_MEM_MX 1g
   setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
 
-  set-alias gplink "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/gPLINK.jar"
-
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'plink; generate summary statistics about missing data rates'
+    description: 'Create a binary PED file and generate some simple summary statistics on rates of missing data in the file.'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      # For more plink usage information see:
+      #   http://pngu.mgh.harvard.edu/~purcell/plink/tutorial.shtml
+      #   http://pngu.mgh.harvard.edu/~purcell/plink/reference.shtml
+
+      # The example data used in this script is available from
+      # http://pngu.mgh.harvard.edu/~purcell/plink/hapmap1.zip
+
+      # Create the output/working data directory and change to the directory
+      # to ensure that any files will be created there.
+      DATA_DIR="plink/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+      mkdir -p "$DATA_DIR"
+      cd "$DATA_DIR"
+
+      # Copy the example data to the output directory.
+      unzip ${PLINKEXAMPLE}/example_data.zip
+
+      # Verify that the file is intact and get some basic summary statistics.
+      plink --file hapmap1
+
+      # Create a binary PED file. This more compact representation of the data
+      # saves space and speeds up subsequent analysis.
+      plink --file hapmap1 --make-bed --out hapmap1
+
+      # Generate some simple summary statistics on rates of missing data in
+      # the file, using the --missing option. Note that we use the option
+      # --bfile to specify the binary file created in the previous step.
+      plink --bfile hapmap1 --missing --out miss_stat
+
+      echo ""
+      echo "--------------------------"
+      echo "plink processing completed"
+      echo "--------------------------"
+      echo "Output is available in: $DATA_DIR"
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'gplink; start a desktop session running gplink'
+    description: 'Start a desktop session running gplink'
+    template: 'script:stub:interactive:desktop'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      # For more gplink usage information see:
+      #   http://pngu.mgh.harvard.edu/~purcell/plink/gplink.shtml#doc
+      #   http://pngu.mgh.harvard.edu/~purcell/plink/gplink_tutorial/index.html
+
+      # The example data used in this script is available from
+      # http://pngu.mgh.harvard.edu/~purcell/plink/hapmap1.zip
+
+      # Create the output/working data directory and change to the directory
+      # to ensure that any files will be created there.
+      DATA_DIR="plink/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+      mkdir -p "$DATA_DIR"
+      cd "$DATA_DIR"
+
+      # Copy the example data to the output directory.
+      unzip $PLINKEXAMPLE/example_data.zip
+
+      # Create a binary PED file. This more compact representation of the data
+      # is required by gplink.
+      plink --file hapmap1 --make-bed --out hapmap1
+
+      gplink
