@@ -51,6 +51,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'maqindex and maqview; example data usage'
+    description: 'Execute maqindex to index the example data (available separately) then launch maqview to visualize it'
     template: 'script:stub:interactive:desktop'
     content: |
       #############################################

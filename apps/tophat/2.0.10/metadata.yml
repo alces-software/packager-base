@@ -53,6 +53,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'tophat; alignment of paired reads'
+    description: 'Execute TopHat to align paired reads from test data (available separately)'
     template: 'script:stub:simple'
     content: |
       #############################################

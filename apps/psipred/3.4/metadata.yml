@@ -128,6 +128,8 @@
   }
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'runpsipred; general usage'
+    description: 'Execute runpsipred script using bundled example target sequence'
     template: 'script:stub:simple'
     content: |
       #############################################

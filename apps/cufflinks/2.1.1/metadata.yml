@@ -64,6 +64,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'cufflinks; general usage'
+    description: 'Execute Cufflinks using a test file SAM alignments (available separately)'
     template: 'script:stub:simple'
     content: |
       #############################################

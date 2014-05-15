@@ -153,6 +153,8 @@
   puts $completion_data
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'pdb2gmx; generate topology from PDB'
+    description: 'Execute pdb2gmx to generate a topology file from a bundled sample PDB'
     template: 'script:stub:simple'
     content: |
       #############################################

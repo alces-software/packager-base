@@ -53,6 +53,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'mira; generic script for genome/EST/RNASeq mode'
+    description: 'Execute MIRA using specified manifest file (not included)'
     template: 'script:stub:simple'
     content: |
       #############################################

@@ -89,6 +89,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'samtools view; convert SAM to BAM'
+    description: 'Execute samtools view command to convert a SAM file to a BAM file'
     template: 'script:stub:simple'
     content: |
       #############################################

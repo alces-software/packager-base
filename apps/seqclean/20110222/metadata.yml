@@ -67,6 +67,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'seqclean; general usage'
+    description: 'Execute SeqClean using a specified input sequence file'
     template: 'script:stub:simple'
     content: |
       #############################################

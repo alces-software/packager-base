@@ -43,6 +43,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'codeml and baseml; generic usage'
+    description: 'Execute codeml and then baseml using the sample control files supplied with PAML'
     template: 'script:stub:simple'
     content: |
       #############################################

@@ -48,6 +48,8 @@
   prepend-path PATH ${appdir}
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Lambda phage example'
+    description: 'Execute bowtie2-build to index Lambda phage reference genome and then call bowtie2 to align example reads'
     template: 'script:stub:simple'
     content: |
       #############################################

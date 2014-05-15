@@ -49,6 +49,8 @@
   prepend-path PATH ${appdir}/bin/
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'iozone; automatic mode'
+    description: 'Execute IOzone using automatic mode'
     template: 'script:stub:simple'
     content: |
       #############################################

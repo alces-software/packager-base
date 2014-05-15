@@ -39,6 +39,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Make multiple sequence alignment'
+    description: 'Execute muscle with FASTA input file (not included) to make a multiple sequence alignment (MSA)'
     template: 'script:stub:simple'
     content: |
       #############################################

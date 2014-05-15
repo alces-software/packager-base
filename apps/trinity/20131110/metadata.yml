@@ -77,6 +77,8 @@
   prepend-path PATH ${appdir}
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Trinity.pl; general usage'
+    description: 'Execute Trinity using the supplied example reads'
     template: 'script:stub:smp-multislot'
     content: |
       #############################################

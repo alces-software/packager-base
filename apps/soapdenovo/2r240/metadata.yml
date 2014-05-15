@@ -47,6 +47,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'SOAPdenovo-63mer; all command usage'
+    description: 'Execute SOAPdenovo-63mer using the all command and specified config file (not supplied)'
     template: 'script:stub:simple'
     content: |
       #############################################

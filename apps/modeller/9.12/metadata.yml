@@ -63,6 +63,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Comparative modelling with PDB files'
+    description: 'Execute model-default.py using bundled example Protein Data Bank (PDB) files and alignment/script file'
     template: 'script:stub:simple'
     content: |
       #############################################

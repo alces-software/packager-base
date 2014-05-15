@@ -83,6 +83,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/trinity-plugins/jellyfish/lib
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Trinity.pl; general usage'
+    description: 'Execute Trinity using the supplied example reads'
     template: 'script:stub:smp-multislot'
     content: |
       #############################################

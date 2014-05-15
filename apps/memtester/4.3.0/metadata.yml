@@ -34,6 +34,8 @@
   prepend-path PATH ${appdir}/bin/
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'memtester; 1MB/5 runs'
+    description: 'Execute memtester, limiting number of runs to 5 and memory to 1MB'
     template: 'script:stub:simple'
     content: |
       #############################################

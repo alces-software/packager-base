@@ -34,6 +34,8 @@
   prepend-path PATH ${appdir}/bin
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Exhaustive alignment of FASTA sequences'
+    description: 'Execute Satsuma to perform exhaustive alignment using bundled sample query and target sequence'
     template: 'script:stub:simple'
     content: |
       #############################################

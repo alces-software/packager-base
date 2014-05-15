@@ -49,6 +49,8 @@
   prepend-path PATH ${appdir}
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'Test run with example data'
+    description: 'Execute InterProScan using bundled protein test sequences'
     template: 'script:stub:simple'
     content: |
       #############################################

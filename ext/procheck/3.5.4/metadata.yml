@@ -67,6 +67,8 @@
        prepend-path PATH ${appdir}/scripts
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'procheck; generic usage'
+    description: 'Executes PROCHECK using a specified coordinate file (not supplied) and resolution'
     template: 'script:stub:simple'
     content: |
       #############################################

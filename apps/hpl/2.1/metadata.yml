@@ -46,6 +46,8 @@
   prepend-path MANPATH ${appdir}/man/
 :example_scripts:
   - tags: ['script:type=batch']
+    name: 'hpl; tuned 4-node usage'
+    description: 'Execute HPL using an Alces-tuned input data file for 4-node/64-process operation'
     template: 'script:stub:mpi-multinode'
     facts:
       hardMemoryLimit: 64G
