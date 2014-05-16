@@ -1,20 +1,35 @@
 :schema: 1
+:title: HPL
 :license: Modified Free http://www.netlib.org/benchmark/hpl/copyright.html
 :summary: A Portable Implementation of the High-Performance Linpack Benchmark for Distributed-Memory Computers
 :url: http://www.netlib.org/benchmark/hpl/
 :description: |
-  HPL is a software package that solves a (random) dense linear system in double precision (64 bits) arithmetic on distributed-memory computers. It can thus be regarded as a portable as well as freely available implementation of the High Performance Computing Linpack Benchmark.
-  The algorithm used by HPL can be summarized by the following keywords: Two-dimensional block-cyclic data distribution - Right-looking variant of the LU factorization with row partial pivoting featuring multiple look-ahead depths - Recursive panel factorization with pivot search and column broadcast combined - Various virtual panel broadcast topologies - bandwidth reducing swap-broadcast algorithm - backward substitution with look-ahead of depth 1.
-  The HPL package provides a testing and timing program to quantify the accuracy of the obtained solution as well as the time it took to compute it. The best performance achievable by this software on your system depends on a large variety of factors. Nonetheless, with some restrictive assumptions on the interconnection network, the algorithm described here and its attached implementation are scalable in the sense that their parallel efficiency is maintained constant with respect to the per processor memory usage.
-  The HPL software package requires the availibility on your system of an implementation of the Message Passing Interface MPI (1.1 compliant). An implementation of either the Basic Linear Algebra Subprograms BLAS or the Vector Signal Image Processing Library VSIPL is also needed. Machine-specific as well as generic implementations of MPI, the BLAS and VSIPL are available for a large variety of systems.
+  HPL is a software package that solves a (random) dense linear system
+  in double precision (64 bits) arithmetic on distributed-memory
+  computers. It can thus be regarded as a portable as well as freely
+  available implementation of the High Performance Computing Linpack
+  Benchmark.
+
+  The algorithm used by HPL can be summarized by the following keywords:
+
+    * Two-dimensional block-cyclic data distribution
+    * Right-looking variant of the LU factorization with row partial
+      pivoting featuring multiple look-ahead depths
+    * Recursive panel factorization with pivot search and column
+      broadcast combined
+    * Various virtual panel broadcast topologies
+    * Bandwidth reducing swap-broadcast algorithm
+    * Backward substitution with look-ahead of depth 1
 :group: Benchmarks
 :changelog: |
+  * Wed May 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tidied up the description field; added title field
   * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
     - Added simple example script
   * Wed Nov 21 2012 - Steve Norledge <steve.norledge@alces-software.com>
     - First created
 :src: hpl-2.1.tar.gz
-:patches: 
+:patches:
   - alces-hpl.patch
 :type: apps
 :version: '2.1'
@@ -31,7 +46,7 @@
   - 4node_hpl.alces.dat
 :compile: |
   export TOPdir=`pwd`
-  make arch=<%= compiler[:build_name]%> <%= redirect :make %> 
+  make arch=<%= compiler[:build_name]%> <%= redirect :make %>
 :install: |
   (cd bin && ln -snf <%=compiler[:build_name]%>/* .) <%= redirect(:install) %>
   cp -pav . <%= dest_dir %> <%= redirect(:install) %>
