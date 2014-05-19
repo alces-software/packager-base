@@ -20,6 +20,10 @@
   quickly retrieve any region in an Maq alignment file.
 :group: Bioinformatics
 :changelog: |
+  * Mon May 19 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Correct description of example data
+  * Thu May 15 2014 - James Donohue <james.donohue@alces-software.com>
+    - Add name and description to example script
   * Mon May 12 2014 - Ben Armston <ben.armston@alces-software.com>
     - Added example script
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -52,7 +56,7 @@
 :example_scripts:
   - tags: ['script:type=interactive', 'session:type=desktop']
     name: 'maqindex and maqview; example data usage'
-    description: 'Execute maqindex to index the example data (available separately) then launch maqview to visualize it'
+    description: 'Execute maqindex to index the provided example data then launch maqview to visualize it'
     template: 'script:stub:interactive:desktop'
     content: |
       #############################################
@@ -61,8 +65,8 @@
       # For more M.A.Q Viewer usage information see:
       #   http://maq.sourceforge.net/maqview-man.shtml
 
-      # The example data used in this script was created by running the
-      # following commands.
+      # The example data provided for use in this script was created by
+      # running the following commands.
       #
       #    wget http://tophat.cbcb.umd.edu/downloads/test_data.tar.gz
       #    tar -xzf test_data.tar.gz
