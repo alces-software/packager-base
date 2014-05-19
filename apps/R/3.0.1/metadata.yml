@@ -29,6 +29,8 @@
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Mon May 19 2014 Ben Armston <ben.armston@alces-software.com>
+    - Corrected environment variable name
   * Mon May 12 2014 Ben Armston <ben.armston@alces-software.com>
     - Added example scripts
     - Added an example Rprofile to add brief instructions for example scripts
@@ -122,7 +124,7 @@
 
       # Set the startup file to use. The example startup file contains some
       # instructions on how to demonstrate some of R's functionality.
-      export R_PROFILE_USER=$R_EXAMPLE/Rprofile
+      export R_PROFILE_USER=$REXAMPLE/Rprofile
 
       # Additional command-line options (R -h for a list).
       R_OPTIONS=""
@@ -139,7 +141,7 @@
 
       # Set the startup file to use. The example startup file contains some
       # instructions on how to demonstrate some of R's functionality.
-      export R_PROFILE_USER=$R_EXAMPLE/Rprofile
+      export R_PROFILE_USER=$REXAMPLE/Rprofile
 
       # Additional command-line options (R -h for a list).
       R_OPTIONS=""
