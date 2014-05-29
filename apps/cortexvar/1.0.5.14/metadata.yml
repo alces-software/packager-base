@@ -17,6 +17,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu May 29 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Updated Makefiles to link against pthread
   * Wed Nov 21 2012 Steve Norledge
     - First created
 :src: CORTEX_release_v1.0.5.14.tgz
@@ -33,6 +35,7 @@
     - apps/stampy
 :patches:
   - gridware-aware.patch1
+  - link-to-pthread.patch1
 :sources:
   - build_cortex_var
 :compilers:

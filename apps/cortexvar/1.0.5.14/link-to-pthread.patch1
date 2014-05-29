@@ -1,0 +1,24 @@
+diff -ur CORTEX_release_v1.0.5.14.orig/libs/seq_file/Makefile CORTEX_release_v1.0.5.14/libs/seq_file/Makefile
+--- CORTEX_release_v1.0.5.14.orig/libs/seq_file/Makefile	2014-05-29 14:36:54.479465796 +0000
++++ CORTEX_release_v1.0.5.14/libs/seq_file/Makefile	2014-05-29 14:35:20.217542135 +0000
+@@ -22,7 +22,7 @@
+ CFLAGS := $(CFLAGS) -Wall -Wextra -I$(SAMTOOLSINCLUDE) -I$(STRING_BUF_PATH)
+ 
+ LIB_INCS := -L. -L$(SAMTOOLSLIB) -L$(STRING_BUF_PATH)
+-LIB_FLAGS := -lseqfile -lbam -lstrbuf -lz -lm
++LIB_FLAGS := -lseqfile -lbam -lstrbuf -lz -lm -lpthread
+ 
+ ifdef ZLIB_PATH
+ 	LIB_INCS := $(LIB_INCS) -L$(ZLIB_PATH)
+diff -ur CORTEX_release_v1.0.5.14.orig/Makefile CORTEX_release_v1.0.5.14/Makefile
+--- CORTEX_release_v1.0.5.14.orig/Makefile	2014-05-29 14:35:20.201534336 +0000
++++ CORTEX_release_v1.0.5.14/Makefile	2014-05-29 14:36:26.473822655 +0000
+@@ -134,7 +134,7 @@
+ 	OPT := -O3 $(OPT)
+ endif
+ 
+-LIBLIST = -lgsl -lgslcblas -lseqfile -lbam -lstrbuf -lz -lm
++LIBLIST = -lgsl -lgslcblas -lseqfile -lbam -lstrbuf -lz -lm -lpthread
+ #TEST_LIBLIST = -lcunit -lncurses $(LIBLIST)
+ TEST_LIBLIST = -lcunit  $(LIBLIST)
+ 
