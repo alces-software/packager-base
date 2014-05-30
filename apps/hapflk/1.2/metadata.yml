@@ -1,0 +1,75 @@
+---
+:schema: 1
+:title: hapflk
+:license: GPLv3
+:summary: Haplotype-based test for differentiation in multiple populations
+:url: https://forge-dga.jouy.inra.fr/projects/hapflk
+:description: |
+  hapflk is a software implementing the hapFLK and FLK tests for the
+  detection of selection signatures based on multiple population
+  genotyping data.
+:group: Bioinformatics
+:changelog: |
+  * Fri May 30 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: hapflk-1.2.tar.gz
+:src_dir: hapflk-1.2
+:type: apps
+:version: '1.2'
+:requirements:
+  :runtime:
+    - apps/python ~> 2.7.3
+    - libs/numpy
+    - libs/scipy
+  :build:
+    - apps/python ~> 2.7.3
+    - libs/numpy
+    - libs/scipy
+:compilers:
+  gcc:
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Hapmap data/LCT gene'
+    description: 'Execute hapflk to perform an example of analysis on a small portion of HapMap phase III data around the LCT gene'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full hapflk usage information see:
+      #   https://forge-dga.jouy.inra.fr/projects/hapflk/wiki/Options
+      #
+      # This example script is based on the tutorial at:
+      #   https://forge-dga.jouy.inra.fr/projects/hapflk/wiki/Tutorial
+      # It requires the tutorial genome data which be downloaded from:
+      #   https://forge-dga.jouy.inra.fr/documents/222
+      # Download, extract it and set TUTORIAL_DATA_DIR below
+
+      # Output directory
+      OUTPUT_DIR="hapflk/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Directory where tutorial data has been extracted (see above)
+      TUTORIAL_DATA_DIR="/path/to/hapflk-tutorial"
+
+      # Additional command-line options (hapflk -h for list)
+      HAPFLK_OPTIONS="-K 15 --nfit=1 --ncpu=2"
+
+      # Create output directory and copy tutorial data
+      mkdir -p $OUTPUT_DIR
+      cd $OUTPUT_DIR
+      cp -v $TUTORIAL_DATA_DIR/* .
+
+      hapflk --file hapmap3-lct --kinship kinship.txt $HAPFLK_OPTIONS
