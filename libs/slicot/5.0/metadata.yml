@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: SLICOT
+:license: GPLv2
+:summary: Subroutine Library in Systems and Control Theory
+:url: http://slicot.org
+:description: |
+    SLICOT - Subroutine Library In COntrol Theory - is a general purpose basic
+    mathematical library for control theoretical computations.  The library
+    provides tools to perform essential system analysis and synthesis tasks.
+    The main emphasis in SLICOT is on numerical reliability of implemented
+    algorithms and the numerical robustness and efficiency of routines.
+    Providing algorithmic flexibility and the use of rigorous implementation
+    and documentation standards are other SLICOT features.
+    
+    The SLICOT Library is available as standard Fortran 77 code in double
+    precision.  Each user-callable subroutine for control computations is
+    accompanied by an example program which illustrates the use of the
+    subroutine and can act as a template for the user's own routines.
+:group: Libraries
+:requirements: 
+  :build:
+    - libs/atlas
+:changelog: |
+  * Wed Jun  4 2014 Mark J. Titorneko <mark.titorenko@alces-software.com>
+    - Selected v5.0 and converted to standard layout for libs rather
+      than ext package
+  * Mon Jun  2 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: slicot_5.0.tar.gz
+:src_dir: slicot-5.0+20101122
+:type: libs
+:compilers:
+  gcc:
+:patches:
+ - slicot-alces.patch1
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{lib,doc/html,share}
+  cp -Rv doc <%= dest_dir %>/doc/html <%= redirect(:install) %>
+  cp -Rv examples77 <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v lpkaux.a slicot.a <%= dest_dir %>/lib  <%= redirect(:install) %>
+  cp -v libindex.html <%= dest_dir %>/doc/html <%= redirect(:install) %>
+  cp -v readme gpl-2.0.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR     ${appdir}
+  setenv ${appcaps}LIB     ${appdir}/lib
+  setenv ${appcaps}DOC     ${appdir}/doc
+  setenv ${appcaps}SHARE   ${appdir}/share

@@ -1,0 +1,38 @@
+diff -ur slicot-5.0+20101122.orig/makefile slicot-5.0+20101122/makefile
+--- slicot-5.0+20101122.orig/makefile	2012-08-30 15:20:07.000000000 +0100
++++ slicot-5.0+20101122/makefile	2014-06-04 10:45:58.180992960 +0100
+@@ -46,7 +46,7 @@
+ 	( cd src_aux; $(MAKE) )
+ 
+ example:
+-	( cd examples; $(MAKE) )
++	( cd examples77; $(MAKE) )
+ 
+ cleanlib:
+ 	( cd src; $(MAKE) clean )
+diff -ur slicot-5.0+20101122.orig/make.inc slicot-5.0+20101122/make.inc
+--- slicot-5.0+20101122.orig/make.inc	2012-08-30 15:20:07.000000000 +0100
++++ slicot-5.0+20101122/make.inc	2014-06-04 10:44:55.680466106 +0100
+@@ -16,10 +16,10 @@
+ #  selected.  Define LOADER and LOADOPTS to refer to the loader and 
+ #  desired load options for your machine.
+ #
+-FORTRAN  = f77
+-OPTS     = -O4 -native -u
++FORTRAN  = g77
++OPTS     = -O4 -u -I$(ATLASINCLUDE)
+ NOOPT    = -u
+-LOADER   = f77
++LOADER   = g77
+ LOADOPTS = $(SLICOTLIB) $(LPKAUXLIB) $(LAPACKLIB)
+ #
+ #  The archiver and the flag(s) to use when building archive (library)
+@@ -35,6 +35,7 @@
+ #  possible.)
+ #
+ #BLASLIB     = -L/software/lib
+-LAPACKLIB    = -L/software/lib -llapack -lblas
++#LAPACKLIB    = -L/software/lib -llapack -lblas
++LAPACKLIB    = -L$(ATLASLIB) -lsatlas
+ SLICOTLIB    = ../slicot.a
+ LPKAUXLIB    = ../lpkaux.a
