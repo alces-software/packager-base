@@ -34,10 +34,15 @@
   PAGIT bundles these software and makes them more accessible for users.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jun 04 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to include latest upstream bugfixes
   * Wed Jul 03 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: PAGIT.V1.64bit.tgz
 :src_dir: .
+:sources:
+  - PAGIT_MissingScripts.zip
+  - promer
 :type: apps
 :version: 1
 :compilers:
@@ -46,9 +51,11 @@
   :runtime:
     - apps/samtools
 :compile: |
-  # no-op; this is a distribution of a binary package
+  # no compilation required; this is a distribution of a binary package
   # NB re-creation from source possible but difficult given number of
   # tools and helper scripts bundled in PAGIT environment.
+  # Apply update:
+  unzip -o <%= source('PAGIT_MissingScripts.zip') %> -d PAGIT/ABACAS <%= redirect(:update) %>
 :install: |
   mkdir -p <%= dest_dir %>/{bin,doc,lib}
   cp -Rv PAGIT/* <%= dest_dir %>/bin <%= redirect(:install) %>
@@ -56,6 +63,7 @@
   cp -v PAGIT/lib/*.pm <%= dest_dir %>/lib <%= redirect(:install) %>
   # Bundled samtools gives library error; use gridware dep instead
   rm -vf <%= dest_dir %>/bin/bin/samtools <%= redirect(:install) %>
+  install -v -D -m 0755 <%= source('promer') %> <%= dest_dir %>/bin/bin/ <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
