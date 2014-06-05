@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: Cython
+:license: Apache License
+:summary: C-Extensions for Python
+:url: http://cython.org/
+:description: |
+  Cython is a language that makes writing C extensions for the Python
+  language as easy as Python itself. It is based on the well-known
+  Pyrex, but supports more cutting edge functionality and
+  optimizations.
+
+  Cython gives you the combined power of Python and C to let you:
+
+    * write Python code that calls back and forth from and to C or C++
+      code natively at any point
+    * easily tune readable Python code into plain C performance by
+      adding static type declarations
+    * use combined source code level debugging to find bugs in your
+      Python, Cython and C code
+    * interact efficiently with large data sets, e.g. using
+      multi-dimensional NumPy arrays
+    * quickly build your applications within the large, mature and
+      widely used CPython ecosystem
+    * integrate natively with existing code and data from legacy,
+      low-level or high-performance libraries and applications
+:group: Languages
+:changelog: |
+  * Wed Jun  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.20
+  * Wed Feb  6 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Cython-0.20.tar.gz
+:src_dir: Cython-0.20
+:type: apps
+:version: '0.20'
+:compilers:
+  gcc:
+:requirements:
+  :build: apps/python
+  :runtime: apps/python
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
