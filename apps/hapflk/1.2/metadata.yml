@@ -10,6 +10,8 @@
   genotyping data.
 :group: Bioinformatics
 :changelog: |
+  * Thu Jun 05 2014 Ben Armston <ben.armston@alces-software.com>
+    - Install R libraries ape and phangorn
   * Fri May 30 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: hapflk-1.2.tar.gz
@@ -21,14 +23,25 @@
     - apps/python ~> 2.7.3
     - libs/numpy
     - libs/scipy
+    - apps/R
   :build:
     - apps/python ~> 2.7.3
     - libs/numpy
     - libs/scipy
+    - apps/R
 :compilers:
   gcc:
 :compile: |
   python setup.py build <%= redirect(:build) %>
+
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD BATCH <(cat <<EOF
+    local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+    install.packages("ape",     "<%= dest_dir %>/R")
+    install.packages("phangorn","<%= dest_dir %>/R")
+  EOF) <%= redirect(:rlibs) %>
 :install: |
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
@@ -39,6 +52,7 @@
   prepend-path PATH ${appdir}/bin
 
   prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  append-path  R_LIBS_SITE ${appdir}/R
 :example_scripts:
   - tags: ['script:type=batch']
     name: 'Hapmap data/LCT gene'
