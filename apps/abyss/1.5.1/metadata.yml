@@ -1,0 +1,105 @@
+---
+:schema: 1
+:title: 'ABySS'
+:license: GPLv3+
+:summary: A de novo, parallel, paired-end sequence assembler that is designed for short reads
+:url: http://www.bcgsc.ca/platform/bioinfo/software/abyss
+:description: |
+  ABySS (Assembly By Short Sequences) is a de novo, parallel,
+  paired-end sequence assembler that is designed for short reads. The
+  single-processor version is useful for assembling genomes up to 100
+  Mbases in size. The parallel version is implemented using MPI and is
+  capable of assembling larger genomes.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jun 13 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.5.1; added example data and script
+  * Thu Sep 20 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: abyss-1.5.1.tar.gz
+:sources:
+  - test-data.tar.gz
+:type: apps
+:version: '1.5.1'
+:requirements:
+  :build:
+    - mpi/openmpi
+    - libs/sparsehash
+    - libs/boost >= 1.53.0
+  :runtime:
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+    --with-mpi="$OPENMPIDIR" \
+    --with-boost="$BOOSTINCLUDE" \
+    CPPFLAGS="-I$SPARSEHASHINCLUDE" \
+    <%= redirect(:configure) %>
+
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+
+  mkdir <%= dest_dir %>/example
+  tar -C <%= dest_dir %>/example -xzf <%= source('test-data.tar.gz') %>
+  <% if Process.euid == 0 %>
+  chown -R root:root <%= dest_dir %>/example/test-data
+  <% end %>
+  chmod 644 <%= dest_dir %>/example/test-data/*
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/share/doc/abyss
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Paired-end assembly'
+    description: 'Execute abyss-pe tool to assemble paired short reads into contigs'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full ABySS usage information see:
+      #   https://github.com/bcgsc/abyss/blob/1.5.1/README.md
+      #   or: $ABYSSDOC/README.md
+      # For more information about ABySS, please refer to the website:
+      #   http://www.bcgsc.ca/platform/bioinfo/software/abyss
+
+      # Output/working data directory
+      DATA_DIR=abyss/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
+
+      # Command-line options
+      KMER_LENGTH=25
+      MIN_JOIN_PAIRS=10
+      ANALYSIS_NAME=test
+
+      ABYSS_OPTIONS="k=$KMER_LENGTH n=$MIN_JOIN_PAIRS name=$ANALYSIS_NAME"
+
+      # Input file (or files)
+      INPUT_FILES="reads1.fastq reads2.fastq"
+
+      # Create the output/working data directory
+      mkdir -p "$DATA_DIR"
+      cd "$DATA_DIR"
+      
+      # Copy in the input files
+      cp "$ABYSSEXAMPLE"/test-data/*.fastq .
+
+      # Execute abyss-pe
+      abyss-pe $ABYSS_OPTIONS \
+        in="${INPUT_FILES}"
+
+      echo ""
+      echo "-----------------"
+      echo " abyss completed"
+      echo "-----------------"
+      echo " Output is available in: $DATA_DIR"
