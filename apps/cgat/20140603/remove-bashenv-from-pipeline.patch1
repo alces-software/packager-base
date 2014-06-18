@@ -1,0 +1,12 @@
+--- CGATOxford-cgat-f5665e1/CGAT/Pipeline.py.orig	2014-06-02 16:19:38.000000000 +0100
++++ CGATOxford-cgat-f5665e1/CGAT/Pipeline.py	2014-06-05 17:31:04.798795987 +0100
+@@ -1050,7 +1050,8 @@
+ 
+         jt = session.createJobTemplate()
+         jt.workingDirectory = os.getcwd()
+-        jt.jobEnvironment = {'BASH_ENV': '~/.bashrc'}
++        # mjt - alces - 2014-06-05 - disable this so bash doesn't endlessly loop if bashrc opens other bash processes.
++        #jt.jobEnvironment = {'BASH_ENV': '~/.bashrc'}
+         jt.args = []
+         jt.nativeSpecification = "-V -q %s -p %i -N %s %s" % \
+             (options.get("job_queue", GLOBAL_OPTIONS.cluster_queue),

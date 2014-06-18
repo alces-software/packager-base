@@ -1,0 +1,118 @@
+---
+:schema: 1
+:title: CGAT
+:license: BSD
+:summary: The Computational Genomics Analysis Toolkit
+:url: http://www.cgat.org/~andreas/documentation/cgat/index.html
+:description: |
+  The CGAT code collection has grown out of the work in comparative
+  genomics by the Ponting group in the last decade. Now, CGAT has
+  added functionality to do next-generation sequencing analysis.
+
+  The collection has three major components, these are directories in
+  the package.
+
+    * Scripts - A collection of useful scripts for genomics and NGS
+      analysis
+    * Modules - A collection of modules with utility functions for
+      genomics and NGS analysis.
+    * CGAT Pipelines - A collection of pipelines for common workflows
+      in genomics and NGS analysis.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jun  2 2014 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: CGATOxford-cgat-f5665e1.tar.gz
+:src_dir: CGATOxford-cgat-f5665e1
+:sources:
+  - SphinxReport-2.4.tar.gz
+:type: apps
+:version: '20140603'
+:requirements:
+  :build:
+    - apps/python ~> 2.7.0
+    - apps/cython >= 0.19
+    - libs/numpy
+    - libs/scipy
+    - libs/pysam >= 0.7.8
+    - libs/rpy2
+    - libs/boost
+    - libs/biopython
+  :tool:
+    - apps/setuptools
+  :runtime:
+    - apps/python ~> 2.7.0
+    - apps/cython >= 0.19
+    - libs/scipy
+    - libs/rpy2
+    - libs/biopython
+:params:
+  :queue: "GridScheduler queue to use for pipelines (e.g. byslot.q)"
+:compilers:
+  gcc:
+:patches:
+  - remove-bashenv-from-pipeline.patch1
+  - remove-bashenv-from-farm.patch1
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  PYTHONDEPSSITEPKGS=$PYTHONDEPSDIR/lib/python2.7/site-packages
+  ORIG_PYTHONPATH=$PYTHONPATH
+  export PYTHONPATH=$ORIG_PYTHONPATH:$PYTHONDEPSSITEPKGS
+  mkdir -p $PYTHONDEPSSITEPKGS
+
+  # Required for alignlib-lite Python module
+  export CPLUS_INCLUDE_PATH=$BOOSTINCLUDE:$CPLUS_INCLUDE_PATH
+
+  # Install SphinxReport first as it needs pre-patching (also install 
+  # some deps manually to avoid order-of-installation problems)
+  for pkg_name in pandas patsy tornado MarkupSafe; do 
+    easy_install --install-dir $PYTHONDEPSSITEPKGS \
+      $pkg_name <%= redirect(:pythondeps) %>
+  done
+  cd ..
+  tar -xvf <%= source('SphinxReport-2.4.tar.gz') %>
+  cd SphinxReport-2.4
+  sed -i -e 's|\(requires.txt\)|SphinxReport.egg-info/\1|' setup.py
+  python setup.py install --prefix $PYTHONDEPSDIR <%= redirect(:pythondeps) %>
+  cd ../CGATOxford-cgat-f5665e1
+
+  # Patch Pipeline class to use the specified queue for 'farm' operation.
+  for a in CGATPipelines/configuration/pipeline.ini CGAT/Experiment.py CGAT/Pipeline.py; do
+    sed -i -e 's/all\.q/<%= param(:queue) %>/g' $a
+  done
+
+  installreqs() { grep -v '^#' requires.txt | while read line; do easy_install --install-dir $PYTHONDEPSSITEPKGS "$line" <%= redirect(:pythondeps) %> || return 1; done; }; installreqs
+
+  # Additional requirements not covered by above
+  easy_install --install-dir $PYTHONDEPSSITEPKGS https://bitbucket.org/james_taylor/bx-python/get/tip.tar.bz2 <%= redirect(:pythondeps) %>
+
+  # Build main CGAT tools and scripts
+  export PYTHONPATH=$ORIG_PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+
+  cp -Rv $PYTHONDEPSDIR <%= dest_dir %> <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv -v <%= dest_dir %>/python/bin <%= dest_dir %>/bin <%= redirect(:install) %>
+
+  # Install CGAT pipelines
+  cp -Rv CGATPipelines <%= dest_dir %>/pipelines <%= redirect(:install) %>
+
+  # Install scripts inside egg folder so Pipeline.py can find them
+  cp -Rv scripts <%= dest_dir %>/python/lib/python2.7/site-packages/CGAT-0.2.1-py2.7-linux-x86_64.egg <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PIPELINES ${appdir}/pipelines
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+
+  if { [info exists ::env(GRIDSCHEDULERDIR)] } {
+    setenv DRMAA_LIBRARY_PATH $::env(GRIDSCHEDULERDIR)/lib/linux-x64/libdrmaa.so
+  } else {
+    puts stderr "Unable to find GRIDSCHEDULERDIR environment variable, please set DRMAA_LIBRARY_PATH manually"
+  }

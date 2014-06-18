@@ -1,0 +1,20 @@
+--- CGATOxford-cgat-f5665e1/scripts/farm.py.orig	2014-06-02 16:19:38.000000000 +0100
++++ CGATOxford-cgat-f5665e1/scripts/farm.py	2014-06-05 18:26:26.357213529 +0100
+@@ -541,7 +541,7 @@
+                 "pipes (`|`) within command need to be escaped, "
+                 "otherwise jobs run on submit host")
+ 
+-    c = '%s -v "BASH_ENV=%s" -q %s -p %i %s %s' % (options.cluster_cmd,
++    c = '%s -q %s -p %i %s %s' % (options.cluster_cmd,
+                                                    options.bashrc,
+                                                    options.cluster_queue,
+                                                    options.cluster_priority,
+@@ -676,7 +676,7 @@
+         # get session for process - only one is permitted
+         jt.workingDirectory = os.getcwd()
+         jt.remoteCommand = job_path
+-        e = {'BASH_ENV': options.bashrc}
++        e = {}
+         if environment:
+             for en in environment:
+                 try:
