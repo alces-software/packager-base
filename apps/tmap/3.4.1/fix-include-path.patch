@@ -1,0 +1,11 @@
+--- src/map/util/tmap_map_util.c.orig	2014-06-18 11:18:29.981774436 +0000
++++ src/map/util/tmap_map_util.c	2014-06-18 11:18:38.137671902 +0000
+@@ -16,7 +16,7 @@
+ #include "../../sw/tmap_sw.h"
+ #include "../../sw/tmap_fsw.h"
+ #include "../../sw/tmap_vsw.h"
+-#include "samtools/bam.h"
++#include "../../samtools/bam.h"
+ #include "tmap_map_opt.h"
+ #include "tmap_map_util.h"
+ 

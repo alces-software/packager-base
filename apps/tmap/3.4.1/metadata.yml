@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: TMAP
+:license: GPLv2+
+:summary: Torrent mapping alignment program
+:url: https://github.com/iontorrent/TS/tree/master/Analysis/TMAP
+:description: |
+  TMAP is a fast and accurate alignment software for short and long
+  nucleotide sequences produced by next-generation sequencing
+  technologies.  It consists of a set of utilities, combined into one
+  command line program called "tmap".
+
+  There are two steps in mapping with TMAP:
+
+    1. The first step is to build an index of the reference genome
+       onto which we map.  This index needs only to be built once for
+       each genome, performing much of the mapping work upfront.
+    2. The second step is to map the reads to the reference genome
+       using this index.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jun 18 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: TorrentSuite_4.0.2.tar.gz
+:src_dir: TS-TorrentSuite_4.0.2/Analysis/TMAP
+:sources:
+  - samtools-nh13-e783ea96f0.tar.gz
+:patches:
+  - fix-include-path.patch
+:type: apps
+:version: '3.4.1'
+:compilers:
+  gcc:
+:compile: |
+  tar -C src -xzf <%= source('samtools-nh13-e783ea96f0.tar.gz') %>
+  mv src/samtools-e783ea96f068c99abb1f071c0c34fd9e10d34ce7 src/samtools
+  bash autogen.sh <%= redirect(:autogen) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/share/doc/tmap <%= dest_dir %>/doc
+  rm -rf <%= dest_dir %>/share
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
