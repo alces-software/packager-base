@@ -1,0 +1,87 @@
+---
+:schema: 1
+:title: MIRA
+:license: GPLv2
+:summary: Whole genome shotgun and EST sequence assembler
+:url: http://sourceforge.net/projects/mira-assembler/
+:description: |
+  MIRA is a whole genome shotgun and EST sequence assembler for
+  Sanger, 454, Solexa (Illumina), IonTorrent data and PacBio (the
+  later at the moment only CCS and error-corrected CLR reads). It can
+  be seen as a Swiss army knife of sequence assembly developed and
+  used in the past 12 years to get assembly jobs done efficiently -
+  and especially accurately. That is, without actually putting too
+  much manual work into finishing the assembly.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun 26 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest stable version 4.0.2
+  * Thu Apr 10 2014 - James Donohue <james.donohue@alces-software.com>
+    - Updated to latest stable version 4.0.1
+    - Added example script
+  * Thu Nov 29 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mira-4.0.2.tar.bz2
+:src_dir: mira-4.0.2
+:type: apps
+:version: '4.0.2'
+# Requires expat-devel and vim (for xxd)
+:requirements:
+  :build: libs/boost >= 1.49.0
+  :runtime: libs/boost >= 1.49.0
+:compilers:
+  gcc:
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "6") ]]; then 
+    echo GCC version is $gcc_major.$gcc_minor but MIRA requires at least v4.6.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+
+  ./configure --prefix="<%= dest_dir %>" --with-boost="${BOOSTDIR}" <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+  # XXX - build docbook docs?
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -av AUTHORS ChangeLog COPYING GETTING_STARTED HELP_WANTED NEWS README THANKS <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av minidemo <%= dest_dir %>/minidemo <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'mira; generic script for genome/EST/RNASeq mode'
+    description: 'Execute MIRA using specified manifest file (not included)'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # Note that to use MIRA requires both sequence data and one or more
+      # appropriately configured manifest files (not included)
+      #
+      # For full MIRA usage information see:
+      #   http://mira-assembler.sourceforge.net/docs/DefinitiveGuideToMIRA.html
+
+      # Output directory
+      OUTPUT_DIR="mira/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # File to read assembly configuration details from
+      MANIFEST_FILE="/path/to/manifest"
+
+      # Additional command-line options (mira -h for a list)
+      #MIRA_OPTIONS=""
+
+      # Create output directory if it doesn't already exist
+      mkdir -p "$OUTPUT_DIR"
+
+      # NB remove the following line after configuring manifest file
+      exit 1
+
+      mira -c "$OUTPUT_DIR" "$MANIFEST_FILE"
