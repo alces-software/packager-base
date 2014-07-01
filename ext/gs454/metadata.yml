@@ -19,6 +19,8 @@
   down to the flow-by-flow signal intensities used in base calling.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jul 01 2014 Ben Armston <ben.armston@alces-software.com>
+    - Corrected typo in prepare stage
   * Tue Jan 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: Data_Processing.tar.gz
@@ -34,7 +36,7 @@
   :analysis_tarball: "Path or URL to Data_Analysis tarball (tar.gz format) (pass 'skip' to use an existing download)"
   :processing_tarball: "Path or URL to Data_Processing tarball (tar.gz format) (pass 'skip' to use an existing download)"
 :prepare: |
-  <% if param('anlysis_tarball') != 'skip' %>
+  <% if param('analysis_tarball') != 'skip' %>
     <% if URI.parse(param('analysis_tarball')).scheme.nil? %>
       cp <%= param('analysis_tarball') %> <%= source('Data_Analysis.tar.gz') %>
     <% else %>
