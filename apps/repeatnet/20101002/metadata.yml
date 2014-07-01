@@ -1,0 +1,28 @@
+---
+:schema: 1
+:title: RepeatNet
+:license: OTHER; licensing information absent
+:summary: An ab initio centromeric sequence detection algorithm
+:url: http://eichlerlab.gs.washington.edu/software/repeatnet/
+:description: An ab initio centromeric sequence detection algorithm
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul  1 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: repeatnet.c.sic
+:type: apps
+:version: '20101002'
+:compilers:
+  gcc:
+    :compile_flags: '-O3'
+:compile: |
+  mv -v repeatnet.c.sic repeatnet.c <%= redirect(:compile) %>
+  $CC <%= compiler[:compile_flags] %> -o repeatnet -lm repeatnet.c <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v repeatnet <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
