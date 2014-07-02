@@ -1,0 +1,82 @@
+:schema: 1
+:license: Common Public License Version 1.0
+:summary: IMB is a networking benchmark tool.
+:url: http://software.intel.com/en-us/articles/intel-mpi-benchmarks/
+:description: |
+  IMB is a networking benchmark tool.
+:group: Benchmarks
+:requirements:
+  :runtime:
+    - mpi/openmpi >= 1.8.1
+  :build:
+    - mpi/openmpi >= 1.8.1
+:changelog: |
+  * Wed Jul 2 2014 Steve Norledge
+    - bump to v4.0
+  * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Added MPI example script
+  * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v3.2.4-updated
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Bumped to 3.2.2
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Ported to installer
+  * Wed Aug 17 2011 Steve Norledge
+    - Load openmpi from Alces stack
+  * Sat Feb 19 2011 Steve Norledge
+    - First created
+:src: IMB-4.0.tgz
+:src_dir: imb/
+:patches:
+  - alces-imb.patch
+:type: apps
+:version: '4.0'
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make -f make_mpich <%= redirect :make %>
+:tgtbin:
+  - src/IMB-MPI1
+:tgtdoc:
+  - doc/IMB_Users_Guide.pdf
+  - ReadMe_IMB.txt
+  - license/license.txt
+  - license/use-of-trademark-license.txt
+:install: |
+  <%package.tgtbin.each do |f|%>
+    install -D -m 755 <%=f%> <%=dest_dir%>/bin/<%=File::basename(f)%>
+  <%end%>
+  <%package.tgtdoc.each do |f|%>
+    install -D -m 644 <%=f%> <%=dest_dir%>/doc/<%=File::basename(f)%>
+  <%end%>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+  setenv ${appcaps}DOC ${appdir}/doc/
+
+  prepend-path PATH ${appdir}/bin/
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'mpirun/imb; 4 processes'
+    description: 'Execute IMB via mpirun using 4 processes'
+    template: 'script:stub:mpi-multislot'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For more information about IMB options see:
+      #   http://www.intel.com/software/imb
+
+      # Output directory
+      OUTPUT_DIR="imb/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Number of processes to start
+      NUM_PROCESSES=4
+
+      # Additional command-line options ('IMB-MPI1 -help' for a list)
+      #IMB_OPTIONS=
+
+      mkdir -p $OUTPUT_DIR
+      mpirun -np $NUM_PROCESSES IMB-MPI1 $IMB_OPTIONS > $OUTPUT_DIR/IMB-MPI1.report 2>&1
