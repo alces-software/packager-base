@@ -1,0 +1,65 @@
+---
+:schema: 1
+:title: FastUniq
+:license: UKNOWN; see http://sourceforge.net/projects/fastuniq/
+:summary: an ultrafast de novo duplicates removal tool for paired short DNA sequences
+:url: http://sourceforge.net/projects/fastuniq/
+:description: |
+  FastUniq as an ultrafast de novo tool for removal of duplicates in paired
+  short DNA sequence reads in FASTQ format. FastUniq identifies duplicates
+  by comparing sequences between read pairs and does not require complete
+  genome sequences as prerequisites. FastUniq is capable of simultaneously
+  handling reads with different lengths and results in highly efficient 
+  running time.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Jul 4 2014 - Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: FastUniq-1.1.tar.gz
+:src_dir: 'FastUniq/source'
+:version: '1.1'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  mkdir -p <%= dest_dir %>/doc
+  mkdir -p <%= dest_dir %>/example
+
+  # Adjust the paths in the example input file list so that it contains
+  # absolute paths to the files.
+  sed -i 's,^,<%= dest_dir %>/example/,' ../example/input_list.txt <%= redirect(:install) %>
+
+  install fastuniq      <%= dest_dir %>/bin     <%= redirect(:install) %>
+  install ../example/*  <%= dest_dir %>/example <%= redirect(:install) %>
+  install ../README.txt <%= dest_dir %>/doc     <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'FastUniq; general usage'
+    description: 'Execute FastUniq using the provided example data'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Output directory (default is '.')
+      OUTPUT_DIR="fastuniq/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # The input file list of paired FSATQ sequence files.
+      INPUT_LIST="$FASTUNIQEXAMPLE/input_list.txt"
+
+      # Additional command-line options (fastuniq for list)
+      FASTUNIQ_OPTIONS="-t q -o $OUTPUT_DIR/output_1.fastq -p $OUTPUT_DIR/output_2.fastq -c 1"
+
+      mkdir -p "$OUTPUT_DIR"
+      fastuniq -i $INPUT_LIST $FASTUNIQ_OPTIONS
