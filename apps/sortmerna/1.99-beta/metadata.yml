@@ -1,0 +1,92 @@
+---
+:schema: 1
+:title: SortMeRNA
+:license: LGPL
+:summary: SortMeRNA is a software designed to rapidly filter ribosomal RNA fragments from metatranscriptomic data produced by next-generation sequencers.
+:url: http://bioinfo.lifl.fr/RNA/sortmerna/index.php
+:description: |
+  SortMeRNA is a software designed to rapidly filter ribosomal RNA fragments
+  from metatranscriptomic data produced by next-generation sequencers. It is
+  capable of handling large RNA databases and sorting out all fragments
+  matching to the database with high accuracy and specificity.
+
+  SortMeRNA takes as input a file of reads (fasta or fastq format) and an rRNA
+  database (constructed using indexdb_rna (and buildtrie in versions <1.99
+  beta), and sorts apart the matching and non-matching reads into two files
+  specified by the user. Please refer to the user manual below for examples.
+
+  If you use SortMeRNA, please cite: Kopylova E., Noé L. and Touzet H.,
+  "SortMeRNA: Fast and accurate filtering of ribosomal RNAs in
+  metatranscriptomic data", Bioinformatics (2012), doi:
+  10.1093/bioinformatics/bts611.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul 7 2014 - Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: sortmerna-1.99-beta.tar.gz
+:src_dir: 'sortmerna-1.99-beta'
+:version: '1.99-beta'
+:compilers:
+  gcc:
+:compile: |
+  # Prevent make install from failing due to header files being mentioned multiple times.
+  # This sed command removes everything on the line after 'include_HEADERS = '
+  # and joins the next line to it.
+  sed -i  's/^\(include_HEADERS = \).*/\1/ ; /^include_HEADERS = /N ; s/^\(include_HEADERS = \)*\n/\1/' Makefile.in 
+  ./configure --prefix <%= dest_dir %> <%= redirect(:compile) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+
+  # Remove the include directory. The make install routine does not include
+  # any object files making the include headers rather pointless.
+  rm -rf --one-file-system <%= dest_dir %>/include
+
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
+  install SortMeRNA-user-manual-v1.99-beta.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+
+  mkdir -p <%= dest_dir %>/example <%= redirect(:install) %>
+  install rRNA_databases/*.fasta <%= dest_dir %>/example <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'SortMeRNA; index and sort one database'
+    description: 'Index one of the rRNA databases provided with SortMeRNA and filter rRNA reads against it.'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Output directory.
+      OUTPUT_DIR="sortmerna/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      mkdir -p "$OUTPUT_DIR"
+
+      # The database to index and the output file for the indexed database.
+      # Change these as desired.
+      SOURCE_DB="$SORTMERNAEXAMPLE/silva-bac-16s-database-id85.fasta"
+      INDEXED_DB="silva-bac-16s"
+
+      INDEX_REF="${SOURCE_DB},${OUTPUT_DIR}/${INDEXED_DB}" 
+
+      # Other options to pass to the indexdb_rna command. Change as desired.
+      INDEXDB_RNA_OPTIONS="-v"
+
+      indexdb_rna --ref "$INDEX_REF" $INDEXDB_RNA_OPTIONS
+
+      # The database which is to be filtered against the indexed database.
+      # Change this as desired.
+      READS_DB="$SORTMERNAEXAMPLE/rfam-5.8s-database-id98.fasta"
+
+      # Other options to pass to sortmerna. Change as desired.
+      SORTMERNA_OPTIONS="--feeling-lucky --sam  --fastx --aligned ${OUTPUT_DIR}/accept --other ${OUTPUT_DIR}/other --log -v"
+
+      sortmerna --ref "$INDEX_REF" --reads "$READS_DB" $SORTMERNA_OPTIONS
