@@ -12,10 +12,12 @@
   of analytical output functions, with an emphasis on genotyping.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jul 22 2014 - James Donohue <james.donohue@alces-software.com>
+    - Fixed download URL, MD5 sum and source filename
   * Mon Feb 25 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
-:src: snpomatic-20121106.tar.gz
-:src_dir: snpomatic
+:src: snpomatic-code-14.zip
+:src_dir: snpomatic-code-14
 :type: apps
 :version: '20121106'
 :compilers:
