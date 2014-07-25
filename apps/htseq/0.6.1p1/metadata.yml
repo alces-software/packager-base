@@ -18,14 +18,16 @@
       genes
 :group: Bioinformatics
 :changelog: |
+  * Mon Jul 25 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v0.6.1p1
   * Mon Jun 24 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest v0.5.4p2
   * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: HTSeq-0.5.4p2.tar.gz
-:src_dir: HTSeq-0.5.4p2
+:src: HTSeq-0.6.1p1.tar.gz
+:src_dir: HTSeq-0.6.1p1
 :type: apps
-:version: '0.5.4p2'
+:version: '0.6.1p1'
 :requirements:
   :build:
     - apps/python
