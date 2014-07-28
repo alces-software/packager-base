@@ -1,0 +1,33 @@
+diff -uNr configure configure
+--- configure	2011-06-03 03:24:13.000000000 +0100
++++ configure	2011-10-31 21:22:04.852787182 +0000
+@@ -4206,7 +4206,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ 
+-	#include <bam/bam.h>
++	#include <bam.h>
+ 
+ int
+ main ()
+@@ -4329,7 +4329,7 @@
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+ 
+-		#include <bam/version.hpp>
++		#include <version.hpp>
+ 
+ int
+ main ()
+diff -uNr src/hits.h src/hits.h
+--- src/hits.h	2011-06-03 03:19:29.000000000 +0100
++++ src/hits.h	2011-10-31 21:22:04.853786683 +0000
+@@ -16,7 +16,7 @@
+ 
+ #include <boost/shared_ptr.hpp>
+ 
+-#include <bam/sam.h>
++#include <sam.h>
+ 
+ #include "common.h"
+ #include "multireads.h"
