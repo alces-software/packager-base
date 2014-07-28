@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: car
+:license: GPLv3
+:summary: Reconstructing contiguous regions of an ancestral genome
+:url: http://www.bx.psu.edu/miller_lab/car/
+:description: |
+  A description of this software can be found in the paper "Reconstructing
+  Contiguous Regions of an Ancestral Genome", available at
+  http://www.genome.org/cgi/content/abstract/gr.5383506.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul 28 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: inferCars.061606.tar.bz2
+:src_dir: inferCars/inferCars
+:type: apps
+:version: '061606'
+:requirements:
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+
+  # Adjust the DATA Makefile, used for running the program, to use the
+  # packaged executables and take the confguration file from an environment
+  # variable.
+  sed -e 's|^D = \.\.|D = $(CARBIN)|' -i DATA/Makefile <%= redirect(:compile) %>
+  sed -e 's|^F = config.file.boreo|F = $(CARCONFIGFILE)|' -i DATA/Makefile <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/doc  <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/bin  <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/DATA <%= redirect(:install) %>
+
+  cp -v $( find . -type f -executable ) <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README <%= dest_dir %>/doc  <%= redirect(:install) %>
+  cp -L DATA/* <%= dest_dir %>/DATA <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DATA ${appdir}/DATA
+
+  prepend-path PATH ${appdir}/bin
