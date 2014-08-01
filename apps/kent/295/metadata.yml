@@ -11,6 +11,8 @@
   non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
 :group: Bioinformatics
 :changelog: |
+  * Fri Aug  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Copy trackDb.sql into share subdirectory
   * Fri Feb  7 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest v295
   * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -39,12 +41,15 @@
   OUTDIR="$(pwd)"
   cp -rv out/bin <%= dest_dir %> <%= redirect(:install) %>
   cp -rv out/${OUTDIR}/out/bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
-  mkdir -p <%= dest_dir %>/www/cgi-bin 
+  mkdir -p <%= dest_dir %>/www/cgi-bin
   cp -rv out/cgi-bin-root/* <%= dest_dir %>/www/cgi-bin <%= redirect(:install) %>
   cp -rv out/${OUTDIR}/out/cgi-bin-root/* <%= dest_dir %>/www/cgi-bin <%= redirect(:install) %>
   cp -rv out/htdocs <%= dest_dir %>/www <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/share
+  cp -v kent/src/hg/lib/trackDb.sql <%= dest_dir %>/share <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
 
   prepend-path PATH ${appdir}/bin
