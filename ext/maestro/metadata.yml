@@ -11,6 +11,8 @@
   versatile modeling environment for all researchers.
 :group: Chemistry
 :changelog: |
+  * Fri Aug  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add support for 2014.2
   * Wed Jan  9 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: Maestro.tar
@@ -40,7 +42,12 @@
 :install: |
   cd *Maestro*
   SCRATCHDIR=/tmp
-  echo -e "\n<%= dest_dir %>\n\n\n\n$SCRATCHDIR\ny\n\n" | ./INSTALL <%= redirect(:install) %>
+  if [ "<%= version %>" == "98017" ]; then
+    inst_str="\n<%= dest_dir %>\n\n$SCRATCHDIR\ny\ny\n"
+  else
+    inst_str="\n<%= dest_dir %>\n\n\n\n$SCRATCHDIR\ny\n\n"
+  fi
+  echo -e "$inst_str" | ./INSTALL <%= redirect(:install) %>
   cat <%= source('schrodinger.hosts.append') %> >> <%= dest_dir %>/schrodinger.hosts
 :modules:
    - :type: apps
