@@ -68,6 +68,10 @@
   EOF
   cat <<\EOF > <%= dest_dir %>/bin/BreakPointer
   #!/bin/bash
+  MCR_LD_LIBRARY_PATH=${BREAKPOINTER_MCR_PREFIX}LD_LIBRARY_PATH
+  MCR_XAPPLREDIR=${BREAKPOINTER_MCR_PREFIX}XAPPLRESDIR
+  export LD_LIBRARY_PATH=${!MCR_LD_LIBRARY_PATH}:$LD_LIBRARY_PATH
+  export XAPPLRESDIR=${!MCR_XAPPLRESDIR}
   <%= dest_dir %>/bin/fh_BreakPointerScatter "$@"
   EOF
   chmod 755 <%= dest_dir %>/bin/BreakPointer.sh <%= dest_dir %>/bin/BreakPointer
@@ -79,15 +83,18 @@
 
        set mcrroot ${appdir}/lib/mcr/v710
        set mcrjre ${mcrroot}/sys/java/jre/glnxa64/jre/lib/amd64
+       set mcrprefix ${appcaps}MCR_
 
-       prepend-path LD_LIBRARY_PATH ${mcrjre}
-       prepend-path LD_LIBRARY_PATH ${mcrjre}/client
-       prepend-path LD_LIBRARY_PATH ${mcrjre}/server
-       prepend-path LD_LIBRARY_PATH ${mcrjre}/native_threads
-       prepend-path LD_LIBRARY_PATH ${mcrroot}/sys/os/glnxa64
-       prepend-path LD_LIBRARY_PATH ${mcrroot}/bin/glnxa64
-       prepend-path LD_LIBRARY_PATH ${mcrroot}/runtime/glnxa64
+       setenv ${appcaps}_MCR_PREFIX ${mcrprefix}
 
-       setenv XAPPLRESDIR ${mcrroot}/X11/app-defaults
- 
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/client
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/server
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/native_threads
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/sys/os/glnxa64
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/bin/glnxa64
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/runtime/glnxa64
+
+       setenv ${mcrprefix}XAPPLRESDIR ${mcrroot}/X11/app-defaults
+
        prepend-path PATH ${appdir}/bin
