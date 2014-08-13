@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: bcrypt
+:license: BSD License
+:summary: Cross-platform file encryption utility
+:url: http://bcrypt.sourceforge.net/
+:description: |
+  Bcrypt is a cross platform file encryption utility. Encrypted files
+  are portable across all supported operating systems and
+  processors. Passphrases must be between 8 and 56 characters and are
+  hashed internally to a 448 bit key. However, all characters supplied
+  are significant. The stronger your passphrase, the more secure your
+  data.
+
+  In addition to encrypting your data, bcrypt will by default
+  overwrite the original input file with random garbage three times
+  before deleting it in order to thwart data recovery attempts by
+  persons who may gain access to your computer.
+:group: Tools
+:changelog: |
+  * Wed Aug 13 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bcrypt-1.1.tar.gz
+:type: apps
+:version: '1.1'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  make install PREFIX=<%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path MANPATH ${appdir}/man
+  prepend-path PATH ${appdir}/bin
