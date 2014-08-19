@@ -1,0 +1,24 @@
+--- SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk.orig	2014-08-19 15:07:12.480128551 +0100
++++ SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk	2014-08-19 15:11:33.748843959 +0100
+@@ -82,8 +82,8 @@
+ # LIB = -lm
+ 
+ # For "make install"
+-INSTALL_LIB = /usr/local/lib
+-INSTALL_INCLUDE = /usr/local/include
++INSTALL_LIB = $(ALCES_DESTDIR)/lib
++INSTALL_INCLUDE = $(ALCES_DESTDIR)/include
+ 
+ # Which version of MAKE you are using (default is "make")
+ # MAKE = make
+@@ -106,8 +106,8 @@
+ # naming the BLAS and LAPACK library (*.a or *.so) files.
+ 
+ # This is probably slow ... it might connect to the Standard Reference BLAS:
+-BLAS = -lblas -lgfortran
+-LAPACK = -llapack
++BLAS = -L $ATLASDIR/lib -latlas -lf77blas
++LAPACK = -L $ATLASDIR/lib -llapack
+ 
+ # NOTE: this next option for the "Goto BLAS" has nothing to do with a "goto"
+ # statement.  Rather, the Goto BLAS is written by Dr. Kazushige Goto.

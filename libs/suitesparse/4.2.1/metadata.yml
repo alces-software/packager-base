@@ -1,0 +1,52 @@
+---
+:schema: 1
+:license: OTHER - see http://www.cise.ufl.edu/research/sparse/SuiteSparse/
+:summary: A suite of sparse matrix packages
+:url: http://www.cise.ufl.edu/research/sparse/SuiteSparse/
+:description: |
+  SuiteSparse is a single archive that contains all packages authored
+  or co-authored by Professor Tim Davis has that are available at
+  http://www.cise.ufl.edu/research/sparse. Currently, this includes:
+
+    * AMD: symmetric approximate minimum degree
+    * BTF: permutation to block triangular form
+    * CAMD: symmetric approximate minimum degree
+    * CCOLAMD: constrained column approximate minimum degree
+    * COLAMD: column approximate minimum degree
+    * CHOLMOD: sparse supernodal Cholesky factorization and update/downdate
+    * CSparse: a concise sparse matrix package
+    * CXSparse: an extended version of CSparse
+    * KLU: sparse LU factorization, for circuit simulation
+    * LDL: a simple LDL^T factorization
+    * UMFPACK: sparse multifrontal LU factorization
+    * RBio: MATLAB toolbox for reading/writing sparse matrices
+    * UFconfig: common configuration for all but CSparse
+    * SuiteSparseQR: multifrontal sparse QR
+:group: Mathematics
+:requirements:
+  :build: libs/atlas
+:patches:
+  - gridware.patch1
+:changelog: |
+  * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest v4.2.1 release
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SuiteSparse-4.2.1.tar.gz
+:src_dir: SuiteSparse
+:type: libs
+:version: '4.2.1'
+:compilers:
+  gcc:
+:compile: |
+  make library <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/lib <%= dest_dir %>/include
+  export ALCES_DESTDIR="<%= dest_dir %>"
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
