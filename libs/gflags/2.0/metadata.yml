@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: gflags
+:license: BSD License
+:summary: Library that implements commandline flags processing
+:url: https://code.google.com/p/gflags/
+:description: |
+  The gflags package contains a library that implements commandline
+  flags processing. As such it's a replacement for getopt(). It has
+  increased flexibility, including built-in support for C++ types like
+  string, and the ability to define flags in the source file in which
+  they're used.
+:group: Library
+:changelog: |
+  * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v2.0.zip
+:src_dir: gflags-2.0
+:type: libs
+:version: '2.0'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/share/doc/gflags-2.0 <%= dest_dir %>/doc
+  rm -rf <%= dest_dir %>/share/doc
+  mv <%= dest_dir %>/bin/gflags_completions.sh <%= dest_dir %>/share
+  rmdir <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
