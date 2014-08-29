@@ -41,6 +41,9 @@ license_help: |
 :license_type: :nonprofit
 :group: Bioinformatics
 :changelog: |
+  * Fri Aug 29 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use date to generate version rather than revision which is now a
+      checksum rather than a monotonically increasing integer.
   * Thu Sep 20 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri Jan 13 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -64,7 +67,7 @@ license_help: |
 :analyse: |
   if [ -d <%= src_dir %> ]; then
     cd <%= src_dir %>
-    version=$(grep -i '$Revision:' *.pl | awk -F"[' ]" '{print $6;}' | sort -n | tail -n1)
+    version=$(grep -i '$Date:' annotate_variation.pl | awk -F"[' ]" '{print $6;}' | sort | tail -n1 | sed 's/-//g')
     cat <<-EOF
     :version: '$version'
   EOF
