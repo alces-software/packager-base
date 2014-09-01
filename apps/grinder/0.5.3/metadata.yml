@@ -1,0 +1,116 @@
+---
+:schema: 1
+:title: Grinder
+:license: GPLv3
+:summary: A versatile omics shotgun and amplicon sequencing read simulator
+:url: http://biogrinder.sourceforge.net/
+:description: |
+    Grinder is a versatile program to create random shotgun and amplicon
+    sequence libraries based on DNA, RNA or proteic reference sequences
+    provided in a FASTA file.
+
+    Grinder can produce genomic, metagenomic, transcriptomic,
+    metatranscriptomic, proteomic, metaproteomic shotgun and amplicon
+    datasets from current sequencing technologies such as Sanger, 454,
+    Illumina. These simulated datasets can be used to test the accuracy of
+    bioinformatic tools under specific hypothesis, e.g. with or without
+    sequencing errors, or with low or high community diversity. Grinder may
+    also be used to help decide between alternative sequencing methods for a
+    sequence-based project, e.g. should the library be paired-end or not,
+    how many reads should be sequenced.
+
+    Grinder features include:
+
+     * shotgun or amplicon read libraries
+
+     * omics support to generate genomic, transcriptomic, proteomic,
+       metagenomic, metatranscriptomic or metaproteomic datasets
+
+     * arbitrary read length distribution and number of reads
+
+     * simulation of PCR and sequencing errors (chimeras, point mutations,
+       homopolymers)
+
+     * support for paired-end (mate pair) datasets
+
+     * specific rank-abundance settings or manually given abundance for
+       each genome, gene or protein
+
+     * creation of datasets with a given richness (alpha diversity)
+
+     * independent datasets can share a variable number of genomes (beta
+       diversity)
+
+     * modeling of the bias created by varying genome lengths or gene copy
+       number
+
+     * profile mechanism to store preferred options
+
+     * available to biologists or power users through multiple interfaces:
+       GUI, CLI and API
+:group: Bioinformatics
+:changelog: |
+  * Mon Sep  1 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: Grinder-0.5.3.tar.gz
+:src_dir: Grinder-0.5.3
+:type: apps
+:version: '0.5.3'
+:requirements:
+  :tool: apps/cpanminus
+  :runtime: libs/bioperl >= 1.6.901
+:compilers:
+  noarch:
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  cpanm parent Getopt::Euclid Math::Random::MT <%= redirect(:cpanm) %>
+
+  perl Makefile.PL --skipdeps INSTALL_BASE=<%= dest_dir %>/perl <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/perl/bin <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Shotgun DNA library with specified coverage'
+    description: 'Run Grinder on a FASTA database (not supplied) with a specified coverage'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full Grinder usage information see:
+      #   http://sourceforge.net/projects/biogrinder/files/?source=navbar
+
+      # Input directory
+      INPUT_DIR="grinder/input"
+
+      # Output directory
+      OUTPUT_DIR="grinder/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # FASTA file that contains the input reference sequences
+      INPUT_SEQS="$INPUT_DIR/genomes.fna"
+
+      # Desired fold coverage of the input reference sequences
+      COVERAGE_FOLD="0.1"
+
+      # Additional command-line options
+      GRINDER_OPTIONS=""
+
+      # Create output directory
+      mkdir -p "$OUTPUT_DIR"
+
+      # Run Grinder command line
+      grinder "$GRINDER_OPTIONS" \
+          -reference_file "$INPUT_SEQS" \
+          -coverage_fold "$COVERAGE_FOLD" \
+          -output_dir "$OUTPUT_DIR" 
