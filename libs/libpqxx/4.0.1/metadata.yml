@@ -1,0 +1,36 @@
+---
+:license: BSD
+:summary: C++ API to the PostgreSQL database management system.
+:url: http://damien.douxchamps.net/ieee1394/libdc1394/
+:description: |
+  libpqxx is the official C++ client API for  PostgreSQL, the
+  enterprise-strength open-source relational database. (If "PostgreSQL" is too
+  verbose, call it by its shorter name, postgres).
+
+  If you are writing software in C++ that needs to access databases managed by
+  postgres—on just about any platform—then libpqxx is the library you use. It
+  is the standard C++ language binding for the postgres RDBMS.
+:group: Libraries
+:changelog: |
+  * Mon Sep  1 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: libpqxx-4.0.1.tar.gz
+:src_dir: libpqxx-4.0.1
+:type: libs
+:version: '4.0.1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
