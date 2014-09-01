@@ -1,0 +1,20 @@
+--- express-1.5.1-src/src/CMakeLists.txt.orig	2013-12-08 19:09:18.000000000 +0000
++++ express-1.5.1-src/src/CMakeLists.txt	2014-09-01 16:45:53.998722140 +0100
+@@ -7,7 +7,7 @@
+ 
+ add_executable(express ${sources} ${headers} ${PROTO_SOURCES} ${PROTO_HEADERS})
+ 
+-set(LIBRARIES ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
++set(LIBRARIES ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} "librt.so")
+ 
+ if (GPERFTOOLS_TCMALLOC) 
+    set(LIBRARIES ${LIBRARIES} "libtcmalloc_minimal.a")
+@@ -20,7 +20,7 @@
+ endif(WIN32)
+ 
+ if (PROTOBUF_FOUND)
+-  set(LIBRARIES ${LIBRARIES} "libprotobuf.a")
++  set(LIBRARIES ${LIBRARIES} "libprotobuf.so")
+ endif(PROTOBUF_FOUND)
+ 
+ target_link_libraries(express ${LIBRARIES})
