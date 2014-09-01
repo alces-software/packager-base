@@ -1,0 +1,55 @@
+---
+:license: LGPL
+:summary: High level API to control digital cameras.
+:url: http://damien.douxchamps.net/ieee1394/libdc1394/
+:description: |
+  libdc1394 is a library that provides a complete high level application
+  programming interface (API) for developers who wish to control IEEE 1394
+  based cameras that conform to the 1394-based Digital Camera Specifications
+  (also known as the IIDC or DCAM Specifications). The library is currently the
+  only one to run on all three major platforms (Linux, Mac OSX and Windows). On
+  Linux, both the legacy drivers (raw1394/video1394) and the new "juju" stack
+  (firewire-ohci) are supported and auto-detected.
+
+  libdc1394 provides a complete API that includes camera detection (hotplug
+  coming soon), broadcast commands, bus ressource management (basic), full
+  feature controls (including absolute values), memory channels, external and
+  software trigger, support for all video modes (including 16bit modes and
+  1394B modes at 800Mb/s), video capture using DMA and full Format_7 control.
+  Moreover, libdc1394 also includes a number extras such as the support of
+  vendor specific features for Allied Vision Technologies (AVT), Basler and
+  PixelInk. The library also includes video conversion tools such as color
+  space conversion (YUV, RGB, MONO, etc...) and the demosaicing of Bayer color
+  pattern images (with 8 different algorithms and including 16bit modes). All
+  these features in combination with the multi-platform compatibility makes
+  libdc1394 the most versatile and performant SDK for IIDC cameras. Moreover,
+  it's open source (license: LGPL) and it's free! Several examples are also
+  provided to put you quickly on the right tracks.
+
+  libdc1394 works with every camera that follows the IIDC standard, which is
+  about 500 models. Check the IEEE1394 Digital Camera List for more information.
+:group: Libraries
+:changelog: |
+  * Mon Sep  1 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: libdc1394-2.2.0.tar.gz
+:src_dir: libdc1394-2.2.0
+:type: libs
+:version: '2.2.0'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
