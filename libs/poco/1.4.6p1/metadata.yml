@@ -1,0 +1,41 @@
+---
+:license: OTHER - Boost Software License, Version 1.0
+:summary: Modern, powerful open source C++ class libraries and frameworks for building network- and internet-based applications that run on desktop, server, mobile and embedded systems.
+:url: http://pocoproject.org/
+:description: |
+  POrtable COmponents C++ Libraries are:
+
+   * A collection of C++ class libraries, conceptually similar to the Java
+     Class Library, the .NET Framework or Apple’s Cocoa.
+   * Focused on solutions to frequently-encountered practical problems.
+   * Focused on ‘internet-age’ network-centric applications.
+   * Written in efficient, modern, 100% ANSI/ISO Standard C++.
+   * Based on and complementing the C++ Standard Library/STL.
+   * Highly portable and available on many different platforms.
+   * Open Source, licensed under the Boost Software License.
+
+  In regards to Boost, in spite of some functional overlapping, POCO is best
+  thought of as a Boost complement (rather than replacement). Side-by-side use of
+  Boost and POCO is a very common occurence.  :group: Libraries
+:changelog: |
+  * Mon Sep  2 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: poco-1.4.6p1.tar.gz
+:src_dir: poco-1.4.6p1
+:type: libs
+:version: '1.4.6p1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> --omit=Data/ODBC,Data/MySQL <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
