@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: pip
+:license: MIT
+:summary: The PyPA recommended tool for installing and managing Python packages.
+:url: https://pypi.python.org/pypi/pip
+:description: |
+  pip is a package management system used to install and manage software
+  packages written in Python. Many packages can be found in the Python Package
+  Index (PyPI).
+:group: Tools
+:changelog: |
+  * Tue Sep  2 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: pip-1.5.6.tar.gz
+:src_dir: pip-1.5.6
+:type: apps
+:version: '1.5.6'
+:compilers:
+  noarch:
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python ~> 2.7.3
+  :runtime:
+    - apps/python ~> 2.7.3
+    - apps/setuptools
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHON_DEST_DIR=<%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHON_DEST_DIR
+  mkdir -p $PYTHON_DEST_DIR
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path PATH ${appdir}/bin$
