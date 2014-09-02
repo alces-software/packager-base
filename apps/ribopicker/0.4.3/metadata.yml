@@ -1,0 +1,106 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Identify and remove rRNA sequences from metagenomic and metatranscriptomic datasets
+:url: http://ribopicker.sourceforge.net/
+:description: |
+  The majority of RNA recovered in metatranscriptomic studies is ribosomal RNA
+  (rRNA), not mRNA, often exceeding 90% of the total reads (Stewart et al.,
+  2010; doi:10.1038/ismej.2010.18). Even after various treatments prior to
+  sequencing, the observed rRNA content decreases only slightly (Hei et al.,
+  2010; doi:10.1038/nmeth.1507). It is estimated that misannotations of rRNA
+  as proteins may cause up to 90% false positive matches of rRNA-like
+  sequences in metatranscriptomic studies (Tripp et al., 2011;
+  doi:10.1093/nar/gkr576). Those false positive matches are a serious concern
+  for downstream analysis, possibly causing erroneous conclusions. Therefore,
+  the removal of rRNA-like sequences presents a necessary step for all
+  metatranscriptomic projects.
+
+  riboPicker is distributed under the GNU Public License (GPL). All its source
+  codes are freely available to both academic and commercial users. The latest
+  version can be downloaded at the SourceForge download page.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep  2 2014 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:sources:
+  - bwa-0.5.9.tar.bz2
+:src: ribopicker-standalone-0.4.3.tar.gz
+:src_dir: ribopicker-standalone-0.4.3
+:type: apps
+:version: '0.4.3'
+:compilers:
+  gcc:
+:compile: |
+  # Rebuild modified BWA using original source and riboPicker patches
+  mv -v bwa64 bwa64.bundled <%= redirect(:compile) %>
+  tar -xf <%= source('bwa-0.5.9.tar.bz2') %> <%= redirect(:compile) %>
+  cd bwa-0.5.9
+  /bin/cp -fv ../bwasw_modified_source/* . <%= redirect(:compile) %>
+  make <%= redirect(:compile) %>
+  mv -v bwa ../bwa64 <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,var,doc}
+  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' ribopicker.pl
+  sed -i -e "s|'db/'|'<%= dest_dir %>/var/db/'|g" -e "s|'./'|'<%= dest_dir %>/bin/'|g" riboPickerConfig.pm
+  chmod a+x ribopicker.pl
+  cp -v ribopicker.pl riboPickerConfig.pm bwa64 <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v COPYING ChangeLog README* test_input.fasta <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -r db <%= dest_dir %>/var
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Example usage with test database'
+    description: 'Run riboPicker using test database according to examples in documentation'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For more riboPicker usage information see:
+      #   http://sourceforge.net/projects/ribopicker/files/?source=navbar
+
+      # Input directory
+      INPUT_DIR="ribopicker/input"
+
+      # Output directory
+      OUTPUT_DIR="ribopicker/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # FASTA file containing input sequences
+      INPUT_FILE="$INPUT_DIR/test_input.fasta"
+
+      # Alignment coverage threshold in percentage
+      COVERAGE_THRESHOLD="80"
+
+      # Alignment identity threshold in percentage
+      IDENTITY_THRESHOLD="90"
+
+      # Name of database to use
+      DATABASE_NAME="test"
+
+      # Output file prefix
+      OUTPUT_PREFIX="test_input"
+
+      # Set up input data
+      if [ ! -d "$INPUT_DIR" ]; then
+          mkdir -p "$INPUT_DIR"
+          cp -v "$RIBOPICKERDOC/test_input.fasta" "$INPUT_DIR"
+      fi
+
+      # Create output directory
+      mkdir -p "$OUTPUT_DIR"
+
+      # Run riboPicker command line
+      ribopicker.pl \
+          -c "$COVERAGE_THRESHOLD" \
+          -i "$IDENTITY_THRESHOLD" \
+          -f "$INPUT_FILE" \
+          -dbs "$DATABASE_NAME" \
+          -out_dir "$OUTPUT_DIR" \
+          -id "$OUTPUT_PREFIX"
