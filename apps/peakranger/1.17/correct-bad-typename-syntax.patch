@@ -1,0 +1,11 @@
+--- short_reads/PairEndedReadsAux.cpp.orig	2014-09-02 14:40:36.158271722 +0100
++++ short_reads/PairEndedReadsAux.cpp	2014-09-02 14:40:37.474913178 +0100
+@@ -13,7 +13,7 @@
+         std::vector<Read>& results) {
+     using namespace std;
+ 
+-    typename std::vector<ReadPair<BlockedRead> >::iterator l, r;
++    std::vector<ReadPair<BlockedRead> >::iterator l, r;
+     vector<string> chrs = rds.getChrs();
+     foreach( string& c, chrs) {
+ 

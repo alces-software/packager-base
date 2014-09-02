@@ -1,0 +1,72 @@
+---
+:schema: 1
+:title: PeakRanger
+:license: Artistic License 2.0
+:summary: Multi-purporse software suite for analyzing next-generation sequencing (NGS) data
+:url: http://ranger.sourceforge.net/
+:description: |
+  PeakRanger is a multi-purporse software suite for analyzing
+  next-generation sequencing (NGS) data. The suite contains the
+  following tools:
+
+    * `nr` noise rate estimator. Estimates signal to noise ratio which
+      is an indicator for ChIP enrichment.
+    * `lc` library complexity calculator. Calculates the ratio of
+      unique reads over total reads. Only accepts bam files.
+    * `wig` coverage file generator. Generates variable step format
+      wiggle file.
+    * `wigpe` coverage file generator. Generates bedGraph format
+      wiggle file and supports spliced alignments and thus only
+      supports bam files.
+    * `ranger` ChIP-Seq peak caller. It is able to identify enriched
+      genomic regions while at the same time discover summits within
+      these regions.
+    * `ccat` ChIP-Seq peak caller. Tuned for the discovery of broad
+      peaks.
+
+  Both `ranger` and ccat supports generating HTML-based annotation
+  reports. `wigpe` can also generate coverage files for bam files
+  containing spliced reads, such as those from RNA-Seq experiments.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep  2 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: PeakRanger-1.17-src.zip
+:src_dir: .
+:type: apps
+:version: '1.17'
+:patches:
+  - gridware-boost.patch
+  - correct-bad-typename-syntax.patch
+:requirements:
+  :build:
+    - libs/boost
+  :runtime:
+    - libs/boost
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  install -v -D -m 0755 bin/peakranger <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  cat <<\EOF > "<%= dest_dir %>/bin/peakranger-wrapper"
+  #!/bin/bash
+  tool=$(basename $0)
+  exec peakranger $tool "$@"
+  EOF
+  chmod 755 "<%= dest_dir %>/bin/peakranger-wrapper"
+  for a in nr lc wig wigpe ranger ccat; do
+    ln -s "<%= dest_dir %>/bin/peakranger-wrapper" "<%= dest_dir %>/bin/$a"
+  done
+  for a in AUTHORS COPYING MANUAL NEWS doc/manual.html doc/manual.pdf doc/style.css; do
+    install -v -D -m 0644 $a <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  done
+  cp -Rv shelltests/test_data <%= dest_dir %>/share/example_data
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin

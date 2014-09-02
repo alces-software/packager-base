@@ -1,0 +1,11 @@
+--- Makefile.orig	2014-09-02 14:27:03.938565603 +0100
++++ Makefile	2014-09-02 14:45:11.388361340 +0100
+@@ -16,7 +16,7 @@
+ 	make -C boost_tests/
+ peakranger    : $(ALLCPP) $(ALLH) 
+ 	mkdir bin -p
+-	g++ -I./ $(STATIC) $(NOBAMWAR) -Wall -pedantic  -O3  $(ALLCPP)  -o bin/$@ $(VER) $(BOOST_S) $(BOOST_PO) $(BOOST_FS) $(Z) $(M) $(BOOST_TH)  $(PTHREAD) -std=c++0x
++	g++ -I./ $(STATIC) $(NOBAMWAR) -Wall -pedantic  -O3  $(ALLCPP)  -o bin/$@ $(VER) -I$(BOOSTINCLUDE) -L$(BOOSTLIB) $(BOOST_S) $(BOOST_PO) $(BOOST_FS) $(Z) $(M) $(BOOST_TH)  $(PTHREAD) -std=c++0x
+ 	@echo "PeakRanger compilation complete."
+ %.o : %.cpp
+ 	g++ -Wall -pedantic $(NOBAMWAR) $(LOG) $(VER) -O3  -c $< -o $@
