@@ -12,6 +12,8 @@
   is the standard C++ language binding for the postgres RDBMS.
 :group: Libraries
 :changelog: |
+  * Wed Sep  3 2014 Ben Armston <ben.armston@alces-software.com>
+    - Configure with --enable-shared option
   * Mon Sep  1 2014 Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: libpqxx-4.0.1.tar.gz
@@ -21,7 +23,7 @@
 :compilers:
   gcc:
 :compile: |
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  ./configure --enable-shared --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:compile) %>
 :install: |
   make install <%= redirect(:install) %>
