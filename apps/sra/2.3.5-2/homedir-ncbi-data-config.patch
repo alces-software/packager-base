@@ -1,0 +1,30 @@
+--- libs/kfg/config.c.orig	2014-06-10 18:37:15.000000000 +0100
++++ libs/kfg/config.c	2014-09-03 16:00:25.720765720 +0100
+@@ -2062,6 +2062,10 @@
+ static
+ bool load_from_std_location ( KConfig *self, const KDirectory *dir )
+ {
++    const char *home = getenv( "HOME" );
++    char *home_ncbi = malloc ( strlen(home) + 6 );
++    sprintf(home_ncbi, "%s/.ncbi", home);
++
+     const char * std_locs [] =
+     {
+ #if ! WINDOWS
+@@ -2069,6 +2073,7 @@
+ #else
+         "/c/ncbi",
+ #endif
++        home_ncbi
+     };
+ 
+     rc_t rc = 0;
+@@ -2084,6 +2089,8 @@
+     }
+     if ( loaded )
+         DBGMSG( DBG_KFG, DBG_FLAG(DBG_KFG), ( "KFG: found from std. location\n" ) );
++
++    free(home_ncbi);
+     return loaded;
+ }
+ 
