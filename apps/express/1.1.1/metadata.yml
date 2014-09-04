@@ -1,0 +1,124 @@
+---
+:schema: 1
+:title: eXpress
+:license: Artistic License 2.0
+:summary: Streaming tool for quantifying the abundances of a set of target sequences from sampled subsequences
+:url: http://bio.math.berkeley.edu/eXpress/overview.html
+:description: |
+  eXpress is a streaming tool for quantifying the abundances of a set
+  of target sequences from sampled subsequences. Example applications
+  include transcript-level RNA-Seq quantification,
+  allele-specific/haplotype expression analysis (from RNA-Seq),
+  transcription factor binding quantification in ChIP-Seq, and
+  analysis of metagenomic data. It is based on an online-EM algorithm
+  that results in space (memory) requirements proportional to the
+  total size of the target sequences and time requirements that are
+  proportional to the number of sampled fragments. Thus, in
+  applications such as RNA-Seq, eXpress can accurately quantify much
+  larger samples than other currently available tools greatly reducing
+  computing infrastructure requirements. eXpress can be used to build
+  lightweight high-throughput sequencing processing pipelines when
+  coupled with a streaming aligner (such as Bowtie), as output can be
+  piped directly into eXpress, effectively eliminating the need to
+  store read alignments in memory or on disk.
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Downgraded to 1.1.1 for Galaxy support
+  * Mon Sep  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: express-1.1.1-src.tgz
+:src_dir: express-1.1.1-src
+:type: apps
+:version: '1.1.1'
+:patches:
+  - fix-cmake-configuration.patch
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - apps/bamtools
+    - libs/boost
+  :runtime:
+    - apps/samtools
+    - apps/bowtie
+:compilers:
+  gcc:
+:compile: |
+  ln -s "$BAMTOOLSDIR" bamtools
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> \
+      -DBOOST_ROOT:PATH=$BOOSTDIR \
+      -DBoost_NO_BOOST_CMAKE=TRUE \
+      -DBoost_NO_SYSTEM_PATHS=TRUE \
+      ../src <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{doc,share}
+  cp -Rv sample_data <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv express-doc.pdf LICENSE README <%= dest_dir %>/doc <%= redirect(:install) %>
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'General Use Case: RNA-Seq abundances'
+    description: 'Run eXpress on a sample RNA-Seq dataset with simulated reads from UGT3A2 and the HOXC cluster using the human genome build hg18.'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full eXpress usage information see:
+      #   http://bio.math.berkeley.edu/eXpress/manual.html
+
+      # Input directory
+      INPUT_DIR="express/input"
+
+      # Output directory
+      OUTPUT_DIR="express/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Additional command-line options
+      EXPRESS_OPTIONS=""
+ 
+      # Variables governing input
+      IN_TRANSCRIPTS_FA="$INPUT_DIR/transcripts.fasta"
+      IN_READS_1_FQ="$INPUT_DIR/reads_1.fastq"
+      IN_READS_2_FQ="$INPUT_DIR/reads_2.fastq"
+
+      # Variables governing output
+      OUT_HITS_BAM="$OUTPUT_DIR/hits.bam"
+      OUT_TRANSCRIPTS_BASE="$OUTPUT_DIR/transcripts"
+
+      # Set up input data
+      mkdir -p "$INPUT_DIR"
+      if [ ! -d "$INPUT_DIR/sample_data" ]; then
+          cp -Rv "$EXPRESSSHARE/sample_data" "$INPUT_DIR"
+      fi
+
+      # Create output directory
+      mkdir -p "$OUTPUT_DIR"
+
+      # Step 1: Prepare the Bowtie index
+      bowtie-build --offrate 1 "$IN_TRANSCRIPTS_FA" "$OUT_TRANSCRIPTS_BASE"
+
+      # Step 2: SAM output from Bowtie is piped into SAMtools in order
+      # to compress it to BAM format (optional, but will greatly
+      # reduce the size of the alignment file).
+      bowtie -aS -X 800 --offrate 1 "$OUT_TRANSCRIPTS_BASE" \
+          -1 "$IN_READS_1_FQ" -2 "$IN_READS_2_FQ" \
+          | samtools view -Sb - \
+          > "$OUT_HITS_BAM"
+
+      # Step 3: Run eXpress
+      express $EXPRESS_OPTIONS \
+          -o "$OUTPUT_DIR" \
+          "$IN_TRANSCRIPTS_FA" "$OUT_HITS_BAM"
