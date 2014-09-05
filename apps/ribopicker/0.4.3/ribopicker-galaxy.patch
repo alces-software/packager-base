@@ -1,0 +1,14 @@
+--- ribopicker-galaxy.pl.orig	2014-09-05 10:35:18.040664250 +0100
++++ ribopicker-galaxy.pl	2014-09-05 10:32:27.498808252 +0100
+@@ -423,9 +423,10 @@
+     $fasta = $fastq = $qual = 0;
+     $format = 'unknown';
+ 
+-    open(FILE,"perl -p -e 's/\r/\n/g;s/\n\n/\n/g' < $file |") or die "ERROR: Could not open file $file: $! \n";
++    open(FILE,'<', $file) or die "ERROR: Could not open file $file: $! \n"; 
+     while (<FILE>) {
+         chomp();
++	s/^\s+//g;
+         next unless(length($_));
+         if($count-- == 0) {
+             last;

@@ -21,10 +21,14 @@
   version can be downloaded at the SourceForge download page.
 :group: Bioinformatics
 :changelog: |
+  * Fri Sep  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added galaxy-compatible patched version of the ribopicker tool
+      <http://sourceforge.net/p/ribopicker/bugs/6/>
   * Tue Sep  2 2014 - James Donohue <james.donohue@alces-software.com>
     - First created
 :sources:
   - bwa-0.5.9.tar.bz2
+  - ribopicker-galaxy.patch
 :src: ribopicker-standalone-0.4.3.tar.gz
 :src_dir: ribopicker-standalone-0.4.3
 :type: apps
@@ -32,6 +36,9 @@
 :compilers:
   gcc:
 :compile: |
+  # Generate a galaxy-compatible version of the ribopicker tool
+  cp ribopicker.pl ribopicker-galaxy.pl
+  patch -p0 < <%= source('ribopicker-galaxy.patch') %>
   # Rebuild modified BWA using original source and riboPicker patches
   mv -v bwa64 bwa64.bundled <%= redirect(:compile) %>
   tar -xf <%= source('bwa-0.5.9.tar.bz2') %> <%= redirect(:compile) %>
@@ -41,10 +48,10 @@
   mv -v bwa ../bwa64 <%= redirect(:compile) %>
 :install: |
   mkdir -p <%= dest_dir %>/{bin,var,doc}
-  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' ribopicker.pl
+  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' ribopicker.pl ribopicker-galaxy.pl
   sed -i -e "s|'db/'|'<%= dest_dir %>/var/db/'|g" -e "s|'./'|'<%= dest_dir %>/bin/'|g" riboPickerConfig.pm
-  chmod a+x ribopicker.pl
-  cp -v ribopicker.pl riboPickerConfig.pm bwa64 <%= dest_dir %>/bin <%= redirect(:install) %>
+  chmod a+x ribopicker.pl ribopicker-galaxy.pl
+  cp -v ribopicker.pl ribopicker-galaxy.pl riboPickerConfig.pm bwa64 <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v COPYING ChangeLog README* test_input.fasta <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -r db <%= dest_dir %>/var
 :module: |
