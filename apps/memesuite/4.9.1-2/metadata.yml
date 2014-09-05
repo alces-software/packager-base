@@ -1,0 +1,81 @@
+---
+:schema: 1
+:title: MEME Suite
+:license: NONFREE - Non-commercial use only; see http://meme.nbcr.net/meme/COPYRIGHT.html
+:summary: Motif-based sequence analysis tools
+:url: http://meme.nbcr.net/meme/
+:description: |
+  The MEME Suite allows you to:
+
+    * discover motifs using MEME, DREME (DNA only) or GLAM2 on groups
+      of related DNA or protein sequences
+    * search sequence databases with motifs using MAST, FIMO, MCAST or
+      GLAM2SCAN
+    * compare a motif to all motifs in a database of motifs
+    * associate motifs with Gene Ontology terms via their putative
+      target genes
+    * analyse motif enrichment using SpaMo or CentriMo
+:group: Bioinformatics
+:changelog: |
+  * Fri Sep  5 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Package for v4.9.1-2 release
+  * Thu Sep  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Downgraded to v4.9.0 for Galaxy compatibility
+  * Tue Sep  2 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: meme_4.9.1_2.tar.gz
+:sources:
+  - motif_databases.12.1.tgz
+  - gomo_databases.3.tgz
+:src_dir: meme_4.9.1
+:type: apps
+:version: '4.9.1-2'
+:variants:
+  default:
+  mpi:
+    :requirements:
+      - mpi/openmpi
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+    - apps/python
+  :runtime:
+    - apps/perl
+    - apps/python
+  :rpm:
+    - expat-devel
+    - ImageMagick
+:compilers:
+  gcc:
+:perl_reqs:
+  - HTML::PullParser
+  - HTML::Template
+  - XML::Simple
+  - XML::Parser::Expat
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in <%= package.perl_reqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  tar xzf <%= source('motif_databases.12.1.tgz') %>
+  tar xzf <%= source('gomo_databases.3.tgz') %>
+  cp motif_databases/motif_db.csv etc
+  cp gomo_databases/gomo_db.csv etc
+  ./configure --with-url="http://meme.nbcr.net/meme" \
+    --prefix="<%= dest_dir %>" <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cp -Rv motif_databases <%= dest_dir %>/db <%= redirect(:install) %>
+  cp -Rv gomo_databases <%= dest_dir %>/db <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+
+  prepend-path PATH ${appdir}/bin
