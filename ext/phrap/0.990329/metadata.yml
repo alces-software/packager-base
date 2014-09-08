@@ -14,7 +14,7 @@
   information to assist in trouble-shooting assembly problems, and it handles
   large datasets. See the phrap/cross_match/swat documentation and phrap
   documentation for additional information.
-  
+
   cross_match is a general purpose utility for comparing any two DNA sequence
   sets using a 'banded' version of swat. For example, it can be used to compare a
   set of reads to a set of vector sequences and produce vector-masked versions of
@@ -23,7 +23,7 @@
   other, or phrap contigs to the final edited cosmid sequence. It is slower but
   more sensitive than BLAST. See the phrap/cross_match/swat documentation and
   phrap documentation for additional information.
-  
+
   swat is a program for searching one or more DNA or protein query sequences, or
   a query profile, against a sequence database, using an efficient implementation
   of the Smith-Waterman or Needleman-Wunsch algorithms with linear (affine) gap
@@ -31,15 +31,17 @@
   derived from the observed score distribution is computed. See the
   phrap/cross_match/swat documentation and swat documentation for additional
   information.
-  
+
   phrap/cross_match/swat runs on most computers and operating systems including
   Apple Mac OS X, *BSD, Hewlett-Packard HP-UX, HP-Compaq Tru64, IBM AIX, Linux,
   Microsoft Windows, Silicon Graphics IRIX, and SUN Solaris.
-  
+
   We distribute phrap/cross_match/swat as 'C' source code: in order to run them
   you need a 'C' compiler.
 :group: Bioinformatics
 :changelog: |
+  * Mon Sep 08 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Include manyreads and longread varieties of phrap and cross_match utilities
   * Tue Jul 01 2014 Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: distrib.tar.gz
@@ -64,7 +66,7 @@
     :version: '$version'
   EOF
 :compile: |
-  make <%= redirect(:compile) %>
+  make manyreads <%= redirect(:compile) %>
 :install: |
   mkdir -p <%= dest_dir %>/bin
   mkdir -p <%= dest_dir %>/doc
@@ -72,8 +74,11 @@
 
   # The licence agreement requires that these are set to be non-readable.
   install -m 0111 phrap       <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -m 0111 phrap.longreads <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -m 0111 phrap.manyreads <%= dest_dir %>/bin <%= redirect(:install) %>
   install -m 0111 cluster     <%= dest_dir %>/bin <%= redirect(:install) %>
   install -m 0111 cross_match <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -m 0111 cross_match.manyreads <%= dest_dir %>/bin <%= redirect(:install) %>
   install -m 0111 loco        <%= dest_dir %>/bin <%= redirect(:install) %>
   install -m 0111 phrapview   <%= dest_dir %>/bin <%= redirect(:install) %>
   install -m 0111 swat        <%= dest_dir %>/bin <%= redirect(:install) %>

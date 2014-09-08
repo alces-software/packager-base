@@ -1,0 +1,64 @@
+---
+:schema: 1
+:license: NONFREE - Oracle
+:title: Oracle Java(TM)
+:summary: Java Programing Language
+:url: http://www.java.com
+:description: |
+  The JDK is a development environment for building applications,
+  applets, and components using the Java programming language.
+
+  The JDK includes tools useful for developing and testing programs
+  written in the Java programming language and running on the Java
+  platform.
+:group: Languages
+:changelog: |
+  * Mon Sep  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: jdk-linux-x64.tar.gz
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:requirements:
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to Oracle JDK tarball (tar.gz format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    # skip tarball retrieval
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('jdk-linux-x64.tar.gz') %>
+  <% else %>
+    wget -O <%= source('jdk-linux-x64.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  cd <%= src_dir %>
+  # jdk1.7.0_67
+  version=$(echo * | cut -f2- -d'.' | sed 's/_/./g')
+  if echo "$version" | egrep -q '^[0-9]+\.[0-9]+\.[0-9]+'; then
+    cat <<-EOF
+    :version: '$version'
+  EOF
+  else
+    echo ":failure: unable to parse version number from directory name; got: $version"
+    exit 1
+  fi
+:compile: |
+  # No-op; this is a distribution of a binary application.
+:install: | 
+  mkdir -p <%= dest_dir %>
+  cd jdk*
+  cp -pav * <%= dest_dir %>
+  chown root:root -R <%= dest_dir %>
+:modules:
+   - :type: apps
+     :content: |
+        setenv ${appcaps}DIR ${appdir}
+        setenv ${appcaps}BIN ${appdir}/bin
+        setenv JAVA_HOME ${appdir}
+        setenv JAVAHOME ${appdir}
+
+        prepend-path PATH ${appdir}/bin
+        prepend-path MANPATH ${appdir}/man
