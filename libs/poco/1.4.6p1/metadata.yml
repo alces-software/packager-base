@@ -16,8 +16,11 @@
 
   In regards to Boost, in spite of some functional overlapping, POCO is best
   thought of as a Boost complement (rather than replacement). Side-by-side use of
-  Boost and POCO is a very common occurence.  :group: Libraries
+  Boost and POCO is a very common occurence.
+:group: Libraries
 :changelog: |
+  * Thu Sep 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Fix badly wrapped :group: field to prevent packager from breaking during module creation
   * Mon Sep  2 2014 Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: poco-1.4.6p1.tar.gz
