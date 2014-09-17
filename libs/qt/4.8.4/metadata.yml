@@ -29,9 +29,6 @@
 :src_dir: qt-everywhere-opensource-src-4.8.4
 :version: 4.8.4
 # Requires gstreamer-plugins-base-devel on build host
-:requirements:
-  :build: 
-  :runtime: 
 :compilers:
   gcc:
 :compile: |
