@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: LoFreq
+:license: BSD License
+:summary: Fast and sensitive variant-caller for inferring SNVs from high-throughput sequencing data
+:url: http://sourceforge.net/p/lofreq/wiki/Home/
+:description: |
+  LoFreq is a fast and sensitive variant-caller for inferring
+  single-nucleotide variants (SNVs) from high-throughput sequencing
+  data. It is designed to robustly call low-frequency variants by
+  exploiting base-call quality values. LoFreq has been used to call
+  rare variants in viral and bacterial sequencing datasets and can be
+  used to study mitochondrial heteroplasmy and rare somatic mutations
+  in heterogeneous tumors.
+
+  LoFreq makes full use of base-call qualities (and versions >=0.5
+  also use read mapping qualities) which are usually ignored by other
+  methods or only used for filtering. It is very sensitive; most
+  notably, it is able to predict variants below the average base-call
+  quality (i.e. sequencing error rate). Each SNV call is assigned a
+  p-value which allows for rigorous false positive control. Even
+  though it uses no approximations or heuristics, it is very efficient
+  due to several runtime optimizations. LoFreq is generic and fast
+  enough to be applied to high-coverage data and large genomes. It
+  takes a minute to analyze Dengue genome sequencing data with nearly
+  4000X coverage, roughly one hour to call SNVs on a 600X coverage
+  E.coli genome and 1.5 hours to run on a 100X coverage human exome
+  dataset.
+:group: Bioinformatics
+:changelog: |
+  * Wed Sep 17 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version available (binary only), 2.0.0
+  * Thu Dec  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: lofreq_star-2.0.0-linux-x86-64.tgz
+:src_dir: lofreq_star-2.0.0
+:type: apps
+:version: 2.0.0
+:requirements:
+  :build:
+    - apps/python ~> 2.7
+  :runtime:
+    - apps/python ~> 2.7
+    - libs/numpy
+    - libs/scipy
+  :tool:
+    - apps/setuptools
+    - libs/numpy
+  :build_rpms:
+    - freetype-devel
+    - libjpeg-turbo-devel
+    - libpng-devel
+:compilers:
+  bin:
+:compile: |
+  # No-op; this is a distribution of a bin package
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR matplotlib==1.3.1 <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR PyVCF==0.6.7 <%= redirect(:python) %>
+:install: |
+  ./binary_installer.sh --prefix <%= dest_dir %> <%= redirect(:install) %>
+  for a in lofreq2_cluster.py lofreq2_vcfplot.py; do
+    sed -i -e 's|^#!/usr/bin/python|#!/usr/bin/env python|g' "<%= dest_dir %>/bin/$a"
+  done
+  PYTHONDEPSDIR=$(pwd)/python
+  cp -Rv $PYTHONDEPSDIR <%= dest_dir %> <%= redirect(:install) %>
+  mv <%= dest_dir %>/lib/python2.7/site-packages/* <%= dest_dir %>/python
+  rmdir <%= dest_dir %>/lib/python2.7/site-packages <%= dest_dir %>/lib/python2.7 <%= dest_dir %>/lib
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python
