@@ -10,6 +10,8 @@
   macros.
 :group: Library
 :changelog: |
+  * Tue Sep 23 2014 James Donohue <james.donohue@alces-software.com>
+    - Compile with gflags support by default; add variant with gflags disabled
   * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: glog-0.3.3.tar.gz
@@ -18,8 +20,20 @@
 :version: '0.3.3'
 :compilers:
   gcc:
+:variants:
+  default:
+    :description: "Compile with gflags support (requires libs/gflags)"
+    :requirements:
+      :build: libs/gflags
+      :runtime: libs/gflags
+  no-gflags:
+    :description: "Compile without gflags support"
 :compile: |
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  <% if variant_name == 'default' %>
+    ./configure --prefix=<%= dest_dir %> --with-gflags="${GFLAGSDIR}" <%= redirect(:configure) %>
+  <% else %>
+    ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  <% end %>
   make <%= redirect(:compile) %>
 :install: |
   make install <%= redirect(:install) %>
