@@ -1,0 +1,136 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: Functional genomics and genome-wide association studies
+:url: https://github.com/joepickrell/fgwas
+:description: |
+  fgwas is a command line tool for integrating functional genomic
+  information into a genome-wide association study (GWAS). The basic
+  setup is as follows: you have performed a GWAS or a meta-analysis of
+  many GWAS, and have identified tens of loci that influence the
+  disease or trait (our approach works best if there are at least ~20
+  independent loci with p-values less than 5e-8). We set out to
+  address the following questions:
+
+    1. Are these associations enriched in particular types of regions
+       of the genome (coding exons, DNAse hypersensitive sites, etc.)?
+    2. Can we use these enrichments (if they exist) to identify novel
+       loci influencing the trait?
+
+  The underlying model is described in: [Pickrell JK (2014) Joint
+  analysis of functional genomic data and genome-wide association
+  studies of 18 human
+  traits](http://biorxiv.org/content/early/2014/01/22/000752).
+  bioRxiv 10.1101/000752
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 23 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.3.5.tar.gz
+:src_dir: fgwas-0.3.5
+:version: '0.3.5'
+:requirements:
+  :build:
+    - libs/boost
+    - libs/gsl
+  :runtime:
+    - libs/gsl
+:compilers:
+  gcc:
+:compile: |
+  ./configure CPPFLAGS="-I$GSLDIR/include" LDFLAGS="-L$GSLDIR/lib" \
+    --with-boost="$BOOSTDIR" \
+    --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/{doc,example}
+  install -D -m 0644 man/fgwas_manual.pdf README.md LICENSE <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -D -m 0644 test_data/* <%= dest_dir %>/example/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Test a presence/absence annotation for enrichment'
+    description: |
+      The main use of fgwas is to test whether SNPs that influence a
+      trait are enriched or depleted in certain genomic
+      annotations. The names of the annotations are defined by the
+      header of the input file.
+
+      Most annotations are presence/absence annotations coded as 0/1
+      in the input file (for example, nonsynonymous SNPs might be
+      coded as 1 in a column called “nonsynonymous”, which all other
+      SNPs would be coded as 0 in that column).
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full `fgwas` usage information see:
+      #   https://github.com/joepickrell/fgwas/blob/master/man/fgwas_manual.pdf
+
+      # Input directory
+      INPUT_DIR="$HOME/fgwas/input"
+
+      # Output directory
+      OUTPUT_DIR="fgwas/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Additional command-line options
+      #
+      # Other options include:
+      #
+      #   -dists [string:string] the name of the distance annotation(s)
+      #     and the file(s) containing the distance model(s)
+      #   -k [integer] block size in number of SNPs (5000)
+      #   -v [float] variance of prior on normalized effect size
+      #     (0.1 [0.5 for case-control])
+      #   -p [float] penalty on sum of squared lambdas, only relevant
+      #     for -print (0.2)
+      #   -print print the per-SNP output
+      #   -xv do 10-fold cross-validation
+      #   -dens [string float float] model segment probability according
+      #     to quantiles of an annotation
+      #   -cc this is a case-control study, which implies a different input
+      #     file format
+      #   -fine this is a fine mapping study, which implies a different input
+      #     file format
+      #   -onlyp only do optimization under penalized likelihood
+      #   -cond [string] estimate the effect size of an annotation conditional
+      #     on the others in the model
+      FGWAS_OPTIONS=""
+
+      # Set up example input data
+      if [ ! -d "$INPUT_DIR" ]; then
+          mkdir -p "$INPUT_DIR"
+          cp -v "$FGWASEXAMPLE"/* "$INPUT_DIR"
+      fi
+
+      # Set up input file name
+      INPUT_FILE="${INPUT_DIR}/test_LDL.fgwas_in.gz"
+
+      # Set up output file stem (file name prefix)
+      OUTPUT_STEM="example"
+
+      # Set up list of annotations to use (space-separated)
+      ANNOTATION_LIST=(ens_coding_exon)
+
+      # Convert annotations from list to '+' delimited parameter
+      function join { local IFS="$1"; shift; echo "$*"; }
+      ANNOTATIONS=$(join "+" "${ANNOTATION_LIST[@]}")
+
+      # Create and change to output directory
+      mkdir -p "$OUTPUT_DIR"
+      cd "$OUTPUT_DIR"
+
+      # Execute fgwas
+      fgwas -i $INPUT_FILE \
+        -o $OUTPUT_STEM \
+        -w "$ANNOTATIONS" $FGWAS_OPTIONS
