@@ -15,6 +15,8 @@
   exactly what characteristics make good primers for your goals.
 :group: Bioinformatics
 :changelog: |
+  * Mon Sep 29 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Additionally install primer3_config to share directory
   * Wed Feb 26 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: primer3-src-2.3.6.tar.gz
@@ -26,12 +28,13 @@
   cd src
   make <%= redirect(:compile) %>
 :install: |
-  mkdir <%= dest_dir %>/{bin,doc,share}
+  mkdir -p <%= dest_dir %>/{bin,doc,share/settings}
   cp -Rv test <%= dest_dir %>/share <%= redirect(:install) %>
-  cp -v cmp_settings.pl *.txt example <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v cmp_settings.pl primer*.txt example <%= dest_dir %>/share/settings <%= redirect(:install) %>
   cp -v COPYING.txt primer3_manual.htm <%= dest_dir %>/doc <%= redirect(:install) %>
   cd src
   cp -v ntdpal oligotm primer3_core long_seq_tm_test ntthal <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv primer3_config <%= dest_dir %>/share <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
