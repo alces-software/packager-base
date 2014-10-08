@@ -17,6 +17,8 @@
   tease apart transcripts derived from paralogous genes.
 :group: Bioinformatics
 :changelog: |
+  * Wed Oct  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated example script to refer to correct fact for smp slots
   * Thu Apr  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added example script and title
     - Tweaked environment variables to add MALLOC_ARENA_MAX=1
@@ -93,7 +95,7 @@
       #   (For GridScheduler tasks, this should match the number of
       #   slots you request for use in the -pe scheduler directive
       #   above.)
-      CORES={{ fact.multinodeNumNodes }}
+      CORES={{ fact.smpNumSlots }}
 
       # Change the following to match the amount of memory required
       # per core. (ie. the total memory the Trinity job will require /

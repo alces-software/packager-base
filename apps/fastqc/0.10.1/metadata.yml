@@ -22,6 +22,8 @@
       without running the interactive application
 :group: Bioinformatics
 :changelog: |
+  * Wed Oct  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated example script to refer to correct fact for smp slots
   * Fri Apr 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added example script and example FASTQ file
   * Wed Oct 31 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -75,7 +77,7 @@
       #   (For GridScheduler tasks, you should update the amount of
       #   memory per core requested in the "-l h_vmem" scheduler
       #   directive above to 250M.)
-      THREADS={{ fact.multislotNumSlots }}
+      THREADS={{ fact.smpNumSlots }}
 
       # Specify the length of Kmer to look for in the Kmer content
       # module. Specified Kmer length must be between 2 and 10. Default
