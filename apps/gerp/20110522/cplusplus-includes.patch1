@@ -1,0 +1,34 @@
+diff -ur src.orig/etree.cc src/etree.cc
+--- src.orig/etree.cc	2009-09-29 17:50:02.000000000 +0100
++++ src/etree.cc	2014-10-07 16:09:57.235508590 +0100
+@@ -25,6 +25,7 @@
+ #include <iostream>
+ #include <fstream>
+ #include <string>
++#include <cstdlib>
+ 
+ ETree::ETree(string filename) {
+   ifstream ifs(filename.c_str());
+diff -ur src.orig/gerpcol.cc src/gerpcol.cc
+--- src.orig/gerpcol.cc	2009-09-29 17:50:02.000000000 +0100
++++ src/gerpcol.cc	2014-10-07 16:10:19.366290507 +0100
+@@ -26,6 +26,8 @@
+ #include <map>
+ #include <cmath>
+ #include <sstream>
++#include <cstdlib>
++#include <algorithm>
+ 
+ #include "etree.h"
+ #include "emodel.h"
+diff -ur src.orig/gerpelem.cc src/gerpelem.cc
+--- src.orig/gerpelem.cc	2009-09-29 18:05:28.000000000 +0100
++++ src/gerpelem.cc	2014-10-07 16:10:32.032461352 +0100
+@@ -27,6 +27,7 @@
+ #include <ctime>
+ #include <algorithm>
+ #include <cmath>
++#include <cstring>
+ 
+ #include "Mseq.h"
+ #include "MIter.h"

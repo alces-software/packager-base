@@ -1,0 +1,272 @@
+---
+:schema: 1
+:title: 'GERP++'
+:license: GPLv3+
+:summary: Identifies constrained elements in multiple alignments by quantifying substitution deficits
+:url: http://mendel.stanford.edu/SidowLab/downloads/gerp/index.html
+:description: |
+  GERP identifies constrained elements in multiple alignments by
+  quantifying substitution deficits. These deficits represent
+  substitutions that would have occurred if the element were neutral
+  DNA, but did not occur because the element has been under functional
+  constraint. We refer to these deficits as "Rejected
+  Substitutions". Rejected substitutions are a natural measure of
+  constraint that reflects the strength of past purifying selection on
+  the element.
+
+  GERP estimates constraint for each alignment column; elements are
+  identified as excess aggregations of constrained columns. A
+  false-positive rate (which is user-settable) is calculated using
+  'shuffled' alignments in which the order of columns is randomized.
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct  7 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gerp++.tar.gz
+:type: apps
+:version: '20110522'
+:src_dir: .
+:patches:
+  - cplusplus-includes.patch1
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -v -D -m 0755 gerpcol gerpelem <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -v -D -m 0644 README.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'gerpcol: analyze multiple alignments and computes RS scores'
+    description: |
+      This script allows you to execute the `gerpcol` tool.  When
+      given an evolutionary tree and one or more multiple alignments,
+      `gerpcol` will compute RS scores for every position of each
+      alignment by doing the following:
+
+      1. Project the evolutionary tree to the set of species that are
+         present at that position. If there are fewer than 3 species
+         remaining, `gerpcol` will not perform the main computation
+         and will instead output a neutral rate and RS score of 0 for
+         this position.
+
+      2. Compute the total neutral rate N of the projected tree from
+         (1) by summing the branch lengths of the tree.
+
+      3. Compute the scaling factor r that will maximize the
+         probability of the leaf nucleotides given the scaled tree.
+         This probability is computed using the HKY85 model of
+         evolution with nucleotide frequencies estimated from the
+         multiple alignment data and the Tr/Tv parameter settable by
+         the user (defaults to 2.0).  The optimal scaling r is
+         computed using numerical optimization.
+
+      4. Compute the rejected substitution score for the position by
+         computing the quantity S = N - N*r.  This represents the
+         number of substitutions "rejected" by evolutionary
+         constraint, i.e. the difference between the expected
+         (i.e. neutral rate) and the observed (maximum likelihood
+         estimate).  This quantity will be capped from below at -2*N;
+         since r is by definition nonnegative, the final RS score will
+         be between -2*N and N, inclusive.
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For further GERP usage information see:
+      #   $GERPDOC/README.txt
+      # For more information about GERP, please refer to the website:
+      #   http://mendel.stanford.edu/SidowLab/downloads/gerp/
+
+      # Output/working data directory
+      DATA_DIR=gerp/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
+
+      # Specify input file names and the directory in which they are located.
+      #INPUT_DIR=$HOME/gerp.input
+      #INPUT_FILES=(region1.mfa region2.mfa region3.mfa)
+      #TREE_FILE="$INPUT_DIR"/input.tree
+      #-----------------------------------------------------------------------
+      #    Specify your input files above.  Once specified, you can
+      #    remove this section.
+      if [ -z "$INPUT_FILES" ]; then
+        echo "No input files have been specified."
+        exit 1
+      fi
+      #   
+      #-----------------------------------------------------------------------
+
+      # Create the output/working data directory
+      mkdir -p "$DATA_DIR"
+      cd "$DATA_DIR"
+      
+      # Create regionlist.txt input file and copy input files to working directory
+      for a in $INPUT_FILES; do
+        cp -v "$INPUT_DIR/$a" .
+        echo $a >> regionlist.txt
+      done
+
+      # Specify options to use for gerpcol:
+      #
+      # -v   verbose mode
+      # -a   alignment in mfa format [default = false]
+      # -e <reference seq>
+      #      name of reference sequence
+      # -j   project out reference sequence
+      # -r <ratio>
+      #      Tr/Tv ratio [default = 2.0]
+      # -p <precision>
+      #      tolerance for rate estimation [default = 0.001]
+      # -z   force start at position 0 [default = false]
+      # -n <rate>
+      #      tree neutral rate [default = compute from tree]
+      # -s <factor>
+      #      tree scaling factor [default = 1.0]
+      GERPCOL_OPTIONS="-a"
+
+      # Modify the output suffix if desired
+      # -x <suffix>
+      #      suffix for naming output files [default = ".rates"]
+      #OUTPUT_SUFFIX=".out"
+      if [ "$OUTPUT_SUFFIX" ]; then
+        GERPCOL_OPTIONS="$GERPCOL_OPTIONS -x $OUTPUT_SUFFIX"
+      fi
+
+      # Execute gerpcol
+      gerpcol -t "$TREE_FILE" -F regionlist.txt \
+        $GERPCOL_OPTIONS
+
+      echo ""
+      echo "-------------------"
+      echo " gerpcol completed"
+      echo "-------------------"
+      echo " Output is available in: $DATA_DIR"
+  - tags: ['script:type=batch']
+    name: 'gerpelem: find constrained elements given RS scores produced by gerpcol'
+    description: |
+      This script allows you to execute the `gerpelem` tool.
+
+      Given a rates file as output by gerpcol, gerpelem will find and
+      report a list of elements that appear constrained beyond what is
+      likely to occur by chance.  However, repetitive elements present
+      only in a shallow subset of the alignment can appear to fit this
+      criterion. Therefore, gerpelem incorporates certain heuristic
+      measures to remove such elements from c onsideration; (it does
+      not utilize repeat annotations).  The main steps of the gerpelem
+      algorithm are as follows:
+
+        1. Calculate the median neutral rate of the alignment columns.
+           This value is different from (smaller than) the neutral
+           tree length because many columns will have one or more
+           species missing due to indels or incomplete data.
+
+        2. Mark all columns whose neutral rate is below a given depth
+           as shallow; this depth can be specified using the -d para
+           meter and defaults to 0.5 subsitutions per site.
+
+        3. Generate a list of candidate constrained elements or all
+           segments that fit certain criteria.
+
+        4. Each candidate element of length L and score S is assigned
+           a p-value, corresponding to the probability that a score of
+           at least S occurs at random in a block of L positions.
+
+        5. The candidate elements are sorted and reported in order of
+           increasing p-value as long as they do not overlap any
+           previously reported elements.
+
+        6. In order to make the background distribution more
+           accurately reflect the score distribution in neutral
+           regions, we exclude not only non-border shallow columns but
+           also a set of clearly constrained elements.
+
+      Additional details can be found in the README.txt file
+      accompanying the application.
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For further GERP usage information see:
+      #   $GERPDOC/README.txt
+      # For more information about GERP, please refer to the website:
+      #   http://mendel.stanford.edu/SidowLab/downloads/gerp/
+
+      # Output/working data directory
+      DATA_DIR=gerp/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
+
+      # Specify input file names and the directory in which they are located.
+      #INPUT_DIR=$HOME/gerp/input
+      #INPUT_FILE=region1.mfa.rates
+      #-----------------------------------------------------------------------
+      #    Specify your input files above.  Once specified, you can
+      #    remove this section.
+      if [ -z "$INPUT_FILE" ]; then
+        echo "No input file has been specified."
+        exit 1
+      fi
+      #   
+      #-----------------------------------------------------------------------
+
+      # Create the output/working data directory
+      mkdir -p "$DATA_DIR"
+      cd "$DATA_DIR"
+      
+      # Copy input file to working directory
+      cp -v "$INPUT_DIR/$INPUT_FILE" .
+
+      # Specify options to use for gerpelem:
+      #
+      # -v   verbose mode
+      # -c <chromosome> [default = none]
+      # -s <start offset> [default = 0]
+      # -w <suffix>
+      #      suffix for naming exclusion region file [default = no output]
+      # -l <length>
+      #      minimum element length [default = 4]
+      # -L <length>
+      #      maximum element length [default = 2000]
+      # -t <inverse tolerance>
+      #      inverse of the rounding tolerance [default = 10]
+      # -d <threshold>
+      #      depth threshold for shallow columns, in substitutions per site [default = 0.5]
+      # -p <penalty>
+      #      penalty coefficient for shallow columns, as fraction of the median neutral rate [default = 0.5]
+      # -b <number>
+      #      number of border nucleotides for shallow regions [default = 2]
+      # -a <number>
+      #     total number of allowed non-border shallow nucleotides per element [default = 10]
+      # -e <ratio>
+      #     acceptable false positive rate [default = 0.05]
+      # -q <value>
+      #     denominator for minimum candidate element score formula [default = 10.0]
+      # -r <value>
+      #     exponent for minimum candidate element score formula [default = 1.15]
+      GERPELEM_OPTIONS=""
+
+      # Modify the output suffix if desired (defaults to '.elems')
+      # -x <suffix>
+      #      suffix for naming output files [default = ".elems"]
+      #OUTPUT_SUFFIX=".out"
+      if [ "$OUTPUT_SUFFIX" ]; then
+        GERPELEM_OPTIONS="$GERPELEM_OPTIONS -x $OUTPUT_SUFFIX"
+      fi
+
+      # Execute gerpelem
+      gerpelem -f $INPUT_FILE \
+        $GERPELEM_OPTIONS
+
+      echo ""
+      echo "-------------------"
+      echo " gerpelem completed"
+      echo "-------------------"
+      echo " Output is available in: $DATA_DIR"
