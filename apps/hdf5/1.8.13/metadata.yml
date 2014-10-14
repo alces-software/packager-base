@@ -15,7 +15,8 @@
 :changelog: |
   * Tue Oct 14 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to version 1.8.13
-    - Added --enable-cxx flag
+    - Added --enable-cxx flag for serial builds ("the C++ interface
+      does not support parallel HDF5")
   * Mon Sep 23 2013 - James Donohue <james.donohue@alces-software.com>
     - Bumped to version 1.8.11
   * Wed Feb  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -50,10 +51,9 @@
       :runtime: mpi/openmpi
       :build: mpi/openmpi
   serial:
-    :configure_flags: ''
+    :configure_flags: '--enable-cxx'
 :compile: |
   ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
-  	      --enable-cxx \
               --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |

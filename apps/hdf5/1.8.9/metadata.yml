@@ -13,6 +13,9 @@
   viewing, and analyzing data in the HDF5 format.
 :group: Databases
 :changelog: |
+  * Tue Oct 14 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added --enable-cxx flag for serial builds ("the C++ interface
+      does not support parallel HDF5")
   * Wed Feb  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated fetch URL for non-current release
   * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -45,7 +48,7 @@
       :runtime: mpi/openmpi
       :build: mpi/openmpi
   serial:
-    :configure_flags: ''
+    :configure_flags: '--enable-cxx'
 :compile: |
   ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
               --prefix=<%= dest_dir %> <%= redirect(:configure) %>
