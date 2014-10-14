@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: HAL
+:license: MIT License
+:summary: Hierarchical Alignment Format API and analysis and conversion tools
+:url: https://github.com/glennhickey/hal
+:description: |
+  HAL is a structure to efficiently store and index multiple genome
+  alignments and ancestral reconstructions. HAL is a graph-based
+  representation which provides several advantages over
+  matrix/block-based formats such as MAF, such as improved scalability
+  and the ability to perform queries with respect to an arbitrary
+  reference or subtree.
+
+  This package includes the HAL API and several analysis and
+  conversion tools which are described below. HAL files are presently
+  stored in HDF5 format, but we note that the tools and most of the
+  API are format-independent, so other databases could be implemented
+  in the future.
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: hal.tar.gz
+:src_dir: hal-eebfefa4a69e6053f6e8a9c4f072ed4c69fa8a90
+:sources:
+  - sonLib.tar.gz
+:type: apps
+:version: 2.1.20141010
+:requirements:
+  :build:
+    - apps/hdf5_serial ~> 1.8.9
+    - apps/python
+  :runtime:
+    - apps/python
+    - libs/numpy
+:compilers:
+  gcc:
+:compile: |
+  export h5prefix=-prefix=$HDF5_SERIALDIR
+  mkdir ../sonLib
+  tar --strip-components=1 -C ../sonLib -xvzf <%= source('sonLib.tar.gz') %> <%= redirect(:prepare) %>
+  pushd ../sonLib
+  make <%= redirect(:make_sonlib) %>
+  popd
+  make <%= redirect(:make_hal) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,python,lib,include}
+  cp -v lib/*.h <%= dest_dir %>/include <%= redirect(:install) %>
+  cp -v lib/*.a <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -v bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v LICENSE.txt README.* <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv api/doc/html <%= dest_dir %>/doc/api <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/python/{hal,sonLib}
+  tar c $(find -type f -name '*.py*' '!' -path './bin/*') | tar -C <%= dest_dir %>/python/hal -x
+  cd ../sonLib
+  tar c $(find -type f -name '*.py*' '!' -path './bin/*') | tar -C <%= dest_dir %>/python/sonLib -x
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python
