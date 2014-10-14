@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: Progressive Cactus
+:license: GPLv3
+:summary: A whole-genome alignment package
+:url: https://github.com/glennhickey/progressiveCactus
+:description: |
+  Cactus uses a cactus graph (aka cactus tree), a graph in which any
+  edge is a member of at most one simple cycle, to construct a genome
+  alignment. The aligner allows for arbitrary types of rearrangement
+  and duplication, but favours alignments that create
+  "chains" of aligned bases.
+
+  Progressive Cactus is the latest release of this aligner.
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: progressiveCactus-20141006.tar.gz
+:src_dir: progressiveCactus-8baf7a97596eed4b9ee4238e33c02c920adc52d0
+:sources:
+  - biopython.tar.gz
+  - cactus.tar.gz
+  - cactus2hal.tar.gz
+  - cactusTestData.tar.gz
+  - clapack.tar.gz
+  - drmaa-python.tar.gz
+  - hal.tar.gz
+  - hdf5.tar.gz
+  - jobTree.tar.gz
+  - kyotocabinet.tar.gz
+  - kyototycoon.tar.gz
+  - matchingAndOrdering.tar.gz
+  - networkx.tar.gz
+  - pbs-drmaa.tar.gz
+  - phast.tar.gz
+  - pinchesAndCacti.tar.gz
+  - psutil.tar.gz
+  - sonLib.tar.gz
+  - tokyocabinet.tar.gz
+  - virtualenv.tar.gz
+  - zlib.tar.gz
+:type: apps
+:version: 20141006
+:requirements:
+  :build:
+    - apps/python
+    - libs/numpy
+  :runtime:
+    - apps/python
+    - libs/numpy
+:compilers:
+  gcc:
+:compile: |
+  <% package.sources.each do |s| %>
+    f=$(basename "<%= s %>" .tar.gz)
+    tar -C submodules/${f} --strip-components=1 -xvzf <%= source(s) %> <%= redirect(:prepare) %>
+  <% end %>
+  make <%= redirect(:make) %>
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  sed -i -e "s,$(pwd),<%= dest_dir %>,g" <%= dest_dir %>/environment
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
