@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: IPython
+:license: BSD License
+:summary: Rich architecture for interactive computing
+:url: http://ipython.org/
+:description: |
+  IPython provides a rich architecture for interactive computing with:
+
+    * Powerful interactive shells (terminal and Qt-based).
+    * A browser-based notebook with support for code, text,
+      mathematical expressions, inline plots and other rich media.
+    * Support for interactive data visualization and use of GUI
+      toolkits.
+    * Flexible, embeddable interpreters to load into your own
+      projects.
+    * Easy to use, high performance tools for parallel computing.
+:group: Languages
+:changelog: |
+  * Wed Oct 15 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ipython-2.3.0.tar.gz
+:type: apps
+:version: '2.3.0'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+    - libs/numpy
+  :runtime:
+    - apps/python
+    - libs/numpy
+:compilers:
+  gcc:
+:variants:
+  default:
+  qt4:
+    :requirements:
+      :build: libs/pyqt
+      :runtime:
+        - libs/pyqt
+        - apps/sip
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  for a in jinja2 sphinx pyzmq pygments tornado nose readline matplotlib==1.3.1; do
+    easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
+  done
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  python setup.py install --prefix <%= dest_dir %>/python
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  mv <%= dest_dir %>/python/share <%= dest_dir %>/share
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
