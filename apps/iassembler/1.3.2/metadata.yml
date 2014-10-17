@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: iAssember
+:license: MIT License
+:summary: Assemble ESTs generated using Sanger and/or Roche-454 pyrosequencing technologies into contigs
+:url: http://bioinfo.bti.cornell.edu/tool/iAssembler/
+:description: |
+  iAssembler is a standalone package to assemble ESTs generated using
+  Sanger and/or Roche-454 pyrosequencing technologies into
+  contigs. The pipeline gives much higher accuracy in EST assembly
+  than other existing assemblers by employing an iterative assembly
+  strategy and automated error corrections of mis-assemblies.
+  iAssembler first performs iterative assemblies using MIRA and CAP3
+  (default: four cycles of MIRA assemblies followed by one CAP3
+  assembly) to correct assembly errors (mostly sequences derived from
+  the same transcript fail to be assembled together) which occur
+  frequently in just one round of assembly. The program then performs
+  post-assembly quality checking by:
+
+     1. aligning each EST sequence to its corresponding unigene
+        sequence to identify mis-assemblies; and
+
+     2. performing all-verus-all pair-wise sequence alignments of
+        unigenes to identify sequences derived from same transcripts
+        that fail to be assembled together. The identified
+        mis-assemblies are then corrected by the program
+        automatically.
+:group: Bioinformatics
+:changelog: |
+  * Fri Oct 17 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: iAssembler-v1.3.2.x64.tgz
+:src_dir: iAssembler-v1.3.2.x64
+:type: apps
+:version: '1.3.2'
+:compilers:
+  bin:
+:compile: |
+  # no compilation; this is a distribution of a binary package
+  sed -i -e '1 s|#!.*/perl.*|#!/usr/bin/env perl\nuse warnings;|g' iAssembler.pl
+  sed -i -e 's|$program_dir."/bin|$ENV{'"'IASSEMBLERSHARE'"'}."/bin|g' iAssembler.pl
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share}
+  cp -Rv bin <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v iAssembler.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv doc <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
