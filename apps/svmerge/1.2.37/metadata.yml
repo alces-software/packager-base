@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: SVMerge
+:license: GPLv3+
+:summary: Enhanced structural variant and breakpoint detection
+:url: http://svmerge.sourceforge.net/
+:description: |
+  SVMerge detects structural variants (SVs) by integrating calls from
+  several existing SV callers, which are then validated and the
+  breakpoints refined using local de novo assembly. SVMerge is modular
+  and extensible allowing new callers to be incorporated as they
+  become available.
+:group: Bioinformatics
+:changelog: |
+  * Fri Nov  7 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SVMerge-1.2r37.tar.gz
+:src_dir: .
+:type: apps
+:version: '1.2.37'
+:requirements:
+  :tool: apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:compilers:
+  noarch:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm DBI Set::IntSpan <%= redirect(:cpanm) %>
+  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' bin/getSeqLines2.pl
+:install: |
+  cp -Rv bin data example lib perl <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv docs <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v LICENSE.TXT README <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
+
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+  prepend-path PATH ${appdir}/bin
