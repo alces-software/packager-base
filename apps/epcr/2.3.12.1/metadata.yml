@@ -1,0 +1,33 @@
+---
+:schema: 1
+:title: e-PCR
+:license: NONFREE - refer to website http://www.ncbi.nlm.nih.gov/tools/epcr/
+:summary: Identifies sequence tagged sites (STSs) within DNA sequences
+:url: http://www.ncbi.nlm.nih.gov/tools/epcr/
+:description: |
+  e-PCR identifies sequence tagged sites(STSs)within DNA
+  sequences. Using e-PCR, you can search for sub-sequences that
+  closely match the PCR primers and have the correct order,
+  orientation, and spacing.
+:group: Bioinformatics
+:changelog: |
+  * Fri Nov  7 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: e-PCR-2.3.12-1-src.tar.gz
+:src_dir: e-PCR-2.3.12
+:type: apps
+:version: '2.3.12.1'
+:compilers:
+  gcc:
+:compile: |
+  make links depend all OPTIMIZE=6 <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -m 0644 README.txt README.html Changes <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -D -m 0755 e-PCR famap fahash re-PCR <%= dest_dir %>/bin/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
