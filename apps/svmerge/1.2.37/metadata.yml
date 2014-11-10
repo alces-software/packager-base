@@ -12,6 +12,8 @@
   become available.
 :group: Bioinformatics
 :changelog: |
+  * Mon Nov 10 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correct permissions on files
   * Fri Nov  7 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: SVMerge-1.2r37.tar.gz
@@ -32,6 +34,8 @@
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   cpanm DBI Set::IntSpan <%= redirect(:cpanm) %>
   sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' bin/getSeqLines2.pl
+  find -perm 750 -exec chmod 755 '{}' ';'
+  find -perm 640 -exec chmod 644 '{}' ';'
 :install: |
   cp -Rv bin data example lib perl <%= dest_dir %> <%= redirect(:install) %>
   cp -Rv docs <%= dest_dir %>/doc <%= redirect(:install) %>
