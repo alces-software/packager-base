@@ -13,6 +13,7 @@
 :group: Bioinformatics
 :changelog: |
   * Tue Nov 18 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.5.2
     - Modified example script heading to reflect modern convention
   * Fri Jun 13 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v1.5.1; added example data and script
@@ -20,11 +21,11 @@
     - Refactored to packager style
   * Mon Feb 21 2011 Steve Norledge
     - First created
-:src: abyss-1.5.1.tar.gz
+:src: abyss-1.5.2.tar.gz
 :sources:
   - test-data.tar.gz
 :type: apps
-:version: '1.5.1'
+:version: '1.5.2'
 :requirements:
   :build:
     - mpi/openmpi
@@ -69,7 +70,7 @@
       #  ABySS
       #---------
       # For full ABySS usage information see:
-      #   https://github.com/bcgsc/abyss/blob/1.5.1/README.md
+      #   https://github.com/bcgsc/abyss/blob/1.5.2/README.md
       #   or: $ABYSSDOC/README.md
       # For more information about ABySS, please refer to the website:
       #   http://www.bcgsc.ca/platform/bioinfo/software/abyss
