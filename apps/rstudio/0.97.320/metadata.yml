@@ -1,25 +1,29 @@
 ---
 :schema: 1
 :license: AGPLv3
+:title: RStudio Desktop
 :summary: A free and open source integrated development environment for R
 :url: http://www.rstudio.com/ide/
 :description: |
-  RStudio is an integrated development environment (IDE) for the 
+  RStudio is an integrated development environment (IDE) for the
   R programming language (http://www.r-project.org). Some of its
   features include:
 
-    * Customizable workbench with all of the tools required to work 
-      with R in one place (console, source, plots, workspace, help, 
+    * Customizable workbench with all of the tools required to work
+      with R in one place (console, source, plots, workspace, help,
       history, etc.).
     * Syntax highlighting editor with code completion.
-    * Execute code directly from the source editor (line, selection, 
+    * Execute code directly from the source editor (line, selection,
       or file).
     * Full support for authoring Sweave and TeX documents.
-    * Runs on all major platforms (Windows, Mac, and Linux) and can 
-      also be run as a server, enabling multiple users to access the 
+    * Runs on all major platforms (Windows, Mac, and Linux) and can
+      also be run as a server, enabling multiple users to access the
       RStudio IDE using a web browser.
 :group: Bioinformatics
 :changelog: |
+  * Thu Nov 06 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added interactive session example script
+    - Added missing title metadata field
   * Mon Mar 04 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: rstudio-0.97.320.tar.gz
@@ -29,11 +33,11 @@
 # Requires libuuid-devel and ant on build host
 :requirements:
   :tool: apps/cmake >= 2.8
-  :build: 
+  :build:
     - apps/R >= 2.11.1
     - libs/boost >= 1.50
     - libs/qt >= 4.8
-  :runtime: 
+  :runtime:
     - apps/R >= 2.11.1
     - libs/boost >= 1.50
     - libs/qt >= 4.8
@@ -59,3 +63,22 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'RStudio Desktop'
+    description: 'Start an interactive desktop session running RStudio Desktop.'
+    template: 'script:stub:interactive:desktop'
+    facts:
+      runMode: single
+      hardMemoryLimitDesktop: 64G
+      hardMemoryLimitPerSlot: 16G
+      smpNumSlots: 4
+    content: |
+      #===================
+      #  RStudio Desktop
+      #-------------------
+      # For full RStudio Desktop information see:
+      #   http://www.rstudio.com/
+
+      # Launch RStudio Desktop
+      rstudio
