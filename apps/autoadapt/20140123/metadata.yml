@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: autoadapt
+:license: GPLv2+
+:summary: Automatically detect and remove adaptors and primers present in a FASTQ file
+:url: https://github.com/optimuscoprime/autoadapt
+:description: |
+  As of November 2013, the NCBI Sequence Read Archive contains over
+  three million gigabytes of publicly available DNA and RNA sequencing
+  files.
+
+  However, there is a wide variety of sequencing adaptors and primers
+  which may be contaminating each file, and these sequences normally
+  need to be removed before doing any further analysis.
+
+  This tool automatically detects which adaptors and primers are
+  present in a FASTQ file and removes those sequences from the file,
+  as well as detecting the quality score encoding type used.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov 20 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: autoadapt.pl.sic
+:src_dir: .
+:sources:
+  - README.md
+  - LICENSE
+:patches:
+  - gridware-dependencies.patch
+:version: '20140123'
+:requirements:
+  :tool: apps/cpanminus
+  :build:
+    - apps/perl >= 5.18.0
+  :runtime:
+    - apps/perl >= 5.18.0
+    - apps/fastqc = 0.10.1
+    - apps/cutadapt = 1.3
+:compilers:
+  gcc:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm forks <%= redirect(:cpanm) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  install -D -m 0755 -v autoadapt.pl.sic <%= dest_dir %>/bin/autoadapt.pl <%= redirect(:install) %>
+  install -D -m 0644 -v <%= [source('README.md'),source('LICENSE')].join(' ') %> <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
