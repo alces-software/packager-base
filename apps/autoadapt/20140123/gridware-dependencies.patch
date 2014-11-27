@@ -1,5 +1,5 @@
---- autoadapt.pl.sic.orig	2014-11-20 17:44:54.456892531 +0000
-+++ autoadapt.pl.sic	2014-11-20 17:48:30.014182609 +0000
+--- autoadapt.pl.sic.orig	2014-11-27 11:21:14.730525128 +0000
++++ autoadapt.pl.sic	2014-11-27 11:22:25.599721107 +0000
 @@ -18,11 +18,12 @@
  # with this program; if not, write to the Free Software Foundation, Inc.,
  # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -14,16 +14,26 @@
  use threads;
  use Getopt::Long;
  use File::Basename;
-@@ -32,9 +33,9 @@
+@@ -32,9 +33,10 @@
  use File::Spec;
  
  use constant SCRIPT_DIR => File::Spec->rel2abs(dirname(__FILE__));
 -use constant CUTADAPT_PATH => File::Spec->rel2abs(SCRIPT_DIR . "/tools/cutadapt");
 -use constant FASTQC_PATH => File::Spec->rel2abs(SCRIPT_DIR . "/tools/fastqc");
 -use constant FASTQC_CONTAMINANTS_LIST => File::Spec->rel2abs(SCRIPT_DIR . "/tools/install/FastQC/Contaminants/contaminant_list.txt");
++use constant TMPDIR_ROOT => $ENV{'AUTOADAPTTMP'};
 +use constant CUTADAPT_PATH => "$ENV{'CUTADAPTBIN'}/cutadapt";
 +use constant FASTQC_PATH => "$ENV{'FASTQCBIN'}/fastqc";
 +use constant FASTQC_CONTAMINANTS_LIST => "$ENV{'FASTQCDIR'}/app/Contaminants/contaminant_list.txt";
  
  use constant DEFAULT_QUALITY_CUTOFF => 20;
  use constant DEFAULT_NUM_THREADS => 1;
+@@ -144,7 +146,7 @@
+         system("mkdir -p '" . dirname($pairedOutputFilename2) . "'");
+     }
+ 
+-    my $workingDirectory = File::Spec->rel2abs(tempdir(SCRIPT_DIR . "/autoadapt.tmp.XXXXXXXX"));
++    my $workingDirectory = File::Spec->rel2abs(tempdir("autoadapt.tmp.XXXXXXXX", DIR => TMPDIR_ROOT));
+ 
+     if ($usingUnpairedData) {
+         ensureFileExists($unpairedInputFilename);

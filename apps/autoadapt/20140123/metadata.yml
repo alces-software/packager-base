@@ -19,6 +19,9 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Nov 27 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated patch and added an environment variable to correct
+      temporary/working directory creation
   * Thu Nov 20 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: autoadapt.pl.sic
@@ -53,6 +56,14 @@
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}TMP $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}TMP $::env(TMPDIR)
+  } else {
+    setenv ${appcaps}TMP "/tmp"
+  }
 
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5
   prepend-path MANPATH ${appdir}/perl/man
