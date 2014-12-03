@@ -1,0 +1,32 @@
+---
+:schema: 1
+:title: bamUtil
+:license: GPLv3
+:summary: Several programs that perform operations on SAM/BAM files
+:url: http://genome.sph.umich.edu/wiki/BamUtil
+:description: |
+  bamUtil is a repository that contains several programs that perform
+  operations on SAM/BAM files. All of these programs are built into a
+  single executable, bam.
+:group: Bioinformatics
+:changelog: |
+  * Wed Dec  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: BamUtilLibStatGen.1.0.12.tar.gz
+:src_dir: bamUtil_1.0.12
+:type: apps
+:version: 1.0.12
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  install -D -m 0755 -v bamUtil/bin/bam <%= dest_dir %>/bin/bam <%= redirect(:install) %>
+  install -D -m 0644 -v bamUtil/copyrights/COPYING <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
