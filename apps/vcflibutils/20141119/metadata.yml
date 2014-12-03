@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: vcflib utilities
+:license: MIT
+:summary: Command-line utilities for executing complex manipulations on VCF files
+:url: https://github.com/ekg/vcflib
+:description: |
+  The Variant Call Format (VCF) is a flat-file, tab-delimited textual
+  format intended to concisely describe reference-indexed variations
+  between individuals. VCF provides a common interchange format for
+  the description of variation in individuals and populations of
+  samples, and has become the defacto standard reporting format for a
+  wide array of genomic variant detectors.
+
+  vcflib provides methods to manipulate and interpret sequence
+  variation as it can be described by VCF. It is both:
+
+    * an API for parsing and operating on records of genomic variation
+      as it can be described by the VCF format,
+    * and a collection of command-line utilities for executing complex
+      manipulations on VCF files.
+
+  The API itself provides a quick and extremely permissive method to
+  read and write VCF files. Extensions and applications of the library
+  provided in the included utilities (*.cpp) comprise the vast bulk of
+  the library's utility for most users.
+
+  This package comprises the command-line utilities.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Dec  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: vcflib-20141119.tgz
+:src_dir: vcflib-5ac091365fdc716cc47cc5410bb97ee5dc2a2c92
+:version: '20141119'
+:compilers:
+  gcc:
+:compile: |
+  # Cloning here is cheating a little, but vcflib has _lots_ of
+  # submodules, so we're taking this short-cut for now.
+
+  for repo in tabixpp:bbc63a4 smithwaterman:203218b multichoose:73d35da fastahack:c68cebb intervaltree:1290744 fsom:a6ef318 filevercmp:1a9b779; do
+      name=${repo%:*}
+      revision=${repo#*:}
+      git clone https://github.com/ekg/$name.git <%= redirect(:clone) %>
+      cd $name
+      git checkout $revision <%= redirect(:clone) %>
+      cd ..
+  done
+  make <%= redirect(:compile) %>
+  chmod 755 bin/*
+:install: |
+  mkdir -p <%= dest_dir %>/{doc,example}
+  cp -Rv bin <%= dest_dir %> <%= redirect(:install) %>
+  install -v -D -m 0644 LICENSE README.md <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -v -D -m 0644 samples/sample.vcf <%= dest_dir %>/example/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
