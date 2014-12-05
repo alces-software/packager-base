@@ -34,9 +34,11 @@
   PAGIT bundles these software and makes them more accessible for users.
 :group: Bioinformatics
 :changelog: |
-  * Wed Jun 04 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+  * Wed Dec  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to patch some important interpreter lines to use /usr/bin/env
+  * Wed Jun  4 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to include latest upstream bugfixes
-  * Wed Jul 03 2013 - James Donohue <james.donohue@alces-software.com>
+  * Wed Jul  3 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: PAGIT.V1.64bit.tgz
 :src_dir: .
@@ -56,6 +58,9 @@
   # tools and helper scripts bundled in PAGIT environment.
   # Apply update:
   unzip -o <%= source('PAGIT_MissingScripts.zip') %> -d PAGIT/ABACAS <%= redirect(:update) %>
+  for a in PAGIT/ABACAS/abacas.pl PAGIT/bin/mummerplot; do
+    sed -i -e 's|#!.*perl.*|#!/usr/bin/env perl|g' $a
+  done
 :install: |
   mkdir -p <%= dest_dir %>/{bin,doc,lib}
   cp -Rv PAGIT/* <%= dest_dir %>/bin <%= redirect(:install) %>
