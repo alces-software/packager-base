@@ -1,0 +1,96 @@
+---
+:schema: 1
+:title: phantompeakqualtools
+:license: MIT License
+:summary: Compute quick, highly informative enrichment and quality measures for ChIP-seq/DNase-seq/FAIRE-seq/MNase-seq data
+:url: https://code.google.com/p/phantompeakqualtools/
+:description: |
+  This package computes quick but highly informative enrichment and
+  quality measures for ChIP-seq/DNase-seq/FAIRE-seq/MNase-seq data. It
+  can also be used to obtain robust estimates of the predominant
+  fragment length or characteristic tag shift values in these assays.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Dec  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ccQualityControl.v.1.1.tar.gz
+:src_dir: phantompeakqualtools
+:version: '1.1'
+:requirements:
+  :build:
+    - apps/R >= 2.10
+    - libs/boost
+  :runtime:
+    - apps/R >= 2.10
+    - apps/samtools
+:sources:
+  - example.tagAlign.gz
+:compilers:
+  gcc:
+:compile: |
+  # We patch the spp tarball to add the Gridware Boost include
+  # directory.
+  tar xzf spp_1.10.1.tar.gz
+  echo "PKG_CPPFLAGS=-I$BOOSTINCLUDE" >> spp/src/Makevars.in
+  tar cvf spp_1.10.1.tar.gz spp
+
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD BATCH <(cat <<EOF
+    local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+    install.packages("caTools", "<%= dest_dir %>/R")
+    install.packages("snow","<%= dest_dir %>/R")
+    install.packages('spp_1.10.1.tar.gz',"<%= dest_dir %>/R",dependencies=TRUE)
+  EOF) /dev/stdout <%= redirect(:rlibs) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,share,example}
+  install -D -m 0644 -v run_spp_nodups.R run_spp.R <%= dest_dir %>/share/ <%= redirect(:install) %>  
+  install -D -m 0644 -v README.txt peakCallingPipelineForIdr.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -D -m 0644 -v <%= source('example.tagAlign.gz') %> <%= dest_dir %>/example/ <%= redirect(:install) %>
+  for a in run_spp run_spp_nodups; do
+    cat <<EOF > <%= dest_dir %>/bin/$a
+  #!/bin/bash
+  exec Rscript <%= dest_dir %>/share/$a.R "\$@"
+  EOF
+    chmod 755 <%= dest_dir %>/bin/$a
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}R ${appdir}/R
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+  append-path R_LIBS_SITE ${appdir}/R
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Typical usage'
+    description: 'Determine strand cross-correlation peak / predominant fragment length OR print out quality measures'
+    template: 'script:stub:simple'
+    content: |
+      #========================
+      #  phantompeakqualtools
+      #------------------------
+      # For more usage information see:
+      #   https://code.google.com/p/phantompeakqualtools/
+
+      # Output directory
+      OUTPUT_DIR="phantompeakqualtools/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Change these as necessary
+      INPUT_DIR="${PHANTOMPEAKQUALTOOLSEXAMPLE}"
+      INPUT_FILE="example.tagAlign.gz"
+
+      # Additional command-line options (execute `run_spp` for list)
+      RUNSPP_OPTIONS="-savp"
+
+      # Create output directory
+      mkdir -p $OUTPUT_DIR
+
+      run_spp -c="${INPUT_DIR}/${INPUT_FILE}" \
+        -out="${OUTPUT_DIR}/example.out.tsv" \
+        $RUNSPP_OPTIONS
