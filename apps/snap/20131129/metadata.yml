@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: SNAP
+:license: MIT License
+:summary: General purpose gene finding for both eukaryotic and prokaryotic genomes
+:url: http://korflab.ucdavis.edu/software.html
+:description: |
+  SNAP is a general purpose gene finding program suitable for both
+  eukaryotic and prokaryotic genomes. SNAP is an acroynm for
+  Semi-HMM-based Nucleic Acid Parser.
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec  9 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: snap-2013-11-29.tar.gz
+:src_dir: snap
+:type: apps
+:version: '20131129'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+  for a in *.pl; do
+    sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,example,share}
+  cp -Rv HMM <%= dest_dir %>/share <%= redirect(:install) %>
+  install -D -m 0644 -v 00README <%= dest_dir %>/doc/README <%= redirect(:install) %>
+  install -D -m 0644 -v LICENSE <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv DNA/* <%= dest_dir %>/example <%= redirect(:install) %>
+  install -D -m 0755 -v *.pl <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0755 -v exonpairs fathom forge hmm-info snap <%= dest_dir %>/bin/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  setenv ZOE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
