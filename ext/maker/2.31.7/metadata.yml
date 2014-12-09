@@ -1,0 +1,111 @@
+---
+:schema: 1
+:title: MAKER
+:license: NONFREE; free for academic use under GPL or Articstic License 2.0; registration required, see http://yandell.topaz.genetics.utah.edu/cgi-bin/maker_license.cgi
+:summary: Portable and easily configurable genome annotation pipeline
+:url: http://www.yandell-lab.org/software/maker.html
+:description: |
+  MAKER is a portable and easily configurable genome annotation
+  pipeline. Its purpose is to allow smaller eukaryotic and prokaryotic
+  genome projects to independently annotate their genomes and to
+  create genome databases. MAKER identifies repeats, aligns ESTs and
+  proteins to a genome, produces ab-initio gene predictions and
+  automatically synthesizes these data into gene annotations having
+  evidence-based quality values. MAKER is also easily trainable:
+  outputs of preliminary runs can be used to automatically retrain its
+  gene prediction algorithm, producing higher quality gene-models on
+  seusequent runs. MAKER's inputs are minimal and its ouputs can be
+  directly loaded into a GMOD database. They can also be viewed in the
+  Apollo genome browser; this feature of MAKER provides an easy means
+  to annotate, view and edit individual contigs and BACs without the
+  overhead of a database. MAKER should prove especially useful for
+  emerging model organism projects with minimal bioinformatics
+  expertise and computer resources.
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec  9 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: maker-2.31.7.tgz
+:src_dir: maker
+:version: 2.31.7
+:type: ext
+:pkg_type: apps
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl >= 5.10.0
+    - libs/bioperl >= 1.6.0
+  :runtime:
+    - apps/perl >= 5.10.0
+    - libs/bioperl >= 1.6.0
+    - apps/ncbiblast >= 2.2.0
+    - apps/snap
+    - apps/repeatmasker
+    - apps/exonerate
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to MAKER tarball (tar.gz format) (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('maker-2.31.7.tgz') %>
+    <% else %>
+      wget -O <%= source('maker-2.31.7.tgz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+:variants:
+  default:
+    :mpi: 'N'
+  mpi:
+    :requirements:
+      :build: mpi/openmpi
+      :runtime: mpi/openmpi
+    :mpi: 'Y'
+:perl_reqs:
+  - DBI
+  - DBD::SQLite
+  - forks
+  - forks::shared
+  - File::Which
+  - Perl::Unsafe::Signals
+  - Bit::Vector
+  - Inline::C
+  - IO::All
+  - IO::Prompt
+  - URI::Escape
+  - LWP::Simple
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5:${TOPDIR}/perl/lib/perl5/x86_64-linux:$PERL5LIB"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  for a in <%= package.perl_reqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  cd src
+  echo '<%= variant[:mpi] %>' | perl ./Build.PL
+  ./Build install
+:install: |
+  mkdir -p <%= dest_dir %>/{example,doc,share}
+  cp -Rv perl lib bin <%= dest_dir %> <%= redirect(:install) %>
+  install -D -m 0644 -v data/* <%= dest_dir %>/example/ <%= redirect(:install) %>
+  install -D -m 0644 -v README LICENSE <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv GMOD/* <%= dest_dir %>/share <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/doc
+       setenv ${appcaps}EXAMPLE ${appdir}/example
+       setenv ${appcaps}LIB ${appdir}/lib
+       setenv ${appcaps}PERL ${appdir}/perl
+       setenv ${appcaps}SHARE ${appdir}/share
+
+       prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
+       prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+       prepend-path MANPATH ${appdir}/perl/man
+       prepend-path PATH ${appdir}/perl/bin
+
+       prepend-path PATH ${appdir}/bin
