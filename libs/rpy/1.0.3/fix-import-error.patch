@@ -1,0 +1,33 @@
+--- src/RPy.h.orig	2015-01-12 13:05:41.922681271 +0000
++++ src/RPy.h	2015-01-12 13:06:34.082025539 +0000
+@@ -81,8 +81,8 @@
+ # define CleanEd		Rf_CleanEd
+ extern void CleanEd(void);
+ extern int  R_CollectWarnings; 
+-# define PrintWarnings		Rf_PrintWarnings
+-extern void PrintWarnings(void);
++//# define PrintWarnings		Rf_PrintWarnings
++//extern void PrintWarnings(void);
+ /****/
+ 
+ #include <signal.h>
+--- src/rpymodule.c.orig	2015-01-12 13:12:37.653454828 +0000
++++ src/rpymodule.c	2015-01-12 13:12:42.993387696 +0000
+@@ -1180,7 +1180,7 @@
+   obj = to_Pyobj_with_mode(res, conv);
+   UNPROTECT(2);
+ 
+-  PrintWarnings(); /* show any warning messages */
++  //PrintWarnings(); /* show any warning messages */
+   
+   return obj;
+ }
+@@ -1799,7 +1799,7 @@
+     }
+ #endif 
+ 
+-    PrintWarnings();	/* from device close and .Last */
++    //PrintWarnings();	/* from device close and .Last */
+     R_gc();  /* Remove any remaining R objects from memory */
+ }
+ 

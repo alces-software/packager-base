@@ -1,0 +1,11 @@
+--- src/RPy.h.orig	2015-01-12 13:00:33.878553910 +0000
++++ src/RPy.h	2015-01-12 13:00:49.410358649 +0000
+@@ -74,7 +74,7 @@
+ #  endif
+ #endif  /* _WIN32 */
+ 
+-#include <Rdevices.h> /* must follow Graphics.h */
++#include <Rembedded.h> /* must follow Graphics.h */
+ 
+ 
+ /* Missing definitions from Rinterface.h or RStartup.h */

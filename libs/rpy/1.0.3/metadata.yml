@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: RPy
+:license: MPLv1.1 / GPLv2+ / LGPLv2.1+
+:summary: A simple and efficient access to R from Python
+:url: http://rpy.sourceforge.net/
+:description: |
+  RPy is a very simple, yet robust, Python interface to the R
+  Programming Language.  It can manage all kinds of R objects and can
+  execute arbitrary R functions (including the graphic functions). All
+  errors from the R language are converted to Python exceptions.  Any
+  module installed for the R system can be used from within Python.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Mon Jan 12 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Created RPy 1.x series package
+  * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: rpy-1.0.3.tar.gz
+:version: '1.0.3'
+:patches:
+  - modern-r-compat.patch
+  - fix-import-error.patch
+  - fix-version-scraping.patch
+:compilers:
+  gcc:
+:requirements:
+  :build: 
+    - apps/python
+    - apps/R
+  :runtime: 
+    - apps/python
+    - apps/R
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
