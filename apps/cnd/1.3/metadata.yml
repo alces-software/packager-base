@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: cnD
+:license: GPLv3
+:summary: Copy number variant caller for inbred strains
+:url: http://www.sanger.ac.uk/resources/software/cnd/
+:description: |
+  cnD is a program to detect copy number variants from short read
+  sequence data.
+
+  The target organism is assumed to be inbred, and therefore
+  homozygous, so regions of apparent heterozygous SNPs (as called by
+  MAQ) can be used to detect copy number gains. cnD uses both the rate
+  of these paralogous sequence variants, and the raw sequence depth,
+  to call copy number gains and losses using a hidden markov model.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 15 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: cnD-1.3.tar.gz
+:src_dir: cnD
+:version: '1.3'
+:requirements:
+  :tool: apps/cpanminus
+  :build: apps/perl
+  :runtime: apps/perl
+:compilers:
+  bin:
+:compile: |
+  # no compilation required; this is a binary distribution
+  for a in bin/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+  sed -e 's|^use IntSpan;$|use Set::IntSpan;|g' -i bin/extractCNChanges.pl
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm Set::IntSpan <%= redirect(:cpanm) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  install -D -m 0755 -v bin/cnD bin/*.pl <%= dest_dir %>/bin/ <%= redirect(:install) %>  
+  install -D -m 0644 -v COPYING README <%= dest_dir %>/doc/ <%= redirect(:install) %>  
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
