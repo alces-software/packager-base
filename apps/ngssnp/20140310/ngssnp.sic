@@ -1,0 +1,6 @@
+This file is not used to build NGS-SNP but is required as packager requires a source file.
+
+In the case of NGS-SNP, we are unable to retrieve the upstream ZIP
+file without additional parameters to wget (as the wget user agent is
+blocked by the upstream web server).  The download is manually handled
+as part of the compilation phase within the package metadata.

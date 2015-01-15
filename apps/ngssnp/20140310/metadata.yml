@@ -1,0 +1,102 @@
+---
+:schema: 1
+:title: NGS-SNP
+:license: 
+:summary: Collection of command-line scripts for providing rich annotations for SNPs
+:url: http://stothard.afns.ualberta.ca/downloads/NGS-SNP/index.html
+:description: |
+  NGS-SNP is a collection of command-line scripts for providing rich
+  annotations for SNPs identified by the sequencing of transcripts or
+  whole genomes from organisms with reference sequences in
+  Ensembl. Included among the annotations, several of which are not
+  available from any existing SNP annotation tools, are the results of
+  detailed comparisons with orthologous sequences. These comparisons
+  allow, for example, SNPs to be sorted or filtered based on how
+  drastically the SNP changes the score of a protein alignment. Other
+  fields indicate the names of overlapping protein domains or
+  features, and the conservation of both the SNP site and flanking
+  regions. NCBI, Ensembl, and Uniprot IDs are provided for genes,
+  transcripts, and proteins when applicable, along with Gene Ontology
+  terms, a gene description, phenotypes linked to the gene, and an
+  indication of whether the SNP is novel or known. A
+  "Model_Annotations" field provides several annotations obtained by
+  transferring in silico the SNP to an orthologous gene, typically in
+  a well-characterized species.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 15 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ngssnp.sic
+:src_dir: .
+:version: '20140310'
+:requirements:
+  :tool: apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+    - apps/emboss
+    - apps/tcoffee
+    - apps/muscle
+    - apps/sift
+:compilers:
+  noarch:
+:compile: |
+  source="<%= package.source_file('NGS-SNP.zip') %>"
+  if [ ! -f "${source}" ]; then
+    wget --user-agent='Alces Packager' http://www.ualberta.ca/~stothard/downloads/NGS-SNP.zip -O "${source}"
+    echo "Downloaded upstream source." >/dev/stderr
+  else 
+    echo "Using cached download of upstream source." >/dev/stderr
+  fi
+  unzip ${source}
+  rm -rf NGS-SNP/scripts/obtain_reference_transcripts/docs
+  rm -rf NGS-SNP/scripts/obtain_reference_chromosomes/docs
+  rm -rf NGS-SNP/scripts/annotate_SNPs/docs
+  rm -rf NGS-SNP/scripts/merge_and_sort_SNP_lists/docs
+  rm -f NGS-SNP/scripts/.DS_Store
+  rmdir NGS-SNP/scripts/cDNA_library_entropy
+
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm File::Find::Rule Tie::IxHash DBI DBD::mysql \
+    BerkeleyDB Memoize::ExpireLRU Date::Calc Parse::RecDescent \
+    LWP::Simple XML::DOM MIME::Lite <%= redirect(:cpanm) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -Rv perl NGS-SNP/lib NGS-SNP/scripts <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv NGS-SNP/docs/* <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -D -m 0644 -v NGS-SNP/LICENSE.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/ngssnp-wrapper
+  #!/bin/bash
+  s=$(basename "$0")
+  exec perl "$NGSSNPSCRIPTS/${s}/${s}.pl" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/ngssnp-wrapper
+  for a in annotate_INDELs annotate_SNPs get_genes_in_area merge_and_sort_SNP_lists ncbi_monitor obtain_reference_chromosomes obtain_reference_transcripts; do
+    ln -s <%= dest_dir %>/bin/ngssnp-wrapper <%= dest_dir %>/bin/$a
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SCRIPTS ${appdir}/scripts
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  setenv NGS_SNP ${appdir}
+  prepend-path PERL5LIB ${appdir}/lib/ensembl/ensembl-funcgen/modules
+  prepend-path PERL5LIB ${appdir}/lib/ensembl/ensembl-variation/modules
+  prepend-path PERL5LIB ${appdir}/lib/ensembl/ensembl-compara/modules
+  prepend-path PERL5LIB ${appdir}/lib/ensembl/ensembl/modules
+  prepend-path PERL5LIB ${appdir}/lib/bioperl-1.2.3
+  prepend-path PERL5LIB ${appdir}/lib/bioperl-1.5.2_102_Matrix
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  conflict libs/bioperl
+  conflict libs/ensemblvep
