@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: T-Coffee
+:license: GPLv2+
+:summary: Align sequences or combine the output of other alignment methods into one unique alignment
+:url: http://www.tcoffee.org/Projects/tcoffee/index.html
+:description: |
+  T-Coffee is a multiple sequence alignment package. You can use
+  T-Coffee to align sequences or to combine the output of your
+  favorite alignment methods (Clustal, Mafft, Probcons, Muscle...)
+  into one unique alignment (M-Coffee).
+
+  T-Coffee can align Protein, DNA and RNA sequences. It is also able
+  to combine sequence information with protein structural information
+  (3D-Coffee/Expresso), profile information (PSI-Coffee) or RNA
+  secondary structures (R-Coffee).
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 15 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: T-COFFEE_distribution_Version_11.00.8cbe486.tar.gz
+:src_dir: T-COFFEE_distribution_Version_11.00.8cbe486
+:type: apps
+:version: '11.0'
+:compilers:
+  gcc:
+:compile: |
+  cd t_coffee_source
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  install -D -m 0755 -v t_coffee_source/t_coffee <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0644 -v license.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv mcoffee example <%= dest_dir %>/share/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
