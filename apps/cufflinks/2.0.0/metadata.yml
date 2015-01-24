@@ -20,6 +20,8 @@
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0.5
 :changelog: |
+  * Sat Jan 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated link in fetch file after project relocation to github
   * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>

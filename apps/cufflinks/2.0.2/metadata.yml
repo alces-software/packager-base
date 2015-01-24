@@ -21,6 +21,8 @@
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0.5
 :changelog: |
+  * Sat Jan 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated link in fetch file after project relocation to github
   * Fri May 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - depend on apps/samtools at runtime for libbam.so
   * Wed Aug 15 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
