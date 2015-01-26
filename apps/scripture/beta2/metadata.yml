@@ -11,7 +11,10 @@
   Scripture also has modules for ChIP-Seq peak calling.
 :group: Bioinformatics
 :changelog: |
-  * Wed 27 Feb 2013 - James Donohue <james.donohue@alces-software.com>
+  * Mon Jan 26 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+     - Added "$*" to set-alias to ensure the 'alias' is created as a
+       function under bash.
+  * Wed Feb 27 2013 - James Donohue <james.donohue@alces-software.com>
      - First created
 :src: scripture-beta2.jar.sic
 :type: apps
@@ -42,4 +45,4 @@
   setenv ${appcaps}_JAVA_MEM_MX 2g
   setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX"
 
-  set-alias scripture "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/scripture-beta2.jar"
+  set-alias scripture "java `eval echo \\$JAVA_OPTS` -jar ${appdir}/java/scripture-beta2.jar $*"
