@@ -1,0 +1,32 @@
+--- Makefile.orig	2012-03-15 18:00:04.000000000 +0000
++++ Makefile	2015-02-04 19:30:36.627846181 +0000
+@@ -24,7 +24,7 @@
+ mafOverlapObjs = $(foreach f,mafOverlap jkmaf, ${objPath}/$f.o)
+ mafAdjustObjs = $(foreach f,mafAdjust jkmaf genome mafTree malnComp malnBlk malnBlkCursor malnBlkSet malnSet malnJoinBlks malnJoinWithinSet malnJoinSets malnMergeComps malnCompCompMap malnAdjust, ${objPath}/$f.o)
+ cflags += -I ${kentInc}
+-CFLAGS = ${cflags} -std=c99 -pedantic
++CFLAGS = ${cflags} -fno-strict-aliasing -std=c99 -pedantic
+ progs = ${binPath}/mafJoin ${binPath}/mafOverlap ${binPath}/mafAdjust
+ endif
+ 
+@@ -39,17 +39,17 @@
+ 
+ ${binPath}/mafJoin: ${mafJoinObjs}
+ 	@mkdir -p $(dir $@)
+-	${CC} ${CFLAGS} -o $@.tmp $^ ${kentLibWeb} ${sonLibPath}/sonLib.a
++	${CC} ${CFLAGS} -o $@.tmp $^ ${kentLibWeb} ${sonLibPath}/sonLib.a -lssl
+ 	mv $@.tmp $@
+ 
+ ${binPath}/mafOverlap: ${mafOverlapObjs}
+ 	@mkdir -p $(dir $@)
+-	${CC} ${CFLAGS} -o $@.tmp $^ ${kentLibWeb} ${sonLibPath}/sonLib.a
++	${CC} ${CFLAGS} -o $@.tmp $^ ${kentLibWeb} ${sonLibPath}/sonLib.a -lssl
+ 	mv $@.tmp $@
+ 
+ ${binPath}/mafAdjust: ${mafAdjustObjs}
+ 	@mkdir -p $(dir $@)
+-	${CC} ${CFLAGS} -o $@.tmp $^ ${kentLibWeb} ${sonLibPath}/sonLib.a
++	${CC} ${CFLAGS} -o $@.tmp $^ ${kentLibWeb} ${sonLibPath}/sonLib.a -lssl
+ 	mv $@.tmp $@
+ 
+ clean: 

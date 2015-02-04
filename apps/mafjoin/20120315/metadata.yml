@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: mafJoin
+:license: MIT License
+:summary: Tool for combining pairs of maf files that share a common sequence
+:url: https://github.com/dentearl/mafJoin
+:description: |
+:group: Bioinformatics
+:changelog: |
+  * Wed Aug  6 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest v301.1
+  * Fri Aug  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Copy trackDb.sql into share subdirectory
+  * Fri Feb  7 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest v295
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Dec 7 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mafjoin-20120315.tar.gz
+:src_dir: mafJoin-2f25743da0432784957aa23a88e0dc0fcfc592d9
+:type: apps
+:version: '20120315'
+:compilers:
+  gcc:
+:sources:
+  - sonLib.tar.gz
+:requirements:
+  :build:
+    # While kent > 295 may work, 303.1 certainly doesn't and we've
+    # only tested the build against 295
+    - apps/kent = 295
+:patches:
+  - fix-makefile.patch
+:compile: |
+  mkdir ../sonLib
+  tar --strip-components=1 -C ../sonLib -xvzf <%= source('sonLib.tar.gz') %> <%= redirect(:prepare) %>
+  pushd ../sonLib
+  make <%= redirect(:compile_sonlib) %>
+  popd
+  if [ -z "$KENTSRC" ]; then
+    if [ -d "$KENTDIR/share/src" ]; then
+      KENTSRC="$KENTDIR/share/src"
+    else
+      <%# Try and find Kent source tree in packager src cache %>
+      KENTSRC=$(echo <%= File.join(src_dir.split('/')[0..-6],'apps','kent','295','*','kent','src') %>)
+      if [ ! -d "$KENTSRC" ]; then
+        echo "Unable to locate Kent Utilities source tree (tried: $KENTSRC)." >/dev/stderr
+        echo "Try installing the latest version of apps/kent/295." >/dev/stderr
+        exit 1
+      fi
+    fi
+  fi
+  make kentDir="$KENTSRC" <%= redirect(:compile_mafjoin) %>
+:install: |
+  cp -Rv bin doc example <%= dest_dir %> <%= redirect(:install) %>
+  cp -v README.md LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
