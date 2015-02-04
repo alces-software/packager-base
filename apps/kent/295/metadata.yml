@@ -11,6 +11,9 @@
   non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
 :group: Bioinformatics
 :changelog: |
+  * Wed Feb  3 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Copy lib and inc directories from source tree into share/src so
+      third party tools can link against them if necessary.
   * Fri Aug  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Copy trackDb.sql into share subdirectory
   * Fri Feb  7 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -47,9 +50,12 @@
   cp -rv out/htdocs <%= dest_dir %>/www <%= redirect(:install) %>
   mkdir <%= dest_dir %>/share
   cp -v kent/src/hg/lib/trackDb.sql <%= dest_dir %>/share <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/share/src
+  cp -Rv kent/src/inc kent/src/lib <%= dest_dir %>/share/src
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}SRC ${appdir}/share/src
 
   prepend-path PATH ${appdir}/bin

@@ -11,6 +11,9 @@
   non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
 :group: Bioinformatics
 :changelog: |
+  * Wed Feb  3 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Copy lib and inc directories from source tree into share/src so
+      third party tools can link against them if necessary.
   * Wed Aug  6 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest v301.1
     - Added configuration of UCSC browser htdocs to install script
@@ -51,6 +54,8 @@
 
   mkdir <%= dest_dir %>/share
   cp -v kent/src/hg/lib/trackDb.sql <%= dest_dir %>/share <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/share/src
+  cp -Rv kent/src/inc kent/src/lib <%= dest_dir %>/share/src
   cat <<EOF > <%= dest_dir %>/share/ucsc_browser-<%= version %>.conf
   Listen 8030
   <VirtualHost *:8030>
@@ -98,5 +103,6 @@
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}SRC ${appdir}/share/src
 
   prepend-path PATH ${appdir}/bin
