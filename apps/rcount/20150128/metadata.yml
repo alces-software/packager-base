@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: Rcount
+:license: GPLv3
+:summary: Simple and flexible RNA-Seq read counting
+:url: https://github.com/MWSchmid/Rcount
+:description: |
+   Analysis of differential gene expression by RNA sequencing
+   (RNA-Seq) is frequently done using feature counts, i.e. the number
+   of reads mapping to a gene. However, commonly used count algorithms
+   (e.g. HTSeq) do not address the problem of reads aligning with
+   multiple locations in the genome (multireads) or reads aligning
+   with positions where two or more genes overlap (ambiguous
+   reads). Rcount specifically addresses these issues. Furthermore,
+   Rcount allows the user to assign priorities to certain feature
+   types (e.g. higher priority for protein-coding genes compared to
+   rRNA-coding genes) or to add flanking regions.
+:group: Bioinformatics
+:changelog: |
+  * Tue Feb 10 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: rcount-20150128.tar.gz
+:src_dir: Rcount-bacea56920ffd7c66130dbce275db57f83585e8a
+:type: apps
+:version: '20150128'
+:patches:
+  - qt46-compat.patch
+:compilers:
+  gcc:
+:requirements:
+  :rpms: qt4-devel
+:compile: |
+  cd source_V2/p502dataAnalysisRNA
+  qmake-qt4 "INCPATH+=.."
+  make <%= redirect(:compile_distribute) %>
+  cd ../p502_format_wizard
+  qmake-qt4 "INCPATH+=.."
+  make <%= redirect(:compile_format) %>
+  cd ../p502_process_multireads
+  qmake-qt4 "INCPATH+=.."
+  make <%= redirect(:compile_multireads) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -m 0755 -v \
+    source_V2/p502dataAnalysisRNA/Rcount-distribute \
+    source_V2/p502_format_wizard/Rcount-format \
+    source_V2/p502_process_multireads/Rcount-multireads \
+    <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0644 -v \
+    other/Rcount_user_guide.pdf \
+    README.md LICENSE \
+    <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

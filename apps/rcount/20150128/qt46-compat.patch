@@ -1,0 +1,11 @@
+--- source_V2/p502_SOURCE/dataAnalysis/readcounter.cpp.orig	2015-02-10 10:28:05.380227444 +0000
++++ source_V2/p502_SOURCE/dataAnalysis/readcounter.cpp	2015-02-10 10:28:10.928157697 +0000
+@@ -32,7 +32,7 @@
+     this->_tempData.clear();
+     //! a list holding all ambiguous alignments
+     this->_ambAlignments.clear();
+-    this->_ambAlignments.reserve(2000000);
++    //this->_ambAlignments.reserve(2000000);
+     //! variables related to filtering
+     this->_minReads = minReads;
+     this->_maxDist = maxDist;
