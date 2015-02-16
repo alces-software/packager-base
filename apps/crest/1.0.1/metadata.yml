@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: CREST
+:license: GPLv2+
+:summary: Algorithm for detecting genomic structural variations at base-pair resolution
+:url: http://www.stjuderesearch.org/site/lab/zhang
+:description: |
+  CREST (Clipping Reveals Structure) is a new algorithm for detecting
+  genomic structural variations at base-pair resolution using
+  next-generation sequencing data.
+
+  Please cite the following article:
+
+  Wang J, Mullighan CG, Easton J, Roberts S, Heatley SL, Ma J, Rusch
+  MC, Chen K, Harris CC, Ding L, Holmfeldt L, Payne-Turner D, Fan X,
+  Wei L, Zhao D, Obenauer JC, Naeve C, Mardis ER, Wilson RK, Downing
+  JR and Zhang J. CREST maps somatic structural variation in cancer
+  genomes with base-pair resolution (2011). Nature
+  Methods. <http://www.nature.com/nmeth/journal/vaop/ncurrent/full/nmeth.1628.html>
+:group: Bioinformatics
+:requirements: 
+  :runtime:
+    - apps/blat
+    - apps/cap3
+    - apps/samtools ~> 0.1.18
+    - libs/bioperl
+:changelog: |
+  * Mon Feb 16 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CREST1-0-1.tgz
+:src_dir: .
+:type: apps
+:version: '1.0.1'
+:compilers:
+  bin:
+:patches:
+  - fix-syntax-errors.patch
+:compile: |
+  # No compilation required, this is a distribution of a perl
+  # application with binary components.
+  for a in *.pl; do
+    sed -i -e '1 s|#!.*/perl.*|#!/usr/bin/env perl\nuse warnings;|g' $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,perl,doc}
+  cp -Rv *.pm Tree <%= dest_dir %>/perl <%= redirect(:install) %>
+  install -v -D -m 0755 *.pl ptrfinder <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -v -D -m 0644 README <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv example <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PERL5LIB ${appdir}/perl
