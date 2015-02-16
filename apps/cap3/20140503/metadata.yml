@@ -23,12 +23,16 @@
   produce more accurate consensus sequences.
 :group: Bioinformatics
 :changelog: |
-  * Mon Jul 28 2014 Ben Armston <ben.armston@alces-software.com>
+  * Mon Feb 16 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Renumbered release from 20130608 to 20140503 to reflect date of
+      binary release.
+    - Removed control character from example script
+  * Mon Jul 28 2014 - Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: cap3.linux.x86_64.tar
 :src_dir: CAP3
 :type: apps
-:version: '20130608'
+:version: '20140503'
 :compilers:
   bin:
 :compile: |
@@ -70,7 +74,7 @@
       # Directory where tutorial data has been extracted (see above)
       EXAMPLE_DATA_DIR="$CAP3EXAMPLE"
 
-      # Create output directory and copy tutorial data
+      # Create output directory and copy tutorial data
       mkdir -p "$OUTPUT_DIR"
       cd "$OUTPUT_DIR"
       cp -v "$EXAMPLE_DATA_DIR"/* .
