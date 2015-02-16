@@ -1,0 +1,84 @@
+---
+:schema: 1
+:title: CAP3
+:license: NONFREE - Free for non-profit organizations; see http://seq.cs.iastate.edu/
+:summary: Sequence Assembly Program
+:url: http://seq.cs.iastate.edu/cap3.html
+:description: |
+  An improved version of the CAP sequence assembly program. The following
+  improvements have been made:
+
+  1. Use of forward-reverse constraints to correct assembly errors and link
+  contigs.
+
+  2. Use of base quality values in alignment of sequence reads.
+
+  3. Automatic clipping of 5' and 3' poor regions of reads.
+
+  4. Generation of assembly results in ace file format for Consed.
+
+  5. CAP3 can be used in GAP4 of the Staden package.
+
+  These improvements allow CAP3 to take longer sequences of higher errors and
+  produce more accurate consensus sequences.
+:group: Bioinformatics
+:changelog: |
+  * Mon Feb 16 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release, 2015-02-11
+    - Removed control character from example script
+  * Mon Jul 28 2014 - Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: cap3.linux.x86_64.tar
+:src_dir: CAP3
+:type: apps
+:version: '20150211'
+:compilers:
+  bin:
+:compile: |
+  # no-op, this is a binary package
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
+
+  cp -v cap3 formcon <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v doc.txt README aceform <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -vr example <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'cap3; general usage'
+    description: |
+      Execute cap3 using a provided test file
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full CAP3 usage information see:
+      #   $CAP3DOC/doc.txt
+      #
+      # This example script is based on the example script which ship with
+      # CAP3.
+
+      # Output directory
+      OUTPUT_DIR="cap3/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Directory where tutorial data has been extracted (see above)
+      EXAMPLE_DATA_DIR="$CAP3EXAMPLE"
+
+      # Create output directory and copy tutorial data
+      mkdir -p "$OUTPUT_DIR"
+      cd "$OUTPUT_DIR"
+      cp -v "$EXAMPLE_DATA_DIR"/* .
+
+      # Run cap3 without any paramaters to get a list of all options.
+      CAP3_OPTIONS=""
+
+      cap3 xyz $CAP3_OPTIONS > xyz.out
