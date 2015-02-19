@@ -1,0 +1,22 @@
+--- StanfordAlgorithmClient_control.pl.orig	2015-02-19 13:36:57.450596350 +0000
++++ StanfordAlgorithmClient_control.pl	2015-02-19 13:36:19.086588302 +0000
+@@ -48,7 +48,7 @@
+ # http://hivdb.stanford.edu/pages/webservices/register.html.
+ #
+ # Once you receive your key (via email), replace the null key below.
+-my $key = '0000-0000-0000-0000';
++my $key = $ENV{SIERRAKEY} || '0000-0000-0000-0000';
+ 
+ # Let's create a Sierra object, a wrapper to the Stanford web service.
+ # We can create it once and then process as many sequences as we would
+--- StanfordAlgorithmClient.pl.orig	2015-02-19 13:37:09.254607600 +0000
++++ StanfordAlgorithmClient.pl	2015-02-19 13:36:31.285557051 +0000
+@@ -60,7 +60,7 @@
+ # http://hivdb.stanford.edu/pages/webservices/register.html.
+ #
+ # Once you receive your key (via email), replace the null key below.
+-my $key = '0000-0000-0000-0000';
++my $key = $ENV{SIERRAKEY} || '0000-0000-0000-0000';
+ 
+ # Let's create a Sierra object, a wrapper to the Stanford web service.
+ # We can create it once and then process as many sequences as we would

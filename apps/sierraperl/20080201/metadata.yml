@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: Sierra Perl Client
+:license: Public Domain
+:summary: Perl client to access Sierra, the Stanford HIV Web Service
+:url: http://hivdb.stanford.edu/DR/webservices/index.html
+:description: |
+  Sierra, the Stanford Algorithm web service, is a way for machines to
+  interface with the HIVdb program. Sierra enables other computers to
+  obtain the latest Stanford HIV Drug Resistance Algorithm scores,
+  comments, and inferred levels of resistance to 17 FDA-approved
+  protease and RT inhibitors.
+
+  The HIVdb program on the web accepts user-submitted protease and RT
+  sequences and returns inferred levels of resistance in a human
+  readable HTML-formatted report. Sierra is an essentially identical
+  service, but one tailored to computers instead of humans.
+
+  This package contains the Perl client for the Sierra web service.
+:group: Bioinformatics
+:changelog: |
+  * Thu Feb 19 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: sierra-perl.tar.gz
+:src_dir: .
+:type: apps
+:version: '20080201'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:patches:
+  - key-from-env.patch
+:compilers:
+  noarch:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm SOAP::Lite Switch <%= redirect(:cpanm) %>
+  for a in *.pl; do
+    sed -i -e '1 s|#!.*/perl.*|#!/usr/bin/env perl\nuse warnings;|g' $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv modules/edu <%= dest_dir %>/perl/lib/perl5 <%= redirect(:install) %>
+  install -D -m 0755 -v *.pl <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0644 -v *.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  if { ! [info exists ::env(SIERRAKEY)] } {
+    setenv SIERRAKEY 0000-0000-0000-0000
+  }
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
