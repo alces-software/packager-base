@@ -10,6 +10,8 @@
   :tool: apps/cmake
 :group: Mathematics
 :changelog: |
+  * Mon Feb 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Fix broken v3.2.2 which was still installing v3.2.0
   * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v3.2.2
   * Fri Nov 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -19,7 +21,7 @@
   * Fri Jun  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: 3.2.2.tar.bz2
-:src_dir: eigen-eigen-ffa86ffb5570
+:src_dir: eigen-eigen-1306d75b4a21
 :type: libs
 :version: '3.2.2'
 :compilers:
