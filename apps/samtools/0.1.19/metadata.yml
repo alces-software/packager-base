@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Tue Mar  3 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected permissions on installed files
   * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
     - Added example script
   * Thu Oct 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -67,13 +69,21 @@
 :install: |
   mkdir -p <%= dest_dir %>/include <%= dest_dir %>/doc <%= dest_dir %>/lib <%= dest_dir %>/bin <%= dest_dir %>/man/man1
   cp -v AUTHORS COPYING NEWS <%= dest_dir %>/doc <%= redirect(:install) %>
+  chmod a+r <%= dest_dir %>/doc/*
+
   cp -v samtools bcftools/bcftools bcftools/*.pl misc/*.pl misc/maq2sam-long misc/maq2sam-short misc/md5fa misc/md5sum-lite misc/varfilter.py misc/wgsim misc/bamcheck misc/plot-bamcheck <%= dest_dir %>/bin <%= redirect(:install) %>
+  chmod a+rx <%= dest_dir %>/bin/*
+
   cp -v samtools.1 <%= dest_dir %>/man/man1 <%= redirect(:install) %>
+  chmod a+r <%= dest_dir %>/man/man1/*
+
   cp -v *.a <%= dest_dir %>/lib <%= redirect(:install) %>
   shopt -s nullglob
   cp -av *.dylib* *.so* <%= dest_dir %>/lib <%= redirect(:install) %>
   shopt -u nullglob
   cp -v *.h <%= dest_dir %>/include <%= redirect(:install) %>
+  chmod a+r <%= dest_dir %>/include/*
+
   cp -rv examples <%= dest_dir %> <%= redirect(:install) %>
   chmod a+rx <%= dest_dir %>/examples
   chmod -R a+r <%= dest_dir %>/examples/*
@@ -106,13 +116,13 @@
       # Output directory
       OUTPUT_DIR="samtools/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
-      # Input SAM file
+      # Input SAM file
       INPUT_FILE=$SAMTOOLSDIR/examples/toy.sam
 
-      # Output BAM file
+      # Output BAM file
       OUTPUT_FILE=$OUTPUT_DIR/toy.bam
 
-      # Additional command-line options (samtools -h for a list)
+      # Additional command-line options (samtools -h for a list)
       SAMTOOLS_OPTIONS="-bS"
 
       mkdir -p $OUTPUT_DIR
