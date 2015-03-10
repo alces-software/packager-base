@@ -12,6 +12,8 @@
   become available.
 :group: Bioinformatics
 :changelog: |
+  * Tue Mar 10 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Apply patches to make runSVCallers.pl work correctly
   * Mon Nov 10 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Correct permissions on files
   * Fri Nov  7 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -26,6 +28,8 @@
     - apps/perl
   :runtime:
     - apps/perl
+:patches:
+  - svcallers.patch
 :compilers:
   noarch:
 :compile: |

@@ -1,0 +1,27 @@
+--- bin/runSVcallers.pl.orig	2014-11-10 11:17:28.375568909 +0000
++++ bin/runSVcallers.pl	2015-03-10 15:19:42.700617335 +0000
+@@ -150,9 +150,10 @@
+ 		$pd{prevjob}="$params{name}.$vers.pdFilter" if $params{PDgetReads};
+ 		my $outfiles = 'out';
+ 		my $reference = $params{chrrefdir} ? "$params{chrrefdir}/$jobindex.fa" : $params{reffile};
++		# ALCES; mjt - 2015-03-10 - added 'chr' prefix to $jobindex in calls to makeCommand below.
+ 		my $cmd = $params{PDoptParams} ?
+-			$svrun->makeCommand("$params{pinexe} -f $reference -c $jobindex -o $params{name}.$jobindex  -i $params{PDconf} $params{PDoptParams}", %pd) :
+-			$svrun->makeCommand("$params{pinexe} -f $reference -c $jobindex -o $params{name}.$jobindex  -i $params{PDconf}" , %pd);
++			$svrun->makeCommand("$params{pinexe} -f $reference -c chr$jobindex -o $params{name}.$jobindex  -i $params{PDconf} $params{PDoptParams}", %pd) :
++			$svrun->makeCommand("$params{pinexe} -f $reference -c chr$jobindex -o $params{name}.$jobindex  -i $params{PDconf}" , %pd);
+ 		push @commands, $cmd;
+ 	}
+ 	if ($params{chrOther}) {
+--- lib/RunSVcallers/SGE.pm.orig	2014-11-10 11:17:28.377570455 +0000
++++ lib/RunSVcallers/SGE.pm	2015-03-10 15:27:39.973604360 +0000
+@@ -103,6 +103,9 @@
+         # memory requirements
+         print $tmp qq(#\$ -l "h_vmem=$param{mem}M"\n) if $param{mem};
+ 
++	# ALCES; mjt - 2015-03-10 - export environment variables
++	print $tmp qq(#\$ -V\n);
++ 
+         # command
+         print $tmp qq($cmd\n);
+ 
