@@ -1,0 +1,14 @@
+--- Makefile.orig	2015-01-08 18:36:04.000000000 +0000
++++ Makefile	2015-03-13 15:31:24.748542525 +0000
+@@ -1,9 +1,7 @@
+-# Location of Bamtools on your machine. 
+-BAMTOOLS = include/bamtools
+ FASTQ    = include/readfq
+ 
+-CXXFLAGS = -O2 -g -Wall -fmessage-length=0 -I$(BAMTOOLS)/src -I$(FASTQ) -I$(BAMTOOLS) -std=c++0x
+-LIBS 	 = -L$(BAMTOOLS)/lib -lbamtools -lz
++CXXFLAGS = -O2 -g -Wall -fmessage-length=0 -I$(BAMTOOLSINCLUDE) -I$(FASTQ) -std=c++0x
++LIBS 	 = -L$(BAMTOOLSLIB) -lbamtools -lz
+ 
+ OBJS 	 = bin/DDiMAP.o bin/DDiMAP-lib.o bin/Read-Helper.o
+ TARGET   = DDiMAP

@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: DDiMAP
+:license: GPLv3
+:summary: Analyses mapped NGS read data to discover rare variants
+:url: https://github.com/jpspence/DDiMAPpublic
+:description: |
+  High Performance DDiMAP, written in C.
+:group: Bioinformatics
+:changelog: |
+  * Fri Mar 13 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: DDiMAPpublic-20150108.tar.gz
+:sources:
+  - readfq-20140411.tar.gz
+:patches:
+  - gridware-bamtools.patch
+:src_dir: DDiMAPpublic-76ea754b5263a1f0f560b4cbc77e38de75822bcb
+:type: apps
+:version: 20150108
+:compilers:
+  gcc:
+:requirements:
+  :build: apps/bamtools
+  :runtime: apps/bamtools
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "7") ]]; then
+    echo GCC version is $gcc_major.$gcc_minor but DDiMAP requires at least v4.7.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+  cd include/readfq
+  tar --strip-components=1 -xzf <%= source('readfq-20140411.tar.gz') %>
+  cd ../..
+  make <%= redirect(:compile) %>
+  # Remove DOS line endings
+  sed -e 's|\x0D$||' -i bin/DDiMapIterate.py
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,etc,share}
+  install -v -D -m 0755 bin/DDiMAP bin/DDiMapIterate.py <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -v -D -m 0644 README.md <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -v -D -m 0644 bin/DDiMap.cfg <%= dest_dir %>/etc <%= redirect(:install) %>
+  cp -Rv data matlab scripts <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
