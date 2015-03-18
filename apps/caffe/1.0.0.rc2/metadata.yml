@@ -1,0 +1,72 @@
+---
+:title: Caffe
+:license: BSD License
+:summary: A fast open framework for deep learning
+:url: http://caffe.berkeleyvision.org/
+:description: |
+  Caffe is a deep learning framework made with expression, speed, and
+  modularity in mind. It is developed by the Berkeley Vision and
+  Learning Center (BVLC) and by community contributors. Yangqing Jia
+  created the project during his PhD at UC Berkeley.
+:group: Libraries
+:changelog: |
+  * Wed Mar 18 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: caffe-1.0.0.rc2.tar.gz
+:src_dir: caffe-rc2
+:type: apps
+:version: '1.0.0.rc2'
+:requirements:
+  :build:
+    - libs/numpy
+    - apps/python
+    - libs/opencv >= 2.4.0
+    - libs/protobuf
+    - libs/gflags
+    - libs/glog
+    - apps/hdf5_serial
+    - libs/boost >= 1.55.0
+    - libs/atlas
+  :runtime:
+    - libs/glog
+    - libs/gflags
+    - libs/protobuf
+    - libs/boost >= 1.55.0
+    - apps/hdf5_serial
+    - libs/opencv >= 2.4.0
+    - apps/python
+  :rpms:
+    - snappy-devel
+    - leveldb-devel
+    - lmdb-devel
+:compilers:
+  gcc:
+:compile: |
+  cat <<\EOF > Makefile.config
+  CPU_ONLY := 1
+  BLAS := atlas
+  BLAS_INCLUDE := $(ATLASINCLUDE)
+  BLAS_LIB := $(ATLASLIB)
+  PYTHON_INCLUDE := $(PYTHONINCLUDE)
+  PYTHON_LIB := $(PYTHONLIB)
+  WITH_PYTHON_LAYER := 1
+  INCLUDE_DIRS := $(BOOSTINCLUDE) $(PYTHONINCLUDE) $(PYTHONINCLUDE)/python2.7 $(PROTOBUFINCLUDE) $(OPENCVINCLUDE) $(GFLAGSINCLUDE) $(GLOGINCLUDE) $(HDF5_SERIALINCLUDE)
+  LIBRARY_DIRS := $(PYTHONLIB) $(PROTOBUFLIB) $(OPENCVLIB) $(GFLAGSLIB) $(GLOGLIB) $(HDF5_SERIALLIB) $(BOOSTLIB)
+  BUILD_DIR := build
+  DISTRIBUTE_DIR := <%= dest_dir %>
+  #Q ?= @
+  EOF
+  make <%= redirect(:compile) %>
+  make pycaffe <%= redirect(:compile_python) %>
+:install: |
+  make distribute <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PYTHONPATH ${appdir}/python
