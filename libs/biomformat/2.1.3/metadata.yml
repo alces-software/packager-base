@@ -1,0 +1,80 @@
+---
+:schema: 1
+:title: biom-format
+:license: GPLv2
+:summary: The Biological Observation Matrix (BIOM) format
+:url: http://biom-format.org/
+:description: |
+  The BIOM file format (canonically pronounced biome) is designed to
+  be a general-use format for representing biological sample by
+  observation contingency tables. BIOM is a recognized standard for
+  the Earth Microbiome Project and is a Genomics Standards Consortium
+  candidate project.
+
+  The BIOM format is designed for general use in broad areas of
+  comparative -omics. For example, in marker-gene surveys, the primary
+  use of this format is to represent OTU tables: the observations in
+  this case are OTUs and the matrix contains counts corresponding to
+  the number of times each OTU is observed in each sample. With
+  respect to metagenome data, this format would be used to represent
+  metagenome tables: the observations in this case might correspond to
+  SEED subsystems, and the matrix would contain counts corresponding
+  to the number of times each subsystem is observed in each
+  metagenome. Similarly, with respect to genome data, this format may
+  be used to represent a set of genomes: the observations in this case
+  again might correspond to SEED subsystems, and the counts would
+  correspond to the number of times each subsystem is observed in each
+  genome.
+
+  There are two components to the BIOM project: first is definition of
+  the BIOM format, and second is development of support objects in
+  multiple programming languages to support the use of BIOM in diverse
+  bioinformatics applications. The version of the BIOM file format is
+  independent of the version of the biom-format software.
+:group: Bioinformatics
+:changelog: |
+  * Tue Mar 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v2.1.3
+  * Mon Jul 15 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: biom-format-2.1.3.tar.gz
+:src_dir: biom-format-2.1.3
+:type: libs
+:version: '2.1.3'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build: 
+    - apps/python
+    - libs/numpy
+    - libs/scipy
+  :runtime: 
+    - apps/python
+    - libs/numpy
+    - libs/scipy
+    - apps/setuptools
+:sources:
+  - pyqi-0.3.2.tar.gz
+:compile: |
+  python setup.py build <%= redirect(:compile) %>
+:install: |
+  INSTALL_DIR="<%= dest_dir %>/python/lib/python2.7/site-packages"
+  export PYTHONPATH="${INSTALL_DIR}:$PYTHONPATH"
+  mkdir -p "${INSTALL_DIR}"
+
+  tar xzf <%= source('pyqi-0.3.2.tar.gz') %>
+  cd pyqi-0.3.2
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+
+  cd ..  
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
