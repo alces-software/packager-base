@@ -1,0 +1,76 @@
+---
+:schema: 1
+:title: PyNAST
+# GPL but note dependency on nonfree uclust
+:license: GPL 
+:summary: Python Nearest Alignment Space Termination tool
+:url: http://qiime.org/pynast/index.html
+:description: |
+  PyNAST is a reimplementation of the NAST sequence aligner, which has
+  become a popular tool for adding new 16s rDNA sequences to existing
+  16s rDNA alignments. This reimplementation is more flexible, faster,
+  and easier to install and maintain than the original NAST
+  implementation. PyNAST is built using the PyCogent Bioinformatics
+  Toolkit.
+
+  The first versions of PyNAST (through PyNAST 1.0) were written to
+  exactly match the results of the original NAST algorithm. Beginning
+  with the post-PyNAST 1.0 development code, PyNAST no longer exactly
+  matches the NAST output but is instead focused on getting better
+  alignments. Users who wish to exactly match the results of NAST
+  should download PyNAST 1.0.
+
+  Given a set of sequences and a template alignment, PyNAST will align
+  the input sequences against the template alignment, and return a
+  multiple sequence alignment which contains the same number of
+  positions (or columns) as the template alignment. This facilitates
+  the analysis of new sequences in the context of existing alignments,
+  and additional data derived from existing alignments such as
+  phylogenetic trees. Because any protein or nucleic acid sequences
+  and template alignments can be provided, PyNAST is not limited to
+  the analysis of 16s rDNA sequences.
+
+  PyNAST is presented in an open access Bioinformatics Applications
+  Note.
+:group: Bioinformatics
+:changelog: |
+  * Thu Mar 26 2015 James Donohue <james.donohue@alces-software.com>
+    - Updated to v1.2.2
+  * Thu Jul 25 2013 James Donohue <james.donohue@alces-software.com>
+    - Moved 'prepare' phase into 'install' to prevent download issues.
+  * Mon Jul 15 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: pynast-1.2.2.tar.gz
+:src_dir: pynast-1.2.2
+:type: apps
+:version: '1.2.2'
+:compilers:
+  noarch:
+:requirements:
+  :build: 
+    - apps/python
+    - apps/pycogent
+  :runtime: 
+    - apps/python
+    - apps/pycogent
+    # Also requires uclust 1.2.22q executable (see install stage)
+:params:
+  :uclust_licensing: "Pass 'uclust_licensing=understood' to accept download and installation of required nonfree uclust executable, licensed for use with PyNAST and QIIME only [see http://www.drive5.com/uclust/downloads1_2_22q.html]"
+:compile: |
+  # No-op; this is a distribution of a python application.
+:install: |
+  if [ "<%= param(:uclust_licensing) %>" != "understood" ]; then
+    echo "Unrecognised value: <%= param(:uclust_licensing) %>" > /dev/stderr
+    exit 1
+  fi
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # Download requred 64-bit Linux uclust binary (no source available)
+  wget http://www.drive5.com/uclust/uclustq1.2.22_i86linux64 <%= redirect(:install) %> || exit 1
+  install -D -m 755 uclustq1.2.22_i86linux64 <%= dest_dir %>/bin/uclust <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path PATH ${appdir}/bin
