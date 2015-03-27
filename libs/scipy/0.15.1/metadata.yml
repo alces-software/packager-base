@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: SciPy
+:license: BSD
+:summary: Scientific tools for Python
+:url: http://www.scipy.org/
+:description: |
+  SciPy (pronounced "Sigh Pie") is open-source software for
+  mathematics, science, and engineering.
+
+  The SciPy library depends on NumPy, which provides convenient and
+  fast N-dimensional array manipulation. The SciPy library is built to
+  work with NumPy arrays, and provides many user-friendly and
+  efficient numerical routines such as routines for numerical
+  integration and optimization.
+:type: libs
+:group: Mathematics
+:changelog: |
+  * Thu Mar 26 2015 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.15.1
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.13.2 and added python3 variant
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v0.12.0
+  * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Jul 7 2011 Steve Norledge
+    - First created
+:src: scipy-0.15.1.tar.gz
+:version: '0.15.1'
+:compilers:
+  gcc:
+    :blas_dir: '$ATLASDIR'
+    :lapack_dir: '$ATLASDIR'
+    :atlas_dir: '$ATLASDIR'
+    :requirements:
+      :build: libs/atlas
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build: 
+        - apps/python ~> 2.7.0
+        - libs/numpy
+      :runtime: 
+        - apps/python ~> 2.7.0
+        - libs/numpy
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :build: 
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+      :runtime: 
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+:compile: |
+  export BLAS=<%= compiler[:blas_dir] %>
+  export LAPACK=<%= compiler[:lapack_dir] %>
+  export ATLAS=<%= compiler[:atlas_dir] %>
+  <%= variant[:python_bin] %> setup.py config_fc --fcompiler=gnu95 --noarch build <%= redirect(:build) %>
+:install: |
+  export BLAS=<%= compiler[:blas_dir] %>
+  export LAPACK=<%= compiler[:lapack_dir] %>
+  export ATLAS=<%= compiler[:atlas_dir] %>
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
