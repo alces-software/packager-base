@@ -1,0 +1,95 @@
+---
+:schema: 1
+:title: OpenMS
+:license: BSD License
+:summary: LC/MS data management and analyses
+:url: http://open-ms.sourceforge.net/
+:description: |
+  OpenMS is an open-source software C++ library for LC/MS data
+  management and analyses. It offers an infrastructure for the rapid
+  development of mass spectrometry related software.
+
+  It comes with a vast variety of pre-built and ready-to-use tools for
+  proteomics and metabolomics data analysis (TOPPTools) and powerful
+  2D and 3D visualization(TOPPView).
+
+  OpenMS offers analyses for various quantitation protocols, including
+  label-free quantitation, SILAC, iTRAQ, SRM, SWATH, ...
+
+  It provides built-in algorithms for de-novo identification and
+  database search, as well as adapters to other state-of-the art tools
+  like XTandem, Mascot, OMSSA, etc.
+
+  It supports easy integration of OpenMS built tools into workflow
+  engines like Knime, Galaxy, WS-Pgrade, and TOPPAS via the TOPPtools
+  concept and a unified parameter handling (CTD).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Mar 25 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: OpenMS-1.11.1.tar.gz
+:src_dir: OpenMS-1.11.1
+:patches:
+  - cython-fix.patch
+  - libsvm-include-fix.patch
+:requirements:
+  :tool:
+    - apps/cmake
+    - apps/setuptools
+  :build:
+    - libs/boost
+    - libs/numpy
+    - apps/cython
+  :runtime:
+    - libs/boost
+  :rpms:
+    - xerces-c-devel
+    - gsl-devel
+    - zlib-devel
+    - bzip2-devel
+    - libsvm-devel
+    - qtwebkit-devel
+:version: '1.11.1'
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR nose autowrap <%= redirect(:python) %>
+
+  cd contrib
+  cmake -DBUILD_TYPE=SEQAN . <%= redirect(:cmake_contrib) %>
+  cmake -DBUILD_TYPE=GLPK . <%= redirect(:cmake_contrib) %>
+  cmake -DBUILD_TYPE=LIBSVM . <%= redirect(:cmake_contrib) %>
+  cmake -DBUILD_TYPE=COINOR . <%= redirect(:cmake_contrib) %>
+  cd ..
+
+  mkdir build
+  cd build  
+  cmake -DINSTALL_PREFIX=<%= dest_dir %> \
+    -DCMAKE_FIND_ROOT_PATH=/usr \
+    -DBOOST_ROOT:PATH=$BOOSTDIR \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DBOOST_USE_STATIC=OFF \
+    -DPYOPENMS=OFF \
+    -DPYTHON_EXECUTABLE=$(which python) \
+    .. <%= redirect(:configure) %>
+
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  export OPENMS_DATA_PATH="<%= dest_dir %>/share/OpenMS"
+  make doc_minimal <%= redirect(:install) %>
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  setenv OPENMS_DATA_PATH ${appdir}/share/OpenMS
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin

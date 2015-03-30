@@ -1,0 +1,10 @@
+--- pyOpenMS/setup.py.orig	2013-08-19 14:42:47.000000000 +0100
++++ pyOpenMS/setup.py	2015-03-25 14:22:06.987758776 +0000
+@@ -204,6 +204,7 @@
+     QT_HEADERS_DIR,
+     QT_QTCORE_INCLUDE_DIR,
+     j(OPEN_MS_CONTRIB_BUILD_DIR, "include"),
++    j(OPEN_MS_CONTRIB_BUILD_DIR, "include", "libsvm"),
+     #j(OPEN_MS_CONTRIB_BUILD_DIR, "src", "boost_1_52_0")
+     j(OPEN_MS_CONTRIB_BUILD_DIR, "include", "boost"),
+     j(OPEN_MS_BUILD_DIR ,  "include"),
