@@ -1,0 +1,84 @@
+---
+:schema: 1
+:license: GPLv2
+:title: fREEDA
+:summary: Multi-physics simulator
+:url: http://www.freeda.org/
+:description: |
+  fREEDA(TM) is a multi-physics simulator under development by a user community
+  from universities, research communities and laboratories. It uses state
+  variables, local reference group concepts and automatic differentiation to
+  capture multi-physics. As a result of this, model development is considerably
+  simplified.
+
+  This simulation approach represents a new approach since SPICE-like analyses
+  were developed. The approach allows the modeling of virtually any physical
+  model and the generic model evaluation mechanism in which the primitive model
+  equations are wrapped in generic analysis specific functions, reduces the
+  time required for computation and development.
+
+  fREEDA(TM) implements several types of analyses. It implements a DC, Harmonic
+  Balance, several Time marching transient and a unique wavelet analysis. It
+  also implements several device models including common three and four
+  terminal transistors, transmission line, Foster's canonical form and diodes -
+  electronic, optical and tunnel types.
+:group: Physics
+:changelog: |
+  * Wed Apr  1 2015 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: freeda-2.0.tar.gz
+:src_dir: freeda-2.0
+:type: apps
+:version: '2.0'
+:patches:
+  # Patch to use Gridware FFTW2 in place of bundled version and use Trilinos 
+  # headers from installed Gridware package instead of source tree
+  - makefile.defs.patch
+:requirements:
+  :build:
+    - libs/blas
+    - libs/lapack
+    - libs/fftw2_double
+    - libs/trilinos
+  :runtime:
+    - libs/fftw2_double
+:compilers:
+  gcc:
+:compile: |
+  cd simulator
+  make <%= redirect(:make) %>
+:install: |
+  cp -rv doc <%= dest_dir %> <%= redirect(:install) %>
+  cp -rv test <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/bin
+  cp -v simulator/freeda <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}TEST ${appdir}/test
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'fREEDA; run simulator using sample netlist'
+    description: 'Execute the fREEDA simulator using one of the sample netlists provided.'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Output directory.
+      OUTPUT_DIR="freeda/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      mkdir -p "$OUTPUT_DIR"
+
+      # The netlist to use; change this to use a different netlist
+      INPUT_FILE="$FREEDATEST/testcir.net"
+
+      # The file under OUTPUT_DIR where command output should be written
+      OUTPUT_FILE="testcir.out"
+
+      cd "$OUTPUT_DIR"
+      freeda "$INPUT_FILE" "$OUTPUT_FILE"

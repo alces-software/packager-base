@@ -1,0 +1,25 @@
+--- simulator/makefile.defs.orig	2015-04-01 09:37:28.487589676 +0000
++++ simulator/makefile.defs	2015-04-01 11:31:28.207839722 +0000
+@@ -59,18 +59,13 @@
+ MLLIB        = $(TLIB)/ml/src/
+ SACADOLIB    = $(TLIB)/sacado/src/
+ 
+-LDFLAGS = -L ./lib -L $(PACKLIB) \
+-  -lanalysis -L $(NOXEPETRALIB) -L $(IFPACKLIB) -L $(EPETRALIB) -L $(TEUCHOSLIB) \
+-  -L $(AMESOSLIB) -L $(MLLIB) -L $(AZTECOOLIB) -L $(EPETRAEXTLIB) -L $(NOXLIB) -L $(SACADOLIB) \
+-  -lio -lnetwork -lcompat -lnoxepetra -lifpack  \
++LDFLAGS = -L ./lib -L $(TRILINOSLIB) -L $(FFTW2_DOUBLELIB) -L $(BLASDIR) -L $(LAPACKDIR) \
++  -lanalysis -lio -lnetwork -lcompat -lnoxepetra -lifpack  \
+   -lamesos -lml -laztecoo -lepetra -lepetraext -lnox -lteuchos -lsacado -llapack  \
+   -lrfftw -lfftw -lblas -lgfortran -lm
+ 
+-OPTFLAGS = $(FFTW_IP) \
+-    $(NOXEPETRA_IP) $(IFPACK_IP) $(EPETRA_IP) $(EPETRAEXT_IP) $(EPETRAEXTT_IP) $(TEUCHOS_IP) $(AMESOS_IP) \
+-    $(COARSEN_IP) $(COMM_IP) $(FEGRID_IP) $(INCLUDE_IP) $(KRYLOV_IP) $(MAIN_IP) $(MATRIXFREE_IP) $(MLAPI_IP) \
+-    $(OPERATOR_IP) $(REFMAXWELL_IP) $(SMOOTHER_IP) $(UTILS_IP) $(ML_IP) $(AZTECOO_IP) $(NOX_IP) -I $(TEUCHOSLIB) \
+-   -I $(EPETRAEXTLIB) $(SACADO_IP) -I $(SACADOLIB) -fstrict-aliasing -funroll-loops -fomit-frame-pointer
++OPTFLAGS = -I $(TRILINOSINCLUDE) -I $(FFTW2_DOUBLEINCLUDE) \
++   -fstrict-aliasing -funroll-loops -fomit-frame-pointer
+ 
+ TEMPLATEFLAGS = $(OPTFLAGS)
+ # Global C++ flags
