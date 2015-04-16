@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: Chimerascan
+:license: GPLv3
+:summary: Detection of chimeric transcripts in high-throughput sequencing data
+:url: https://code.google.com/p/chimerascan/
+:description: |
+  Recurrent gene fusions (a.k.a. chimeras) are a prevalent class of
+  mutations that can produce functional transcripts that contribute to
+  cancer progression. Recent advanced in high-throughput sequencing
+  technologies have enabled reliable gene fusion discovery
+  (1,2). chimerascan is a software package that detects gene fusions
+  in paired-end RNA sequencing (RNA-Seq) datasets.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 16 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: chimerascan-0.4.5a.tar.gz
+:src_dir: chimerascan-0.4.5
+:version: '0.4.5a'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+    - apps/bowtie = 0.12.7
+:compilers:
+  gcc:
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR jinja2 <%= redirect(:python) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
