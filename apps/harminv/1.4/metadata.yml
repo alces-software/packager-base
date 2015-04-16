@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: Harminv
+:license: GPLv2+
+:summary: Extract mode frequencies from time-series data
+:url: http://ab-initio.mit.edu/wiki/index.php/Harminv
+:description: |
+  Harminv is a free program (and accompanying library) to solve the
+  problem of harmonic inversion — given a discrete-time, finite-length
+  signal that consists of a sum of finitely-many sinusoids (possibly
+  exponentially decaying) in a given bandwidth, it determines the
+  frequencies, decay constants, amplitudes, and phases of those
+  sinusoids.
+
+  It can, in principle, provide much better accuracy than
+  straightforwardly extracting FFT peaks, essentially because it
+  assumes a specific form for the signal. (Fourier transforms, in
+  contrast, attempt to represent any data as a sum of sinusoidal
+  components, and are thus limited by the uncertainty principle.) It
+  is also often more robust than directly least-squares fitting the
+  data (which can have problematic convergence), since it re-expresses
+  the problem in terms of simply finding the eigenvalues of a small
+  matrix.
+
+  Harminv uses a low-storage "filter diagonalization method" (FDM) for
+  finding the sinusoids near a given frequency interval.
+:group: Physics
+:changelog: |
+  * Thu Apr 16 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: harminv-1.4.tar.gz
+:src_dir: harminv-1.4
+:type: apps
+:version: '1.4'
+:requirements:
+  :build: libs/atlas
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+    --with-blas=$ATLASLIB/libsatlas.so \
+    --enable-shared <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
