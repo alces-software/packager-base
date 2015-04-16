@@ -1,0 +1,108 @@
+---
+:schema: 1
+:title: Meep
+:license: GPLv2+
+:summary: Finite-difference time-domain (FDTD) simulation software
+:url: http://ab-initio.mit.edu/wiki/index.php/Meep
+:description: |
+  Meep (or MEEP) is a free finite-difference time-domain (FDTD)
+  simulation software package developed at MIT to model
+  electromagnetic systems, along with our MPB eigenmode package. Its
+  features include:
+
+    * Free software under the GNU GPL.
+    * Simulation in 1d, 2d, 3d, and cylindrical coordinates.
+    * Distributed memory parallelism on any system supporting the MPI
+      standard. Portable to any Unix-like system (GNU/Linux is fine).
+    * Arbitrary anisotropic electric permittivity epsilon and magnetic
+      permeability mu, along with dispersive epsilon(omega) and
+      mu(omega) (including loss/gain) and nonlinear (Kerr & Pockels)
+      dielectric and magnetic materials, and electric/magnetic
+      conductivities sigma.
+    * PML absorbing boundaries and/or perfect conductor and/or
+      Bloch-periodic boundary conditions.
+    * Exploitation of symmetries to reduce the computation size --
+      even/odd mirror symmetries and 90°/180° rotations.
+    * Complete scriptability -- either via a Scheme scripting
+      front-end (as in libctl and MPB), or callable as a C++ library;
+      a Python interface is also available.
+    * Field output in the HDF5 standard scientific data format,
+      supported by many visualization tools.
+    * Arbitrary material and source distributions.
+    * Field analyses including flux spectra, Maxwell stress tensor,
+      frequency extraction, local density of states and energy
+      integrals, near to far field transformations; completely
+      programmable.
+    * Multi-parameter optimization, root-finding, integration,
+      etcetera (via libctl).
+
+  Meep officially stands for MIT Electromagnetic Equation Propagation.
+:group: Physics
+:requirements:
+  :build:
+    - apps/hdf5_serial
+:changelog: |
+  * Thu Apr 16 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: meep-1.3.tar.gz
+:src_dir: meep-1.3
+:type: apps
+:version: '1.3'
+:variants:
+  default:
+    :description: "Serial execution"
+    :requirements:
+      :build:
+        - apps/hdf5_serial
+    :ldflags: -L$HDF5_SERIALLIB
+    :cppflags: -I$HDF5_SERIALINCLUDE
+  mpi:
+    :description: "Parallel execution with MPI"
+    :requirements:
+      :build:
+        - apps/hdf5_mpi
+        - mpi/openmpi
+      :runtime:
+        - mpi/openmpi
+    :ldflags: -L$HDF5_MPILIB
+    :cppflags: -I$HDF5_MPIINCLUDE
+    :configure_flags: --with-mpi
+:requirements:
+  :build:
+    - libs/gsl
+    - libs/atlas
+    - libs/libctl
+    - apps/harminv
+  :rpms:
+    - guile-devel
+    - latex2html
+:compilers:
+  gcc:
+:compile: |
+  export LDFLAGS="-L$LIBCTLLIB -L$GSLLIB -L$HARMINVLIB <%= variant[:ldflags] %>"
+  export CPPFLAGS="-I$LIBCTLINCLUDE -I$GSLINCLUDE -I$HARMINVINCLUDE <%= variant[:cppflags] %>"
+  ./configure --prefix=<%= dest_dir %> <%= variant[:configure_flags] %> \
+    --enable-shared \
+    --with-blas=$ATLASLIB/libsatlas.so \
+    --with-libctl=$LIBCTLSHARE/libctl <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+
+  cp -Rv examples <%= dest_dir %>/examples <%= redirect(:install) %>
+  rm -f <%= dest_dir %>/examples/Makefile*
+  mkdir -p <%= dest_dir %>/doc
+  cp -v AUTHORS COPYING COPYRIGHT NEWS <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
