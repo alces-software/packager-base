@@ -1,0 +1,145 @@
+---
+:schema: 1
+:title: MIT Photonic Bands (MPB)
+:license: GPLv2
+:summary: Electromagnetic eigenmode solver
+:url: http://ab-initio.mit.edu/wiki/index.php/MIT_Photonic_Bands
+:description: |
+  The MIT Photonic-Bands (MPB) package is a free program for computing the band
+  structures (dispersion relations) and electromagnetic modes of periodic
+  dielectric structures, on both serial and parallel computers. It was
+  developed by Steven G. Johnson at MIT along with the Joannopoulos Ab Initio
+  Physics group.
+
+  This program computes definite-frequency eigenstates (harmonic modes) of
+  Maxwell's equations in periodic dielectric structures for arbitrary
+  wavevectors, using fully-vectorial and three-dimensional methods. It is
+  especially designed for the study of photonic crystals (a.k.a. photonic
+  band-gap materials), but is also applicable to many other problems in optics,
+  such as waveguides and resonator systems. (For example, it can solve for the
+  modes of waveguides with arbitrary cross-sections.)
+:group: Physics
+:variants:
+  default:
+    :description: "Double precision; serial execution"
+  mpi:
+    :description: "Double precision; parallel execution with MPI"
+    :requirements:
+      :build:
+        - apps/hdf5_mpi
+        - mpi/openmpi
+      :runtime:
+        - mpi/openmpi
+:requirements:
+  :build:
+    - apps/hdf5_serial
+    - libs/atlas
+    - libs/fftw3_double
+    - libs/libctl
+  :rpms:
+    - guile-devel
+:changelog: |
+  * Thu Apr 16 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mpb-1.5.tar.gz
+:src_dir: .
+:type: apps
+:version: '1.5'
+:compilers:
+  gcc:
+:compile: |
+  <% if variant_name == 'default' %>
+    cp -R mpb-1.5 mpb-1.5.inv-symmetry
+  <% elsif variant_name == 'mpi' %>
+    cp -R mpb-1.5 mpb-1.5.mpi
+    cp -R mpb-1.5 mpb-1.5.mpi.inv-symmetry
+  <% end %>
+
+  # SERIAL BUILD
+  pushd mpb-1.5
+  export LDFLAGS="-L$FFTW3_DOUBLELIB -L$LIBCTLLIB -L$HDF5_SERIALLIB"
+  export CPPFLAGS="-I$FFTW3_DOUBLEINCLUDE -I$LIBCTLINCLUDE -I$HDF5_SERIALINCLUDE"
+  ./configure --prefix=<%= dest_dir %> \
+    --enable-shared \
+    --with-blas=$ATLASLIB/libsatlas.so \
+    --with-libctl=$LIBCTLSHARE/libctl <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  popd
+
+  <% if variant_name == 'default' %>
+  # SERIAL BUILD w/ inversion symmetry
+  pushd mpb-1.5.inv-symmetry
+  ./configure --prefix=<%= dest_dir %> \
+    --with-inv-symmetry \
+    --enable-shared \
+    --with-blas=$ATLASLIB/libsatlas.so \
+    --with-libctl=$LIBCTLSHARE/libctl <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  popd
+  <% elsif variant_name == 'mpi' %>
+  # MPI BUILD
+  pushd mpb-1.5.mpi
+  export LDFLAGS="-L$FFTW3_DOUBLELIB -L$LIBCTLLIB -L$HDF5_MPILIB"
+  export CPPFLAGS="-I$FFTW3_DOUBLEINCLUDE -I$LIBCTLINCLUDE -I$HDF5_MPIINCLUDE"
+  ./configure --prefix=<%= dest_dir %> \
+    --with-mpi \
+    --enable-shared \
+    --with-blas=$ATLASLIB/libsatlas.so \
+    --with-libctl=$LIBCTLSHARE/libctl <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  popd
+  
+  # MPI BUILD w/ inversion symmetry
+  pushd mpb-1.5.mpi.inv-symmetry
+  ./configure --prefix=<%= dest_dir %> \
+    --with-inv-symmetry \
+    --with-mpi \
+    --enable-shared \
+    --with-blas=$ATLASLIB/libsatlas.so \
+    --with-libctl=$LIBCTLSHARE/libctl <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  popd
+  <% end %>
+:install: |
+  # SERIAL BUILD
+  pushd mpb-1.5
+  make install <%= redirect(:install) %>
+  popd
+
+  <% if variant_name == 'default' %>
+  # SERIAL BUILD w/ inversion symmetry
+  pushd mpb-1.5.inv-symmetry
+  make install <%= redirect(:install) %>
+  popd
+  <% elsif variant_name == 'mpi' %>
+  # MPI BUILD
+  pushd mpb-1.5.mpi
+  make install <%= redirect(:install) %>
+  popd
+
+  # MPI BUILD w/ inversion symmetry
+  pushd mpb-1.5.mpi.inv-symmetry
+  make install <%= redirect(:install) %>
+  popd
+
+  rm -f <%= dest_dir %>/bin/mpb
+  <% end %>
+
+  cd mpb-1.5
+  cp -Rv examples/ <%= dest_dir %>/examples <%= redirect(:install) %>
+  rm -f <%= dest_dir %>/examples/Makefile*
+  mkdir -p <%= dest_dir %>/doc
+  cp -v AUTHORS ChangeLog COPYING COPYRIGHT NEWS README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv doc <%= dest_dir %>/doc/manual <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
