@@ -1,0 +1,64 @@
+---
+:schema: 1
+:license: GPLv3
+:title: CoNIFER
+:summary: Copy Number Inference From Exome Reads
+:url: http://conifer.sourceforge.net/index.html
+:description: |
+  CoNIFER uses exome sequencing data to find copy number variants
+  (CNVs) and genotype the copy-number of duplicated genes. As exome
+  capture reactions are subject to strong and systematic capture
+  biases between sample batches, we implemented singular value
+  decomposition (SVD) to eliminate these biases in exome data. CoNIFER
+  offers the ability to mix exome sequence from multiple experimental
+  runs by eliminating batch biases. Together with a short read aligner
+  such as mrsFAST which can align reads to multiple locations, CoNIFER
+  can robustly detect rare CNVs and estimate the copy number of
+  duplicated genes up to ~8 copies with current exome capture kits.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 16 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: conifer_v0.2.2.tar.gz
+:src_dir: conifer_v0.2.2
+:version: '0.2.2'
+:requirements:
+  :tool: apps/setuptools
+  :build:
+    - apps/python
+    - libs/numpy
+  :runtime:
+    - apps/python
+    - libs/pytables
+    - libs/numpy
+  :rpms:
+    - freetype-devel
+    - libpng-devel
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %>
+  # add #!s to python scripts
+  for a in *.py; do
+    echo "#!/usr/bin/env python" > $a.new
+    cat $a >> $a.new
+    mv $a.new $a
+  done
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/{bin,doc,python/lib/python2.7/site-packages}
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  cp -v LICENSE <%= dest_dir %>/doc
+  install -D -m 0755 -v *.py <%= dest_dir %>/bin/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
