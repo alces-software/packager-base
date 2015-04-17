@@ -1,0 +1,93 @@
+---
+:schema: 1
+:title: OncoSNP-SEQ
+:license: OTHER - free for non-commercial use
+:summary: Characterise copy number alterations and loss-of-heterozygosity events
+:url: https://sites.google.com/site/oncosnpseq/
+:description: |
+  OncoSNP-SEQ is an analytical tool for characterising copy number
+  alterations and loss-of-heterozygosity (LOH) events in cancer
+  samples from whole genome sequencing data.
+
+  OncoSNP-SEQ contains the following novel features:
+
+    * Loci classified into one of a number of copy number aberration
+      states, each state describes a particular form of copy number
+      alteration and LOH event.
+    * Ability to model both normal DNA contamination and intra-tumour
+      heterogeneity jointly.
+    * Estimates baseline haploid read level for polyploid samples.
+    * Inference using Bayesian methods allowing uncertainty in
+      estimates to be characterised.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 2.01.tar.gz
+:src_dir: oncosnpseq-2.01
+:sources:
+  - MCR_R2013b_glnxa64_installer.zip
+:version: '2.0.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution of a matlab package
+:install: |
+  mkdir mcr
+  cd mcr
+  unzip <%= source('MCR_R2013b_glnxa64_installer.zip') %> <%= redirect(:mcr) %>
+  ./install -mode silent -agreeToLicense yes -destinationFolder "<%= dest_dir %>/lib/mcr" <%= redirect(:mcr) %>
+  cd ..
+  mkdir <%= dest_dir %>/{bin,matlab,share,doc}
+  cp -v executables/oncoseq <%= dest_dir %>/matlab <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/oncoseq
+  #!/bin/bash
+  MCR_LD_LIBRARY_PATH=${ONCOSNPSEQ_MCR_PREFIX}LD_LIBRARY_PATH
+  MCR_XAPPLRESDIR=${ONCOSNPSEQ_MCR_PREFIX}XAPPLRESDIR
+  export LD_LIBRARY_PATH=${!MCR_LD_LIBRARY_PATH}:$LD_LIBRARY_PATH
+  export XAPPLRESDIR=${!MCR_XAPPLRESDIR}
+  exec <%= dest_dir %>/matlab/oncoseq "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/oncoseq
+  cp -v readme.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv config scripts example_data <%= dest_dir %>/share <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/share/example.sh
+  #!/bin/bash
+  OUTDIR="$HOME/oncoseq.$$"
+  mkdir "$OUTDIR"
+  oncoseq --read_depth_range "[10:40]" \
+    --chr_range "[1:22]" --n_train 30000 \
+    --maxploidy 4.5 --minploidy 1.5 \
+    --normalcontamination \
+    --tumourstatestable "$ONCOSNPSEQSHARE/config/tumourStates.txt" \
+    --maxnormalcontamination 0.6 \
+    --hgtable "$ONCOSNPSEQSHARE/config/hgTables_b37.txt" \
+    --seqtype cg --samplename snps-100 \
+    --infile "$ONCOSNPSEQSHARE/example_data/snps-100.txt.gz" \
+    --outdir "$OUTDIR"
+  EOF
+  chmod 755 <%= dest_dir %>/share/example.sh
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  set mcrroot ${appdir}/lib/mcr/v82
+  set mcrjre ${mcrroot}/sys/java/jre/glnxa64/jre/lib/amd64
+  set mcrprefix ${appcaps}MCR_
+
+  setenv ${appcaps}_MCR_PREFIX ${mcrprefix}
+
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/client
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/server
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/native_threads
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/sys/os/glnxa64
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/bin/glnxa64
+  prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/runtime/glnxa64
+
+  setenv ${mcrprefix}XAPPLRESDIR ${mcrroot}/X11/app-defaults
+
+  prepend-path PATH ${appdir}/bin
