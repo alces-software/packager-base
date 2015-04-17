@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: FusionFinder
+:license: GPLv3
+:summary: Find fusion transcript candidates in RNA-Seq data
+:url: http://bioinformatics.childhealthresearch.org.au/software/fusionfinder
+:description: |
+  A fusion transcript is an aberrant RNA molecule comprising exonic
+  sequence from two normally separate genes. They can be formed either
+  by transcription of a fusion gene, following some sort of
+  translocation event, or by trans-splicing. They have been implicated
+  as the cause of both haematological malignancies, and solid tumours,
+  including prostate, breast and lung cancers.
+
+  FusionFinder is a perl-based software package, which can be used to
+  find fusion transcript candidates in RNA-Seq data.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: FusionFinder_v1.2.1.zip
+:src_dir: FusionFinder_v1.2.1
+:version: '1.2.1'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - libs/bioperl  
+    - apps/bowtie
+    - libs/ensemblapi
+  :runtime:
+    - apps/bowtie
+    - apps/muscle
+    - libs/bioperl
+    - libs/ensemblapi
+:perllibs:
+  - Getopt::Long
+  - List::MoreUtils
+  - Pod::Usage
+  - Config::IniFiles
+  - Sort::ArrayOfArrays
+  - Term::ProgressBar
+  - GD::Graph
+  - DBI
+  - DBD::mysql
+:compilers:
+  gcc:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  <% package.perllibs.each do |s| %>
+    cpanm <%= s %> <%= redirect(:cpanm) %>
+  <% end %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc,share}
+  cp -v bin/*.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v doc/* COPYING README <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv conf test_data <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  sed -i -e "s,/full/path/to/Bowtie,$(which bowtie),g" \
+    -e "s,/full/path/to/API,$ENSEMBLAPIDIR,g" <%= dest_dir %>/share/conf/example_fusionfinder.cnf
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
