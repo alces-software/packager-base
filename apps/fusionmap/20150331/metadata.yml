@@ -1,0 +1,48 @@
+---
+:schema: 1
+:title: FusionMap
+:license: OTHER - non-commercial use only
+:summary: Align reads spanning fusion junctions directly to the genome
+:url: http://www.arrayserver.com/wiki/index.php?title=FusionMap
+:description: |
+  FusionMap is an efficient fusion aligner which aligns reads spanning
+  fusion junctions directly to the genome without prior knowledge of
+  potential fusion regions. It detects and characterizes fusion
+  junctions at base-pair resolution. FusionMap can be applied to
+  detect fusion junctions in both single- and paired-end dataset from
+  either gDNA-Seq or RNA-Seq studies.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: FusionMap_2015-03-31.zip
+:src_dir: FusionMap_2015-03-31
+:version: '20150331'
+:requirements:
+  :rpms:
+    - mono
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary package for Mono
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,mono,share}
+  cp -v bin/* <%= dest_dir %>/mono
+  cp -Rv TestDataset <%= dest_dir %>/share
+  for a in FusionMap oalign ojob osummary; do
+    cat <<EOF > <%= dest_dir %>/bin/$a
+  #!/bin/bash
+  exec mono <%= dest_dir %>/mono/$a.exe "\$@"
+  EOF
+    chmod 755 <%= dest_dir %>/bin/$a
+    ln -s <%= dest_dir %>/bin/$a <%= dest_dir %>/bin/$a.exe
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}MONO ${appdir}/mono
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MONO_PATH ${appdir}/mono
+  prepend-path PATH ${appdir}/bin
