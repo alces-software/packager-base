@@ -45,7 +45,7 @@
     - Upgraded to v2.12; requires R >= 2.16.0, effectively R 3.0.0
   * Mon Feb 25 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: BiocInstaller_1.14.2.tar.gz
+:src: BiocInstaller_1.14.3.tar.gz
 :src_dir: .
 :type: libs
 :version: '2.14'
