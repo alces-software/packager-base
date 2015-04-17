@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: Ensembl API 
+:license: Apache License 2.0
+:summary: Abstraction layer for accessing Ensembl genomic databases
+:url: http://www.ensembl.org/info/docs/index.html
+:description: |
+  All data sets in the Ensembl system are stored in relational
+  databases (MySQL). For each of the Ensembl databases the project
+  provides a specific Perl API. As Ensembl takes also advantage of
+  code provided by the BioPerl project; installation of the BioPerl
+  package is included in these instructions. The Ensembl API is
+  compatible with Perl version 5.10.
+:type: libs
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ensembl-79.tar.gz
+:src_dir: .
+:sources:
+  - ensembl-compara-79.tar.gz
+  - ensembl-funcgen-79.tar.gz
+  - ensembl-variation-79.tar.gz
+:version: '79'
+:requirements:
+  :runtime:
+    - libs/bioperl
+:compilers:
+  gcc:
+:compile: |
+  tar xvzf <%= source('ensembl-compara-79.tar.gz') %> <%= redirect(:unpack) %>
+  tar xvzf <%= source('ensembl-funcgen-79.tar.gz') %> <%= redirect(:unpack) %>
+  tar xvzf <%= source('ensembl-variation-79.tar.gz') %> <%= redirect(:unpack) %>
+:install: |
+  cp -Rv ensembl-release-79 <%= dest_dir %>/ensembl <%= redirect(:install) %>
+  for a in compara funcgen variation; do
+    cp -Rv ensembl-$a-release-79 <%= dest_dir %>/ensembl-$a <%= redirect(:install) %>
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PERL5LIB ${appdir}/ensembl/modules
+  prepend-path PERL5LIB ${appdir}/ensembl-compara/modules
+  prepend-path PERL5LIB ${appdir}/ensembl-variation/modules
+  prepend-path PERL5LIB ${appdir}/ensembl-funcgen/modules
