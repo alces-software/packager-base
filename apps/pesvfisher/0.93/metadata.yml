@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: PeSV-Fisher
+:license: GPLv3
+:summary: Pipeline for the detection of five general types of structural variants
+:url: http://big.crg.cat/genetic_causes_of_disease/services_and_software
+:description: |
+  PeSV-Fisher is a pipeline for the detection of five general types of
+  structural variants (SVs): deletions, gains, intra- and
+  inter-chromosomal translocations, and inversions, at very reasonable
+  computational costs. The pipeline further provides comprehensive
+  information on co-localization of SVs in the genome, a key aspect
+  for studying biological consequences. The algorithm uses a
+  combination of methods based on paired-reads (PR) and read-depth
+  strategies (RD). PeSV-Fisher has been designed with the aim to
+  facilitate identification of somatic variation, and, as such, it is
+  capable of analysing two or more samples simultaneously, producing a
+  list of non-shared variants between samples, although it can also
+  analyse individual samples.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Apr 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: PeSVFisher-0.93.tar.gz
+:src_dir: PeSVFisher-0.93
+:version: '0.93'
+:requirements:
+  :runtime:
+    - apps/python3
+    - apps/samtools
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a python package.
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,dist,doc}
+  install -D -m 0644 -v bin/COPYRIGHT bin/README bin/RESULTS doc/* <%= dest_dir %>/doc/
+  cp -Rv bin config src <%= dest_dir %>/dist <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/PeSVFisher
+  #!/bin/bash
+  exec python3 <%= dest_dir %>/dist/src/PeSVFisher.py "$1"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/PeSVFisher
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DIST ${appdir}/dist
+
+  prepend-path PATH ${appdir}/bin
