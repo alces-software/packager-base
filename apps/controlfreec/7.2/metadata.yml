@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: Control-FREEC
+:license: GPLv2+
+:summary: Detect copy-number changes and allelic imbalances using deep-sequencing data
+:url: http://bioinfo.curie.fr/projects/freec/
+:description: |
+  Control-FREEC is a tool for detection of copy-number changes and
+  allelic imbalances (including LOH) using deep-sequencing data
+  developed by the Bioinformatics Laboratory of Institut Curie
+  (Paris).
+
+  Control-FREEC automatically computes, normalizes, segments copy
+  number and beta allele frequency (BAF) profiles, then calls copy
+  number alterations and LOH. The control (matched normal) sample is
+  optional. The program can also use mappability data (files created
+  by GEM).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Apr 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: FREEC_Linux64.tar.gz
+:src_dir: .
+:version: '7.2'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  install -D -m 0755 -v freec <%= dest_dir %>/bin/
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
