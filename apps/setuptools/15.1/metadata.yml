@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: setuptools
+:license: PSF or ZPL
+:summary: Download, build, install, upgrade and uninstall Python packages -- easily!
+:url: http://pypi.python.org/pypi/setuptools
+:description: |
+  Package management for Python packages.
+:type: apps
+:group: Tools
+:changelog: |
+  * Tue Apr 21 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v2.1 and added python3 variant
+  * Fri Sep 28 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: setuptools-15.1.tar.gz
+:version: '15.1'
+:compilers:
+  noarch:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build: apps/python ~> 2.7.0
+      :runtime: apps/python ~> 2.7.0  
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :build: apps/python3 ~> 3.3.0
+      :runtime: apps/python3 ~> 3.3.0
+:compile: |
+  # no-op; this is a distribution of a Python application
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages"
+  <%= variant[:python_bin] %> setup.py install --prefix=<%= dest_dir %>/python
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
