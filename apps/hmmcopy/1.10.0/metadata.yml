@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: HMMcopy
+:license: GPLv3
+:summary: Make copy number estimations for whole genome data
+:url: http://compbio.bccrc.ca/software/hmmcopy/
+:description: |
+  HMMcopy is a suite of tools to make copy number estimations for
+  whole genome data with GC and mappability correction, then segment
+  and classify copy number profiles with a robust Hidden Markov
+  Model. Designed to work with high coverage whole genome HTS data, it
+  can derive copy number estimations from large (~250GB) aligned BAM
+  files in 2 hours on a single core with minimal memory requirements.
+
+  There are 2 sets of tools in the HMMcopy-suite:
+
+    * C++ based programs for analyzing BAM files and preparing read
+      counts.
+    * R package for correcting read counts and performing
+      segmentation.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: HMMcopy_1.10.0.tar.gz
+:src_dir: HMMcopy
+:version: '1.10.0'
+:requirements:
+  :build:
+    - libs/bioconductor
+    - apps/R
+  :runtime:
+    - libs/bioconductor
+    - apps/R
+:compilers:
+  gcc:
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # requires geneplotter R library
+  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(c("geneplotter"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD INSTALL -l "<%= dest_dir %>/R" .
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PATH ${appdir}/bin
