@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: VerifyBamID
+:license: 
+:summary: Verify whether reads match previously known genotypes for an individual
+:url: http://csg.sph.umich.edu/kang/verifyBamID/
+:description: |
+  verifyBamID is a software that verifies whether the reads in
+  particular file match previously known genotypes for an individual
+  (or group of individuals), and checks whether the reads are
+  contaminated as a mixture of two samples. verifyBamID can detect
+  sample contamination and swaps when external genotypes are
+  available. When external genotypes are not available, verifyBamID
+  still robustly detects sample swaps.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr 22 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v1.1.1.tar.gz
+:src_dir: verifyBamID-1.1.1
+:sources:
+  - libStatGen-1.0.13.tar.gz
+:version: '1.1.1'
+:compilers:
+  gcc:
+:compile: |
+  pushd ..
+  tar xzf <%= source('libStatGen-1.0.13.tar.gz') %>
+  mv libStatGen-1.0.13 libStatGen
+  popd
+  make <%= redirect(:compile) %>
+:install: |
+  make install INSTALLDIR=<%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc
+  install -D -m 0644 -v copyrights/COPYING copyrights/LICENSE.txt src/base/LICENSE \
+     <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
