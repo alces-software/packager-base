@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: Delly
+:license: GPLv3+
+:summary: Structural variant discovery by integrated paired-end and split-read analysis
+:url: https://github.com/tobiasrausch/delly
+:description: |
+  Delly is an integrated structural variant prediction method that can
+  detect deletions, tandem duplications, inversions and translocations
+  at single-nucleotide resolution in short-read massively parallel
+  sequencing data. It uses paired-ends and split-reads to sensitively
+  and accurately delineate genomic rearrangements throughout the
+  genome.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr 21 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.6.5.tar.gz
+:version: '0.6.5'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/htslib
+    - apps/bamtools
+    - libs/boost
+  :runtime:
+    - apps/bamtools
+    - libs/boost
+:patches:
+  - gridware-depends.patch
+:compile: |
+  make PARALLEL=1 <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  install -D -m 0755 -v src/delly src/extract src/cov src/iover src/stats \
+    <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0644 -v src/CREDITS src/LICENSE README.md \
+    <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv assembly excludeTemplates R test variantFiltering \
+    <%= dest_dir %>/share/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
