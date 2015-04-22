@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: Oncotator
+:license: OTHER - free for non-profit use
+:summary: Annotate human genomic point mutations and indels with data relevant to cancer researchers
+:url: http://www.broadinstitute.org/cancer/cga/oncotator
+:description: |
+  Oncotator is a tool for annotating genomic point mutations and short
+  nucleotide insertions/deletions (indels) with variant- and
+  gene-centric information relevant to cancer researchers. This
+  information is drawn from 14 different publicly available resources
+  that have been pooled and indexed, and we provide an extensible
+  framework to add additional data sources. Annotations linked to
+  variants range from basic information, such as gene names and
+  functional classification (e.g. missense), to cancer-specific data
+  from resources such as the Catalogue of Somatic Mutations in Cancer
+  (COSMIC), the Cancer Gene Census, and The Cancer Genome Atlas
+  (TCGA).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr 21 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v1.5.1.0.tar.gz
+:version: '1.5.1.0'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+    - apps/cython
+    - libs/numpy
+    - libs/pandas
+    - libs/biopython
+    - libs/pysam = 0.7.5
+  :runtime:
+    - apps/python
+    - apps/cython
+    - libs/numpy
+    - libs/pandas
+    - libs/biopython
+    - libs/pysam = 0.7.5
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  mkdir -p <%= dest_dir %>/{doc,share}
+  install -D -m 0644 -v README.* LICENSE THIRD_PARTY_CODE_README.txt \
+    <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv test/testdata <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
