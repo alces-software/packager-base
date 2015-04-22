@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: PRINSEQ Lite
+:license: GPLv3
+:summary: Filter, reformat, or trim genomic and metagenomic sequence data
+:url: http://prinseq.sourceforge.net/
+:description: |
+  PRINSEQ is a tool that generates summary statistics of sequence and
+  quality data and that is used to filter, reformat and trim
+  next-generation sequence data. It is particular designed for
+  454/Roche data, but can also be used for other types of sequence
+  data. PRINSEQ is available through a user-friendly web interface or
+  as standalone version. The standalone version is primarily designed
+  for data preprocessing and does not generate summary statistics in
+  graphical form.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr 22 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: prinseq-lite-0.20.4.tar.gz
+:src_dir: prinseq-lite-0.20.4
+:version: '0.20.4'
+:compilers:
+  gcc:
+:requirements:
+  :tool: apps/cpanminus
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm JSON Cairo Statistics::PCA MIME::Base64 <%= redirect(:cpanm) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  install -D -m 0755 -v *.pl \
+    <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0644 -v README COPYING ChangeLog \
+    <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv example <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
