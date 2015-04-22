@@ -1,0 +1,90 @@
+---
+:schema: 1
+:title: ONCOCNV
+:license: 
+:summary: Detection of copy number changes in Deep Sequencing data
+:url: https://oncocnv.curie.fr/
+:description: |
+  ONCOCNV is a package to detect copy number changes in Deep
+  Sequencing data developed by OncoDNA with the collaboration with the
+  Bioinformatics Laboratory of Institut Curie (Paris).
+
+  ONCOCNV automatically computes, normalizes, segments copy number
+  profiles, then calls copy number alterations. The user can provide
+  any number of control samples in order to construct the
+  baseline. However, we recommend to use at least three control
+  samples. The more the better.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr 21 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ONCOCNV.v6.0.zip
+:src_dir: ONCOCNV
+:version: '6.0'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/R
+    - libs/bioconductor
+  :runtime:
+    - apps/R
+    - libs/bioconductor
+    - apps/samtools
+    - apps/bedtools
+:r_libraries:
+  - MASS
+  - mclust
+  - PSCBS
+  - R.cache
+  - scales
+  - cwhmisc
+  - fastICA
+  - cghseg
+  - digest
+:sources:
+  - example.cfg
+  - ONCOCNV.sh
+:compile: |
+  # Install R packages
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+
+  # requires DNAcopy R library
+  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(c("DNAcopy"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+
+  # DNAcopy has to be installed first as PSCBS has a dependency on it
+  Rscript --vanilla - <%= redirect(:rlibs) %> <<RSCRIPT
+    local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+    <% package.r_libraries.each do |p| %>
+    install.packages("<%= p %>", "<%= dest_dir %>/R")
+    <% end %>
+  RSCRIPT
+  mv logs CHANGELOG.txt
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,etc,share/scripts}
+  install -D -m 0644 -v *.pl *.sh *.R \
+    <%= dest_dir %>/share/scripts/ <%= redirect(:install) %>
+  install -D -m 0755 -v <%= source('ONCOCNV.sh') %> \
+    <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -D -m 0644 -v <%= source('example.cfg') %> \
+    <%= dest_dir %>/etc/ <%= redirect(:install) %>
+  install -D -m 0644 -v README.txt CHANGELOG.txt \
+    <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}R ${appdir}/R
+
+  prepend-path R_LIBS_SITE ${appdir}/R
+
+  prepend-path PATH ${appdir}/bin
