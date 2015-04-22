@@ -1,0 +1,65 @@
+---
+:schema: 1
+:title: Snappy Java
+:license: Apache License 2.0
+:summary: Snappy compressor/decompressor for Java
+:url: https://github.com/xerial/snappy-java
+:description: |
+  The snappy-java is a Java port of the snappy
+  http://code.google.com/p/snappy/, a fast C++ compresser/decompresser
+  developed by Google.
+
+  Features:
+
+    * Fast compression/decompression around 200~400MB/sec.
+    * Less memory usage. SnappyOutputStream uses only 32KB+ in
+      default.
+    * JNI-based implementation to achieve comparable performance to
+      the native C++ version.
+    * Although snappy-java uses JNI, it can be used safely with
+      multiple class loaders (e.g. Tomcat, etc.).
+    * Compression/decompression of Java primitive arrays (float[],
+      double[], int[], short[], long[], etc.)
+    * Portable across various operating systems; Snappy-java contains
+      native libraries built for Window/Mac/Linux
+      (64-bit). snappy-java loads one of these libraries according to
+      your machine environment (It looks system properties, os.name
+      and os.arch).
+    * Simple usage. Add the snappy-java-(version).jar file to your
+      classpath. Then call compression/decompression methods in
+      org.xerial.snappy.Snappy.
+    * Framing-format support (Since 1.1.0 version)
+    * OSGi support
+    * Apache License Version 2.0. Free for both commercial and
+      non-commercial use.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Wed Apr 22 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 1.1.1.7.tar.gz
+:src_dir: snappy-java-1.1.1.7
+:version: '1.1.1.7'
+:compilers:
+  gcc:
+:requirements:
+  :rpms:
+    - ant
+:sources:
+  - snappy-1.1.1.tar.gz
+:compile: |
+  export JAVA_HOME=/usr/lib/jvm/java-openjdk
+  mkdir target
+  cp <%= source('snappy-1.1.1.tar.gz') %> target
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{java,doc}
+  install -D -m 0644 -v target/snappy-java-1.1.1.7.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  ln -s <%= dest_dir %>/java/snappy-java-1.1.1.7.jar <%= dest_dir %>/java/snappy-java.jar
+  install -D -m 0644 -v LICENSE NOTICE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}JAVA ${appdir}/java
+
+  prepend-path CLASSPATH ${appdir}/java/snappy-java.jar
