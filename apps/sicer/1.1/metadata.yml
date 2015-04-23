@@ -1,0 +1,48 @@
+---
+:schema: 1
+:title: SICER
+:license: GPLv3
+:summary: Identify enriched domains from histone modification ChIP-Seq data
+:url: http://home.gwu.edu/~wpeng/Software.htm
+:description: |
+  A clustering approach for identification of enriched domains from
+  histone modification ChIP-Seq data by Chongzhi Zang, Dustin
+  E. Schones, Chen Zeng, Kairong Cui, Keji Zhao and Weiqun Peng.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 23 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SICER_V1.1.tgz
+:src_dir: SICER_V1.1/SICER
+:version: '1.1'
+:compilers:
+  noarch:
+:requirements:
+  :runtime:
+    - apps/python
+    - libs/numpy
+    - libs/scipy
+:compile: |
+  for a in *.sh ex/*.sh; do
+    sed -i -e 's,^SICER=.*,SICER=<%= dest_dir %>/dist,g' \
+      -e 's,^PYTHONPATH=.*,PYTHONPATH=$SICER/lib:$PYTHONPATH,g' \
+      -e 's,/home/data/SICER1.1/SICER/ex,$SICERSHARE/example,g' $a
+    chmod 755 $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,dist,share}
+  cp -Rv *.sh src utility lib <%= dest_dir %>/dist <%= redirect(:install) %>
+  cp -Rv ex <%= dest_dir %>/share/example <%= redirect(:install) %>
+  install -D -m 0644 -v Changelog README.pdf <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  for a in *.sh; do
+    ln -s <%= dest_dir %>/dist/$a <%= dest_dir %>/bin/$a
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DIST ${appdir}/dist
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
