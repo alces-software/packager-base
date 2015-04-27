@@ -1,0 +1,129 @@
+---
+:schema: 1
+:title: OpenMS
+:license: BSD License
+:summary: LC/MS data management and analyses
+:url: http://open-ms.sourceforge.net/
+:description: |
+  OpenMS is an open-source software C++ library for LC/MS data
+  management and analyses. It offers an infrastructure for the rapid
+  development of mass spectrometry related software.
+
+  It comes with a vast variety of pre-built and ready-to-use tools for
+  proteomics and metabolomics data analysis (TOPPTools) and powerful
+  2D and 3D visualization(TOPPView).
+
+  OpenMS offers analyses for various quantitation protocols, including
+  label-free quantitation, SILAC, iTRAQ, SRM, SWATH, ...
+
+  It provides built-in algorithms for de-novo identification and
+  database search, as well as adapters to other state-of-the art tools
+  like XTandem, Mascot, OMSSA, etc.
+
+  It supports easy integration of OpenMS built tools into workflow
+  engines like Knime, Galaxy, WS-Pgrade, and TOPPAS via the TOPPtools
+  concept and a unified parameter handling (CTD).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, v2.0.0
+  * Wed Mar 25 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: OpenMS-2.0.0.tar.gz
+:src_dir: OpenMS-2.0.0
+:variants:
+  default:
+  python:
+    :requirements:
+      :build:
+        - apps/python >= 2.6.0
+        - libs/numpy 
+        - apps/cython >= 0.19
+   
+:requirements:
+  :tool:
+    - apps/cmake
+    - apps/setuptools
+  :build:
+    - libs/boost >= 1.46.0
+    - libs/eigen ~> 3.2.0
+    - libs/seqan >= 1.4.0
+  :runtime:
+    - libs/boost
+  :rpms:
+    - gsl-devel
+    - zlib-devel
+    - bzip2-devel
+    - libsvm-devel
+    - qtwebkit-devel
+:version: '2.0.0'
+:compilers:
+  gcc:
+:compile: |
+  <% if variant_name == 'python' %>
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR nose autowrap distribute <%= redirect(:python) %>
+  <% end %>
+
+  cd contrib
+  cmake -DBUILD_TYPE=GLPK . <%= redirect(:cmake_contrib) %>
+  cmake -DBUILD_TYPE=WILDMAGIC . <%= redirect(:cmake_contrib) %>
+  # Requires 3.1.1 and EL6 only provides 3.0.1
+  cmake -DBUILD_TYPE=XERCESC . <%= redirect(:cmake_contrib) %>
+  cd ..
+
+  mkdir build
+  cd build
+
+  # Put eigen3 in a place the OpenMS build system likes more
+  cp -R $EIGENINCLUDE eigen3
+  cp -R $EIGENINCLUDE eigen3/eigen3
+
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DBOOST_ROOT:PATH=$BOOSTDIR \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DQT_QMAKE_EXECUTABLE=/usr/bin/qmake-qt4 \
+    -DSEQAN_INCLUDE_DIR=$SEQANINCLUDE \
+    -DEIGEN3_INCLUDE_DIR=$(pwd)/eigen3 \
+    -DBOOST_USE_STATIC=OFF \
+    -DHAS_XSERVER=OFF \
+    -DWITH_GUI=OFF \
+    -DPYOPENMS=<%= variant_name == 'python' ? 'ON' : 'OFF' %> \
+    .. <%= redirect(:configure) %>
+
+  make <%= redirect(:compile) %>
+
+  <% if variant_name == 'python' %>
+  rm -f ../src/pyOpenMS/pxds/ConsensusID.pxd
+  make pyopenms <%= redirect(:compile) %>
+  <% end %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+
+  <% if variant_name == 'python' %>
+  PYTHONDEPSDIR=$(pwd)/python
+  cd pyOpenMS
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+
+  cp -Rv $PYTHONDEPSDIR <%= dest_dir %> <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  <% end %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+  <% if variant_name == 'python' %>
+  setenv ${appcaps}PYTHON ${appdir}/python
+  <% end %>
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  <% if variant_name == 'python' %>
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  <% end %>
+
+  prepend-path PATH ${appdir}/bin
