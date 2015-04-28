@@ -1,0 +1,94 @@
+---
+:schema: 1
+:title: snpEff
+:license: LGPLv3
+:summary: Fast variant effect predictor (SNP, MNP and InDels) for genomic data
+:url: http://snpeff.sourceforge.net/
+:description: |
+  snpEff is a variant annotation and effect prediction tool. It
+  annotates and predicts the effects of variants on genes (such as
+  amino acid changes).
+
+  Typical usage:
+
+    * Input: The inputs are predicted variants (SNPs, insertions,
+      deletions and MNPs). The input file is usually obtained as a
+      result of a sequencing experiment, and it is usually in variant
+      call format (VCF).
+    * Output: SnpEff analyzes the input variants. It annotates the
+      variants and calculates the effects they produce on known genes
+      (e.g. amino acid changes). A list of effects and annotations
+      that SnpEff can calculate can be found at
+      http://snpeff.sourceforge.net/faq.html#What_effects_are_predicted?
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr 28 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v3.3
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: snpEff_v3_3_core.zip
+:src_dir: snpEff
+:type: apps
+:version: '3.3'
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Java application
+:install: |
+  mkdir -p <%= dest_dir %>/{share,bin,etc,java}
+
+  cat <<\EOF > <%= dest_dir %>/bin/snpEff
+  #!/bin/bash
+  case "$1" in
+    eff|download|build|dump|cds)
+      cmd="$1"
+      shift
+      ;;
+    *)
+      cmd="eff"
+      ;;
+  esac
+  if [ "$SNPEFF_CONFIG" ]; then
+    SNPEFF_CONFIG_PARAM="-config $SNPEFF_CONFIG"
+  fi
+  java `eval echo $SNPEFF_JAVA_OPTS` -jar <%= dest_dir %>/java/snpEff.jar "$cmd" $SNPEFF_CONFIG_PARAM "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/snpEff
+  ln -s snpEff <%= dest_dir %>/bin/snpeff
+
+  cat <<\EOF > <%= dest_dir %>/bin/SnpSift
+  #!/bin/bash
+  java `eval echo $SNPEFF_JAVA_OPTS` -jar <%= dest_dir %>/java/SnpSift.jar "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/SnpSift
+  ln -s SnpSift <%= dest_dir %>/bin/snpsift
+
+  cp -Rv *.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  cp -Rv scripts galaxy <%= dest_dir %>/share <%= redirect(:install) %>
+
+  # XXX - point data_dir somewhere strategic?
+  cp -v snpEff.config <%= dest_dir %>/etc <%= redirect(:install) %>
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}ETC ${appdir}/etc
+
+  setenv ${appcaps}_CONFIG ${appdir}/etc/snpEff.config
+
+  prepend-path PATH ${appdir}/bin
