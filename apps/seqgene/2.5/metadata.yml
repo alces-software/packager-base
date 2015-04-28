@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: SeqGene
+:license: MIT License
+:summary: Software for mining next-gen sequencing datasets
+:url: http://sourceforge.net/apps/mediawiki/seqgene/index.php?title=SeqGene
+:description: |
+  SeqGene is an open-source software for mining next-gen sequencing
+  datasets, focusing on post-alignment quality control, SNP and indel
+  identification and annotation, RNA expression quantification, allele
+  specific expression, and expression-genotying association
+  analysis. SeqGene is especially suited for RNA-seq and exonome-seq
+  applications, with focus on protein coding and regulatory regions of
+  a genome. For RNA-seq applications, SeqGene implemented a novel
+  topology-based pathway analysis method to identify SNP-Expression
+  co-enrichment and SNP-Expression paths.
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr 28 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, v2.5
+  * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Aug 8 2011 Steve Norledge
+    - First created
+:src: seqgene2_5.zip
+:src_dir: seqgene2_5
+:type: apps
+:version: '2.5'
+:compilers:
+  noarch:
+:compile: |
+  # This is a binary distribution of a Python application
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  mv <%= dest_dir %>/script <%= dest_dir %>/bin
+  chmod 755 <%= dest_dir %>/bin/*.py
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
