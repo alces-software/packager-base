@@ -1,0 +1,69 @@
+---
+:schema: 1
+:license: LGPLv2.1
+:summary: A high-performance visualization tool for interactive exploration of large, integrated genomic datasets
+:url: http://www.broadinstitute.org/software/igv/home
+:description: |
+  The Integrative Genomics Viewer (IGV) is a high-performance
+  visualization tool for interactive exploration of large, integrated
+  genomic datasets. It supports a wide variety of data types,
+  including array-based and next-generation sequence data, and genomic
+  annotations.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr 29 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v2.3.51
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v2.1.21
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: IGV_2.3.51.zip
+:src_dir: IGV_2.3.51
+:version: '2.3.51'
+:params:
+  :javahome: "Path to JAVA_HOME for Java 1.6 [specify path excluding bin/ directory, or 'default' for '/usr/lib/jvm/java-1.6.0/jre']"
+:compilers:
+  noarch:
+:compile: |
+  <% java_home = ( param(:javahome) == 'default' ? '/usr/lib/jvm/java-1.6.0/jre' : param(:javahome) ) %>
+  if [ ! -x <%= java_home %>/bin/java ]; then
+    echo Java could not be found in <%= java_home %>/bin/java. >/dev/stderr
+  fi
+  # no-op; this is a distribution of a Java application
+  java_version=$(<%= java_home %>/bin/java -version 2>&1 | grep "java version" | cut -d'"' -f2)
+  java_major=$(echo "$java_version" | cut -d'.' -f1)
+  java_minor=$(echo "$java_version" | cut -d'.' -f2)
+  if [[ "$java_major" -ne "1" || "$java_minor" -ne "6" ]]; then
+    echo Java version is $java_version but IGV requires v1.6.0 to run. Please ensure a compatible version is installed. >/dev/stderr
+  fi
+:install: |
+  mkdir <%= dest_dir %>/{bin,java}
+  cp -rv *.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/igv
+  #!/bin/bash
+  exec $IGV_JAVA_HOME/bin/java `eval echo $IGV_JAVA_OPTS` -jar "<%= dest_dir %>/java/igv.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/igv
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}JAVA ${appdir}/java
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  <% java_home = ( param(:javahome) == 'default' ? '/usr/lib/jvm/java-1.6.0/jre' : param(:javahome) ) %>
+  setenv ${appcaps}_JAVA_HOME <%= java_home %>
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_OPTS "-Dapple.laf.useScreenMenuBar=true -Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  prepend-path PATH ${appdir}/bin
