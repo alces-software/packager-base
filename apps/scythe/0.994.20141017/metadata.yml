@@ -1,0 +1,111 @@
+---
+:schema: 1
+:title: Scythe
+:license: MIT License
+:summary: A very simple adapter trimmer
+:url: https://github.com/vsbuffalo/scythe
+:description: |
+
+  Scythe uses a Naive Bayesian approach to classify contaminant
+  substrings in sequence reads. It considers quality information,
+  which can make it robust in picking out 3'-end adapters, which often
+  include poor quality bases.
+
+  Most next generation sequencing reads have deteriorating quality
+  towards the 3'-end. It's common for a quality-based trimmer to be
+  employed before mapping, assemblies, and analysis to remove these
+  poor quality bases. However, quality-based trimming could remove
+  bases that are helpful in identifying (and removing) 3'-end adapter
+  contaminants. Thus, it is recommended you run Scythe before
+  quality-based trimming, as part of a read quality control pipeline.
+
+  The Bayesian approach Scythe uses compares two likelihood models:
+  the probability of seeing the matches in a sequence given
+  contamination, and not given contamination. Given that the read is
+  contaminated, the probability of seeing a certain number of matches
+  and mistmatches is a function of the quality of the sequence. Given
+  the read is not contaminated (and is thus assumed to be random
+  sequence), the probability of seeing a certain number of matches and
+  mismatches is chance. The posterior is calculated across both these
+  likelihood models, and the class (contaminated or not contaminated)
+  with the maximum posterior probability is the class selected.
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr 29 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 0.994 and made MAX_ADAPTERS configurable
+  * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Updated to latest version 0.993 and added example script
+  * Tue Oct 30 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: scythe-0.994.20141017.tar.gz
+:src_dir: vsbuffalo-scythe-20d3cff
+:type: apps
+:version: '0.994.20141017'
+:params:
+  :maxadapters: "Set the MAX_ADAPTERS compile time configuration variable to increase the adapter limit [integer 100 <= x <= 50000 or 'default' to use the default of 1000]"
+:compilers:
+  gcc:
+:compile: |
+  <%
+  a = param(:maxadapters).to_i
+  if param(:maxadapters) != 'default' && (a < 100 || a > 50000)
+  %>
+  echo "Error: invalid maxadapters (<%= a %>) was specified.  Must be an integer 100 <= x <= 50000 or the string 'default'." > /dev/stderr
+  exit 1
+  <% else %>
+  sed -i -e 's/^#define MAX_ADAPTERS.*/#define MAX_ADAPTERS <%= a %>/g' src/scythe.h
+  <% end %>
+  make all <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,example}
+  cp -av README.md LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av scythe <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av illumina_adapters.fa testing/reads.fastq <%= dest_dir %>/example <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Example usage with test data'
+    description: 'Run scythe with minimal options using supplied test data'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full Scythe usage information see:
+      #   https://github.com/vsbuffalo/scythe
+
+      # Input directory
+      INPUT_DIR="scythe/input"
+
+      # Output directory
+      OUTPUT_DIR="scythe/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Adapter file
+      ADAPTER_FILE="$INPUT_DIR/illumina_adapters.fa"
+
+      # Output file
+      OUTPUT_FILE="$OUTPUT_DIR/trimmed_sequences.fasta"
+
+      # Sequence file
+      SEQUENCE_FILE="$INPUT_DIR/reads.fastq"
+
+      # Additional command-line options
+      SCYTHE_OPTIONS=""
+
+      # Create output directory
+      mkdir -p "$OUTPUT_DIR"
+
+      # Set up input data
+      if [ ! -d "$INPUT_DIR" ]; then
+          cp -Rv "$SCYTHEEXAMPLE" "$INPUT_DIR"
+      fi
+
+      # Run Scythe command line
+      scythe -a "$ADAPTER_FILE" -o "$OUTPUT_FILE" "$SEQUENCE_FILE"
