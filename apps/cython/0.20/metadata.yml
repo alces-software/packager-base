@@ -26,6 +26,8 @@
       low-level or high-performance libraries and applications
 :group: Languages
 :changelog: |
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added python3 and python34 variants (for Python 3.3.x and 3.4.x support)
   * Wed Jun  4 2014 James Donohue <james.donohue@alces-software.com>
     - Bumped to v0.20
   * Wed Feb  6 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -36,13 +38,40 @@
 :version: '0.20'
 :compilers:
   gcc:
-:requirements:
-  :build: apps/python
-  :runtime: apps/python
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build:
+        - apps/python ~> 2.7.0
+      :runtime:
+        - apps/python ~> 2.7.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.3.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.4.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
 :compile: |
-  python setup.py build <%= redirect(:build) %>
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
-  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
 :module: |
   setenv ${appcaps}DIR ${appdir}
@@ -50,4 +79,4 @@
   setenv ${appcaps}PYTHON ${appdir}/python
 
   prepend-path PATH ${appdir}/bin
-  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
