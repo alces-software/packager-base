@@ -1,0 +1,11 @@
+--- qutip/fortran/qutraj_evolve.f90.orig	2015-05-06 16:26:01.068811999 +0000
++++ qutip/fortran/qutraj_evolve.f90	2015-05-06 16:26:14.120647915 +0000
+@@ -45,7 +45,7 @@
+ 
+   type(operat) :: hamilt
+   type(operat), allocatable :: c_ops(:), e_ops(:)
+-  type(options) :: ode
++  type(options), SAVE :: ode
+ 
+   ! Hermitian conjugated operators
+   type(operat), allocatable :: c_ops_hc(:)
