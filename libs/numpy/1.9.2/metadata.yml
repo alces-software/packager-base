@@ -20,6 +20,8 @@
 :type: libs
 :group: Mathematics
 :changelog: |
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added python34 variant for Python 3.4.x
   * Thu Mar 26 2015 - James Donohue <james.donohue@alces-software.com>
     - Bumped to v1.9.2
   * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
@@ -55,6 +57,13 @@
     :requirements:
       :build: apps/python3 ~> 3.3.0
       :runtime: apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :build: apps/python3 ~> 3.4.0
+      :runtime: apps/python3 ~> 3.4.0
 :compile: |
   export BLAS=<%= compiler[:blas_dir] %>
   export LAPACK=<%= compiler[:lapack_dir] %>
