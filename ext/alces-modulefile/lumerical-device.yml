@@ -1,0 +1,43 @@
+---
+:schema: 1
+:name: lumerical-device
+:version: '4.1.150'
+:type: apps
+:title: Lumerical DEVICE
+:license: Commercial
+:summary: Powerful semiconductor TCAD device simulation software for the design, analysis and optimization of semiconductor-based optoelectronic components
+:url: https://www.lumerical.com/tcad-products/device/
+:description: |
+  DEVICE employs the industry proven drift-diffusion equations to
+  model steady state and transient behavior of charge carriers in
+  semiconductors. Using advanced finite-element mesh generation
+  algorithms, DEVICE is capable of efficiently handling arbitrary
+  geometries, enabling accurate modeling of innovative integrated
+  optoelectronic designs.
+
+  DEVICE provides users with a complete set of tools to design and
+  evaluate semiconductors, including integrated process simulation,
+  comprehensive physical material models and robust numerical
+  algorithms for device simulation.
+
+  When combined with MODE Solutions, Lumerical's waveguide design
+  environment, DEVICE provides a powerful tool for the design and
+  analysis of active components such as high speed optoelectronic
+  modulators.
+
+  Along with FDTD Solutions, MODE Solutions, and INTERCONNECT, DEVICE
+  is a key part of Lumerical's comprehensive photonic design and
+  analysis tools. All of Lumerical's solvers provide support for data
+  import/export and integration into common EDA tools, enabling
+  complete product design flows from component architecture and
+  optimization to large scale device and system design.
+:group: Physics
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

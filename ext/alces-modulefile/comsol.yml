@@ -1,0 +1,30 @@
+---
+:schema: 1
+:name: comsol
+:version: '5.0'
+:type: apps
+:title: COMSOL Multiphysics
+:license: Commercial
+:summary: Simulation Tool for Electrical, Mechanical, Fluid Flow, and Chemical applications
+:url: https://uk.comsol.com/comsol-multiphysics
+:description: |
+  COMSOL Multiphysics is a general-purpose software platform, based
+  on advanced numerical methods, for modeling and simulating
+  physics-based problems. With COMSOL Multiphysics, you will be able
+  to account for coupled or multiphysics phenomena. With more than 30
+  add-on products to choose from, you can further expand the
+  simulation platform with dedicated physics interfaces and tools for
+  electrical, mechanical, fluid flow, and chemical
+  applications. Additional interfacing products connect your COMSOL
+  Multiphysics simulations with technical computing, CAD, and ECAD
+  software.
+:group: Physics
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

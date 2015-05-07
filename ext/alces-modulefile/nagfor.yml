@@ -1,0 +1,41 @@
+---
+:schema: 1
+:name: nagfor
+:version: '6.0'
+:type: apps
+:title: NAG Fortran Compiler
+:license: Commercial
+:summary: Fortran compiler from the Numerical Algorithms Group
+:url: http://www.nag.co.uk/nagware/np.asp
+:description: |
+  The NAG Fortran Compiler is robust, highly tested, and valued by
+  developers all over the globe for its checking capabilities and
+  detailed error reporting. Release 6.0 has extensive support for both
+  legacy and modern Fortran features, and also supports parallel
+  programming with OpenMP.
+
+  The NAG Compiler provides support for:
+
+    * Fortran 2008 (partial)
+    * Fortran 2003 (almost complete)
+    * Fortran 95
+    * OpenMP 3.1
+    * OpenMP 3.0
+:group: Compilers
+:params:
+  :license_file: "Kusari license file path (file path or <server>:<port> format)"
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib/NAG_Fortran
+  setenv ${appcaps}MAN ${appdir}/man
+
+  setenv NAG_KUSARI_FILE <%= param('license_file') %>
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/NAG_Fortran
+  prepend-path MANPATH ${appdir}/man

@@ -1,0 +1,32 @@
+---
+:schema: 1
+:name: lumerical-fdtd
+:version: '8.7.4'
+:type: apps
+:title: Lumerical FDTD Solutions
+:license: Commercial
+:summary: High performance 3D FDTD-method Maxwell solver for the design, analysis and optimization of nanophotonic devices, processes and materials
+:url: https://www.lumerical.com/tcad-products/fdtd/
+:description: |
+  FDTD Solutions is a 3D Maxwell solver, capable of analyzing the
+  interaction of UV, visible, and IR radiation with complicated
+  structures employing wavelength scale features.
+
+  FDTD Solutions empowers designers to confront the most challenging
+  photonic design problems. Rapid prototyping and highly-accurate
+  simulations reduce reliance upon costly experimental prototypes,
+  leading to a quicker assessment of design concepts and reduced
+  product development costs. FDTD Solutions can facilitate your
+  success in diverse application areas, from fundamental photonics
+  research to current industrial applications in imaging, lighting,
+  biophotonics, photovoltaics, and many more.
+:group: Physics
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

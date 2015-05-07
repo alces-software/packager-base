@@ -1,0 +1,24 @@
+---
+:schema: 1
+:name: mathematica
+:version: '10.0'
+:type: apps
+:title: Wolfram Mathematica
+:license: Commercial
+:summary: All-in-one computation and visualization system, development environment, and deployment engine
+:url: http://www.wolfram.com/mathematica/
+:description: |
+  Mathematica is an all-in-one computation and visualization system,
+  development environment, and deployment engine.  It is used across
+  diverse technical fields, including engineering, science, and
+  financial analysis.
+:group: Mathematics
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/Executables
+
+  prepend-path PATH ${appdir}/Executables

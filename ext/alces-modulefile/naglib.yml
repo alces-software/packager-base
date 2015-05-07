@@ -1,0 +1,29 @@
+---
+:schema: 1
+:name: naglib
+:version: '24'
+:type: libs
+:title: NAG Fortran Library
+:license: Commercial
+:summary: Collection of numerical and statistical algorithms
+:url: http://www.nag.co.uk/nagware/np.asp
+:description: |
+  The NAG Fortran Library contains hundreds of routines which are
+  powerful, reliable, flexible and ready for use from a wide range of
+  operating systems, languages, environments and packages including
+  Excel, Java, MATLAB(R), .NET/C# and many more.
+:group: Libraries
+:params:
+  :license_file: "Kusari license file path (file path or <server>:<port> format)"
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  setenv NAG_KUSARI_FILE <%= param('license_file') %>
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib

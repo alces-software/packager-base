@@ -1,0 +1,42 @@
+---
+:schema: 1
+:name: lumerical-mode
+:version: '6.6.4'
+:type: apps
+:title: Lumerical MODE Solutions
+:license: Commercial
+:summary: Comprehensive waveguide design environment for the analysis and optimization of planar integrated optical waveguides, components and fibers
+:url: https://www.lumerical.com/tcad-products/mode/
+:description: |
+  Supporting an eigenmode solver as well as various methods for
+  simulating guided propagation of optical fields over long distances,
+  MODE Solutions is an ideal tool for the design, analysis and
+  optimization of guided components. The eigenmode solver accurately
+  calculates the physical properties of guided modes in truly
+  arbitrary waveguide geometries. The 2.5D varFDTD solver in MODE
+  Solutions enables rapid and accurate simulation of planar waveguide
+  geometries such as SOI tapers and ring resonators, whereas the
+  eigenmode expansion (EME) solver is ideal for simulating long
+  distance light propagation in waveguide devices such as spot-size
+  converters, tapers and Bragg gratings.
+
+  When combined with DEVICE, Lumerical's optoelectronic solver, MODE
+  Solutions provides a powerful tool for the design and analysis of
+  active components such as high speed optoelectronic modulators.
+
+  Along with FDTD Solutions, INTERCONNECT and DEVICE, MODE Solutions
+  is a key part of Lumerical's comprehensive photonic design and
+  analysis tools. All of Lumerical's solvers provide support for data
+  import/export and integration into common EDA tools, enabling
+  complete product design flows from component architecture and
+  optimization to large scale device and system design.
+:group: Physics
+:changelog: |
+  * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created; happy general election day!
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
