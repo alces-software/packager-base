@@ -1,0 +1,113 @@
+---
+:schema: 1
+:title: FastQC
+:license: GPLv3+
+:summary: A quality control tool for high throughput sequence data
+:url: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+:description: |
+  FastQC aims to provide a simple way to do some quality control
+  checks on raw sequence data coming from high throughput sequencing
+  pipelines. It provides a modular set of analyses which you can use
+  to give a quick impression of whether your data has any problems of
+  which you should be aware before doing any further analysis.
+
+  The main functions of FastQC are:
+
+    * Import of data from BAM, SAM or FastQ files (any variant)
+    * Providing a quick overview to tell you in which areas there may
+      be problems
+    * Summary graphs and tables to quickly assess your data
+    * Export of results to an HTML based permanent report
+    * Offline operation to allow automated generation of reports
+      without running the interactive application
+:group: Bioinformatics
+:changelog: |
+  * Tue May 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 0.11.3
+  * Wed Nov 12 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated example script to correct comments.
+  * Wed Oct  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated example script to refer to correct fact for smp slots
+  * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Updated to latest version 0.11.2
+  * Fri Apr 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added example script and example FASTQ file
+  * Wed Oct 31 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fastqc_v0.11.3.zip
+:sources:
+  - ilmn_example.fq
+:src_dir: FastQC
+:type: apps
+:version: '0.11.3'
+:compilers:
+  noarch:
+:compile: |
+  sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i fastqc
+  chmod 755 fastqc
+:install: |
+  mkdir -p <%= dest_dir %>/{app,bin,doc,example}
+  cp -av *.jar fastqc Configuration Templates Help uk net org <%= dest_dir %>/app <%= redirect(:install) %>
+  cp -av *.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -v -D -m 0644 <%= source('ilmn_example.fq') %> <%= dest_dir %>/example/ <%= redirect(:install) %>
+  ln -s <%= dest_dir %>/app/fastqc <%= dest_dir %>/bin/fastqc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}APP ${appdir}/app
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    template: 'script:stub:smp-multislot'
+    name: 'Process an example FASTQ file'
+    description: 'Execute fastqc tool on a bundled example FASTQ file'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full FastQC usage information see:
+      #   http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+      #
+      # For command-line options, run: fastqc --help
+
+      # Configure output directory
+      OUTPUT_DIR=fastqc/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
+
+      # Specify the number of files which can be processed
+      # simultaneously.  Each thread will be allocated 250MB of
+      # memory.
+      #   (For GridScheduler tasks, you should update the amount of
+      #   memory per core requested in the "-l h_vmem" scheduler
+      #   directive above to 250M.)
+      THREADS={{ fact.smpNumSlots }}
+
+      # Specify the length of Kmer to look for in the Kmer content
+      # module. Specified Kmer length must be between 2 and 10. Default
+      # length is 5 if -k parameter is not specified.
+      KMER_LENGTH=5
+
+      # Input file (or files)
+      INPUT_FILES=("$FASTQCEXAMPLE/ilmn_example.fq")
+
+      # Command-line options (run `fastqc --help` for a list).
+      #FASTQC_OPTIONS=""
+
+      # Create output directory if it doesn't already exist
+      mkdir -p "$OUTPUT_DIR"
+
+      # Execute fastqc
+      fastqc -o "$OUTPUT_DIR" \
+        -t $THREADS \
+        -k $KMER_LENGTH \
+        $FASTQC_OPTIONS \
+        "${INPUT_FILES[@]}"
+
+      echo ""
+      echo "------------------"
+      echo " fastqc completed"
+      echo "------------------"
+      echo " Output is available in: $OUTPUT_DIR"
