@@ -1,0 +1,35 @@
+---
+:schema: 1
+:license: MIT License
+:title: samblaster
+:summary: Mark duplicates and extract discordant and split reads from sam files
+:url: https://github.com/GregoryFaust/samblaster
+:description: |
+  samblaster is a fast and flexible program for marking duplicates in
+  read-id grouped paired-end SAM files. It can also optionally output
+  discordant read pairs and/or split read mappings to separate SAM
+  files, and/or unmapped/clipped reads to a separate FASTQ file. When
+  marking duplicates, samblaster will require approximately 20MB of
+  memory per 1M read pairs.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue May 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: samblaster-v.0.1.21.tar.gz
+:src_dir: samblaster-v.0.1.21
+:version: '0.1.21'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -m 0644 -v LICENSE.txt README.md SAMBLASTER_Supplemental.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0755 -v samblaster <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
