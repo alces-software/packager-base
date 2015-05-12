@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: MIT License
+:title: LUMPY
+:summary: A probabilistic framework for structural variant discovery
+:url: https://github.com/arq5x/lumpy-sv
+:description: |
+  Comprehensive discovery of structural variation (SV) from whole
+  genome sequencing data requires multiple detection signals including
+  read-pair, split-read, read-depth and prior knowledge. Owing to
+  technical challenges, extant SV discovery algorithms either use one
+  signal in isolation, or at best use two sequentially. We present
+  LUMPY, a novel SV discovery framework that naturally integrates
+  multiple SV signals jointly across multiple samples. We show that
+  LUMPY yields improved sensitivity, especially when SV signal is
+  reduced owing to either low coverage data or low intra-sample
+  variant allele frequency. We also report a set of 4,564 validated
+  breakpoints from the NA12878 human genome.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue May 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: lumpy-sv-0.2.11.tar.gz
+:src_dir: lumpy-sv-0.2.11
+:version: '0.2.11'
+:compilers:
+  gcc:
+:requirements:
+  :runtime:
+    - apps/samtools
+    - apps/python
+    - apps/samblaster
+    - libs/numpy
+    - libs/pysam
+:compile: |
+  make <%= redirect(:make) %>
+  # create config file
+  cat <<\EOF > bin/lumpyexpress.config
+  LUMPY_HOME=${LUMPYDIR}
+
+  LUMPY=${LUMPYBIN}/lumpy
+  SAMBLASTER=${SAMBLASTERBIN}/samblaster
+  SAMBAMBA=
+  SAMTOOLS=${SAMTOOLSBIN}/samtools
+  PYTHON=${PYTHONBIN}/python
+
+  PAIREND_DISTRO=${LUMPYSHARE}/scripts/pairend_distro.py
+  BAMGROUPREADS=${LUMPYSHARE}/scripts/bamkit/bamgroupreads.py
+  BAMFILTERRG=${LUMPYSHARE}/scripts/bamkit/bamfilterrg.py
+  BAMLIBS=${LUMPYSHARE}/scripts/bamkit/bamlibs.py
+  EOF
+  sed -i -e 's,^CONFIG=.*,CONFIG=${LUMPYETC}/lumpyexpress.config,g' bin/lumpyexpress
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,etc,share}
+  install -D -m 0644 -v LICENSE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0755 -v bin/lumpy bin/lumpyexpress <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -D -m 0644 -v bin/lumpyexpress.config <%= dest_dir %>/etc <%= redirect(:install) %>
+  cp -Rv data scripts test <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
