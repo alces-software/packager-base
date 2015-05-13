@@ -24,11 +24,13 @@
       which includes conditionals, loops, user-defined recursive
       functions and input and output facilities.
 :group: Languages
-:requirements: 
+:requirements:
   :build:
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Wed May 13 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Moved Rprofile out of subdirectory and added to sources list
   * Wed Feb 11 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v3.1.2
   * Fri Jul 11 2014 - Ben Armston <ben.armston@alces-software.com>
@@ -60,6 +62,8 @@
   * Fri Feb 18 2011 Steve Norledge
     - First created
 :src: R-3.1.2.tar.gz
+:sources:
+  - Rprofile
 :type: apps
 :version: '3.1.2'
 :compilers:
@@ -85,7 +89,7 @@
 
   # Install example files.
   mkdir -v <%= dest_dir %>/example/ <%= redirect(:install) %>
-  install -D -m 0644 <%= source('example/Rprofile') %> <%= dest_dir %>/example <%= redirect(:install) %>
+  install -D -m 0644 <%= source('Rprofile') %> <%= dest_dir %>/example <%= redirect(:install) %>
 :module: |
   set r_user_libs $::env(HOME)/gridware/share/R/${version}
   set r_site_libs <%= File.expand_path(Config.gridware) %>/share/R/${version}
