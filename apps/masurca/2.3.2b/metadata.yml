@@ -1,0 +1,87 @@
+---
+:schema: 1
+:title: MaSuRCA
+:license: GPLv2+
+:summary: Whole genome assembly
+:url: http://www.genome.umd.edu/masurca.html
+:description: |
+  MaSuRCA is whole genome assembly software. It combines the
+  efficiency of the de Bruijn graph and Overlap-Layout-Consensus (OLC)
+  approaches. MaSuRCA can assemble data sets containing only short
+  reads from Illumina sequencing or a mixture of short reads and long
+  reads (Sanger, 454).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed May 13 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: MaSuRCA-2.3.2b.tar.gz
+:src_dir: MaSuRCA-2.3.2b
+:version: '2.3.2b'
+:compilers:
+  gcc:
+:requirements:
+  :rpms:
+    - chrpath
+:compile: |
+  mkdir dist
+  DISTDIR=$(pwd)/dist
+
+  export QR_DIR=quorum
+
+  cd jellyfish
+  ./configure --prefix=$DISTDIR --program-suffix=-2.0 <%= redirect(:configure_jf) %>
+  make install <%= redirect(:compile_jf) %>
+  cd ..
+
+  export PKG_CONFIG_PATH=$(make -s -C jellyfish print-pkgconfigdir):$PKG_CONFIG_PATH
+  BINDIR=$(make -s -C jellyfish print-bindir)
+  LIBDIR=$(make -s -C jellyfish print-libdir)
+  PATH="$BINDIR:$PATH"
+  
+  cd CA/kmer
+  ./configure.sh
+  make install <%= redirect(:compile_ca_kmer) %>
+  cd ../src
+  make LD_RUN_PATH="$LIBDIR" <%= redirect(:compile_ca) %>
+  cd ../..
+  mkdir -p $DISTDIR/CA/Linux-amd64/bin
+  cp -R CA/Linux-amd64/bin/* $DISTDIR/CA/Linux-amd64/bin
+
+  cd SuperReads
+  ./configure --prefix=$DISTDIR <%= redirect(:configure_superreads) %>
+  make install <%= redirect(:compile_superreads ) %>
+  cd ..
+
+  cd quorum
+  ./configure --prefix=$DISTDIR --enable-relative-paths \
+    <%= redirect(:configure_quorum) %>
+  make install <%= redirect(:compile_quorum) %>
+  cd ..
+
+  for a in $(file dist/CA/Linux-amd64/bin/* | grep ELF | cut -f1 -d':'); do
+    strip $a
+    chrpath -d $a
+  done
+
+  for a in $(file $BINDIR/* | grep ELF | cut -f1 -d':'); do
+    strip $a
+    chrpath -d $a
+  done
+
+  mkdir dist/etc
+  dist/bin/masurca -g dist/etc/sr_config_example.txt
+:install: |
+  cp -Rv dist/* <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
