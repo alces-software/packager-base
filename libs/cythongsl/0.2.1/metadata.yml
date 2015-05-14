@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: CythonGSL
+:license: GPLv3+
+:summary: Cython interface for the GNU Scientific Library (GSL)
+:url: https://github.com/twiecki/CythonGSL
+:description: |
+  CythonGSL provides a Cython interface for the GNU Scientific Library (GSL).
+
+  Cython is the ideal tool to speed up numerical computations by
+  converting typed Python code to C and generating Python wrappers so
+  that these compiled functions can be called from Python. Scientific
+  programming often requires use of various numerical routines
+  (e.g. numerical integration, optimization). While SciPy provides
+  many of those tools, there is an overhead associated with using
+  these functions within your Cython code. CythonGSL allows you to
+  shave off that last layer by providing Cython declarations for the
+  GSL which allow you to use this high-quality library from within
+  Cython without any Python overhead.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu May 14 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: CythonGSL-0.2.1.tar.gz
+:src_dir: CythonGSL-0.2.1
+:version: '0.2.1'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/setuptools
+    - apps/cython
+  :build: 
+    - apps/python
+  :runtime: 
+    - apps/python
+    - apps/setuptools
+    - libs/gsl
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
