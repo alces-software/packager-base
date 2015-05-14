@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: h5utils
+:license: 
+:summary: Utilities for visualization and conversion of scientific data in HDF5 format
+:url: http://ab-initio.mit.edu/wiki/index.php/H5utils
+:description: |
+  h5utils is a set of utilities for visualization and conversion of
+  scientific data in the free, portable HDF5 format.
+
+  Besides providing a simple tool for batch visualization as PNG
+  images, h5utils also includes programs to convert HDF5 datasets into
+  the formats required by other free visualization software
+  (e.g. plain text, Vis5d, and VTK).
+:type: apps
+:group: Utilities
+:changelog: |
+  * Thu May 14 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: h5utils-1.12.1.tar.gz
+:version: '1.12.1'
+:compilers:
+  gcc:
+:variants:
+  default:
+    :requirements:
+      :build:
+        - apps/hdf5_serial
+      :runtime:
+        - apps/hdf5_serial
+    :configure_flags: 'CPPFLAGS="-I$HDF5_SERIALINCLUDE" LDFLAGS="-L$HDF5_SERIALLIB"'
+  mpi:
+    :requirements:
+      :build:
+        - apps/hdf5_mpi
+      :runtime:
+        - apps/hdf5_mpi
+    :configure_flags: 'CPPFLAGS="-I$HDF5_MPIINCLUDE -I$MPI_HOME/include" LDFLAGS="-L$HDF5_MPILIB"'
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= variant[:configure_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
