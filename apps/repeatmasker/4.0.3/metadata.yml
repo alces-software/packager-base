@@ -1,0 +1,88 @@
+---
+:schema: 1
+:license: OSL 2.1; see http://opensource.org/licenses/osl-2.1.php
+:summary: Screens DNA sequences for interspersed repeats and low complexity DNA sequences
+:url: http://www.repeatmasker.org/
+:description: |
+  RepeatMasker is a program that screens DNA sequences for
+  interspersed repeats and low complexity DNA sequences. The output of
+  the program is a detailed annotation of the repeats that are present
+  in the query sequence as well as a modified version of the query
+  sequence in which all the annotated repeats have been masked
+  (default: replaced by Ns). On average, almost 50% of a human genomic
+  DNA sequence currently will be masked by the program. Sequence
+  comparisons in RepeatMasker are performed by one of several popular
+  search engines including, cross_match, ABBlast/WUBlast, RMBlast and
+  Decypher.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun 04 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added version 4.0.3 and ensured perl loaded at build time
+  * Mon May 12 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 4.0.5
+  * Wed Feb 27 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: RepeatMasker-open-4-0-3.tar.gz
+:src_dir: RepeatMasker
+:type: apps
+:version: '4.0.3'
+:params: 
+  :library: "Path to tar.gz file complete RepeatMasker repeat library or 'dist' to use the minimal repeat library distributed with RepeatMasker"
+:requirements:
+  :tool: apps/cpanminus
+  :build:
+    - apps/trf
+    - apps/rmblast
+    - apps/perl
+  :runtime:
+    - apps/trf
+    - apps/rmblast
+    # Requires Perl v5.008 or later 
+    - apps/perl
+:compilers:
+  gcc:
+:additional_prereqs:
+  - Tie::File
+  - Getopt::Long
+  - POSIX
+  - File::Copy
+  - File::Path
+  - Data::Dumper
+  - Cwd
+  # Requires a version of Scalar::Util compiled with XS option
+  - Scalar::Util
+  # Requires at least version 2.06 of Storable
+  - Storable~2.06
+:compile: |
+  for a in DateRepeats DupMasker ProcessRepeats RepeatMasker RepeatProteinMask util/*; do
+    sed -e 's|#!.*perl\s*$|#!/usr/bin/env perl|g' -e 's|#!.*perl -w\s*$|#!/usr/bin/env perl\nuse warnings;|g' -i $a
+  done
+  # Install required Perl modules
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in <%= package.additional_prereqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  # Perform other setup tasks (derived from ./configure script)
+  sed -e "s#\$TRF_PRGM = \"\"#\$TRF_PRGM = \"$TRFBIN\/trf\"#" \
+    -e "s#\$DEFAULT_SEARCH_ENGINE = \".*\"#\$DEFAULT_SEARCH_ENGINE = \"ncbi\"#"\
+    -e "s#\$RMBLAST_DIR   = \".*\"#\$RMBLAST_DIR   = \"$RMBLASTBIN\"#" \
+    < RepeatMaskerConfig.tmpl > RepeatMaskerConfig.pm
+  <% if param(:library).to_s.downcase != 'dist' %>
+    tar -xzf <%= param(:library) %>
+  <% end %>
+  util/buildRMLibFromEMBL.pl Libraries/RepeatMaskerLib.embl > Libraries/RepeatMasker.lib <%= redirect(:setup) %>
+  makeblastdb -dbtype nucl -in Libraries/RepeatMasker.lib <%= redirect(:setup) %>
+  makeblastdb -dbtype prot -in Libraries/RepeatPeps.lib <%= redirect(:setup) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{doc,bin}
+  cp -Rv *.pm <%= dest_dir %>/perl/lib/perl5 <%= redirect(:install) %>
+  cp -Rv license.txt README INSTALL repeatmasker.help <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv RepeatMasker bluegrad.jpg DateRepeats daterepeats.help DupMasker HTMLAnnotHeader.html Libraries Matrices ProcessRepeats RepeatProteinMask util <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/perl/man
