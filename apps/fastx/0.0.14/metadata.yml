@@ -1,0 +1,54 @@
+---
+:schema: 1
+:license: AGPLv3+
+:summary: A collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing
+:url: http://hannonlab.cshl.edu/fastx_toolkit/
+:description: |
+  The FASTX-Toolkit is a collection of command line tools for
+  Short-Reads FASTA/FASTQ files preprocessing.
+
+  Next-Generation sequencing machines usually produce FASTA or FASTQ
+  files, containing multiple short-reads sequences (possibly with
+  quality information).
+
+  The main processing of such FASTA/FASTQ files is mapping (aka
+  aligning) the sequences to reference genomes or other databases
+  using specialized programs. Example of such mapping programs are:
+  Blat, SHRiMP, LastZ, MAQ and many many others.
+
+  However, it is sometimes more productive to preprocess the
+  FASTA/FASTQ files before mapping the sequences to the genome -
+  manipulating the sequences to produce better mapping results. The
+  FASTX-Toolkit tools perform some of these preprocessing tasks.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun  6 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v0.0.14
+  * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: fastx_toolkit-0.0.14.tar.bz2
+:src_dir: fastx_toolkit-0.0.14
+:type: apps
+:version: '0.0.14'
+:requirements:
+  :build: libs/gtextutils >= 0.6
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path GDFONTPATH /usr/share/fonts/dejavu
+  setenv GNUPLOT_DEFAULT_GDFONT DejaVuSans
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
