@@ -1,0 +1,70 @@
+---
+:schema: 1
+:license: UNKNOWN - refer to http://soap.genomics.org.cn/ICLU.html
+:title: SOAP-ICLU
+:summary: Identify genome-wide large variants, such as CNVs and LOH etc.
+:url: http://soap.genomics.org.cn/ICLU.html
+:description: |
+  ICLU is an open source tool developed for Identifying genome-wide
+  large variants, such as CNVs and LOH etc. using target re-sequencing
+  data without a mactched sample. It is implemented in the Perl
+  platform and only for analysis on Human being re-sequencing data.
+
+  The alogrithms and software in this package were developed by BGI
+  (wangyu@genomics.cn).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ICLUv1.01_package.tar.gz
+:src_dir: ICLUv1.01_package
+:version: '1.01'
+:compilers:
+  noarch:
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :runtime:
+    - apps/circos
+    - apps/samtools = 0.1.12
+    - apps/bwa = 0.5.9
+    - apps/gatk ~> 2.4.0
+:patches:
+  - remove-absolute-paths.patch
+:perllibs:
+  - Statistics::Descriptive
+  - Statistics::Distributions
+  - Parallel::ForkManager
+  - List::Util
+  - Getopt::Long
+  - File::Basename
+  - Data::Dumper
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  <% package.perllibs.each do |s| %>
+    cpanm <%= s %> <%= redirect(:cpanm) %>
+  <% end %>
+  # sed #!s to use env
+  for a in bin/*.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  install -D -m 0644 -v ICLU-V1.01_tutorial.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0755 -v bin/*.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv example material <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin

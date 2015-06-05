@@ -1,0 +1,262 @@
+--- bin/ICLU.V1.01.pl.orig	2014-02-18 10:13:56.000000000 +0000
++++ bin/ICLU.V1.01.pl	2015-06-05 12:30:13.393335510 +0000
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/usr/bin/env perl
+ #modified at:	2013-6-25	1)add CNV && LOH detection algorithm(ExomeCNV algorithm) 
+ #modified at:	2013-8-17	1)Change CNV detect algorithm
+ #modified at:	2013-8-27	1)add CNV annotation 2)set parameters to control analysis step
+@@ -130,17 +130,17 @@
+ 	print "start creat Sample$n\_$_.step1_Fq2Bam.sh\n";
+ 	open FQ,">$out_dir/$_/sh/Sample$n\_$_.step1_Fq2Bam.sh" or die $!;
+ 	mkdir $out_dir."/$_/Deal_raw_data" unless (-d $out_dir."/$_/Deal_raw_data");
+-	print FQ "time -p perl $Bin/Filter_raw_data.pl -Fq1 $fq{$_}[0] -Res $out_dir/$_/Deal_raw_data -Q_system $fq{$_}[4] -Ada $fq{$_}[2] -Rsta Yes && echo finished fitering and sta raw data && echo This-Work-Filter_raw_data-is-Completed  \n";
++	print FQ "time -p Filter_raw_data.pl -Fq1 $fq{$_}[0] -Res $out_dir/$_/Deal_raw_data -Q_system $fq{$_}[4] -Ada $fq{$_}[2] -Rsta Yes && echo finished fitering and sta raw data && echo This-Work-Filter_raw_data-is-Completed  \n";
+ 	mkdir $out_dir."/$_/Alignment" unless (-d $out_dir."/$_/Alignment");
+-	print FQ " time -p $Bin/bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz > $out_dir/$_/Alignment/$_\_1.sai && echo This-Work-Product-sai1-is-Completed\n";
+-	print FQ " time -p $Bin/bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz > $out_dir/$_/Alignment/$_\_2.sai && echo This-Work-Product-sai2-is-Completed\n";
+-	print FQ " time -p $Bin/bwa sampe -r \'\@RG\tID:$SAMPLE\_foo\tSM:$SAMPLE\tLB:$SAMPLE\tPL:illumina\tCN:BGI\tPG:BWA-0.5.9' $Ref $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz >$out_dir/$_/Alignment/$_\.sam &&  echo This-Work-Product-sam-is-Completed && rm $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz \n";
+-	print FQ "$Bin/samtools view -u -b -S -t $Ref_fai $out_dir/$_/Alignment/$_\.sam  >$out_dir/$_/Alignment/$_\.bam && echo finished bam  && rm $out_dir/$_/Alignment/$_\.sam\n";
+-	print FQ "$Bin/samtools index $out_dir/$_/Alignment/$_\.bam \n";
+-	print FQ "$Bin/samtools sort -m 200000000 $out_dir/$_/Alignment/$_\.bam $out_dir/$_/Alignment/$_\.sort && echo finished sort bam && rm $out_dir/$_/Alignment/$_\.bam\n";
+-	print FQ "$Bin/samtools rmdup $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.rmdup.bam &&  echo finished rmdup bam && rm $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.bam.bai\n";
+-	print FQ "$Bin/samtools index $out_dir/$_/Alignment/$_\.rmdup.bam \n";	
+-	print FQ "$Bin/samtools view -H $out_dir/$_/Alignment/$_\.rmdup.bam >$out_dir/$_/Alignment/$_\.reheader.sam\n";
++	print FQ " time -p bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz > $out_dir/$_/Alignment/$_\_1.sai && echo This-Work-Product-sai1-is-Completed\n";
++	print FQ " time -p bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz > $out_dir/$_/Alignment/$_\_2.sai && echo This-Work-Product-sai2-is-Completed\n";
++	print FQ " time -p bwa sampe -r \'\@RG\tID:$SAMPLE\_foo\tSM:$SAMPLE\tLB:$SAMPLE\tPL:illumina\tCN:BGI\tPG:BWA-0.5.9' $Ref $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz >$out_dir/$_/Alignment/$_\.sam &&  echo This-Work-Product-sam-is-Completed && rm $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz \n";
++	print FQ "samtools view -u -b -S -t $Ref_fai $out_dir/$_/Alignment/$_\.sam  >$out_dir/$_/Alignment/$_\.bam && echo finished bam  && rm $out_dir/$_/Alignment/$_\.sam\n";
++	print FQ "samtools index $out_dir/$_/Alignment/$_\.bam \n";
++	print FQ "samtools sort -m 200000000 $out_dir/$_/Alignment/$_\.bam $out_dir/$_/Alignment/$_\.sort && echo finished sort bam && rm $out_dir/$_/Alignment/$_\.bam\n";
++	print FQ "samtools rmdup $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.rmdup.bam &&  echo finished rmdup bam && rm $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.bam.bai\n";
++	print FQ "samtools index $out_dir/$_/Alignment/$_\.rmdup.bam \n";	
++	print FQ "samtools view -H $out_dir/$_/Alignment/$_\.rmdup.bam >$out_dir/$_/Alignment/$_\.reheader.sam\n";
+ 	print " finished writing Sample$n\_$_.step1_Fq2Bam.sh\n";
+ #	my @CHR=('chr1','chr2','chr3','chr4','chr5','chr6','chr7','chr8','chr9','chr10','chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20','chr21','chr22','chrX','chrY');
+ 	my $circle=0;
+@@ -155,24 +155,24 @@
+ 		my $chr=$CHR[$_];
+ 		
+ 		open  REAL,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step2_$chr.Bam2recal.sh" or die $!;
+-		print REAL "$Bin/samtools view -h -b $out_dir/$SAMPLE/Alignment/$SAMPLE\.rmdup.bam $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
+-		print REAL "$Bin/samtools reheader $out_dir/$SAMPLE/Alignment/$SAMPLE.reheader.sam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  && echo This-Work-reheader-bam-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
+-		print REAL "$Bin/samtools index $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam -R $Ref -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals --known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -nt 6 &&  echo This-Work-RealignerTargetCreator-is-Completed;\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T IndelRealigner -l INFO -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  -R $Ref -targetIntervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam  -known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -compress 0 &&  echo This-Work-IndelRealigner-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam.bai\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T BaseRecalibrator -R $Ref -knownSites $SNP -knownSites $INDEL -L $Chr_dir/$chr.intervals -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -ip 200 -plots $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pdf -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp && echo This-Work-BaseRecalibrator-is-Completed ;\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T PrintReads  -R $Ref -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -BQSR $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam && echo This-Work-PrintReads-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam.bai $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bai\n";
++		print REAL "samtools view -h -b $out_dir/$SAMPLE/Alignment/$SAMPLE\.rmdup.bam $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
++		print REAL "samtools reheader $out_dir/$SAMPLE/Alignment/$SAMPLE.reheader.sam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  && echo This-Work-reheader-bam-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
++		print REAL "samtools index $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam\n";
++		print REAL "time -p gatk_RealignerTargetCreator -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam -R $Ref -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals --known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -nt 6 &&  echo This-Work-RealignerTargetCreator-is-Completed;\n";
++		print REAL "time -p gatk_IndelRealigner -l INFO -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  -R $Ref -targetIntervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam  -known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -compress 0 &&  echo This-Work-IndelRealigner-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam.bai\n";
++		print REAL "time -p gatk_BaseRecalibrator -R $Ref -knownSites $SNP -knownSites $INDEL -L $Chr_dir/$chr.intervals -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -ip 200 -plots $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pdf -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp && echo This-Work-BaseRecalibrator-is-Completed ;\n";
++		print REAL "time -p gatk_PrintReads  -R $Ref -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -BQSR $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam && echo This-Work-PrintReads-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam.bai $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bai\n";
+ 		open  PreCNV,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step3.$chr.Recalbam2cov_baf.sh" or die $!;
+-		print PreCNV "perl $Bin/generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
+-		print PreCNV "$Bin/samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam\n";
+-		print PreCNV "$Bin/pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
++		print PreCNV "generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
++		print PreCNV "samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam\n";
++		print PreCNV "pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
+ 		if(!($SAMPLE_GENDER =~/M/ && ($_==22 || $_==23)))
+ 		{
+-			print PreCNV "$Bin/pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
+-			print PreCNV "$Bin/baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf\n";
+-#			print PreCNV "$Bin/baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
++			print PreCNV "pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
++			print PreCNV "baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf\n";
++#			print PreCNV "baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
+ 
+-#			print PreCNV "$Bin/Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region 20 $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
++#			print PreCNV "Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region 20 $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
+ #			print LIST2 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.Ftest2LOH.txt\n";
+ #			print LIST3 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.MAF_R_Het.txt\n";
+ 		}
+@@ -184,7 +184,7 @@
+ 	}
+ 	print "start creat Control_step2.cov_baf2datum-line.sh\n";
+ 	open DATUM,">$out_dir/Control_step4.cov_baf2datum-line.sh" or die $!;
+-	print DATUM "time -p perl $Bin/Creat_Control.v1.01.pl $out_dir/Mul_$Gender\_Samples_cov.list $out_dir/Control_$Gender $out_dir/Mul_$Gender\_recal.cov.list && echo finished creat datum-line for cnv\n";
++	print DATUM "time -p Creat_Control.v1.01.pl $out_dir/Mul_$Gender\_Samples_cov.list $out_dir/Control_$Gender $out_dir/Mul_$Gender\_recal.cov.list && echo finished creat datum-line for cnv\n";
+ 	print DATUM "find $out_dir/*/Alignment -name \"*coverage\" > $out_dir/Control\_ctr.list && echo finished found all coverage files for cnv detection\n";
+ 	print DATUM "find $out_dir/*/Alignment -name \"*baf.filter\" >$out_dir/control\_pop.list && echo finished found all baf files for loh/upd detection\n";	
+ 	print "end creat Control_step2.cov_baf2datum-line.sh\n";
+@@ -248,18 +248,18 @@
+ 		my $num=$_;
+ 		my $chr=$CHR[$_];
+ 		open  PreCNV,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step1_$chr.bam2cov_baf.sh" or die $!;
+-		print PreCNV "$Bin/samtools index $BAM \n";
+-		print PreCNV "$Bin/samtools view -h -b $BAM $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
+-		print PreCNV "perl $Bin/generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
+-		print PreCNV "$Bin/samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
+-		print PreCNV "$Bin/pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
++		print PreCNV "samtools index $BAM \n";
++		print PreCNV "samtools view -h -b $BAM $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
++		print PreCNV "generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
++		print PreCNV "samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
++		print PreCNV "pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
+ 		if(!($SAMPLE_GENDER =~/M/ && ($_==22 || $_==23)))
+ 		{
+-			print PreCNV "$Bin/pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf \n";
+-			print PreCNV "$Bin/baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
+-#			print PreCNV "$Bin/baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
++			print PreCNV "pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf \n";
++			print PreCNV "baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
++#			print PreCNV "baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
+ 
+-#			print PreCNV "$Bin/Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region 20 $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
++#			print PreCNV "Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region 20 $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
+ #			print LIST2 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.Ftest2LOH.txt\n";
+ #			print LIST3 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.MAF_R_Het.txt\n";
+ 		}
+@@ -271,7 +271,7 @@
+ 	}
+ 	print "start creat Control_step2.cov_baf2datum-line.sh\n";
+ 	open DATUM,">$out_dir/Control_step2.cov_baf2datum-line.sh" or die $!;
+-	print DATUM "time -p perl $Bin/Creat_Control.v1.01.pl $out_dir/Mul_$Gender\_Samples_cov.list $out_dir/Control_$Gender $out_dir/Mul_$Gender\_recal.cov.list && echo finished creat datum-line for cnv\n";
++	print DATUM "time -p Creat_Control.v1.01.pl $out_dir/Mul_$Gender\_Samples_cov.list $out_dir/Control_$Gender $out_dir/Mul_$Gender\_recal.cov.list && echo finished creat datum-line for cnv\n";
+ 	print DATUM "find $out_dir/*/Alignment -name \"*coverage\" > $out_dir/Contol\_ctr.list && echo finished found all coverage files for cnv detection\n";
+ 	print DATUM "find $out_dir/*/Alignment -name \"*baf.filter\" >$out_dir/Control\_pop.list && echo finished found all baf files for loh/upd detection\n";
+ 	print "end creat Control_step2.cov_baf2datum-line.sh\n";
+@@ -389,17 +389,17 @@
+ 	print "start creat Sample$n\_$_.step1_Fq2Bam.sh\n";
+ 	open FQ,">$out_dir/$_/sh/Sample$n\_$_.step1_Fq2Bam.sh" or die $!;
+ 	mkdir $out_dir."/$_/Deal_raw_data" unless (-d $out_dir."/$_/Deal_raw_data");
+-	print FQ "time -p perl $Bin/Filter_raw_data.pl -Fq1 $fq{$_}[0] -Res $out_dir/$_/Deal_raw_data -Q_system $fq{$_}[4] -Ada $fq{$_}[2] -Rsta Yes && echo finished fitering and sta raw data && echo This-Work-Filter_raw_data-is-Completed  \n";
++	print FQ "time -p Filter_raw_data.pl -Fq1 $fq{$_}[0] -Res $out_dir/$_/Deal_raw_data -Q_system $fq{$_}[4] -Ada $fq{$_}[2] -Rsta Yes && echo finished fitering and sta raw data && echo This-Work-Filter_raw_data-is-Completed  \n";
+ 	mkdir $out_dir."/$_/Alignment" unless (-d $out_dir."/$_/Alignment");
+-	print FQ " time -p $Bin/bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz > $out_dir/$_/Alignment/$_\_1.sai && echo This-Work-Product-sai1-is-Completed\n";
+-	print FQ " time -p $Bin/bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz > $out_dir/$_/Alignment/$_\_2.sai && echo This-Work-Product-sai2-is-Completed\n";
+-	print FQ " time -p $Bin/bwa sampe -r \'\@RG\tID:$SAMPLE\_foo\tSM:$SAMPLE\tLB:$SAMPLE\tPL:illumina\tCN:BGI\tPG:BWA-0.5.9' $Ref $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz >$out_dir/$_/Alignment/$_\.sam &&  echo This-Work-Product-sam-is-Completed && rm $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz \n";
+-	print FQ "$Bin/samtools view -u -b -S -t $Ref_fai $out_dir/$_/Alignment/$_\.sam  >$out_dir/$_/Alignment/$_\.bam && echo finished bam  && rm $out_dir/$_/Alignment/$_\.sam\n";
+-	print FQ "$Bin/samtools index $out_dir/$_/Alignment/$_\.bam \n";
+-	print FQ "$Bin/samtools sort -m 200000000 $out_dir/$_/Alignment/$_\.bam $out_dir/$_/Alignment/$_\.sort && echo finished sort bam && rm $out_dir/$_/Alignment/$_\.bam\n";
+-	print FQ "$Bin/samtools rmdup $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.rmdup.bam &&  echo finished rmdup bam && rm $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.bam.bai\n";
+-	print FQ "$Bin/samtools index $out_dir/$_/Alignment/$_\.rmdup.bam \n";	
+-	print FQ "$Bin/samtools view -H $out_dir/$_/Alignment/$_\.rmdup.bam >$out_dir/$_/Alignment/$_\.reheader.sam\n";
++	print FQ " time -p bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz > $out_dir/$_/Alignment/$_\_1.sai && echo This-Work-Product-sai1-is-Completed\n";
++	print FQ " time -p bwa aln -i 15 -L -t 4 -I $Ref $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz > $out_dir/$_/Alignment/$_\_2.sai && echo This-Work-Product-sai2-is-Completed\n";
++	print FQ " time -p bwa sampe -r \'\@RG\tID:$SAMPLE\_foo\tSM:$SAMPLE\tLB:$SAMPLE\tPL:illumina\tCN:BGI\tPG:BWA-0.5.9' $Ref $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz >$out_dir/$_/Alignment/$_\.sam &&  echo This-Work-Product-sam-is-Completed && rm $out_dir/$_/Alignment/$_\_1.sai $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_1.clean.fq.gz $out_dir/$_/Alignment/$_\_2.sai $out_dir/$_/Deal_raw_data/$_\_2.clean.fq.gz \n";
++	print FQ "samtools view -u -b -S -t $Ref_fai $out_dir/$_/Alignment/$_\.sam  >$out_dir/$_/Alignment/$_\.bam && echo finished bam  && rm $out_dir/$_/Alignment/$_\.sam\n";
++	print FQ "samtools index $out_dir/$_/Alignment/$_\.bam \n";
++	print FQ "samtools sort -m 200000000 $out_dir/$_/Alignment/$_\.bam $out_dir/$_/Alignment/$_\.sort && echo finished sort bam && rm $out_dir/$_/Alignment/$_\.bam\n";
++	print FQ "samtools rmdup $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.rmdup.bam &&  echo finished rmdup bam && rm $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.sort.bam $out_dir/$_/Alignment/$_\.bam.bai\n";
++	print FQ "samtools index $out_dir/$_/Alignment/$_\.rmdup.bam \n";	
++	print FQ "samtools view -H $out_dir/$_/Alignment/$_\.rmdup.bam >$out_dir/$_/Alignment/$_\.reheader.sam\n";
+ 	print " finished writing Sample$n\_$_.step1_Fq2Bam.sh\n";
+ 	my $circle=0;
+ #	$SAMPLE_GENDER=`grep Gender $out_dir/$_/Alignment/depthCoverage.stat|awk '{print $4}'`;
+@@ -414,24 +414,24 @@
+ 		my $chr=$CHR[$_];
+ 		
+ 		open  REAL,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step2_$chr.Bam2recal.sh" or die $!;
+-		print REAL "$Bin/samtools view -h -b $out_dir/$SAMPLE/Alignment/$SAMPLE\.rmdup.bam $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
+-		print REAL "$Bin/samtools reheader $out_dir/$SAMPLE/Alignment/$SAMPLE.reheader.sam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  && echo This-Work-reheader-bam-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
+-		print REAL "$Bin/samtools index $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T RealignerTargetCreator -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam -R $Ref -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals --known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -nt 6 &&  echo This-Work-RealignerTargetCreator-is-Completed;\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T IndelRealigner -l INFO -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  -R $Ref -targetIntervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam  -known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -compress 0 &&  echo This-Work-IndelRealigner-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam.bai\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T BaseRecalibrator -R $Ref -knownSites $SNP -knownSites $INDEL -L $Chr_dir/$chr.intervals -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -ip 200 -plots $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pdf -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp && echo This-Work-BaseRecalibrator-is-Completed ;\n";
+-		print REAL "time -p java -Xmx4g -jar $Bin/GenomeAnalysisTK.jar -T PrintReads  -R $Ref -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -BQSR $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam && echo This-Work-PrintReads-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam.bai $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bai\n";
++		print REAL "samtools view -h -b $out_dir/$SAMPLE/Alignment/$SAMPLE\.rmdup.bam $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
++		print REAL "samtools reheader $out_dir/$SAMPLE/Alignment/$SAMPLE.reheader.sam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  && echo This-Work-reheader-bam-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
++		print REAL "samtools index $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam\n";
++		print REAL "time -p gatk_RealignerTargetCreator -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam -R $Ref -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals --known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -nt 6 &&  echo This-Work-RealignerTargetCreator-is-Completed;\n";
++		print REAL "time -p gatk_IndelRealigner -l INFO -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam  -R $Ref -targetIntervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam  -known $INDEL -L $Chr_dir/$chr.intervals -ip 200 -compress 0 &&  echo This-Work-IndelRealigner-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.relign.intervals $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.reheader.bam.bai\n";
++		print REAL "time -p gatk_BaseRecalibrator -R $Ref -knownSites $SNP -knownSites $INDEL -L $Chr_dir/$chr.intervals -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -ip 200 -plots $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pdf -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp && echo This-Work-BaseRecalibrator-is-Completed ;\n";
++		print REAL "time -p gatk_PrintReads  -R $Ref -I $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam -BQSR $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp -o $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam && echo This-Work-PrintReads-is-Completed && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.grp $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bam.bai $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.bai\n";
+ 		open  PreCNV,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step3.$chr.Recalbam2cov_baf.sh" or die $!;
+-		print PreCNV "perl $Bin/generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
+-		print PreCNV "$Bin/samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam \n";
+-		print PreCNV "$Bin/pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
++		print PreCNV "generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
++		print PreCNV "samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.realign.baseQrecal.bam \n";
++		print PreCNV "pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
+ 		if(!($SAMPLE_GENDER =~/M/ && ($_==22 || $_==23)))
+ 		{
+-			print PreCNV "$Bin/pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
+-			print PreCNV "$Bin/baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf\n";
+-			print PreCNV "$Bin/baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
++			print PreCNV "pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
++			print PreCNV "baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf\n";
++			print PreCNV "baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
+ 
+-			print PreCNV "$Bin/Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region $Mloh $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
++			print PreCNV "Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region $Mloh $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
+ 			print LIST2 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.Ftest2LOH.txt\n";
+ 			print LIST3 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.MAF_R_Het.txt\n";
+ 		}
+@@ -445,18 +445,18 @@
+ 	my $CONTROL_G=($SAMPLE_GENDER=~/M/)?$CONTROL_G_M:$CONTROL_G_F;
+ 	print "start creat Sample$n\_$SAMPLE.step4_1.Cov2CNV.sh\n";
+ 	open CNV,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step4_1.Cov2CNV.sh" or die $!;#$out_dir/$_/Variants
+-	print CNV "perl $Bin/Cov_seg.new.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list $CONTROL_G $out_dir/$SAMPLE/Variants && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.*.pileup\n";
+-	print CNV "perl $Bin/CNV_controlv4.pl --case $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list --ctrl $CONTROL --o $out_dir/$SAMPLE/Variants --gff $GFF --band $BAND --min_cnv $Mcnv --pvalue_cutoff $P \n";
++	print CNV "Cov_seg.new.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list $CONTROL_G $out_dir/$SAMPLE/Variants && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.*.pileup\n";
++	print CNV "CNV_controlv4.pl --case $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list --ctrl $CONTROL --o $out_dir/$SAMPLE/Variants --gff $GFF --band $BAND --min_cnv $Mcnv --pvalue_cutoff $P \n";
+ 	print " finished writing Sample$n\_$_.step4_1.Cov2CNV.sh\n";
+ 	print "start creat Sample$n\_$SAMPLE.step4_2.Baf2LOH.sh\n";
+ 	open LOH,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step4_2.Baf2LOH.sh" or die $!;
+-	print LOH "perl  $Bin/LOH_detect.pl -L $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list -S 2 -H $out_dir/$_/Alignment/$_.MAF_R_Het.list -CNV $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls -N $N_region -Cyto $BAND  -Gene $GFF  -O $out_dir/$SAMPLE/Variants/$SAMPLE.LOH.xls ";
++	print LOH "LOH_detect.pl -L $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list -S 2 -H $out_dir/$_/Alignment/$_.MAF_R_Het.list -CNV $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls -N $N_region -Cyto $BAND  -Gene $GFF  -O $out_dir/$SAMPLE/Variants/$SAMPLE.LOH.xls ";
+ 	print " finished writing Sample$n\_$_.step4_2.Baf2LOH.sh\n";
+ 	mkdir $out_dir."/$_/Circos" unless(-d $out_dir."/$_/Circos");
+ 	print "start creat Sample$n\_$SAMPLE.step5.Circos.sh\n";
+ 	open Circos,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step5.Circos.sh" or die $!;
+-	print Circos "perl $Bin/Formation2conf.new2.pl $out_dir/$SAMPLE/Variants/$SAMPLE.recal.cov.list $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list  $out_dir/$SAMPLE/Alignment/$SAMPLE.MAF_R_Het.list $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls /ifs2/ST_RH_PGD/USER/wangyu/bin/reseq/CNV/circos/circos-0.64 $out_dir/$SAMPLE/Circos\n";
+-	print Circos "/ifs2/ST_RH_PGD/USER/wangyu/bin/reseq/CNV/circos/circos-0.64/bin/circos -conf $out_dir/$SAMPLE/Circos/conf/total.conf -outputdir $out_dir/$SAMPLE/Circos -outputfile $out_dir/$SAMPLE/Circos/$SAMPLE.png\n";
++	print Circos "Formation2conf.new2.pl $out_dir/$SAMPLE/Variants/$SAMPLE.recal.cov.list $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list  $out_dir/$SAMPLE/Alignment/$SAMPLE.MAF_R_Het.list $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls $ENV{CIRCOSDIR} $out_dir/$SAMPLE/Circos\n";
++	print Circos "circos -conf $out_dir/$SAMPLE/Circos/conf/total.conf -outputdir $out_dir/$SAMPLE/Circos -outputfile $out_dir/$SAMPLE/Circos/$SAMPLE.png\n";
+ 	print " finished writing Sample$n\_$_.step5.Circos.sh\n";
+ 	close CNV;
+ 	}
+@@ -534,18 +534,18 @@
+ 		my $num=$_;
+ 		my $chr=$CHR[$_];
+ 		open  PreCNV,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step1_$chr.bam2cov_baf.sh" or die $!;
+-		print PreCNV "$Bin/samtools index $BAM \n";
+-		print PreCNV "$Bin/samtools view -h -b $BAM $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
+-		print PreCNV "perl $Bin/generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
+-		print PreCNV "$Bin/samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
+-		print PreCNV "$Bin/pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
++		print PreCNV "samtools index $BAM \n";
++		print PreCNV "samtools view -h -b $BAM $chr >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam && echo split $chr bam done\n";
++		print PreCNV "generate_pileup_loption_file.pl 0 $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed && echo finished producing $SAMPLE.$chr.pileup.bed  \n";
++		print PreCNV "samtools pileup -c -f $Ref -r 0.0000007 -l $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam >$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup && echo finished $SAMPLE.$chr.pileup && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.bam\n";
++		print PreCNV "pileup2cov.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed 20 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.coverage && echo finished $SAMPLE.$chr.coverage && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup.bed \n";
+ 		if(!($SAMPLE_GENDER =~/M/ && ($_==22 || $_==23)))
+ 		{
+-			print PreCNV "$Bin/pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
+-			print PreCNV "$Bin/baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf\n";
+-			print PreCNV "$Bin/baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
++			print PreCNV "pileup2baf.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup $Chr_dir/$chr.bed $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf && echo finished $SAMPLE.$chr.baf && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.pileup\n";
++			print PreCNV "baf_filter.V1.02.pl $SNP_dir/hg19.$chr.snp.vcf 0.1_0.9 $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter && echo finished $SAMPLE.$chr.baf.filter && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf\n";
++			print PreCNV "baf_pop.V1.01.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.filter $Baf_pop $chr $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final \n ";
+ 
+-			print PreCNV "$Bin/Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region 20 $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
++			print PreCNV "Ftest2LOH.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.baf.final $N_region 20 $out_dir/$SAMPLE/Alignment && echo finished Utest2LOH \n";
+ 			print LIST2 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.Ftest2LOH.txt\n";
+ 			print LIST3 "$out_dir/$SAMPLE/Alignment/$SAMPLE.$chr.MAF_R_Het.txt\n";
+ 		}
+@@ -559,17 +559,17 @@
+ 	my $CONTROL_G=($SAMPLE_GENDER=~/M/)?$CONTROL_G_M:$CONTROL_G_F;
+ 	print "start creat Sample$n\_$SAMPLE.step2_1.Cov2CNV.sh\n";
+ 	open CNV,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step2_1.Cov2CNV.sh" or die $!;#$out_dir/$_/Variants
+-	print CNV "perl $Bin/Cov_seg.new.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list $CONTROL_G $out_dir/$SAMPLE/Variants && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.*.pileup\n";
+-	print CNV "perl $Bin/CNV_controlv4.pl --case $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list --ctrl $CONTROL --o $out_dir/$SAMPLE/Variants --gff $GFF --band $BAND --min_cnv $Mcnv --pvalue_cutoff $P \n";
++	print CNV "Cov_seg.new.pl $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list $CONTROL_G $out_dir/$SAMPLE/Variants && rm $out_dir/$SAMPLE/Alignment/$SAMPLE.*.pileup\n";
++	print CNV "CNV_controlv4.pl --case $out_dir/$SAMPLE/Alignment/$SAMPLE.coverage.list --ctrl $CONTROL --o $out_dir/$SAMPLE/Variants --gff $GFF --band $BAND --min_cnv $Mcnv --pvalue_cutoff $P \n";
+ 	print " finished writing Sample$n\_$_.step2_1.Cov2CNV.sh\n";
+ 	print "start creat Sample$n\_$SAMPLE.step2_2.Baf2LOH.sh\n";
+ 	open LOH,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step2_2.Baf2LOH.sh" or die $!;
+-	print LOH "perl  $Bin/LOH_detect.pl -L $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list -S 2 -H $out_dir/$_/Alignment/$_.MAF_R_Het.list -CNV $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls -N $N_region -Cyto $BAND  -Gene $GFF  -O $out_dir/$SAMPLE/Variants/$SAMPLE.LOH.xls ";
++	print LOH "LOH_detect.pl -L $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list -S 2 -H $out_dir/$_/Alignment/$_.MAF_R_Het.list -CNV $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls -N $N_region -Cyto $BAND  -Gene $GFF  -O $out_dir/$SAMPLE/Variants/$SAMPLE.LOH.xls ";
+ 	print " finished writing Sample$n\_$_.step2_2.Baf2LOH.sh\n";
+ 	mkdir $out_dir."/$_/Circos" unless(-d $out_dir."/$_/Circos");
+ 	print "start creat Sample$n\_$SAMPLE.step3.Circos.sh\n";
+ 	open Circos,">$out_dir/$SAMPLE/sh/Sample$n\_$SAMPLE\_step3.Circos.sh" or die $!;
+-	print Circos "perl $Bin/Formation2conf.new2.pl $out_dir/$SAMPLE/Variants/$SAMPLE.recal.cov.list $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list  $out_dir/$SAMPLE/Alignment/$SAMPLE.MAF_R_Het.list $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls /ifs2/ST_RH_PGD/USER/wangyu/bin/reseq/CNV/circos/circos-0.64 $out_dir/$SAMPLE/Circos\n";
++	print Circos "Formation2conf.new2.pl $out_dir/$SAMPLE/Variants/$SAMPLE.recal.cov.list $out_dir/$SAMPLE/Alignment/$SAMPLE.Ftest2LOH.list  $out_dir/$SAMPLE/Alignment/$SAMPLE.MAF_R_Het.list $out_dir/$SAMPLE/Variants/$SAMPLE.CNV_calling.annotated.xls /ifs2/ST_RH_PGD/USER/wangyu/bin/reseq/CNV/circos/circos-0.64 $out_dir/$SAMPLE/Circos\n";
+ 	print Circos "/ifs2/ST_RH_PGD/USER/wangyu/bin/reseq/CNV/circos/circos-0.64/bin/circos -conf $out_dir/$SAMPLE/Circos/conf/total.conf -outputdir $out_dir/$SAMPLE/Circos -outputfile $out_dir/$SAMPLE/Circos/$SAMPLE.png\n";
+ 	print " finished writing Sample$n\_$_.step3.Circos.sh\n";
+ 	close CNV;
