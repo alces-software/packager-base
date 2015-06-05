@@ -1,0 +1,89 @@
+--- SOAPfusion/bin/indexbuilder.sh.orig	2015-06-05 11:09:09.923934133 +0000
++++ SOAPfusion/bin/indexbuilder.sh	2015-06-05 11:08:20.500555469 +0000
+@@ -1,19 +1,31 @@
+ #!/bin/bash
++
++if [ "$1" = "-h" -o "$1" = "--help" ]; then
++  echo "Usage: $0 <config file>"
++  exit
++elif [ -z "$1" ]; then
++  echo "$0: you must supply a config file path"
++  echo ""
++  echo "Usage: $0 <config file>"
++  exit 1
++elif [ ! -f "$1" ]; then
++  echo "$0: config file not found: $1"
++  exit 1
++fi
++
+ ################# Part I Configfie #############
+ 
+ echo "Program Started:"
+ echo "Reading the config file .................." >&2
+-source ./indexbuilder.cfg
+-echo "Config for the program path: $program_path" >&2
++source $1
++echo "Config for the working path: $work_path" >&2
+ echo "Config for the species name: $species" >&2
+ echo "Config for the transcript annotation: $transcript_psl" >&2
+ echo "Config for the NMToTreefam.txt: $NMToTreefam" >&2
+ echo "Config for the kgXref: $kgXref" >&2
+ 
+ 
+-reference_path=$program_path"/reference"
+-
+-ref_path=$program_path"/reference/"$species
++ref_path=$work_path
+ 
+ mkdir $ref_path
+ cd $ref_path
+--- SOAPfusion/soapfusion.sh.orig	2012-07-27 16:05:20.000000000 +0000
++++ SOAPfusion/soapfusion.sh	2015-06-05 11:08:04.560755859 +0000
+@@ -1,10 +1,22 @@
+ #!/bin/bash
+ 
++if [ "$1" = "-h" -o "$1" = "--help" ]; then
++  echo "Usage: $0 <config file>"
++  exit
++elif [ -z "$1" ]; then
++  echo "$0: you must supply a config file path"
++  echo ""
++  echo "Usage: $0 <config file>"
++  exit 1
++elif [ ! -f "$1" ]; then
++  echo "$0: config file not found: $1"
++  exit 1
++fi
++
+ ################# Part I Read Configfie #############
+ echo "Program Started:"
+ echo "Reading the config file .................." >&2
+-source ./soapfusion.cfg
+-echo "Config for the program path: $program_path" >&2
++source $1
+ echo "Config for the working path: $work_path" >&2
+ 
+ echo "Config for the species name: $species" >&2
+@@ -26,8 +38,8 @@
+ echo "Configuration Completed"
+ echo "........................."
+ ##///////////////// Making directory ////////////////////#########
+-reference_path=$program_path"/reference/"$species
+-program_path=$program_path"/bin"
++reference_path=$SOAPFUSIONSHARE"/reference/"$species
++program_path=$SOAPFUSIONBIN
+ 
+ OneSeg1=$work_path"/"$sample_name"_1.out";
+ TwoSeg1=$work_path"/"$sample_name"_2.out";
+@@ -46,6 +58,11 @@
+ 
+ Candidate="Candidate_"$sample_name;
+ 
++if [ ! -d "$work_path" ]; then
++    echo "$0: configured work path does not exist: $work_path"
++    exit 1
++fi
++
+ cd $work_path
+ 
+ 

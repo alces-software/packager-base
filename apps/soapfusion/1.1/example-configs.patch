@@ -1,0 +1,33 @@
+--- SOAPfusion/bin/indexbuilder.cfg.orig	2012-07-27 16:04:34.000000000 +0000
++++ SOAPfusion/bin/indexbuilder.cfg	2015-06-05 11:07:20.125314489 +0000
+@@ -1,12 +1,12 @@
+ ################## Configuration ########
+ 
+-################## UCSC Gene Annntation File #####################
+-program_path="/home/jkwu/PRO/BGI_HKU/program"
++work_path="$HOME/soapfusion"
+ 
++################## UCSC Gene Annntation File #####################
+ species="HG19"
+ 
+-transcript_psl="/home/jkwu/PRO/MII/simulation/reference/ref_hg19.psl"
++transcript_psl="$SOAPFUSIONSHARE/example/ref.psl"
+ 
+-NMToTreefam="/home/jkwu/PRO/MII/program/reference/NMToTreefam_hg19.txt"
++NMToTreefam="$SOAPFUSIONSHARE/example/NMToTreefam.txt"
+ 
+-kgXref="/home/jkwu/PRO/MII/program/reference/kgXref"
++kgXref="$SOAPFUSIONSHARE/example/kgXref"
+--- SOAPfusion/soapfusion.cfg.orig	2012-07-27 16:16:30.000000000 +0000
++++ SOAPfusion/soapfusion.cfg	2015-06-05 10:49:34.578710223 +0000
+@@ -1,9 +1,6 @@
+ ################## Configuration ########
+ 
+-################## Executable Path #####################
+-program_path="SOAPfusion/"
+-
+-work_path="work_directory"
++work_path="$HOME/soapfusion"
+ 
+ ################## Sample Name and Read Path #####################
+ species="hg18"

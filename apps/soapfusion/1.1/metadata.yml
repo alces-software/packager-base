@@ -1,0 +1,70 @@
+---
+:schema: 1
+:license: UNKNOWN - refer to http://soap.genomics.org.cn/SOAPfusion.html
+:title: SOAPfusion
+:summary: Fusion discovery with paired-end RNA-Seq reads
+:url: http://soap.genomics.org.cn/SOAPfusion.html
+:description: |
+  SOAPfusion is a novel tool for fusion discovery with paired-end
+  RNA-Seq reads. The tool follows a different strategy by "finding
+  fusions directly and verifying them", differentiating it from all
+  other existing tools by "finding the candidate regions and searching
+  for the fusions afterwards". This enables the fusion discovery
+  process to be more effective and sensitive, also with a specular
+  performance under low coverage of sequencing far more better than
+  other tools.
+
+  In the package, it encoporates several modules developped
+  specifically for mapping RNA-seq reads, finding gene fusions and
+  false positive elimination. One thing to note is that the
+  SOAPfusion-aligner is designed for mapping RNA-seq reads both in an
+  intact manner and segemental (with long distantance in-between, or
+  on different chromosomes) manner, which can be applied in other
+  bioinformatics senario requiring segmental mappings as well.
+
+  SOAPfusion is accurate and efficient for fusion discovery under
+  various sequencing coverage (10X~50X, see Section "Performance")
+  with high sensitivity (>=97%), low false positive rate (<=1.36%) and
+  has a saturation level of 10X, highlighting its ability to detect
+  fusions efficiently at low sequencing cost.
+
+  The alogrithms and software in this package were developed by the
+  Algorithm and Bioinformatics Group at The University of Hong Kong
+  (Jikun Wu , Dr. S.M. Yiu). In collaboration with BGI (Zhiyu Peng,
+  Wenqian Zhang).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SOAPfusion_all_in_one_package.zip
+:src_dir: submit
+:version: '1.1'
+:patches:
+  - example-configs.patch
+  - modified-scripts.patch
+:compilers:
+  bin:
+:compile: |
+  rm -f SOAPfusion/bin/{soapfusion,2bwt-builder}
+  pushd SOAPfusion/src/soapfusion-aligner
+  make <%= redirect(:compile) %>
+  mv soapfusion 2bwt-builder ../../bin
+  popd
+  mv SOAPfusion/soapfusion.cfg SOAPfusion/soapfusion.cfg.ex
+  mv SOAPfusion/bin/indexbuilder.cfg SOAPfusion/indexbuilder.cfg.ex
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  install -D -m 0644 -v "User Manual.pdf" "Package README.pdf" \
+    SOAPfusion/src/README.doc SOAPfusion/src/SOAPfusion_source_trunk_descr \
+    <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0644 -v SOAPfusion/*.ex <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv SOAPfusion/{example,reference,test} <%= dest_dir %>/share <%= redirect(:install) %>
+  install -D -m 0755 -v SOAPfusion/soapfusion.sh SOAPfusion/bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
