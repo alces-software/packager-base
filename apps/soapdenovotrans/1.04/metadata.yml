@@ -1,0 +1,39 @@
+---
+:schema: 1
+:license: GPLv3+
+:title: SOAPdenovo-Trans
+:summary: A de novo transcriptome assembler designed specifically for RNA-Seq
+:url: https://github.com/aquaskyline/SOAPdenovo-Trans
+:description: |
+  SOAPdenovo-Trans is a de novo transcriptome assembler basing on the
+  SOAPdenovo framework, adapt to alternative splicing and different
+  expression level among transcripts.The assembler provides a more
+  accurate, complete and faster way to construct the full-length
+  transcript sets.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SOAPdevnovo-Trans.1.04.tar.gz
+:src_dir: SOAPdenovo-Trans-4e25da665b381727a068becd5bf3f65e55654498
+:patches:
+  - remove-static-flag.patch
+:version: '1.04'
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:compile) %>
+  make 63mer=1 <%= redirect(:compile) %>
+  make 127mer=1 <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -m 0644 -v LICENSE README.md update.log <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0755 -v SOAPdenovo-Trans-* <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
