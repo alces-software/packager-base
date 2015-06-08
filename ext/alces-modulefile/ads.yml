@@ -1,0 +1,26 @@
+---
+:schema: 1
+:name: ads
+:version: '2015.01'
+:type: apps
+:title: Keysight ADS
+:license: Commercial
+:summary: Keysight ADS electronic design automation software
+:url: http://www.keysight.com/en/pc-1297113/advanced-design-system-ads
+:description: |
+  Advanced Design System is electronic design automation software for RF,
+  microwave, and high speed digital applications. For X-parameters* and 
+  3D EM simulators, Harmonic Balance, Circuit Envelope, Transient 
+  Convolution, Keysight Ptolemy. 
+:group: Apps
+:params:
+  :license_file: "FlexLM lmgrd Server (<port>@<server> format - probably 27000@headnode1.prv.clustername.compute.estate)"
+:changelog: |
+  * Mon May 18 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ADS_LICENSE_FILE <%= param('license_file') %>
+  prepend-path PATH ${appdir}/bin

@@ -1,0 +1,26 @@
+---
+:schema: 1
+:name: empro
+:version: '2015.01'
+:type: apps
+:title: Keysight EMPro
+:license: Commercial
+:summary: EMPro 3D EM Simulation Software
+:url: http://www.keysight.com/en/pc-1297143/empro-3d-em-simulation-software
+:description: |
+  EMPro is an electromagnetic (EM) simulation software design
+  platform for analyzing the 3D EM effects of components such as 
+  high-speed and RF IC packages, bondwires, antennas, on-chip 
+  and off-chip embedded passives and PCB interconnects
+:group: Apps
+:params:
+  :license_file: "FlexLM lmgrd Server (<port>@<server> format - probably 27000@headnode1.prv.clustername.compute.estate)"
+:changelog: |
+  * Mon May 18 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/linux_x86_64/bin/
+  setenv EMPRO_LICENSE_FILE <%= param('license_file') %>
+  prepend-path PATH ${appdir}/linux_x86_64/bin/

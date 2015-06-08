@@ -1,0 +1,27 @@
+---
+:schema: 1
+:name: matlab
+:version: 'R2014a'
+:type: apps
+:title: Matlab
+:license: Commercial
+:summary: Multi-paradigm numerical computing environment and fourth-generation programming language
+:url: http://uk.mathworks.com/products/matlab/
+:description: |
+  MATLAB(R) is the high-level language and interactive 
+  environment used by millions of engineers and 
+  scientists worldwide. It lets you explore and 
+  visualize ideas and collaborate across disciplines 
+  including signal and image processing, communications,
+  control systems, and computational finance.
+:group: Mathematics 
+:changelog: |
+  * Mon Jun  8 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Metadata tweaks
+  * Mon May 21 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+  prepend-path PATH ${appdir}/bin/
