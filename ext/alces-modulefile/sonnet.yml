@@ -1,0 +1,45 @@
+---
+:schema: 1
+:name: sonnet
+:version: '15.54'
+:type: apps
+:title: Sonnet Suites
+:license: Commercial
+:summary: 3D Planar High-Frequency Electromagnetic Software
+:url: http://www.sonnetsoftware.com/products/sonnet-suites/index.html
+:description: |
+  Sonnet's suites of high-frequency electromagnetic (EM) Software are
+  aimed at today's demanding design challenges involving predominantly
+  planar (3D planar) circuits and antennas. Predominantly planar
+  circuits include microstrip, stripline, coplanar waveguide, PCB
+  (single and multiple layers) and combinations with vias, vertical
+  metal sheets (z-directed strips), and any number of layers of metal
+  traces embedded in stratified dielectric material.
+
+  The Sonnet(R) Suites(TM) develop precise RF models (S-, Y-,
+  Z-parameters or extracted SPICE model) for planar circuits and
+  antennas. The software requires a physical description of your
+  circuit (arbitrary layout and material properties for metal and
+  dielectrics), and employs a rigorous Method-of-Moments EM analysis
+  based on Maxwell's equations that includes all parasitic,
+  cross-coupling, enclosure and package resonance effects.
+
+  Sonnet maintains a single, dedicated focus on providing the
+  industry's most accurate and reliable high frequency planar EM
+  software. Our aim is to make it easy for our customers to either
+  develop and analyze designs within our software, or to incorporate
+  our tools into their existing design processes and
+  frameworks. Customers need never commit to a proprietary framework
+  in order to get the best in planar EM analysis.
+:group: Engineering
+:params:
+  :license_file: "FlexLM lmgrd Server (<port>@<server> format - probably 7852@headnode1.prv.clustername.compute.estate)"
+:changelog: |
+  * Wed Jun 10 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv SONNETD_LICENSE_FILE <%= param('license_file') %>
+  prepend-path PATH ${appdir}/bin

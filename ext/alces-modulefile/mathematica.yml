@@ -13,12 +13,29 @@
   diverse technical fields, including engineering, science, and
   financial analysis.
 :group: Mathematics
+:params:
+  :license_server: "MathLM license server (or pass 'skip' if you don't have one)"
 :changelog: |
+  * Wed Jun 10 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Create license server file if necessary
   * Thu May  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created; happy general election day!
 :compiler: 'bin'
 :module: |
+  set mathematica_licensing_dir $::env(HOME)/.Mathematica/Licensing
+
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/Executables
 
+  <% if param(:license_server) != 'skip' %>
+  if { [module-info mode load] } {
+    # make the licensing directory if it doesn't exist
+    if { ! [file exists "${mathematica_licensing_dir}"] } {
+      file mkdir "${mathematica_licensing_dir}"
+      set fileId [open "${mathematica_licensing_dir}/mathpass" "w"]
+      puts -nonewline $fileId "!<%= param(:license_server) %>"
+      close $fileId
+    }
+  }
+  <% end %>
   prepend-path PATH ${appdir}/Executables
