@@ -1,0 +1,36 @@
+---
+:schema: 1
+:name: cst
+:version: '2015.2'
+:type: apps
+:title: CST Studio Suite
+:license: Commercial
+:summary: Electromagnetic simulation
+:url: https://www.cst.com/Products/CSTS2
+:description: |
+  The electromagnetic simulation software CST STUDIO SUITE is the
+  culmination of many years of research and development into the most
+  accurate and efficient computational solutions for electromagnetic
+  designs. It comprises CST’s tools for the design and optimization of
+  devices operating in a wide range of frequencies - static to
+  optical. Analyses may include thermal and mechanical effects, as
+  well as circuit simulation.
+
+  CST STUDIO SUITE benefits from an integrated design environment
+  which gives access to the entire range of solver technology. System
+  assembly and modeling facilitates multi-physics and co-simulation as
+  well as the management of entire electromagnetic systems.
+
+  CST STUDIO SUITE can offer considerable product to market advantages
+  such as shorter development cycles, virtual prototyping before
+  physical trials, and optimization instead of experimentation.
+:group: Engineering
+:changelog: |
+  * Tue Jun 16 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+
+  prepend-path PATH ${appdir}
