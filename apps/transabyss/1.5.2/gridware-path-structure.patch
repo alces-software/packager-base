@@ -1,0 +1,142 @@
+--- transabyss-analyze.orig	2014-11-04 00:03:46.000000000 +0000
++++ transabyss-analyze	2015-06-19 17:32:39.222925839 +0000
+@@ -55,8 +55,7 @@
+ STAMP_SPLICE = 'SPLICE.COMPLETE'
+ STAMP_TRACK = 'TRACK.COMPLETE'
+ 
+-PACKAGEDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+-BINDIR = os.path.join(PACKAGEDIR, 'bin')
++BINDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+ PARTITION_STATS_FILENAME = 'partition_stats.tsv'
+ 
+ def default_wd():
+@@ -70,35 +69,35 @@
+     """Return the default Trans-ABySS configuration file.
+     """
+ 
+-    return os.path.join(PACKAGEDIR, 'configs', 'transcriptome.cfg')
++    return os.path.join(BINDIR, '..', 'share', 'configs', 'transcriptome.cfg')
+ #enddef
+ 
+ def default_mmcfg():
+     """Return the default model_matcher configuration file.
+     """
+ 
+-    return os.path.join(PACKAGEDIR, 'configs', 'model_matcher.cfg')
++    return os.path.join(BINDIR, '..', 'share', 'configs', 'model_matcher.cfg')
+ #enddef
+ 
+ def default_annodir():
+     """Return the default annotations directory.
+     """
+ 
+-    return os.path.join(PACKAGEDIR, 'annotations')
++    return os.path.join(BINDIR, '..', 'share', 'annotations')
+ #enddef
+ 
+ def default_jobcfg():
+     """Return the default job configuration file.
+     """
+ 
+-    return os.path.join(PACKAGEDIR, 'configs', 'job_script.cfg')
++    return os.path.join(BINDIR, '..', 'share', 'configs', 'job_script.cfg')
+ #enddef
+ 
+ def default_jobtemplatedir():
+     """Return the default job script templates directory.
+     """
+ 
+-    return os.path.join(PACKAGEDIR, 'configs', 'templates')
++    return os.path.join(BINDIR, '..', 'share', 'configs', 'templates')
+ #enddef
+ 
+ def check_stamp(stamp):
+@@ -476,7 +475,7 @@
+     clusterdir = os.path.join(directory, 'cluster')
+     
+     if mmcfg is None:
+-        mmcfg = os.path.join(PACKAGEDIR, 'configs', 'model_matcher.cfg')
++        mmcfg = os.path.join(BINDIR, '..', 'share', 'configs', 'model_matcher.cfg')
+     #endif
+     
+     for d in [directory, clusterdir]:
+@@ -491,12 +490,12 @@
+     else:
+         log('ANALYSIS: %s' % ANALYSIS_FUSION)
+         task = 'fusion.py'
+-        script = os.path.join(PACKAGEDIR, 'analysis', task)
++        script = os.path.join(BINDIR, '..', 'python', 'analysis', task)
+         
+         job_name = name + '.fusion'
+ 
+         if annodir is None:
+-            annodir = os.path.join(PACKAGEDIR, 'annotations')
++            annodir = os.path.join(BINDIR, '..', 'python', 'annotations')
+         #endif
+                 
+         max_task_id = analysis_setup_dirs(os.path.join(outdir, ALN_DIRS[ALN_C2G], 'input'), clusterdir)
+@@ -624,7 +623,7 @@
+     clusterdir = os.path.join(directory, 'cluster')
+     
+     if mmcfg is None:
+-        mmcfg = os.path.join(PACKAGEDIR, 'configs', 'model_matcher.cfg')
++        mmcfg = os.path.join(BINDIR, '..', 'share', 'configs', 'model_matcher.cfg')
+     #endif
+     
+     for d in [directory, clusterdir]:
+@@ -639,12 +638,12 @@
+     else:
+         log('ANALYSIS: %s' % ANALYSIS_INDEL)
+         task = 'snv_caller.py'
+-        script = os.path.join(PACKAGEDIR, 'analysis', task)
++        script = os.path.join(BINDIR, '..', 'python', 'analysis', task)
+         
+         job_name = name + '.indel'
+ 
+         if annodir is None:
+-            annodir = os.path.join(PACKAGEDIR, 'annotations')
++            annodir = os.path.join(BINDIR, '..', 'python', 'annotations')
+         #endif
+                 
+         max_task_id = analysis_setup_dirs(os.path.join(outdir, ALN_DIRS[ALN_C2G], 'input'), clusterdir)              
+@@ -775,16 +774,16 @@
+     else:
+         log('ANALYSIS: %s' % ANALYSIS_SPLICE)
+         task = 'model_matcher.py'
+-        script = os.path.join(PACKAGEDIR, 'analysis', task)
++        script = os.path.join(BINDIR, '..', 'python', 'analysis', task)
+         
+         job_name = name + '.splice'
+         
+         if mmcfg is None:
+-            mmcfg = os.path.join(PACKAGEDIR, 'configs', 'model_matcher.cfg')
++            mmcfg = os.path.join(BINDIR, '..', 'share', 'configs', 'model_matcher.cfg')
+         #endif
+         
+         if annodir is None:
+-            annodir = os.path.join(PACKAGEDIR, 'annotations')
++            annodir = os.path.join(BINDIR, '..', 'share', 'annotations')
+         #endif
+         
+         max_task_id = analysis_setup_dirs(os.path.join(outdir, ALN_DIRS[ALN_C2G], 'input'), clusterdir)
+@@ -915,7 +914,7 @@
+     else:
+         log('ANALYSIS: %s' % ANALYSIS_TRACK)
+         task = 'align_parser.py'
+-        script = os.path.join(PACKAGEDIR, 'utilities', task)
++        script = os.path.join(BINDIR, '..', 'python', 'utilities', task)
+         
+         job_name = name + '.track'
+         
+--- transabyss.orig	2014-11-04 00:03:46.000000000 +0000
++++ transabyss	2015-06-19 17:32:39.222925839 +0000
+@@ -56,8 +56,7 @@
+ STAGE_FINAL = 'final'
+ STAGES = [STAGE_DBG, STAGE_UNITIGS, STAGE_CONTIGS, STAGE_REFERENCES, STAGE_JUNCTIONS, STAGE_FINAL]
+ 
+-PACKAGEDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+-BINDIR = os.path.join(PACKAGEDIR, 'bin')
++BINDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+ SKIP_PSL_SELF = os.path.join(BINDIR, 'skip_psl_self.awk')
+ SKIP_PSL_SELF_SS = os.path.join(BINDIR, 'skip_psl_self_ss.awk')
+ 

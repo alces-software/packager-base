@@ -1,0 +1,78 @@
+---
+:schema: 1
+:title: Trans-ABySS
+:license: BCCA License; see https://github.com/bcgsc/transabyss/blob/7216097e/LICENSE.txt
+:summary: Analyze ABySS multi-k-assembled shotgun transcriptome data
+:url: http://www.bcgsc.ca/platform/bioinfo/software/trans-abyss
+:description: |
+  Trans-ABySS is a software pipeline for analyzing ABySS-assembled
+  contigs from shotgun transcriptome data. The pipeline accepts
+  assemblies that were generated across a wide range of k values in
+  order to address variable transcript expression levels. It first
+  filters and merges the multi-k assemblies, generating a much smaller
+  set of nonredundant contigs. It contains scripts that map assembled
+  contigs to known transcripts, currently supporting the Blat
+  contig-to-genome aligner. It identifies novel splicing events like
+  exon-skipping, novel exons, retained introns, novel introns, and
+  alternative splicing. Its scripts can also identify candidate
+  gene-fusions, single-nucleotide variants, insertions, deletions, and
+  inversions.
+
+  The pipeline can be used with other assembly versions, and with
+  other species, once genome and transcript annotation files are
+  available. However, ABySS and Trans-ABySS are general tools that can
+  be used when a reference genome and transcript annotations are
+  unavailable.
+
+  The pipeline is written in Python, and typically is used via Perl
+  and shell wrapper scripts.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jun 19 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, 1.5.2
+  * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 1.5.2.zip
+:src_dir: transabyss-1.5.2
+:type: apps
+:version: '1.5.2'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :runtime:
+    - apps/python ~> 2.7.8
+    - apps/abyss ~> 1.5.2
+    - apps/blat
+    - apps/bowtie2 ~> 2.2.3
+    - apps/gmap >= 20140121
+    - apps/samtools = 0.1.19
+    - libs/pysam ~> 0.7.8
+    - libs/biopython 
+:patches:
+  - gridware-path-structure.patch
+  - modern-blat-compat.patch
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR python-igraph==0.7.1.post6 <%= redirect(:python) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  cp -Rv $PYTHONDEPSDIR <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/{bin,share,doc}
+  cp -Rv analysis utilities <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -Rv bin/* transabyss* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv annotations configs sample_dataset <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv LICENSE.txt README.txt TUTORIAL.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PYTHONPATH ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin

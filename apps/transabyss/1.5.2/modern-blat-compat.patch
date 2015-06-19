@@ -1,0 +1,16 @@
+--- utilities/fasta_utils.py.orig	2014-11-04 00:03:46.000000000 +0000
++++ utilities/fasta_utils.py	2015-06-19 17:33:31.454269202 +0000
+@@ -53,11 +53,9 @@
+         #print '%d => %d' % (lower, upper)
+         psl = outputpsl + '.' + str(index)
+         
+-        cmd_params = ['blat', '-noHead', '-t=dna', '-q=dna', '-out=psl', '-tileSize=18']
++        cmd_params = ['blat', '-noHead', '-t=dna', '-q=dna', '-out=psl']
+         minscore = int(math.ceil(percent_id * lower))
+-        if minscore <= 18 * 4:
+-            cmd_params.append('-oneOff=1')
+-        #endif
++ 
+         cmd_params.extend(['-maxGap=%d' % max_consecutive_edits, '-maxIntron=%d' % max_consecutive_edits, '-minScore=%d' % minscore, files[upper], files[lower]])
+         
+         if os.path.isfile(skip_psl_self_awk):
