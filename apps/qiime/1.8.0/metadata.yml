@@ -20,6 +20,8 @@
   samples.
 :group: Bioinformatics
 :changelog: |
+  * Web Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Restrict dependency on pycogent to exactly 1.5.3
   * Tue May 27 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v1.8.0
     - Remove obsolete patches for denoiser
@@ -43,12 +45,12 @@
   :build:
     - apps/python ~> 2.7.3
     - libs/numpy <= 1.7.1
-    - apps/pycogent >= 1.5.3
+    - apps/pycogent == 1.5.3
     - apps/ghc
   :runtime:
     - apps/python ~> 2.7.3
     - libs/numpy <= 1.7.1
-    - apps/pycogent ~> 1.5.3
+    - apps/pycogent == 1.5.3
     - libs/biomformat ~> 1.1.2
     - apps/pynast >= 1.2
     - apps/rdpclassifier >= 2.2
