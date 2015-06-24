@@ -1,0 +1,135 @@
+---
+:schema: 1
+:title: Qiime
+:license: GPL
+:summary: Quantitative Insights Into Microbial Ecology
+:url: http://qiime.org/index.html
+:description: |
+  QIIME (pronounced "chime") stands for Quantitative Insights Into
+  Microbial Ecology. QIIME is an open source software package for
+  comparison and analysis of microbial communities, primarily based on
+  high-throughput amplicon sequencing data (such as SSU rRNA)
+  generated on a variety of platforms, but also supporting analysis of
+  other types of data (such as shotgun metagenomic data). QIIME takes
+  users from their raw sequencing output through initial analyses such
+  as OTU picking, taxonomic assignment, and construction of
+  phylogenetic trees from representative sequences of OTUs, and
+  through downstream statistical analysis, visualization, and
+  production of publication-quality graphics. QIIME has been applied
+  to single studies based on billions of sequences from thousands of
+  samples.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.9.1
+    - Readded dependency on pycogent
+    - Removed lanemask_in_1s_and_0s (not required in 1.9.0+)
+    - Removed obsolete configuration variables (template_alignment_lanemask_fp, qiime_scripts_dir)
+  * Tue Mar 26 2015 James Donohue <james.donohue@alces-software.com>
+    - Updated to v1.9.0
+  * Tue May 27 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.8.0
+    - Remove obsolete patches for denoiser
+    - Pin numpy to <= 1.7.1 to fulfil QIIME requirement for >= 1.5.1, <= 1.7.1
+  * Wed Apr 23 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Depends on setuptools during installation
+    - Build FlowAlignment utility as part of installation to enable use of denoiser
+    - Now depends on ghc to build FlowAlignment utility
+    - Added patch and source file to correct upstream bugs with denoiser
+  * Wed Jul 24 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: qiime-1.9.1.tar.gz
+:src_dir: qiime-1.9.1
+:type: apps
+:version: '1.9.1'
+:compilers:
+  noarch:
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python ~> 2.7.3
+    - libs/numpy >= 1.9.0
+    - libs/scipy >= 0.14.0
+    - apps/pycogent == 1.5.3
+    - libs/pandas >= 0.13.1
+    - libs/biomformat >= 2.1.4
+    - libs/matplotlib >= 1.4.3
+    - apps/ghc
+    - apps/pynast = 1.2.2
+  :runtime:
+    - apps/python ~> 2.7.3
+    - libs/numpy >= 1.9.0
+    - libs/scipy >= 0.14.0
+    - apps/pycogent == 1.5.3
+    - libs/pandas >= 0.13.1
+    - libs/biomformat >= 2.1.4
+    - apps/pynast = 1.2.2
+    - apps/rdpclassifier >= 2.2
+    - apps/fasttree >= 2.1.3
+    - apps/tax2tree >= 1.0
+    # Also requires jre1.6.0_05
+    # Also requires gmp-devel (for compilation of FlowgramAlignment)
+    # Also requires freetype-devel, libpng-devel (for compilation of matplotlib)
+    # NB Because Qiime uses PyCogent, it inherits PyCogent's support for
+    # MPI via libs/mpi4py (if installed). If mpi4py is in the PYTHONPATH,
+    # some Qiime tools will give MPI_INIT errors unless they are run via
+    # mpi4run. PyCogent's loading of mpi4py can be disabled by setting
+    # DONT_USE_MPI=1 before running any tools.
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  # Derived from install_requires in setup.py
+  PYTHONDEPS="natsort<4.0.0 qcli>=0.1.1,<0.2.0 gdata emperor>=0.9.51,<1.0.0 scikit-bio>=0.2.3,<0.3.0 burrito>=0.9.1,<1.0.0 burrito-fillings>=0.1.1,<0.2.0 qiime-default-reference>=0.1.2,<0.2.0"
+  for PYTHONDEP in $PYTHONDEPS; do
+    easy_install --install-dir $PYTHONDEPSDIR $PYTHONDEP <%= redirect(:python) %>
+  done
+
+  cd qiime/support_files/denoiser/FlowgramAlignment
+  make <%= redirect(:make_ghc) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  PYTHON_DEST="<%= dest_dir %>/python/lib/python2.7/site-packages"
+  mkdir -p "$PYTHON_DEST"
+  cp -av $PYTHONDEPSDIR/* $PYTHON_DEST <%= redirect(:install) %>
+
+  export PYTHONPATH="$PYTHONPATH:$PYTHON_DEST"
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+
+  mv -v <%= dest_dir %>/python/bin <%= dest_dir %> <%= redirect(:install) %>
+
+  mkdir -p <%= dest_dir %>/share/data <%= redirect(:install) %>
+  core_set=<%= dest_dir %>/share/data/core_set_aligned.fasta.imputed
+  wget -O $core_set http://greengenes.lbl.gov/Download/Sequence_Data/Fasta_data_files/core_set_aligned.fasta.imputed
+
+  mkdir -p <%= dest_dir %>/etc <%= redirect(:install) %>
+  cat <<EOF > <%= dest_dir %>/etc/qiime_config
+  # Installation-wide Qiime configuration goes here
+  cluster_jobs_fp       start_parallel_jobs_sc.py
+  pynast_template_alignment_fp  $core_set
+  EOF
+
+  mv -v examples <%= dest_dir %>/share <%= redirect(:install) %>
+  mv -v doc <%= dest_dir %>/share <%= redirect(:install) %>
+
+  # Comment out default queue name from job script template
+  sed 's/#$ -q %s/#\0/' -i <%= dest_dir %>/bin/start_parallel_jobs_sc.py
+
+  install -v -D -m 0755 \
+    qiime/support_files/denoiser/FlowgramAlignment/FlowgramAli_4frame \
+    <%= dest_dir %>/bin/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/share/doc
+  setenv ${appcaps}DATA ${appdir}/share/data
+  setenv ${appcaps}EXAMPLES ${appdir}/share/examples
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  setenv QIIME_CONFIG_FP ${appdir}/etc/qiime_config
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path PATH ${appdir}/bin$
