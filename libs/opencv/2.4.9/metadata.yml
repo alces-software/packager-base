@@ -28,6 +28,8 @@
   governmental bodies.
 :group: Libraries
 :changelog: |
+  * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added support for TBB
   * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
     - Upgraded to version 2.4.9
   * Mon Oct  7 2013 - James Donohue <james.donohue@alces-software.com>
@@ -38,6 +40,15 @@
 :src_dir: opencv-2.4.9
 :type: libs
 :version: '2.4.9'
+:variants:
+  default:
+  tbb:
+    :cmake_args: -DWITH_TBB=ON -DTBB_INCLUDE_DIRS=$TBBINCLUDE
+    :requirements:
+      :build:
+        - libs/tbb
+      :runtime:
+        - libs/tbb
 :requirements:
   :tool:
     - apps/cmake
@@ -66,6 +77,7 @@
         -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
         -DEIGEN_INCLUDE_PATH=$EIGENINCLUDE \
         -DCMAKE_PREFIX_PATH=$PYTHONDIR \
+        <%= variant[:cmake_args] %> \
         .. <%= redirect(:cmake) %>
   make <%= redirect(:make) %>
 :install: |
