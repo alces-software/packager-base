@@ -81,6 +81,15 @@
       #===================
       #  ANSYS Workbench
       #-------------------
-      # Launch ANSYS Workbench
+      # ANSYS Workbench requires the current working directory to be
+      # set to the location of the launch scripts.
       cd $ANSYS_WORKBENCHDIR/Framework/bin/Linux64
+
+      # Sleep for 5 seconds in order to allow the desktop environment
+      # to complete its initialization process.  Without this sleep,
+      # there is a risk that the Workbench client can cause the X
+      # session to fail.
+      sleep 5
+
+      # Launch ANSYS Workbench.
       ./runwb2
