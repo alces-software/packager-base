@@ -140,3 +140,15 @@
  SKIP_PSL_SELF = os.path.join(BINDIR, 'skip_psl_self.awk')
  SKIP_PSL_SELF_SS = os.path.join(BINDIR, 'skip_psl_self_ss.awk')
  
+--- transabyss-merge.orig	2015-06-22 14:00:56.668552459 +0100
++++ transabyss-merge	2015-07-07 16:18:07.533858840 +0100
+@@ -25,8 +25,7 @@
+ TRANSABYSS_VERSION = package_info.VERSION
+ TRANSABYSS_NAME = package_info.NAME
+ 
+-PACKAGEDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+-BINDIR = os.path.join(PACKAGEDIR, 'bin')
++BINDIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+ SKIP_PSL_SELF = os.path.join(BINDIR, 'skip_psl_self.awk')
+ SKIP_PSL_SELF_SS = os.path.join(BINDIR, 'skip_psl_self_ss.awk')
+ 

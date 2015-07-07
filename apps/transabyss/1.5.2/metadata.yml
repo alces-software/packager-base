@@ -28,6 +28,8 @@
   and shell wrapper scripts.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jul  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated gridware path patch to include transabyss-merge
   * Fri Jun 19 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version, 1.5.2
   * Wed Feb 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
