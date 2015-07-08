@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: vtk
+:license: BSD License
+:summary: Package for 3D graphics, modeling and image processing.
+:url: www.vtk.org
+:description: |
+  The Visualization Toolkit (VTK) is an open-source, freely available 
+  software system for 3D computer graphics, modeling, image processing,
+  volume rendering, scientific visualization, and information 
+  visualization. VTK also includes ancillary support for 3D interaction 
+  widgets, two- and three-dimensional annotation, and parallel computing.   
+:group: Image
+:changelog: |
+  * Tue Jul 07 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:sources:
+  - VTK-6.2.0.zip
+:patches:
+#  - gridware-atlas-and-static-zlib.patch
+:src: VTK-6.2.0.zip
+:src_dir: VTK-6.2.0
+:type: apps
+:version: '6.2.0'
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+:compilers:
+  gcc:
+:compile: |
+  mkdir vtk-build
+  cd vtk-build
+  cmake ../. -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> <%= redirect(:cmake_configure) %>
+  make ../. <%= redirect(:compile) %>
+:install: |
+  mkdir <%= dest_dir %>/{doc,example} 
+  cd vtk-build
+  make install <%= redirect(:install) %>  
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
