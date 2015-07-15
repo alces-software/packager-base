@@ -91,5 +91,11 @@
       # session to fail.
       sleep 5
 
+      # Set the temporary directory for Fluent etc. -- ensure this
+      # path is present on all compute nodes which will be in use.
+      export TMPDIR="$HOME/tmp"
+      export TMP="$TMPDIR"
+      mkdir -p "$TMPDIR"
+
       # Launch ANSYS Workbench.
       ./runwb2
