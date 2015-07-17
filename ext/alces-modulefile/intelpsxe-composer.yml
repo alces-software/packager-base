@@ -1,0 +1,51 @@
+---
+:schema: 1
+:name: intelcsxe
+:version: '2015.3.187'
+:type: ext
+:title: Intel Parallel Studio XE - Composer Edition
+:license: Commercial
+:summary: Tool suite to simplify the design, development, debug, and tuning of code.
+:url: https://software.intel.com/en-us/intel-parallel-studio-xe
+:description: |
+  Intel® Parallel Studio XE 2015 tool suite simplifies the design, development,
+  debug, and tuning of code that utilizes parallel processing to boost application
+  performance. Get more application performance with less effort on compatible
+  Intel® processors and coprocessors.
+:group: Compilers
+:changelog: |
+  * Fri 17 Jul 2015 Ruan G. Ellis - <ruan.ellis@alces-software.com>
+    - First created
+:compiler: 'bin'
+:pkg_type: 'apps'
+:modules:
+  - :type: compilers
+    :name: intel
+    :content:
+      :compiler: |
+        setenv INTELROOT ${appdir}
+        setenv CC icc
+        setenv CXX icpc
+        setenv F77 ifort
+        setenv FC ifort
+        setenv F90 ifort
+        setenv F95 ifort
+        setenv BLASLIB ${appdir}/mkl/lib/intel64/libmkl_core.a
+
+        setenv ${appcaps}DIR ${appdir}
+        setenv ${appcaps}BIN ${appdir}/bin
+        setenv ${appcaps}LIB ${appdir}/lib/intel64
+        setenv ${appcaps}INCLUDE ${appdir}/include
+        setenv ${appcaps}MAN ${appdir}/man/en_US
+
+        prepend-path PATH ${appdir}/bin
+        prepend-path LD_LIBRARY_PATH ${appdir}/lib/intel64
+        prepend-path MANPATH ${appdir}/man/en_US
+      :runtime: |
+        prepend-path LD_LIBRARY_PATH ${appdir}/lib/intel64
+  - :type: libs
+    :name: intel-mkl
+    :tag: bin
+    :content: |
+      set mkldir ${appdir}/mkl
+      setenv INTELMKLDIR ${mkldir}
