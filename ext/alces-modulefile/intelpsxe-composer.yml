@@ -13,6 +13,8 @@
   performance. Get more application performance with less effort on compatible
   Intel® processors and coprocessors.
 :group: Compilers
+:params:
+  :license_file: "FlexLM lmgrd Server (<port>@<server> format - probably <port>@headnode1.prv.clustername.compute.estate)"
 :changelog: |
   * Fri 17 Jul 2015 Ruan G. Ellis - <ruan.ellis@alces-software.com>
     - First created
@@ -31,6 +33,7 @@
         setenv F90 ifort
         setenv F95 ifort
         setenv BLASLIB ${appdir}/mkl/lib/intel64/libmkl_core.a
+        setenv LM_LICENSE_FILE <%= param('license_file') %>
 
         setenv ${appcaps}DIR ${appdir}
         setenv ${appcaps}BIN ${appdir}/bin
