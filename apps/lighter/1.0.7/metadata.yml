@@ -1,0 +1,33 @@
+---
+:schema: 1
+:license: GPLv3+
+:summary: Fast and memory-efficient sequencing error corrector
+:url: https://github.com/mourisl/Lighter
+:description: |
+  Lighter is a kmer-based error correction method for whole genome
+  sequencing data. Lighter uses sampling (rather than counting) to
+  obtain a set of kmers that are likely from the genome. Using this
+  information, Lighter can correct the reads containing sequence
+  errors.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v1.0.7.tar.gz
+:src_dir: Lighter-1.0.7
+:type: apps
+:version: '1.0.7'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -v -m 0755 lighter <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -D -v -m 0644 LICENSE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
