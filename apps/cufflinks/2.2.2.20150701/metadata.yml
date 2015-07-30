@@ -1,0 +1,101 @@
+---
+:schema: 1
+:license: OTHER - Boost Software License, Version 1.0
+:summary: Assembles transcripts, estimates their abundances, and tests for differential expression and regulation in RNA-Seq samples
+:url: http://cufflinks.cbcb.umd.edu/
+:description: |
+  Cufflinks assembles transcripts, estimates their abundances, and
+  tests for differential expression and regulation in RNA-Seq
+  samples. It accepts aligned RNA-Seq reads and assembles the
+  alignments into a parsimonious set of transcripts. Cufflinks then
+  estimates the relative abundances of these transcripts based on how
+  many reads support each one, taking into account biases in library
+  preparation protocols.
+:group: Bioinformatics
+:requirements: 
+  :runtime:
+    - libs/boost <= 1.55.0
+    - apps/samtools ~> 0.1.18
+  :build:
+    - libs/boost <= 1.55.0
+    - apps/samtools ~> 0.1.18
+    - libs/eigen ~> 3.0
+:changelog: |
+  * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest prerelease 2.2.2 2015-07-01
+  * Tue May  5 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to latest prerelease 2.2.2 2015-01-10
+  * Sat Jan 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated link in fetch file after project relocation to github
+  * Mon Jul 28 2014 Ben Armston <ben.armston@alces-software.com>
+    - updated to version 2.2.1
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
+  * Thu Nov 21 2013 James Donohue <james.donohue@alces-software.com>
+    - bumped to version 2.1.1
+  * Fri May 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - depend on apps/samtools at runtime for libbam.so
+  * Wed Aug 15 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - make requirements more stringent
+    - build against 0.1.18 of samtools
+  * Wed Jul 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.0.2
+    - refactored to packager style
+  * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.0.0
+    - refactored to installer style
+  * Thu Feb 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 1.3.0
+    - brought spec file into line with recent macro additions
+  * Thu Jul 14 2011 Steve Norledge
+    - updated version 1.0.3
+    - improved dependecies
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: cufflinks-2.2.2.20150701.tar.gz
+:src_dir: cufflinks-cfb0925534f7458ac9c9bcbef9b6a5f810a04a63
+:type: apps
+:version: '2.2.2.20150701'
+:compilers:
+  gcc:
+:sources:
+  - alces-gridware-samtools.patch
+:compile: |
+  ./autogen.sh <%= redirect(:autogen) %>
+  patch -p0 < <%= source('alces-gridware-samtools.patch') %>
+  ./configure --prefix=<%= dest_dir %> --with-boost=$BOOSTDIR --with-bam=$SAMTOOLSDIR --with-eigen=$EIGENDIR <%= redirect(:configure) %>
+  sed -i -e 's/2.2.1/2.2.2.20150701/g' config.h
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'cufflinks; general usage'
+    description: 'Execute Cufflinks using a test file SAM alignments (available separately)'
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full Cufflinks usage information see:
+      #   http://cufflinks.cbcb.umd.edu/manual.html
+      # Test data may be downloaded from:
+      #   http://cufflinks.cbcb.umd.edu/downloads/test_data.sam
+
+      # Output directory (default is '.')
+      OUTPUT_DIR="cufflinks/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Input file of RNA-Seq read alignments in the SAM format
+      ALIGNED_READS=test_data.sam
+
+      # Additional command-line options (cufflinks -h for list)
+      #CUFFLINKS_OPTIONS=
+
+      cufflinks -o $OUTPUT_DIR $CUFFLINKS_OPTIONS $ALIGNED_READS
