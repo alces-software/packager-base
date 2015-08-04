@@ -1,0 +1,99 @@
+---
+:schema: 1
+:license: NONFREE - refer to https://github.com/hall-lab/speedseq
+:summary: A flexible framework for rapid genome analysis and interpretation
+:url: https://github.com/hall-lab/speedseq
+:description: |
+  Comprehensive interpretation of human genome sequencing data is a
+  challenging bioinformatic problem that typically requires weeks of
+  analysis, with extensive hands-on expert involvement. This
+  informatics bottleneck inflates genome sequencing costs, poses a
+  computational burden for large-scale projects, and impedes the
+  adoption of time-critical clinical applications such as personalized
+  cancer profiling and newborn disease diagnosis, where the actionable
+  timeframe can measure in hours or days. SpeedSeq is an open-source
+  genome analysis platform that vastly reduces computing
+  time. SpeedSeq accomplishes read alignment, duplicate removal,
+  variant detection and functional annotation of a 50X human genome in
+  <24 hours, even using one low-cost server. SpeedSeq offers
+  competitive or superior performance to current methods for detecting
+  germline and somatic single nucleotide variants (SNVs), indels, and
+  structural variants (SVs) and includes novel functionality for SV
+  genotyping, SV annotation, fusion gene detection, and rapid
+  identification of actionable mutations. SpeedSeq will help bring
+  timely genome analysis into the clinical realm.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.0.3a.tar.gz
+:sources:
+  - vawk.sic
+  - svtyper.sic
+  - lumpy-sv.20150314.tar.gz
+  - speedseq.config
+:version: '0.0.3a'
+:patches:
+  - gridware-libs.patch
+:requirements:
+  :build:
+    - libs/root
+    - apps/samtools ~> 0.1.19
+    - apps/python
+  :runtime:
+    - libs/pysam >= 0.8.0
+    - libs/numpy
+    - libs/scipy
+    - apps/bamkit
+    - apps/bwa = 0.7.8
+    - apps/ensemblvep = 76
+    - apps/freebayes ~> 0.9.17
+    - apps/mbuffer
+    - apps/parallel
+    - apps/python
+    - apps/sambamba
+    - apps/samblaster = 0.1.21
+    - apps/tabix ~> 0.2.4
+:compilers:
+  gcc:
+:compile: |
+  export ROOTSYS=dummy
+  make cnvnator-multi <%= redirect(:compile) %>
+  tar --strip-components=1 -C src/lumpy-sv -xzf <%= source('lumpy-sv.20150314.tar.gz') %>
+  make lumpy <%= redirect(:compile) %>
+  sed -i -e 's,../bin/,,g' example/run_speedseq.sh
+  sed -i -e 's,$SPEEDSEQ_DIR/speedseq.config,$SPEEDSEQCONFIG,g' bin/speedseq
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,etc,share}
+  install -v -D -m 0755 <%= source('vawk.sic') %> <%= dest_dir %>/bin/vawk <%= redirect(:install) %>
+  install -v -D -m 0755 <%= source('svtyper.sic') %> <%= dest_dir %>/bin/svtyper <%= redirect(:install) %>
+  install -v -D -m 0755 bin/* <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -v -D -m 0644 README.md <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -v -D -m 0644 <%= source('speedseq.config') %> <%= dest_dir %>/etc/ <%= redirect(:install) %>
+  cp -Rv etc <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  cp -Rv annotations example <%= dest_dir %>/share/ <%= redirect(:install) %>
+:module: |
+  if { [info exists ::env(${appcaps}ANNODIR)] } {
+    set user_annotations_dir $::env(${appcaps}ANNODIR)
+  } else {
+    set user_annotations_dir $::env(HOME)/speedseq/annotations
+    setenv ${appcaps}ANNODIR ${user_annotations_dir}
+  }
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}CONFIG ${appdir}/etc/speedseq.config
+
+  prepend-path PATH ${appdir}/bin
+
+  if { [module-info mode load] } {
+    # make the site libs directory if it doesn't exist
+    if { ! [file exists "${user_annotations_dir}"] && ! [info exists ::env(${appcaps}ANNODIR_SKIP_CREATE)]} {
+      file mkdir "${user_annotations_dir}/vep_cache"
+      file mkdir "${user_annotations_dir}/cnvnator_chroms"
+    }
+  } 

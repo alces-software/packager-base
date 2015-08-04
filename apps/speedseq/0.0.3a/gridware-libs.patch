@@ -1,0 +1,44 @@
+--- src/cnvnator/Makefile.orig	2015-03-29 18:11:41.000000000 +0000
++++ src/cnvnator/Makefile	2015-08-04 11:37:05.939854693 +0000
+@@ -2,16 +2,15 @@
+ #ROOTFLAGS = -pthread -m64
+ ROOTFLAGS = -m64 -O3
+ LIBS      = -lz
+-ROOTLIBS  = -L$(ROOTSYS)/lib -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d \
++ROOTLIBS  = -L$(ROOTLIB) -lCore -lCint -lRIO -lNet -lHist -lGraf -lGraf3d \
+ 		-lGpad -lTree -lRint -lMatrix -lPhysics \
+ 		-lMathCore -lThread -lGui
+ 
+ SRC    = src
+ BINDIR = bin
+ CXX    = g++ $(ROOTFLAGS) -DCNVNATOR_VERSION=\"$(VERSION)\"
+-SAMDIR = $(SRC)/samtools
+-INC    = -I$(ROOTSYS)/include -I$(SAMDIR)
+-SAMLIB = $(SAMDIR)/libbam.a
++INC    = -I$(ROOTINCLUDE)/root -I$(SAMTOOLSINCLUDE)
++SAMLIB = $(SAMTOOLSLIB)/libbam.a
+ 
+ OBJDIR = $(SRC)/obj
+ OBJS   = $(OBJDIR)/cnvnator.o  \
+@@ -30,12 +29,7 @@
+ 
+ all:	cnvnator-multi
+ 
+-.PHONY: samtools
+-
+-samtools:
+-	$(MAKE) -C $(SAMDIR)
+-
+-cnvnator-multi: samtools $(OBJS)
++cnvnator-multi: $(OBJS)
+ 	@mkdir -p $(BINDIR)
+ 	$(CXX) -o $(BINDIR)/$@ $(OBJS) $(SAMLIB) $(LIBS) $(ROOTLIBS)
+ 
+@@ -46,7 +40,6 @@
+ clean:
+ 	rm -f $(OBJS)
+ 	rm -f $(BINDIR)/cnvnator
+-	$(MAKE) -C $(SAMDIR) clean
+ 
+ distribution: clean all
+ 	@echo Creating directory ...
