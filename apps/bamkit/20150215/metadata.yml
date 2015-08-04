@@ -1,0 +1,33 @@
+---
+:schema: 1
+:license: MIT License
+:summary: Tools for common BAM file manipulations
+:url: https://github.com/cc2qe/bamkit
+:description: |
+  Tools for common BAM file manipulations.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Aug  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bamkit-20150215.tar.gz
+:src_dir: bamkit-3c153eada76defbbd78f8cfe8f86b4844da23234
+:version: '20150215'
+:requirements:
+  :runtime:
+    - apps/python
+    - libs/pysam
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a python application
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -v -m 0755 *.py <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -D -v -m 0644 LICENSE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
