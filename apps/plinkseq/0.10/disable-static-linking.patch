@@ -1,0 +1,12 @@
+--- config_defs.Makefile.orig	2015-08-07 15:41:02.966851609 +0000
++++ config_defs.Makefile	2015-08-07 15:41:15.022700046 +0000
+@@ -79,6 +79,6 @@
+ ALL_CFLAGS =-O3 -DSQLITE_OMIT_LOAD_EXTENSION $(LIB_INCLUDE_FLAGS)
+ 
+ STATIC_FLAG = 
+-ifneq ($(SYS),MAC)
+-STATIC_FLAG += -static
+-endif
++#ifneq ($(SYS),MAC)
++#STATIC_FLAG += -static
++#endif
