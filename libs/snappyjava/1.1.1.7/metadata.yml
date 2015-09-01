@@ -35,6 +35,8 @@
 :type: libs
 :group: Libraries
 :changelog: |
+  * Thu Aug 26 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Manually handle download/cleanup of SBT
   * Wed Apr 22 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: 1.1.1.7.tar.gz
@@ -47,11 +49,21 @@
     - ant
 :sources:
   - snappy-1.1.1.tar.gz
+  - sbt-launch-0.13.6.jar
 :compile: |
   export JAVA_HOME=/usr/lib/jvm/java-openjdk
   mkdir target
   cp <%= source('snappy-1.1.1.tar.gz') %> target
+  if [ ! -d "$HOME/.sbt" ]; then
+    mv "$HOME/.sbt" "$HOME/.sbt.orig.$$"
+  fi
+  mkdir -p "$HOME/.sbt/launchers/0.13.6"
+  cp <%= source('sbt-launch-0.13.6.jar') %> "$HOME/.sbt/launchers/0.13.6/sbt-launch.jar"
   make <%= redirect(:compile) %>
+  rm -rf "$HOME/.sbt"
+  if [ -d "$HOME/.sbt.orig.$$" ]; then
+    mv "$HOME/.sbt.orig.$$" "$HOME/.sbt"
+  fi
 :install: |
   mkdir -p <%= dest_dir %>/{java,doc}
   install -D -m 0644 -v target/snappy-java-1.1.1.7.jar <%= dest_dir %>/java <%= redirect(:install) %>
