@@ -13,6 +13,8 @@
   libraries.
 :group: Libraries
 :changelog: |
+  * Tue Aug 25 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added check for AVX2 compatible GCC
   * Wed Mar  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Update to LAPACK 3.5.0 with ATLAS 3.11.26
   * Mon Apr  8 2013 - James Donohue <james.donohue@alces-software.com>
@@ -41,14 +43,26 @@
     :configure_flags: "-C xc opencc -C ic opencc -C if openf90 -C sk opencc -C dk opencc -C sm opencc -C dm opencc -F xc '-O3 -g -lfortran -lffio -lm' -F ic '-O3 -g -lfortran -lffio -lm' -F if '-O3 -g -lfortran -lffio -lm' -F sk '-O3 -g -lfortran -lffio -lm' -F dk '-O3 -g -lfortran -lffio -lm'  -F sm '-O3 -g -lfortran -lffio -lm' -F dm '-O3 -g -lfortran -lffio -lm'"
 :compile: |
   <% lapackfile = param(:lapackfile) == 'default' ? source('lapack-3.5.0.tgz') : param(:lapackfile) %>
+  if [ "<%= compiler_name %>" == "gcc" ]; then
+    if cat /proc/cpuinfo | grep -q '^flags.* avx2'; then
+      # we have AVX2, which means we need >= gcc 4.7
+      gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+      gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+      if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "7") ]]; then
+        echo "GCC version is $gcc_major.$gcc_minor but ATLAS requires at least v4.7.0 to compile on this processor (as it requires AVX2 support). If a compatible version is available, please specify it with --compiler gcc/x.y.z" >/dev/stderr
+        exit 1
+      fi
+    fi
+  fi
   # export F77FLAGS="$F77FLAGS -msse2"
   mkdir build
   cd build
   ../configure <%= compiler[:configure_flags] %> --prefix=<%= dest_dir %> \
     --incdir=<%= File.join(dest_dir,'include') %> \
     --libdir=<%= File.join(dest_dir,'lib') %> \
-    --shared -Fa alg -fPIC -b 64 -D c \
-    -DPentiumCPS=<%= param(:cpuspeed) %> \
+    --shared -Fa alg -fPIC -b 64 \
+    -C acg gcc \
+    -D c -DPentiumCPS=<%= param(:cpuspeed) %> \
     --with-netlib-lapack-tarfile=<%= lapackfile %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
   make check <%= redirect(:check) %>
