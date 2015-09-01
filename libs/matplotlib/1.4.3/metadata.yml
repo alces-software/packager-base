@@ -31,6 +31,8 @@
     :python_bin: python
     :python_libdir: python2.7
     :requirements:
+      :tool:
+        - apps/setuptools
       :build:
         - apps/python ~> 2.7.0
         - libs/numpy
@@ -42,6 +44,8 @@
     :python_bin: python3
     :python_libdir: python3.3
     :requirements:
+      :tool:
+        - apps/setuptools_python3
       :build:
         - apps/python3 ~> 3.3.0
         - libs/numpy_python3
@@ -53,6 +57,8 @@
     :python_bin: python3
     :python_libdir: python3.4
     :requirements:
+      :tool:
+        - apps/setuptools_python34
       :build:
         - apps/python3 ~> 3.4.0
         - libs/numpy_python34
@@ -62,8 +68,10 @@
 :compile: |
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
-  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
-  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
+  mkdir -p $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR mock==1.0.1 <%= redirect(:python) %>
   <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
