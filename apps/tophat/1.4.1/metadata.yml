@@ -10,6 +10,8 @@
   mapping results to identify splice junctions between exons.
 :group: Bioinformatics
 :changelog: |
+  * Tue Aug 25 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Constrained samtools dependency to 0.1.x tree
   * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to version 1.4.1
   * Mon Dec 16 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -26,10 +28,10 @@
 :version: '1.4.1'
 :requirements:
   :build:
-    - apps/samtools >= 0.1.17
+    - apps/samtools ~> 0.1.17
     - libs/boost
   :runtime:
-    - apps/samtools >= 0.1.17
+    - apps/samtools ~> 0.1.17
 :patches:
   - gridware-samtools.patch1
 :compilers:
