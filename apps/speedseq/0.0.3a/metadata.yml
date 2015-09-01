@@ -25,6 +25,10 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Mon Sep  1 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added apps/samtools to list of runtime dependencies
+  * Fri Aug 28 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added libs/root to list of runtime dependencies
   * Tue Aug  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: v0.0.3a.tar.gz
@@ -42,6 +46,7 @@
     - apps/samtools ~> 0.1.19
     - apps/python
   :runtime:
+    - libs/root
     - libs/pysam >= 0.8.0
     - libs/numpy
     - libs/scipy
@@ -54,6 +59,7 @@
     - apps/python
     - apps/sambamba
     - apps/samblaster = 0.1.21
+    - apps/samtools ~> 0.1.19
     - apps/tabix ~> 0.2.4
 :compilers:
   gcc:
