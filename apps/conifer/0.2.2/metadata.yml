@@ -18,30 +18,26 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Aug 27 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use matplotlib module dependency rather than installing as part of package
   * Thu Apr 16 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: conifer_v0.2.2.tar.gz
 :src_dir: conifer_v0.2.2
 :version: '0.2.2'
 :requirements:
-  :tool: apps/setuptools
   :build:
     - apps/python
     - libs/numpy
+    - libs/matplotlib
   :runtime:
     - apps/python
     - libs/pytables
     - libs/numpy
-  :rpms:
-    - freetype-devel
-    - libpng-devel
+    - libs/matplotlib
 :compilers:
   gcc:
 :compile: |
-  PYTHONDEPSDIR=$(pwd)/python
-  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
-  mkdir $PYTHONDEPSDIR
-  easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %>
   # add #!s to python scripts
   for a in *.py; do
     echo "#!/usr/bin/env python" > $a.new
@@ -49,9 +45,7 @@
     mv $a.new $a
   done
 :install: |
-  PYTHONDEPSDIR=$(pwd)/python
-  mkdir -p <%= dest_dir %>/{bin,doc,python/lib/python2.7/site-packages}
-  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/{bin,doc}
   cp -v LICENSE <%= dest_dir %>/doc
   install -D -m 0755 -v *.py <%= dest_dir %>/bin/ <%= redirect(:install) %>
 :module: |
@@ -60,5 +54,3 @@
   setenv ${appcaps}DOC ${appdir}/doc
 
   prepend-path PATH ${appdir}/bin
-
-  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
