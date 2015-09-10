@@ -46,6 +46,8 @@
     # Remove references to tabix subdirectory
     sed -i -e "s#'tabix/\(tabix\|bgzip\)'#'\1'#g" $a
   done
+  # Apply fix to task_pipeline.pl - RGE 10/09/2015
+  sed -i -e "s|=\s\+File::Spec->catfile(\$reapr_dir|\= File::Spec->catfile(\$scriptdir|g” task_pipeline.pl
   cd src/
   make
 :install: |
