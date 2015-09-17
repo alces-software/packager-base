@@ -33,6 +33,7 @@
     - libs/pandas >= 0.13
     - libs/numexpr >= 2.1 
     - apps/setuptools 
+    - libs/matplotlib
 :compilers:
   gcc:
 :compile: |
