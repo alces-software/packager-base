@@ -23,13 +23,13 @@
     - libs/numpy >= 1.7.0
     - libs/pandas >= 0.13
     - libs/numexpr >= 2.1
-    - libs/scipy >= 0.9.0
+    - libs/scipy
     - libs/matplotlib 
     - apps/setuptools
   :runtime:
     - apps/python
     - libs/numpy >= 1.7.0
-    - libs/scipy >= 0.9.0
+    - libs/scipy
     - libs/pandas >= 0.13
     - libs/numexpr >= 2.1 
     - apps/setuptools 
