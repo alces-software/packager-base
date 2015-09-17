@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: pyprophet
+:license: BSD
+:summary: Analyse MRM data
+:url: https://github.com/uweschmitt/pyprophet
+:description: |
+  The pyprophet algorithm is a python reimplementation of mProphet algorithm 
+  and can take targeted proteomics data, learn a linear separation between 
+  true signal and the noise signal and then compute a q-value (false discovery
+  rate) to achieve experiment-wide cutoffs.
+:group: Bioinformatics
+:changelog: |
+  * Wed Sept 16 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pyprophet-0.16.0.tar.gz
+:src_dir: pyprophet-0.16.0
+:type: apps
+:version: '0.16.0'
+:requirements:
+  :build:
+    - apps/python
+    - libs/numpy >= 1.7.0
+    - libs/pandas >= 0.13
+    - libs/numexpr >= 2.1
+    - libs/scipy >= 0.9.0
+    - libs/matplotlib 
+    - apps/setuptools
+  :runtime:
+    - apps/python
+    - libs/numpy >= 1.7.0
+    - libs/scipy >= 0.9.0
+    - libs/pandas >= 0.13
+    - libs/numexpr >= 2.1 
+    - apps/setuptools 
+:compilers:
+  gcc:
+:compile: |
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR scikit-learn <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR seaborn <%= redirect(:python) %>
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages/
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
