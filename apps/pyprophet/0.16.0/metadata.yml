@@ -20,7 +20,8 @@
 :requirements:
   :build:
     - apps/python
-    - libs/numpy >= 1.7.0
+    # Anything above numpy v1.9.0 should be OK
+    - libs/numpy >= 1.9.0
     - libs/pandas >= 0.13
     - libs/numexpr >= 2.1
     - libs/scipy
@@ -28,7 +29,7 @@
     - apps/setuptools
   :runtime:
     - apps/python
-    - libs/numpy >= 1.7.0
+    - libs/numpy >= 1.9.0
     - libs/scipy
     - libs/pandas >= 0.13
     - libs/numexpr >= 2.1 
