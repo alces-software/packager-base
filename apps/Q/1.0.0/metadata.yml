@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: Q
+:license: BSD License
+:summary: Whole genome association analysis toolkit
+:url: https://github.com/charite/Q 
+:description: |
+  Q is a fast saturation-based ChIP-seq peak caller.
+  Q works well in conjunction with the irreproducible discovery 
+  rate (IDR) procedure.
+  Q was extensively tested on publicly available datasets from 
+  ENCODE and shown to perform well with respect to reproducibility 
+  of the called peak set, consistency of the peak sets with respect 
+  to predicted transcription factor binding motifs contained in 
+  them, as well as overall run time.
+  Q is implemented in C++ making use of the Boost and SeqAn library.
+:group: Bioinformatics
+:changelog: |
+  * Wed Sept 30 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Use precompiled binary due to problems with EL6 compiling with zlib support
+  * Mon Aug 24 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: Q.sic
+:type: apps
+:version: '1.0.0'
+:compilers:
+  bin:
+:compile: |
+  #noop - binary
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  install -D -m 0755 Q.sic <%= dest_dir %>/bin/Q
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
