@@ -48,7 +48,11 @@
   PYTHONDEPSDIR=$(pwd)/python
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   mkdir $PYTHONDEPSDIR
+<<<<<<< HEAD
   easy_install --install-dir $PYTHONDEPSDIR scikit-learn <%= redirect(:python) %>
+=======
+  easy_install --install-dir $PYTHONDEPSDIR scikit-learn==0.16.1 <%= redirect(:python) %>
+>>>>>>> 5c9dff4... Upgraded Gridware; pyprophet v0.18.3
   easy_install --install-dir $PYTHONDEPSDIR seaborn <%= redirect(:python) %>
   python setup.py build <%= redirect(:build) %>
 :install: |
