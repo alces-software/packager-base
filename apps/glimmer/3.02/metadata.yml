@@ -15,6 +15,8 @@
   models in its IMMs.
 :group: Bioinformatics
 :changelog: |
+  * Mon Oct 26 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added patch for modern C++ compatibility
   * Tue Sep 18 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Tue Feb 22 2011 Steve Norledge
@@ -25,6 +27,8 @@
 :version: '3.02'
 :compilers:
   gcc:
+:patches:
+  - modern-cplusplus-compat.patch1
 :compile: |
   cd src
   make all <%= redirect(:make) %>

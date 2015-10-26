@@ -1,0 +1,187 @@
+Only in glimmer3.02: inc
+diff -ur glimmer3.02.orig/src/c_make.glm glimmer3.02/src/c_make.glm
+--- glimmer3.02.orig/src/c_make.glm	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/c_make.glm	2015-10-27 01:54:34.812777870 +0900
+@@ -9,7 +9,7 @@
+ SUBDIRS = Common ICM Glimmer Util
+ 
+ CFLAGS = -g -Wall
+-CXXFLAGS = -g -Wall
++CXXFLAGS = -g -Wall -fpermissive
+ 
+ LDFLAGS = -g -lm
+ 
+diff -ur glimmer3.02.orig/src/Common/delcher.cc glimmer3.02/src/Common/delcher.cc
+--- glimmer3.02.orig/src/Common/delcher.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Common/delcher.cc	2015-10-27 01:05:18.495045088 +0900
+@@ -7,6 +7,7 @@
+ //  Common generic routines.
+ 
+ 
++#include <cstring>
+ #include  "delcher.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Common/fasta.cc glimmer3.02/src/Common/fasta.cc
+--- glimmer3.02.orig/src/Common/fasta.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Common/fasta.cc	2015-10-27 01:48:54.878573981 +0900
+@@ -7,6 +7,7 @@
+ //  Routines to manipulate FASTA format files
+ 
+ 
++#include <cstring>
+ #include  "fasta.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Common/gene.cc glimmer3.02/src/Common/gene.cc
+--- glimmer3.02.orig/src/Common/gene.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Common/gene.cc	2015-10-27 01:49:45.835050287 +0900
+@@ -7,6 +7,7 @@
+ //  DNA- and gene-related routines.
+ 
+ 
++#include <cstring>
+ #include "delcher.hh"
+ #include "gene.hh"
+ 
+diff -ur glimmer3.02.orig/src/Glimmer/anomaly.cc glimmer3.02/src/Glimmer/anomaly.cc
+--- glimmer3.02.orig/src/Glimmer/anomaly.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Glimmer/anomaly.cc	2015-10-27 01:49:21.041899205 +0900
+@@ -9,7 +9,7 @@
+ //  the second command-line file and checks for anomalous
+ //  start/stop codons and frame shifts.
+ 
+-
++#include <cstring>
+ #include  "anomaly.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Glimmer/glimmer3.cc glimmer3.02/src/Glimmer/glimmer3.cc
+--- glimmer3.02.orig/src/Glimmer/glimmer3.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Glimmer/glimmer3.cc	2015-10-27 01:51:18.315804115 +0900
+@@ -13,7 +13,7 @@
+ //  & Computational Biology
+ 
+ 
+-
++#include <cstring>
+ #include  "glimmer3.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Glimmer/long-orfs.cc glimmer3.02/src/Glimmer/long-orfs.cc
+--- glimmer3.02.orig/src/Glimmer/long-orfs.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Glimmer/long-orfs.cc	2015-10-27 01:51:38.988431500 +0900
+@@ -12,7 +12,7 @@
+ //  & Computational Biology
+ 
+ 
+-
++#include <cstring>
+ #include  "long-orfs.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/ICM/build-fixed.cc glimmer3.02/src/ICM/build-fixed.cc
+--- glimmer3.02.orig/src/ICM/build-fixed.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/ICM/build-fixed.cc	2015-10-27 01:55:14.228787442 +0900
+@@ -10,6 +10,7 @@
+ //  & Computational Biology
+ 
+ 
++#include <cstring>
+ #include  "build-fixed.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/ICM/build-icm.cc glimmer3.02/src/ICM/build-icm.cc
+--- glimmer3.02.orig/src/ICM/build-icm.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/ICM/build-icm.cc	2015-10-27 01:54:59.012853575 +0900
+@@ -11,6 +11,7 @@
+ //  & Computational Biology
+ 
+ 
++#include <cstring>
+ #include  "build-icm.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/ICM/icm.cc glimmer3.02/src/ICM/icm.cc
+--- glimmer3.02.orig/src/ICM/icm.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/ICM/icm.cc	2015-10-27 01:50:09.227023286 +0900
+@@ -13,6 +13,7 @@
+ //  & Computational Biology
+ 
+ 
++#include <cstring>
+ #include  "icm.hh"
+ 
+ using namespace std;
+Only in glimmer3.02/src/ICM: .icm.cc.swp
+diff -ur glimmer3.02.orig/src/ICM/score-fixed.cc glimmer3.02/src/ICM/score-fixed.cc
+--- glimmer3.02.orig/src/ICM/score-fixed.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/ICM/score-fixed.cc	2015-10-27 01:55:29.244695887 +0900
+@@ -6,6 +6,7 @@
+ //  the model in the file on the command line.
+ 
+ 
++#include <cstring>
+ #include  "score-fixed.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Util/entropy-score.cc glimmer3.02/src/Util/entropy-score.cc
+--- glimmer3.02.orig/src/Util/entropy-score.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Util/entropy-score.cc	2015-10-27 01:50:38.266714082 +0900
+@@ -10,7 +10,7 @@
+ //  to  stdout .
+ 
+ 
+-
++#include <cstring>
+ #include  "entropy-score.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Util/extract.cc glimmer3.02/src/Util/extract.cc
+--- glimmer3.02.orig/src/Util/extract.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Util/extract.cc	2015-10-27 01:52:03.818587285 +0900
+@@ -10,7 +10,7 @@
+ //  are output (in multifasta or two-string format) to stdout.
+ 
+ 
+-
++#include <cstring>
+ #include  "extract.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Util/multi-extract.cc glimmer3.02/src/Util/multi-extract.cc
+--- glimmer3.02.orig/src/Util/multi-extract.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Util/multi-extract.cc	2015-10-27 01:52:22.235928034 +0900
+@@ -11,7 +11,7 @@
+ //  to stdout.
+ 
+ 
+-
++#include <cstring>
+ #include  "multi-extract.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Util/start-codon-distrib.cc glimmer3.02/src/Util/start-codon-distrib.cc
+--- glimmer3.02.orig/src/Util/start-codon-distrib.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Util/start-codon-distrib.cc	2015-10-27 01:52:38.780030705 +0900
+@@ -14,7 +14,7 @@
+ //  the 4th field of the coordinate file can specify the direction
+ //  of the gene.
+ 
+-
++#include <cstring>
+ #include  "start-codon-distrib.hh"
+ 
+ 
+diff -ur glimmer3.02.orig/src/Util/uncovered.cc glimmer3.02/src/Util/uncovered.cc
+--- glimmer3.02.orig/src/Util/uncovered.cc	2006-06-13 04:40:14.000000000 +0900
++++ glimmer3.02/src/Util/uncovered.cc	2015-10-27 01:52:57.643428145 +0900
+@@ -11,7 +11,7 @@
+ //  Output is a multifasta file sent to stdout.
+ 
+ 
+-
++#include <cstring>
+ #include  "uncovered.hh"
+ 
+ 
