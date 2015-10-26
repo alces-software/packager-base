@@ -27,6 +27,9 @@
   you get started quickly accelerating your application with GPUs.
 :group: Libraries
 :changelog: |
+  * Mon Oct 26 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Removed obsolete install script
+    - Set installer environment variable for use with Alces Clusterware handler
   * Wed Apr 22 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to v7.0 release 7.0.28
   * Fri Sep 12 2014 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -65,22 +68,19 @@
   /bin/sh <%=dest_dir%>/installers/cuda-samples-linux-7.0.28-19326674.run -noprompt -cudaprefix=<%=dest_dir%>/toolkit -prefix=<%=dest_dir%>/samples
   # create link for dev driver
   (cd <%=dest_dir%>/installers && ln -snf NVIDIA-Linux-x86_64-346.46.run devdriver.run)
-  # install script
-  sed -e "s|%NVIDIAINSTALLER%|<%=dest_dir%>/installers/devdriver.run|g" <%=source('nvidia-driver-install.sh')%> > <%=dest_dir%>/installers/alces-nvidia
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/toolkit/bin
   setenv ${appcaps}SDK ${appdir}/samples
   setenv ${appcaps}SAMPLES ${appdir}/samples
+  setenv ${appcaps}DRIVER_INSTALLER ${appdir}/installers/NVIDIA-Linux-x86_64-346.46.run
 
   setenv CUDA_DIR ${appdir}/toolkit
   setenv CUDA_HOME ${appdir}/toolkit
   setenv CUDA_SDK ${appdir}/samples
   setenv CUDA_SAMPLES ${appdir}/samples
   setenv NVIDIA_DRIVER ${appdir}/installers/
-  setenv NVIDIA_DRIVERSCRIPT ${appdir}/installers/alces-nvidia
 
   prepend-path PATH ${appdir}/toolkit/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/toolkit/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/toolkit/lib64
-
