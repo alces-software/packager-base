@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: Pindel
+:license: GPLv3
+:summary: Detection of breakpoints of structural variants at single-based resolution from next-gen sequence data
+:url: https://trac.nbic.nl/pindel/
+:description: |
+  Pindel can detect breakpoints of large deletions, medium sized
+  insertions, inversions, tandem duplications and other structural
+  variants at single-based resolution from next-gen sequence data. It
+  uses a pattern growth approach to identify the breakpoints of these
+  variants from paired-end short reads.
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov 19 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest available version, v0.2.5b6
+  * Thu Mar  6 2014 - James Donohue <james.donohue@alces-software.com>
+    - Updated broken fetch URL and source directory
+  * Tue Feb  5 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.2.5b6.tar.gz
+:src_dir: pindel-0.2.5b6
+:type: apps
+:version: '0.2.5b6'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/htslib
+  :runtime:
+    - apps/htslib
+:compile: |
+  sed -e 's/-L$(HTSLIB)/-L$(HTSLIBLIB)/g' -i Makefile
+  bash ./INSTALL $HTSLIBDIR <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,perl/Pindel/Bam,share}
+  cp -av pindel pindel2vcf sam2pindel pindel2vcf4tcga <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -av Adaptor.pm <%= dest_dir %>/perl/Pindel/Bam <%= redirect(:install) %>
+  cp -av RELEASE COPYING.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -av gmt <%= dest_dir %>/doc/manual <%= redirect(:install) %>
+  cp -av demo <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -av somatic_filter <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl
+  prepend-path PATH ${appdir}/bin
+
