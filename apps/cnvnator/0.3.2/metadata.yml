@@ -1,0 +1,70 @@
+---
+:schema: 1
+:license: CC-BY-NC License
+:title: CNVnator
+:summary: CNV discovery and genotyping from depth of read mapping
+:url: http://sv.gersteinlab.org/cnvnator/
+:description: |
+  Copy number variation (CNV) in the genome is a complex phenomenon,
+  and not completely understood. We have developed a method, CNVnator,
+  for CNV discovery and genotyping from read-depth (RD) analysis of
+  personal genome sequencing. Our method is based on combining the
+  established mean-shift approach with additional refinements
+  (multiple-bandwidth partitioning and GC correction) to broaden the
+  range of discovered CNVs. We calibrated CNVnator using the extensive
+  validation performed by the 1000 Genomes Project. Because of this,
+  we could use CNVnator for CNV discovery and genotyping in a
+  population and characterization of atypical CNVs, such as de novo
+  and multi-allelic events. Overall, for CNVs accessible by RD,
+  CNVnator has high sensitivity (86%-96%), low false-discovery rate
+  (3%-20%), high genotyping accuracy (93%-95%), and high resolution in
+  breakpoint discovery (<200 bp in 90% of cases with high sequencing
+  coverage). Furthermore, CNVnator is complementary in a
+  straightforward way to split-read and read-pair approaches: It
+  misses CNVs created by retrotransposable elements, but more than
+  half of the validated CNVs that it identifies are not detected by
+  split-read or read-pair. By genotyping CNVs in the CEPH, Yoruba, and
+  Chinese-Japanese populations, we estimated that at least 11% of all
+  CNV loci involve complex, multi-allelic events, a considerably
+  higher estimate than reported earlier. Moreover, among these events,
+  we observed cases with allele distribution strongly deviating from
+  Hardy-Weinberg equilibrium, possibly implying selection on certain
+  complex loci. Finally, by combining discovery and genotyping, we
+  identified six potential de novo CNVs in two family trios.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue May 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+  * Mon Nov 23 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v0.3.2
+:src: CNVnator_v0.3.2.zip
+:src_dir: CNVnator_v0.3.2
+:version: '0.3.2'
+:requirements:
+  :build:
+    - apps/samtools ~> 1.2.0
+    - apps/htslib ~> 1.2.0
+    - libs/root
+  :runtime:
+    - libs/root
+:patches:
+  - gridware-libs.patch
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:make) %>
+  cd ..
+  # sed #!s to use env
+  sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i cnvnator2VCF.pl
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  install -D -m 0644 -v license.rtf CITATION README <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0755 -v cnvnator2VCF.pl src/cnvnator <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

@@ -1,0 +1,40 @@
+--- src/Makefile.orig	2015-11-23 18:08:16.173318360 +0000
++++ src/Makefile	2015-11-23 18:27:33.170616702 +0000
+@@ -1,25 +1,12 @@
+ VERSION	       = v0.3.2
+ override LIBS += -lz
+ 
+-ifneq ($(wildcard $(ROOTSYS)/lib/root),)
+-        ROOTLIBS = -L$(ROOTSYS)/lib/root -lCore -lRIO -lHist -lGraf -lGpad -lTree -lMathCore
+-else
+-        ROOTLIBS = -L$(ROOTSYS)/lib      -lCore -lRIO -lHist -lGraf -lGpad -lTree -lMathCore
+-endif
++ROOTLIBS = -L$(ROOTLIB) -lCore -lRIO -lHist -lGraf -lGpad -lTree -lMathCore 
+ 
+-ifneq ($(wildcard $(ROOTSYS)/include/root),)
+-        INC = -I$(ROOTSYS)/include/root -I$(SAMDIR)
+-else
+-        INC = -I$(ROOTSYS)/include      -I$(SAMDIR)
+-endif
++INC = -I$(ROOTINCLUDE)/root -I$(SAMTOOLSINCLUDE) -I$(HTSLIBINCLUDE)
+ 
+-SAMDIR = samtools
+-SAMLIB = $(SAMDIR)/libbam.a
++SAMLIB = $(SAMTOOLSLIB)/libbam.a $(HTSLIBLIB)/libhts.a
+ HTSDIR = $(wildcard $(SAMDIR)/htslib-*)
+-ifneq ($(HTSDIR),)
+-        SAMLIB += $(HTSDIR)/libhts.a
+-        INC    += -I$(HTSDIR)
+-endif
+ 
+ ifeq ($(OMP),no)
+         $(info Compiling with NO parallel support)
+@@ -36,7 +23,7 @@
+         INC += -I$(YEPPPINCLUDEDIR) -DUSE_YEPPP
+ endif
+ 
+-CXX    = g++ -O3 -std=c++11 -DCNVNATOR_VERSION=\"$(VERSION)\" $(OMPFLAGS)
++CXX    = g++ -O3 -DCNVNATOR_VERSION=\"$(VERSION)\" $(OMPFLAGS)
+ 
+ OBJDIR = obj
+ OBJS   = $(OBJDIR)/cnvnator.o  \
