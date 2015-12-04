@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: PyQwt
+:license: BSD License
+:summary: PyQwt plots data with Numerical Python and PyQt
+:url: http://pyqwt.sourceforge.net/
+:description: |
+  PyQwt is a set of Python bindings for the Qwt C++ class library
+  which extends the Qt framework with widgets for scientific and
+  engineering applications. It provides a widget to plot 2-dimensional
+  data and various widgets to display and control bounded or unbounded
+  floating point values.
+
+  PyQwt addresses the problem of integrating PyQt, Qt, Qwt, NumPy and
+  optionally SciPy.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: PyQwt-5.2.0.tar.gz
+:src_dir: PyQwt-5.2.0
+:version: '5.2.0'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/sip = 4.14.2
+    - apps/python ~> 2.7.0
+    - libs/numpy
+    - libs/pyqt >= 4.9
+    - libs/qt ~> 4.6.0
+  :runtime:
+    - apps/sip = 4.14.2
+    - apps/python ~> 2.7.0
+    - libs/numpy
+    - libs/pyqt >= 4.9
+    - libs/qt ~> 4.6.0
+:compile: |
+  cd configure
+  python configure.py -Q ../qwt-5.2 -L $QT4LIB -I $QT4INCLUDE \
+    -lpython2.7 \
+    --module-install-path=<%=dest_dir %>/python/lib/PyQt4/Qwt5 <%= redirect(:python) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd configure
+  make install <%= redirect(:install) %>
+  cat <<EOF > <%= dest_dir %>/python/lib/PyQt4/__init__.py
+  from pkgutil import extend_path
+  __path__ = extend_path(__path__, __name__)
+  EOF
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib
