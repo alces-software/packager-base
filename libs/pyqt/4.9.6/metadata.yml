@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: PyQt4
+:license: GPLv3
+:summary: Python v2 and v3 bindings for Digia's Qt application framework
+:url: http://www.riverbankcomputing.com/software/pyqt/intro
+:description: |
+  PyQt is a set of Python v2 and v3 bindings for Digia's Qt
+  application framework and runs on all platforms supported by Qt
+  including Windows, MacOS/X and Linux. PyQt5 supports Qt v5. PyQt4
+  supports Qt v4 and will build against Qt v5. The bindings are
+  implemented as a set of Python modules and contain over 620 classes.
+:group: Libraries
+:changelog: |
+  * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Created package for v4.9.6
+  * Wed Oct 15 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: PyQt-x11-gpl-4.9.6.tar.gz
+:src_dir: PyQt-x11-gpl-4.9.6
+:type: libs
+:version: '4.9.6'
+:requirements:
+  :tool:
+    - apps/sip = 4.14.2
+  :build:
+    - apps/python
+    - libs/qt ~> 4.6.0
+  :runtime:
+    - apps/python
+:compilers:
+  gcc:
+:compile: |
+  python configure.py --destdir <%= dest_dir %>/python \
+    --bindir <%= dest_dir %>/bin \
+    --sipdir <%= dest_dir %>/share/sip \
+    --confirm-license \
+    --no-designer-plugin <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python
