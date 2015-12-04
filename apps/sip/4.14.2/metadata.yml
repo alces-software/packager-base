@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: SIP
+:license: Python License / GPLv3
+:summary: Automatically generate Python bindings for C and C++ libraries
+:url: http://www.riverbankcomputing.com/software/sip/intro
+:description: |
+  One of the features of Python that makes it so powerful is the
+  ability to take existing libraries, written in C or C++, and make
+  them available as Python extension modules. Such extension modules
+  are often called bindings for the library.
+
+  SIP is a tool that makes it very easy to create Python bindings for
+  C and C++ libraries. It was originally developed to create PyQt, the
+  Python bindings for the Qt toolkit, but can be used to create
+  bindings for any C or C++ library.
+
+  SIP comprises a code generator and a Python module. The code
+  generator processes a set of specification files and generates C or
+  C++ code which is then compiled to create the bindings extension
+  module. The SIP Python module provides support functions to the
+  automatically generated code.
+
+  The specification files contains a description of the interface of
+  the C or C++ library, i.e. the classes, methods, functions and
+  variables. The format of a specification file is almost identical to
+  a C or C++ header file, so much so that the easiest way of creating
+  a specification file is to edit the corresponding header file.
+
+  SIP makes it easy to exploit existing C or C++ libraries in a
+  productive interpretive programming environment. SIP also makes it
+  easy to take a Python application (maybe a prototype) and
+  selectively implement parts of the application (maybe for
+  performance reasons) in C or C++.
+:group: Tools
+:changelog: |
+  * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Created package for v4.14.2
+  * Wed Oct 15 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: sip-4.14.2.tar.gz
+:type: apps
+:version: '4.14.2'
+:requirements:
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+:compilers:
+  gcc:
+:compile: |
+  python configure.py --destdir <%= dest_dir %>/python \
+    --bindir <%= dest_dir %>/bin \
+    --incdir <%= dest_dir %>/include \
+    --sipdir <%= dest_dir %>/share/sip <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python
