@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: Bazel
+:license: Apache License 2.0
+:summary: Correct, reproducible, fast builds for everyone
+:url: http://bazel.io/
+:description: |
+  Bazel is a tool that automates software builds and tests. Supported
+  build tasks include running compilers and linkers to produce
+  executable programs and libraries, and assembling deployable
+  packages for Android, iOS and other target environments. Bazel is
+  similar to other tools like Make, Ant, Gradle, Buck, Pants and
+  Maven.
+:type: apps
+:group: Tools
+:changelog: |
+  * Mon Dec  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bazel-0.1.0.zip
+:version: '0.1.0'
+:compilers:
+  gcc:
+:patches:
+  - add-ldflags-to-build-runfiles.patch
+  - add-rpath-ldflag-to-crosstool.patch
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "8") ]]; then
+    echo GCC version is $gcc_major.$gcc_minor but Bazel 0.1.0 requires at least v4.8.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+  export LDFLAGS="${LDFLAGS} -Wl,-rpath,$GCCDIR/lib64"
+  for file in tools/cpp/CROSSTOOL src/test/java/MOCK_CROSSTOOL; do
+    for e in $( ls $GCCBIN ); do
+        sed -i "s,\"/usr/bin/"$e"\",\"$GCCBIN/"$e"\",g" $file
+    done
+    sed -i "s|linker_flag: \"%RPATH_LDFLAG%\"|linker_flag: \"-Wl,-rpath,$GCCDIR/lib64/\"|g" $file
+    sed -i "s,cxx_builtin_include_directory: \"/usr/lib/gcc/\",cxx_builtin_include_directory: \"$GCCDIR/lib/gcc/\",g" $file
+    sed -i "s,cxx_builtin_include_directory: \"/usr/local/include\",cxx_builtin_include_directory: \"$GCCDIR/include\",g" $file
+    sed -i "s,cxx_builtin_include_directory: \"/usr/include\",cxx_builtin_include_directory: \"$GCCDIR/include\",g" $file
+  done
+
+  chown -R alces .
+  su alces -s /bin/bash -c "./compile.sh compile"
+  su alces -s /bin/bash -c "./compile.sh tools output/bazel"
+  output/bazel shutdown
+  pkill -U alces -f bazel
+  rm -rf ~alces/.cache/bazel
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share,doc}
+  cp -v output/bazel <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv examples third_party tools <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v CHANGELOG.md CONTRIBUTING.md LICENSE.txt README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin

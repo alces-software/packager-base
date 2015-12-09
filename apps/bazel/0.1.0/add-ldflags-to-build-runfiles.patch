@@ -1,0 +1,11 @@
+--- scripts/bootstrap/compile.sh.orig	2015-09-08 20:43:45.000000000 +0100
++++ scripts/bootstrap/compile.sh	2015-12-07 16:33:11.988517782 +0000
+@@ -325,7 +325,7 @@
+ 
+ log "Compiling build-runfiles..."
+ # Clang on Linux requires libstdc++
+-run_silent "${CXX}" -o ${OUTPUT_DIR}/build-runfiles -std=c++0x src/main/tools/build-runfiles.cc -l stdc++
++run_silent "${CXX}" -o ${OUTPUT_DIR}/build-runfiles -std=c++0x src/main/tools/build-runfiles.cc -l stdc++ $LDFLAGS
+ 
+ log "Compiling process-wrapper..."
+ run_silent "${CC}" -o ${OUTPUT_DIR}/process-wrapper -std=c99 src/main/tools/process-wrapper.c src/main/tools/process-tools.c -lm

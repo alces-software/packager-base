@@ -1,0 +1,10 @@
+--- tools/cpp/CROSSTOOL.orig	2015-12-04 16:57:29.943341342 +0000
++++ tools/cpp/CROSSTOOL	2015-12-07 18:15:08.907150615 +0000
+@@ -121,6 +121,7 @@
+   cxx_flag: "-std=c++0x"
+   linker_flag: "-lstdc++"
+   linker_flag: "-B/usr/bin/"
++  linker_flag: "%RPATH_LDFLAG%"
+ 
+   # TODO(bazel-team): In theory, the path here ought to exactly match the path
+   # used by gcc. That works because bazel currently doesn't track files at
