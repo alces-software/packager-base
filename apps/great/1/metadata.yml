@@ -1,0 +1,48 @@
+---
+:schema: 1
+:title: GREAT
+:license: NONFREE - please refer to http://bejerano.stanford.edu/help/display/GREAT
+:summary: Genomic Regions Enrichment of Annotations Tool
+:url: http://bejerano.stanford.edu/help/display/GREAT/Home
+:description: |
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec 15 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: greatTools.tar.gz
+:src_dir: greatTools
+:type: apps
+:version: '1'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/kent
+:compile: |
+  if [ -z "$KENTSRC" ]; then
+    if [ -d "$KENTDIR/share/src" ]; then
+      KENTSRC="$KENTDIR/share/src"
+    else
+      <%# Try and find Kent source tree in packager src cache %>
+      KENTVER=$(echo $KENTDIR | sed 's,.*apps/kent/\([^/]*\).*,\1,g')
+      KENTSRC=$(echo <%= File.join(src_dir.split('/')[0..-6],'apps','kent','$KENTVER','*','kent','src') %>)
+      if [ ! -d "$KENTSRC" ]; then
+        echo "Unable to locate Kent Utilities source tree (tried: $KENTSRC)." >/dev/stderr
+        echo "Try installing the latest version of apps/kent first." >/dev/stderr
+        exit 1
+      fi
+    fi
+  fi
+  sed -i -e "s,^KENT_DIR =.*,KENT_DIR=$KENTSRC,g" makefile
+  sed -i -e "s,^LDFLAGS=.*,LDFLAGS=-lpthread -lssl,g" makefile
+  make MACHTYPE=x86_64 <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v calculateBinomialP createRegulatoryDomains <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
