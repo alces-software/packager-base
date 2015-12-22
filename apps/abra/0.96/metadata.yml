@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: ABRA
+:license: MIT License
+:summary: Assembly Based ReAligner
+:url: https://github.com/mozack/abra
+:description: |
+  ABRA is a realigner for next generation sequencing data. It uses
+  localized assembly and global realignment to align reads more
+  accurately, thus improving downstream analysis (detection of indels
+  and complex variants in particular).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Dec 22 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: abra-0.96-SNAPSHOT-jar-with-dependencies.jar.sic
+:src_dir: .
+:version: '0.96'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  install -D -m 644 abra-0.96-SNAPSHOT-jar-with-dependencies.jar.sic <%= dest_dir %>/java/abra-0.96.jar
+  mkdir <%= dest_dir %>/bin
+  cat <<\EOF > <%= dest_dir %>/bin/abra
+  #!/bin/bash
+  exec java `eval echo $ABRA_JAVA_OPTS` -jar "<%= dest_dir %>/java/abra-0.96.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/abra
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 4g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else {
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+                    
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
