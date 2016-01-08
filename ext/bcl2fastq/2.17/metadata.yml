@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: Bcl2FastQ
+:license: NONFREE - Proprietary Commercial
+:summary: A tool to handle bcl conversion and demultiplexing
+:url: https://support.illumina.com/downloads/bcl2fastq-conversion-software-v217.html
+:description: |
+  Illumina sequencing instruments generate per-cycle BCL base call
+  files as primary sequencing output, but many downstream analysis
+  applications use per-read FASTQ files as input. bcl2fastq2
+  Conversion Software v2.17 combines these BCL files from a run and
+  converts them into FASTQ files.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan  7 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v2.17  
+  * Tue May  7 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bcl2fastq-2.17.tar.gz
+:src_dir: bcl2fastq
+:type: ext
+:pkg_type: apps
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - libs/boost >= 1.55.0
+  :runtime:
+    - libs/boost >= 1.55.0
+:compilers:
+  gcc:
+:params:
+  :tarball: "Path or URL to Bcl2FastQ tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('bcl2fastq-2.17.tar.gz') %>
+  <% else %>
+    wget -O <%= source('bcl2fastq-2.17.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  cat <<-EOF
+    :version: '2.17'
+  EOF
+:compile: |
+  mkdir build
+  cd build
+  ../src/configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  rm -rf <%= dest_dir %>/{lib,libexec,etc,bin/test}
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
