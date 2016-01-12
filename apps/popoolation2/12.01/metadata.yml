@@ -1,0 +1,78 @@
+---
+:schema: 1
+:title: popoolation2
+:license: BSD License
+:summary: Allows comparision of allele frequencies between two ore more populations
+:url: http://sourceforge.net/projects/popoolation2/
+:description: |
+  PoPoolation2 allows to compare allele frequencies for SNPs between
+  two or more populations and to identify significant
+  differences. PoPoolation2 requires next generation sequencing data
+  of pooled genomic DNA (Pool-Seq). It may be used for measuring
+  differentiation between populations, for genome wide association
+  studies and for experimental evolution.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: popoolation2_1201.zip
+:src_dir: popoolation2_1201
+:type: apps
+:version: '12.01'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :runtime:
+    - apps/R ~> 2.7
+    - apps/bwa
+    - apps/samtools
+:compilers:
+  noarch:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  mkdir .dist
+  mv * .dist
+  mv .dist dist
+  cpanm Text::NSP::Measures::2D::Fisher::twotailed <%= redirect(:cpanm) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv dist/* <%= dest_dir %>/share <%= redirect(:install) %>
+  for a in <%= dest_dir %>/share/*.pl <%= dest_dir %>/share/export/*.pl <%= dest_dir %>/share/indel_filtering/*.pl; do
+    cat <<EOF > <%= dest_dir %>/bin/$(basename "$a")
+  #!/bin/bash
+  exec perl $a "\$@"
+  EOF
+    chmod 755 <%= dest_dir %>/bin/$(basename "$a")
+  done
+  cat <<\EOF > <%= dest_dir %>/bin/mpileup2sync-java
+  #!/bin/bash
+  exec java `eval echo $POPOOLATION2_JAVA_OPTS` -jar "<%= dest_dir %>/share/mpileup2sync.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/mpileup2sync-java
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 7g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+  
+  prepend-path PATH ${appdir}/bin
