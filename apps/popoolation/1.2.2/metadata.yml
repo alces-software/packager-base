@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: popoolation
+:license: BSD License
+:summary: Estimate natural variation and positive selection
+:url: http://sourceforge.net/projects/popoolation
+:description: |
+  PoPoolation is a pipeline for analysing pooled next generation
+  sequencing data. Currently PoPoolation allows to calculate Tajima's
+  Pi, Watterson's Theta and Tajima's D with a sliding window approach
+  for chromosomes or for set of genes. One of the main challenges in
+  population genomics is to identify regions of intererest on a genome
+  wide scale. We believe that PoPoolation will greatly aid this task
+  by allowing a fast and user friendly analysis of NGS data from DNA
+  pools.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: popoolation_1.2.2.zip
+:src_dir: popoolation_1.2.2
+:type: apps
+:version: '1.2.2'
+:requirements:
+  :runtime:
+    - apps/R ~> 2.7
+    - apps/bwa
+    - apps/samtools
+    - apps/mauve
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a Perl application
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share}
+  cp -Rv * <%= dest_dir %>/share <%= redirect(:install) %>
+  for a in <%= dest_dir %>/share/*.pl <%= dest_dir %>/share/basic-pipeline/*.pl <%= dest_dir %>/share/syn-nonsyn/*.pl; do
+    cat <<EOF > <%= dest_dir %>/bin/$(basename "$a")
+  #!/bin/bash
+  exec perl $a "\$@"
+  EOF
+    chmod 755 <%= dest_dir %>/bin/$(basename "$a")
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
