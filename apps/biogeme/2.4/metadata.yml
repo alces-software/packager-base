@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: biogeme
+:license: Freeware; registration and citation requested - see http://biogeme.epfl.ch/index.php
+:summary: Estimation of discrete choice models
+:url: http://biogeme.epfl.ch/index.php
+:description: |
+  Biogeme is an open source freeware designed for the estimation of
+  discrete choice models. It allows the estimation of the parameters
+  of the following models:
+
+    * Logit
+    * Binary probit
+    * Nested logit
+    * Cross-nested logit
+    * Multivariate Extreme Value models
+    * Discrete and continuous mixtures of Multivariate Extreme Value models
+    * Models with nonlinear utility functions
+    * Models designed for panel data
+    * Heteroscedastic models
+:group: Statistics
+:changelog: |
+  * Tue Jan 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v2.4
+  * Wed Sep 18 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: biogeme-2.4.tar.gz
+:src_dir: biogeme-2.4
+:type: apps
+:version: '2.4'
+:compilers:
+  gcc:
+:requirements:
+  :build: 
+    - apps/python3 >= 3.1
+  :runtime: 
+    - apps/python3 >= 3.1
+:compile: |
+  # Prevent module's PYTHONBIN masking biogeme autoconf variable
+  unset PYTHONBIN
+  ./configure --prefix=<%= dest_dir %> --enable-python --enable-bison
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
