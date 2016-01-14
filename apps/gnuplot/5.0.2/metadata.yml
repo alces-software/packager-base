@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: gnuplot
+:license: GNU GPL
+:summary: A portable command-line driven graphing utility
+:url: http://www.gnuplot.info/
+:description: |
+   Gnuplot is a portable command-line driven graphing utility for 
+   Linux, OS/2, MS Windows, OSX, VMS, and many other platforms. It 
+   was originally created to allow scientists and students to 
+   visualize mathematical functions and data interactively, but has
+   grown to support many non-interactive uses such as web scripting. 
+   It is also used as a plotting engine by third-party applications 
+   like Octave. Gnuplot has been supported and under active 
+   development since 1986.
+:group: Apps
+:changelog: |
+  * Wed Jan 13 20156 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: gnuplot-5.0.2.tar.gz
+:src_dir: gnuplot-5.0.2
+:type: apps
+:version: '5.0.2'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %> 
+  mkdir <%= dest_dir %>/doc
+  mv <%= dest_dir %>/share/man <%= dest_dir %>/man
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}MAN ${appdir}/man
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
