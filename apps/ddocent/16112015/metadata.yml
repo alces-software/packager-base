@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: dDocent
+:license: MIT
+:summary: An interactive bash wrapper to QC, assemble, map, and call SNPs from double digest RAD data
+:url: https://github.com/jpuritz/dDocent
+:description: |
+  This script serves as an interactive bash wrapper to QC, assemble, map, 
+  and call SNPs from double digest RAD data. It is designed to run on 
+  Linux based machines with large memory capacity and multiple processing 
+  cores.
+
+  dDocent relies almost entirely on third party software to complete every 
+  step of the analysis pipeline, and users are encouraged to familiarize 
+  themselves with several of these programs, especially Rainbow, BWA, 
+  FreeBayes, GATK, and VCFtools.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 14 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: d42f2b07f9f3a45afdbf71186b36da63b39613ef.zip
+:src_dir: dDocent-d42f2b07f9f3a45afdbf71186b36da63b39613ef
+:type: apps
+:version: '16112015'
+:compilers:
+  gcc:
+:compile: |
+# noop
+# make <%= redirect(:make) %>
+:patches: 
+  -  dDocent.patch
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v dDocent <%= dest_dir %>/bin <%= redirect(:install) %>
+  chmod 0755 <%= dest_dir %>/bin/dDocent <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/scripts 
+  cp -Rv scripts/* <%= dest_dir %>/scripts <%= redirect(:install) %>
+  chmod 0755 <%= dest_dir %>/scripts/* <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SCRIPTS ${appdir}/scripts
+
+  prepend-path PATH ${appdir}/bin

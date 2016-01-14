@@ -1,0 +1,54 @@
+--- dDocent.orig	2016-01-14 14:21:41.772635161 +0000
++++ dDocent	2016-01-14 14:21:13.864635389 +0000
+@@ -27,19 +27,19 @@
+ 	fi
+ done
+ 
+-if find ${PATH//:/ } -maxdepth 1 -name trimmomatic*jar 2> /dev/null| grep -q 'trim' ; then
+-	TRIMMOMATIC=$(find ${PATH//:/ } -maxdepth 1 -name trimmomatic*jar 2> /dev/null | head -1)
+-	else
+-    echo "The dependency trimmomatic is not installed or is not in your" '$PATH'"."
+-    NUMDEP=$((NUMDEP + 1))
+-	fi
++#if find ${PATH//:/ } -maxdepth 1 -name trimmomatic*jar 2> /dev/null| grep -q 'trim' ; then
++#	TRIMMOMATIC=$(find ${PATH//:/ } -maxdepth 1 -name trimmomatic*jar 2> /dev/null | head -1)
++#	else
++#    echo "The dependency trimmomatic is not installed or is not in your" '$PATH'"."
++#    NUMDEP=$((NUMDEP + 1))
++#	fi
+ 	
+-if find ${PATH//:/ } -maxdepth 1 -name TruSeq2-PE.fa 2> /dev/null | grep -q 'Tru' ; then
+-	ADAPTERS=$(find ${PATH//:/ } -maxdepth 1 -name TruSeq2-PE.fa 2> /dev/null | head -1)
+-	else
+-    echo "The file listing adapters (included with trimmomatic) is not installed or is not in your" '$PATH'"."
+-    NUMDEP=$((NUMDEP + 1))
+-    fi
++#if find ${PATH//:/ } -maxdepth 1 -name TruSeq2-PE.fa 2> /dev/null | grep -q 'Tru' ; then
++ADAPTERS=$TRIMMOMATICSHARE/adapters/TruSeq2-PE.fa
++#	else
++#    echo "The file listing adapters (included with trimmomatic) is not installed or is not in your" '$PATH'"."
++#    NUMDEP=$((NUMDEP + 1))
++#    fi
+ 
+ SAMV=$(samtools 2>&1 >/dev/null | grep Ver | sed -e 's/Version://' | cut -f2 -d " " | sed -e 's/-.*//')
+ 	if [ "$SAMV" != "0.1.19" ]; then
+@@ -409,8 +409,8 @@
+ do
+ #echo "Trimming Sample $i"
+ if [ -f $i.R.fq.gz ]; then
+-java -jar $TRIMMOMATIC PE -threads $NUMProc -phred33 $i.F.fq.gz $i.R.fq.gz $i.R1.fq.gz $i.unpairedF.fq.gz $i.R2.fq.gz $i.unpairedR.fq.gz ILLUMINACLIP:$ADAPTERS:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:10 $TW &> $i.trim.log
+-else java -jar $TRIMMOMATIC SE -threads $NUMProc -phred33 $i.F.fq.gz $i.R1.fq.gz ILLUMINACLIP:$ADAPTERS:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:10 $TW &> $i.trim.log
++trimmomatic PE -threads $NUMProc -phred33 $i.F.fq.gz $i.R.fq.gz $i.R1.fq.gz $i.unpairedF.fq.gz $i.R2.fq.gz $i.unpairedR.fq.gz ILLUMINACLIP:$ADAPTERS:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:10 $TW &> $i.trim.log
++else trimmomatic SE -threads $NUMProc -phred33 $i.F.fq.gz $i.R1.fq.gz ILLUMINACLIP:$ADAPTERS:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:10 $TW &> $i.trim.log
+ fi 
+ done
+ mkdir unpaired &>/dev/null
+@@ -565,7 +565,7 @@
+ LENGTH=$(mawk '!/>/' uniq.full.fasta  | mawk '(NR==1||length<shortest){shortest=length} END {print shortest}')
+ LENGTH=$(($LENGTH * 3 / 4))
+ awk 'BEGIN {RS = ">" ; FS = "\n"} NR > 1 {print "@"$1"\n"$2"\n+""\n"gensub(/./, "I", "g", $2)}' uniq.full.fasta > uniq.fq
+-java -jar $TRIMMOMATIC SE -threads $NUMProc -phred33 uniq.fq uniq.fq1 ILLUMINACLIP:$ADAPTERS:2:30:10 MINLEN:$LENGTH
++trimmomatic SE -threads $NUMProc -phred33 uniq.fq uniq.fq1 ILLUMINACLIP:$ADAPTERS:2:30:10 MINLEN:$LENGTH
+ mawk 'BEGIN{P=1}{if(P==1||P==2){gsub(/^[@]/,">");print}; if(P==4)P=0; P++}' uniq.fq1 > uniq.fasta
+ mawk '!/>/' uniq.fasta > totaluniqseq
+ rm uniq.fq*
