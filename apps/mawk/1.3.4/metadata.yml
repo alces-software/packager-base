@@ -1,0 +1,34 @@
+---
+:schema: 1
+:title: mawk
+:license: GNU GPL
+:summary: mawk is an interpreter for the AWK Programming Language.
+:url: http://invisible-island.net/mawk/ 
+:description: |
+  mawk is an interpreter for the AWK Programming Language.
+:group: Apps
+:changelog: |
+  * Wed Jan 13 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: mawk.tar.gz
+:src_dir: mawk-1.3.4-20150503
+:type: apps
+:version: '1.3.4'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix <%= dest_dir %> <%= redirect(:make) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  make install <%= redirect(:install) %>  
+  mkdir -p <%= dest_dir %>/man
+  mv <%= dest_dir %>/share/man <%= dest_dir %>/. <%= redirect(:install) %>
+  rm -r <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}MAN ${appdir}/man
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
