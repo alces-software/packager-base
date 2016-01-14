@@ -1,0 +1,32 @@
+---
+:schema: 1
+:title: bio-rainbow
+:license: GNU GPLv2
+:summary: Package for RAD-seq related clustering and de novo assembly.
+:url: http://sourceforge.net/projects/bio-rainbow
+:description: |
+  Rainbow package consists of several programs used for RAD-seq related 
+  clustering and de novo assembly.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jan 13 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: rainbow_2.0.4.tar.gz
+:src_dir: rainbow_2.0.4
+:type: apps
+:version: '2.0.4'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  for bin in rainbow rbasm ezmsim ; do
+    install -D -m 0755 $bin <%= dest_dir %>/bin <%= redirect(:install) %>
+  done
+  cp -Rv *.pl <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
