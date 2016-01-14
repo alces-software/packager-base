@@ -39,6 +39,8 @@
     - apps/bamtools
     - apps/java
     - apps/pear
+    - apps/bwa
+    - apps/seqtk
 :compilers:
   gcc:
 :compile: |
