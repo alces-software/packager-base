@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: FreeBayes
+:license: MIT
+:summary: Bayesian genetic variant detector designed to find small polymorphisms
+:url: https://github.com/ekg/freebayes
+:description: |
+  FreeBayes is a Bayesian genetic variant detector designed to find
+  small polymorphisms, specifically SNPs (single-nucleotide
+  polymorphisms), indels (insertions and deletions), MNPs
+  (multi-nucleotide polymorphisms), and complex events (composite
+  insertion and substitution events) smaller than the length of a
+  short-read sequencing alignment.  It uses short-read alignments (BAM
+  files with Phred+33 encoded quality scores) for any number of
+  individuals from a population and a reference genome to determine
+  the most-likely combination of genotypes for the population at each
+  position in a reference genome (FASTA).  It reports positions which
+  it finds to be more likely polymorphic than monomorphic in a
+  standard variant interchange format (VCF).  It can also use an input
+  set of variants (VCF) as a source of prior information, and a copy
+  number variant map (BED) to define non-uniform ploidy variation
+  across the samples under analysis.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 31 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v1.0.2.tar.gz
+:src_dir: freebayes-1.0.2
+:version: '1.0.2'
+:requirements:
+  :build: 
+  - apps/bamtools >= 2.3.0
+  - apps/cmake
+:compilers:
+  gcc:
+:compile: |
+  sed -i -e 's|BAMTOOLS_ROOT=../bamtools|BAMTOOLS_ROOT=$(BAMTOOLSDIR)|g' \
+    -e 's|-I$(BAMTOOLS_ROOT)/src|-I$(BAMTOOLSINCLUDE)|g' src/Makefile
+
+  # Fix the Makefile such that it doesn't trample the environment with
+  # a redefinition of the C compiler as a C++ compiler.
+  sed -i -e 's|CC=g++|#CC=g++|g' \
+    -e 's|C=g++|#C=gcc|g' \
+    -e 's|$(CC)|$(CXX)|g' \
+    -e 's|$(C)|$(CC)|g' \
+    src/Makefile
+
+  # Cloning here is cheating a little, but vcflib has _lots_ of
+  # submodules, so we're taking this short-cut for now. (intervaltree
+  # would be relatively easy to handle, but we might as well clone
+  # that too as we have to clone for vcflib in any case).
+
+  git clone https://github.com/ekg/intervaltree <%= redirect(:intervaltree) %>
+  cd intervaltree
+  git checkout dbb4c51 <%= redirect(:intervaltree) %>
+  cd ..
+
+  git clone https://github.com/ekg/vcflib <%= redirect(:vcflib) %>
+  cd vcflib
+  git checkout 5ac0913 <%= redirect(:vcflib) %>
+  git submodule init <%= redirect(:vcflib) %>
+  git submodule update <%= redirect(:vcflib) %>
+  cd ..
+
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  cp -v bin/freebayes bin/bamleftalign <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v LICENSE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv examples python scripts <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
