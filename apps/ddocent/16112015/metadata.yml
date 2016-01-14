@@ -24,15 +24,15 @@
 :version: '16112015'
 :requirements:
   :runtime:
-    - apps/freebayes >=1.0.0
+    - apps/freebayes >= 1.0.0
     - apps/stacks
     - apps/trimmomatic
     - apps/mawk
     - apps/samtools = 0.1.19
-    - apps/vcftools
-    - apps/rainbow
+    - apps/vcftools = 0.1.11
+    - apps/bio-rainbow
     - apps/cdhit
-    - apps/bedtools
+    - apps/bedtools = 2.23.0
     - apps/vcflibutils
     - apps/gnuplot
     - apps/parallel
