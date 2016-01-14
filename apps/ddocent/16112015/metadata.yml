@@ -22,6 +22,23 @@
 :src_dir: dDocent-d42f2b07f9f3a45afdbf71186b36da63b39613ef
 :type: apps
 :version: '16112015'
+:requirements:
+  :runtime:
+    - apps/freebayes >=1.0.0
+    - apps/stacks
+    - apps/trimmomatic
+    - apps/mawk
+    - apps/samtools = 0.1.19
+    - apps/vcftools
+    - apps/rainbow
+    - apps/cdhit
+    - apps/bedtools
+    - apps/vcflibutils
+    - apps/gnuplot
+    - apps/parallel
+    - apps/bamtools
+    - apps/java
+    - apps/pear
 :compilers:
   gcc:
 :compile: |
