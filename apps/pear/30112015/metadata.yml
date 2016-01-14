@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: PEAR
+:license: Creative Commons
+:summary: PEAR is an ultrafast, memory-efficient and highly accurate pair-end read merger
+:url: http://sco.h-its.org/exelixis/web/software/pear/
+:description: |
+  PEAR is an ultrafast, memory-efficient and highly accurate pair-end read merger. 
+  It is fully parallelized and can run with as low as just a few kilobytes of memory.
+  
+  PEAR evaluates all possible paired-end read overlaps and without requiring the 
+  target fragment size as input. In addition, it implements a statistical test for 
+  minimizing false-positive results. Together with a highly optimized implementation,
+  it can merge millions of paired end reads within a couple of minutes on a standard
+  desktop computer.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 14 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: a37a84bbf14af90e5780e17061335b2f3443de2e.zip 
+:src_dir: PEAR-a37a84bbf14af90e5780e17061335b2f3443de2e
+:type: apps
+:version: '30112015'
+:compilers:
+  gcc:
+:compile: |
+  ./autogen.sh <%= redirect(:configure) %>
+  ./configure --prefix <%= dest_dir %> --disable-zlib <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  make install <%= redirect(:install) %>  
+  mkdir -p <%= dest_dir %>/example
+  cp -Rv test/* <%= dest_dir %>/example/. <%= redirect(:install) %>
+  ln -s <%= dest_dir %>/bin/pear <%= dest_dir %>/bin/pearRM <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
