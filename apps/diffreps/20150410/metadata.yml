@@ -1,0 +1,61 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: Differential analysis for ChIP-seq with biological replicates
+:url: https://github.com/shenlab-sinai/diffreps
+:description: |
+  ChIP-seq is now widely used to profile the protein DNA interactions
+  on a genome. It is of high interest to compare the differential
+  enrichment of a histone mark or transcription factor between two
+  contrasting conditions, such as disease vs. control. diffReps is
+  developed to serve this purpose. It scans the whole genome using a
+  sliding window, performing millions of statistical tests and report
+  the significant hits. diffReps takes into account the biological
+  variations within a group of samples and uses that information to
+  enhance the statistical power. Considering biological variation is
+  of high importance, especially for in vivo brain tissues.
+
+  In addition, diffReps has two easy-to-use tools. One is for quick
+  genomic annotation of a differential site or peak list. Another is
+  for finding chromatin modification hotspots (see below). diffReps is
+  developed as an automated pipeline so that everything can be done in
+  one command. In incorporates four different statistical tests,
+  i.e. negative binomial, T-test, G-test and Chi-square test, for
+  differential analysis. So no matter you have biological replicates
+  or not, you can choose an appropriate test for your purpose.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jan 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: diffreps-20150410.zip
+:src_dir: diffreps-f4bd4ff2488d601b8cf67c7bac85c0caa8326371
+:type: apps
+:version: 20150410
+:compilers:
+  gcc:
+:requirements:
+  :tool: apps/cpanminus
+  :build: apps/perl
+  :runtime: apps/perl
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm Statistics::TTest Math::CDF Parallel::ForkManager <%= redirect(:cpanm) %>
+  perl Makefile.PL PREFIX=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cp -rv perl <%= dest_dir %>
+  mv <%= dest_dir %>/lib/site_perl/*/{diffReps,gtest_externalR,MyBioinfo,MyShortRead,PJ} <%= dest_dir %>/perl/lib/perl5
+  mv <%= dest_dir %>/man/man3/* <%= dest_dir %>/perl/man/man3
+  rm -rf <%= dest_dir %>/{man,lib}
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
