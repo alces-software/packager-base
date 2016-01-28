@@ -1,0 +1,100 @@
+---
+:schema: 1
+:title: matplotlib
+:license: MIT
+:summary: Package for calling nucleosomes using ATAC-Seq data
+:url: http://matplotlib.org/
+:description: |
+  Python package for calling nucleosomes using ATAC-Seq data. Also 
+  includes general scripts for working with paired-end ATAC-Seq 
+  data (or potentially other paired-end data).
+
+  Published Open Access at Genome Research: 
+  http://genome.cshlp.org/content/early/2015/08/27/gr.192294.115?top=1
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan  26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v0.3.1.tar.gz 
+:src_dir: NucleoATAC-0.3.1 
+:version: '0.3.1'
+:compilers:
+  gcc:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools
+      :build:
+        - apps/python ~> 2.7.0
+        - apps/cython >= 0.22
+        - libs/numpy >= 0.9.1
+        - libs/scipy == 0.17.0
+        - libs/pysam >= 0.8.1
+        - libs/matplotlib
+      :runtime:
+        - apps/python ~> 2.7.0
+        - apps/cython >= 0.22
+        - libs/numpy >= 0.9.1
+        - libs/scipy == 0.17.0
+        - libs/pysam >= 0.8.1
+        - libs/matplotlib
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3
+      :build:
+        - apps/python3 ~> 3.3.0
+        - apps/cython_python3 >= 0.22
+        - libs/numpy_python3 >= 0.9.1
+        - libs/scipy_python3 = 0.17.0
+        - libs/pysam_python3 >= 0.8.1
+        - libs/matplotlib_python3
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - apps/cython_python3 >= 0.22
+        - libs/numpy_python3 >= 0.9.1
+        - libs/scipy_python3 = 0.17.0
+        - libs/pysam_python3 >= 0.8.1
+        - libs/matplotlib_python3
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34
+      :build:
+        - apps/python34 ~> 3.4.0
+        - apps/cython_python34 >= 0.22
+        - libs/numpy_python34 >= 0.9.1
+        - libs/scipy_python34 >= 0.16.0
+        - libs/pysam_python34 >= 0.8.1
+        - libs/matplotlib_python34
+      :runtime:
+        - apps/python34 ~> 3.4.0
+        - apps/cython_python34 >= 0.22
+        - libs/numpy_python34 >= 0.9.1
+        - libs/scipy_python34 >= 0.16.0
+        - libs/pysam_python34 >= 0.8.1
+        - libs/matplotlib_python34
+:compile: |
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
+  mkdir -p $PYTHONDEPSDIR
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
+  prepend-path PATH ${appdir}/python/bin
