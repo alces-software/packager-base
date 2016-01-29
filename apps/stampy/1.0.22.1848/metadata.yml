@@ -23,6 +23,12 @@
 :src: stampy-1.0.22r1848.tgz
 :src_dir: stampy-1.0.22
 :version: '1.0.22.1848'
+:dependencies:
+  el:
+    - gcc-c++
+    - python-devel
+:patches:
+  - remove-broken-option.patch
 :compilers:
   gcc:
 :compile: |

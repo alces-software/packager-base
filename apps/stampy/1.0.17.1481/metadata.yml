@@ -21,6 +21,12 @@
 :src: stampy-1.0.17r1481.tgz
 :src_dir: stampy-1.0.17
 :version: '1.0.17.1481'
+:dependencies:
+  el:
+    - gcc-c++
+    - python-devel
+:patches:
+  - remove-broken-option.patch
 :compilers:
   gcc:
 :compile: |

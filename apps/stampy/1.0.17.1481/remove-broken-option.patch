@@ -1,0 +1,13 @@
+--- makefile.orig	2013-06-06 01:04:36.000000000 +0900
++++ makefile	2016-01-29 20:12:21.248151461 +0900
+@@ -41,8 +41,8 @@
+ buildall: $(bdir)/readalign.o $(bdir)/frontend.o $(bdir)/algebras.o
+ 	cp -r build/$(python)/* .
+ ifeq ($(platform),linux-x86_64)
+-	g++ `$(python)-config --ldflags` -pthread -shared -Wl $(objs) -o maptools.so
++	g++ `$(python)-config --ldflags` -pthread -shared $(objs) -o maptools.so
+ else
+-	g++ `$(python)-config --ldflags` -pthread -dynamiclib -Wl $(objs) -o maptools.so
++	g++ `$(python)-config --ldflags` -pthread -dynamiclib $(objs) -o maptools.so
+ endif
+ 
