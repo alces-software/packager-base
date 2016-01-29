@@ -1,0 +1,99 @@
+---
+:schema: 1
+:title: Seaborn
+:license: BSD Simplified
+:summary: Seaborn is a Python visualization library based on matplotlib.
+:url: http://stanford.edu/~mwaskom/software/seaborn/
+:description: |
+  Seaborn is a library for making attractive and informative statistical graphics 
+  in Python. It is built on top of matplotlib and tightly integrated with the 
+  PyData stack, including support for numpy and pandas data structures and 
+  statistical routines from scipy and statsmodels.
+
+  Some of the features that seaborn offers are
+  * Several built-in themes that improve on the default matplotlib aesthetics
+  * Tools for choosing color palettes to make beautiful plots that reveal patterns
+    in your data
+  * Functions for visualizing univariate and bivariate distributions or for comparing
+    them between subsets of data
+  * Tools that fit and visualize linear regression models for different kinds of 
+    independent and dependent variables
+  * Functions that visualize matrices of data and use clustering algorithms to 
+    discover structure in those matrices
+  * A function to plot statistical timeseries data with flexible estimation and 
+    representation of uncertainty around the estimate
+  * High-level abstractions for structuring grids of plots that let you easily build 
+    complex visualizations
+:type: libs
+:group: Libraries
+:changelog: |
+  * Fri Jan  29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: seaborn-0.7.0.tar.gz
+:version: 'seaborn-0.7.0'
+:compilers:
+  gcc:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools
+      :build:
+        - apps/python ~> 2.7.0
+        - libs/scipy
+        - libs/matplotlib 
+        - libs/pandas
+      :runtime:
+        - apps/python ~> 2.7.0
+        - libs/scipy
+        - libs/matplotlib
+        - libs/pandas
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3
+      :build:
+        - apps/python3 ~> 3.3.0
+        - libs/scipy_python3
+        - libs/matplotlib_python3
+        - libs/pandas_python3
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - libs/scipy_python3
+        - libs/matplotlib_python3
+        - libs/pandas_python3
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34
+      :build:
+        - apps/python34 ~> 3.4.0
+        - libs/scipy_python34
+        - libs/matplotlib_python34
+        - libs/pandas_python34
+      :runtime:
+        - apps/python34 ~> 3.4.0
+        - libs/scipy_python34
+        - libs/matplotlib_python34
+        - libs/pandas_python34
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
+
