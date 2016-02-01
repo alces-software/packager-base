@@ -1,12 +1,15 @@
 ---
 :schema: 1
 :license: GPLv3
-:summary: RAD tools for guppies (Poecilia reticulata)
+:summary: Guppy RAD tools
 :url: http://guppy.weigelworld.org/weigeldatabases/radMarkers/
-:description: # No detailed description available
+:description:
+  RAD tools for guppies (Poecilia reticulata).
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Mon Feb 1 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated description/summary
   * Thu Feb 21 2012 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: RApiD_v0.6.tar.gz
