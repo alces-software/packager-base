@@ -27,6 +27,9 @@
     - First created
 :src: cmake-3.0.2.tar.gz
 :version: '3.0.2'
+:dependencies:
+  el:
+    - ncurses-devel
 :compilers:
   gcc:
 :compile: |

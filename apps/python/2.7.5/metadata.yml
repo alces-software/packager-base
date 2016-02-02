@@ -36,6 +36,13 @@
 :src_dir: Python-2.7.5
 :type: apps
 :version: '2.7.5'
+:dependencies:
+  el:
+    - openssl-devel
+    - bzip2-devel
+    - zlib-devel
+    - tk-devel
+    - libdb-devel
 :compilers:
   gcc:
 :compile: |

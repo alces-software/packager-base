@@ -28,7 +28,9 @@
 :src: qt-everywhere-opensource-src-4.8.4.tar.gz
 :src_dir: qt-everywhere-opensource-src-4.8.4
 :version: 4.8.4
-# Requires gstreamer-plugins-base-devel on build host
+:dependencies:
+  el:
+    - gstreamer-plugins-base-devel
 :compilers:
   gcc:
 :compile: |

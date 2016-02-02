@@ -23,6 +23,11 @@
     - First created
 :src: matplotlib-1.4.3.tar.gz
 :version: '1.4.3'
+:dependencies:
+  el:
+    - freetype-devel
+    - libpng-devel
+    - tk-devel
 :compilers:
   gcc:
 :variants:

@@ -30,6 +30,15 @@
     - First created    
 :src: gcc-5.1.0.tar.bz2
 :version: '5.1.0'
+:dependencies:
+  el:
+    - gmp-devel
+    - mpfr-devel
+    - libmpc-devel
+    - glibc-devel
+    - libgcc
+    - glibc-devel.i686
+    - libgcc.i686
 :compilers:
   gcc:
 :compile: |

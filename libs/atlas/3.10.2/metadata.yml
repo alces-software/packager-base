@@ -44,6 +44,8 @@
     :configure_flags: ''
   open64:
     :configure_flags: "-C xc opencc -C ic opencc -C if openf90 -C sk opencc -C dk opencc -C sm opencc -C dm opencc -F xc '-O3 -g -lfortran -lffio -lm' -F ic '-O3 -g -lfortran -lffio -lm' -F if '-O3 -g -lfortran -lffio -lm' -F sk '-O3 -g -lfortran -lffio -lm' -F dk '-O3 -g -lfortran -lffio -lm'  -F sm '-O3 -g -lfortran -lffio -lm' -F dm '-O3 -g -lfortran -lffio -lm'"
+:dependencies:
+  el: gcc-gfortran
 :compile: |
   <% lapackfile = param(:lapackfile) == 'default' ? source('lapack-3.5.0.tgz') : param(:lapackfile) %>
   if [ "<%= compiler_name %>" == "gcc" ]; then
