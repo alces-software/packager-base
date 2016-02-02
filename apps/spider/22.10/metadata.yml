@@ -1,0 +1,40 @@
+---
+:schema: 1
+:license: GPLv2
+:title: SPIDER
+:summary: System for Processing Image Data from Electron microscopy and Related fields
+:url: http://spider.wadsworth.org/spider_doc/spider/docs/spider.html
+:description: |
+  SPIDER (System for Processing Image Data from Electron microscopy
+  and Related fields) is an image processing system for electron
+  microscopy.
+:group: Imaging
+:changelog: |
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: spiderweb.22.10.tar.gz
+:src_dir: .
+:type: apps
+:version: 22.10
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share/web,share/spider,doc}
+  cp -Rv web/bin web/docs web/jweb <%= dest_dir %>/share/web <%= redirect(:install) %>
+  ln -s <%= dest_dir %>/bin/spider_linux <%= dest_dir %>/bin/spider
+  cp -Rv spider/bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv spider/man spider/proc <%= dest_dir %>/share/spider <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  setenv SPIDER_DIR ${appdir}
+  setenv SPBIN_DIR ${appdir}/bin/
+  setenv SPMAN_DIR ${appdir}/share/spider/man/
+  setenv SPPROC_DIR ${appdir}/share/spider/proc/
+
+  prepend-path PATH ${appdir}/bin
