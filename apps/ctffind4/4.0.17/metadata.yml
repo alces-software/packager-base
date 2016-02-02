@@ -1,0 +1,75 @@
+---
+:schema: 1
+:license: Janelia Research Campus Software Copyright 1.1
+:title: CTFFIND4
+:summary: CTF estimation
+:url: http://grigoriefflab.janelia.org/ctffind4
+:description: |
+  CTFFIND4 is an updated version of CTFFIND3, which is itself is an
+  updated version of the program CTFFIND2, which was developed in 1998
+  by Nikolaus Grigorieff at the MRC Laboratory of Molecular Biology in
+  Cambridge, UK with financial support from the MRC.
+  
+  CTFFIND determines defocus parameters from images of untilted
+  specimens.  CTFFIND4 is:
+
+    * Faster than CTFFIND 3 (2-10x, depending on runtime parameters)
+    * Backward compatibility with CTFFIND 3 by giving
+      --old-school-input. Should not break existing scripts
+    * Completely rewritten, in object-oriented Fortran
+    * New interactive user interface with friendly help (just type '?'
+      to get help)
+    * Improved output diagonstics, including an estimate of the
+      maximum resolution at which Thon rings were detected
+    * Outputs 1D profiles which accurately account for astigmatism
+    * Accepts stack of micrographs as input
+    * Accepts stack of movie frames as input
+    * Finds the phase shift from micrographs collected using a phase
+      plate
+
+:group: Imaging
+:changelog: |
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: ctffind-4.0.17.tar.gz
+:src_dir: ctffind-4.0.17
+:type: apps
+:version: 4.0.17
+:dependencies:
+  el:
+    - gcc-gfortran
+:requirements:
+  :build:
+    - libs/gsl
+    - libs/fftw3_float >= 3.3.3
+:compilers:
+  gcc:
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  gcc_patch=$(gcc -dumpversion | cut -f3 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "9") || ("$gcc_major" -eq "4" && "$gcc_minor" -eq "9" && "$gcc_patch" -lt "1" ) ]]; then
+    echo GCC version is $gcc_major.$gcc_minor but ctffind4 requires at least v4.9.1 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+  mkdir build
+  cd build
+  ../configure --prefix=<%= dest_dir %> \
+    --enable-static --disable-debug \
+    --enable-optimisations --enable-openmp \
+    --with-gsl-libdir=$GSLLIB \
+    --with-fftw-libdir=$FFTW3_FLOATLIB
+    FC=gfortran F77=gfortran \
+    <%= redirect(:configure) %>
+  sed -i 's/FCFLAGS = /FCFLAGS = -xf77-cpp-input /g' Makefile
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v scripts/* build/ctffind <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv doc/* <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
