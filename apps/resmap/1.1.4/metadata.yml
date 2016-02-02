@@ -1,0 +1,46 @@
+---
+:schema: 1
+:license: Creative Commons BY-NC-ND
+:title: ResMap
+:summary: Local Resolution Map Algorithm
+:url: http://resmap.sourceforge.net/
+:description: |
+  ResMap (Resolution Map) is a Python (NumPy/SciPy) application with a
+  Tkinter GUI. It is an easy to use software package for computing the
+  local resolution of 3D density maps studied in structural biology,
+  primarily electron cryo-microscopy (cryo-EM).
+:group: Imaging
+:changelog: |
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: ResMap-1.1.4-src.zip
+:src_dir: .
+:type: apps
+:version: 1.1.4
+:requirements:
+  :runtime:
+    - apps/python >= 2.7.0
+    - libs/numpy >= 1.6.0
+    - libs/scipy >= 0.12.0
+    - libs/matplotlib >= 1.2.0
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a noarch package
+:install: |
+  mkdir <%= dest_dir %>/{bin,python}
+  cp -v *.py <%= dest_dir %>/python <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/ResMap
+  #!/bin/bash
+  exec python $RESMAPDIR/python/ResMap.py "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/ResMap
+  ln -s ResMap <%= dest_dir %>/bin/resmap
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python
+  
+  prepend-path PATH ${appdir}/bin
