@@ -11,6 +11,8 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Additionally enabled threads library
   * Mon Apr  8 2013 - James Donohue <james.donohue@alces-software.com>
     - Updated to v3.3.3
   * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -44,6 +46,7 @@
   <%= compiler[:configure_prefix] %> ./configure \
     --prefix=<%= dest_dir %> \
     --enable-mpi \
+    --enable-threads \
     --enable-shared <%= variant[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
