@@ -1,0 +1,57 @@
+---
+:schema: 1
+:license: GPLv2+
+:title: RELION
+:summary: REgularised LIkelihood OptimisatioN
+:url: http://www2.mrc-lmb.cam.ac.uk/relion/index.php/Main_Page
+:description: |
+  RELION (for REgularised LIkelihood OptimisatioN, pronounce rely-on)
+  is a stand-alone computer program that employs an empirical Bayesian
+  approach to refinement of (multiple) 3D reconstructions or 2D class
+  averages in electron cryo-microscopy (cryo-EM). It is developed in
+  the group of Sjors Scheres at the MRC Laboratory of Molecular
+  Biology. Briefly, the ill-posed problem of 3D-reconstruction is
+  regularised by incorporating prior knowledge: the fact that
+  macromolecular structures are smooth, i.e. they have limited power
+  in the Fourier domain. In the corresponding Bayesian framework, many
+  parameters of a statistical model are learned from the data, which
+  leads to objective and high-quality results without the need for
+  user expertise. The underlying theory is given in Scheres (2012)
+  JMB. A more detailed description of its implementation is given in
+  Scheres (2012) JSB. If RELION is useful in your work, please cite at
+  least one of these papers.
+:group: Imaging
+:changelog: |
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: relion-1.4.tar.bz2
+:src_dir: relion-1.4
+:type: apps
+:version: 1.4
+:requirements:
+  :build:
+    - libs/fftw3_double
+    - libs/fltk
+    - mpi/openmpi
+  :runtime:
+    - libs/fftw3_double
+    - libs/fltk
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  fltk_cxx=`fltk-config --cxxflags`
+  fltk_ld=`fltk-config --ldflags`
+  ./configure --enable-mpi \
+    CPPFLAGS="-I$FFTW3_DOUBLEINCLUDE $fltk_cxx"  LDFLAGS="-L$FFTW3_DOUBLELIB $fltk_ld" \
+    --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
