@@ -1,0 +1,52 @@
+---
+:schema: 1
+:license: Janelia Research Campus Software Copyright 1.1
+:title: CTFFIND3/CTFTILT
+:summary: CTF estimation
+:url: http://grigoriefflab.janelia.org/ctf
+:description: |
+  CTFFIND3 and CTFTILT are two programs for finding CTFs of electron
+  micrographs. The program CTFFIND3 is an updated version of the
+  program CTFFIND2, which was developed in 1998 by Nikolaus Grigorieff
+  at the MRC Laboratory of Molecular Biology in Cambridge, UK with
+  financial support from the MRC. This software is licensed under the
+  terms of the Janelia Research Campus Software Copyright 1.1
+  <http://license.janelia.org/license/jfrc_copyright_1_1.html>.
+
+  CTFFIND and CTFTILT determine defocus parameters from images of
+  untilted specimens, as well as defocus and tilt parameters from
+  images of tilted specimens, respectively. Both programs use a simple
+  algorithm that fits the amplitude modulations visible in a power
+  spectrum with a calculated contrast transfer function (CTF). The
+  background present in the power spectrum is calculated using a
+  low-pass filter. The background is then subtracted from the original
+  power spectrum, allowing the fitting of only the oscillatory
+  component of the CTF.  CTFTILT determines specimen tilt parameters
+  by measuring the defocus at a series of locations on the image while
+  constraining them to a single plane.
+:group: Imaging
+:changelog: |
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: ctf_140609.tar.gz
+:src_dir: ctf
+:type: apps
+:version: 3.5.140609
+:dependencies:
+  el:
+    - gcc-gfortran
+:compilers:
+  gcc:
+:compile: |
+  make -f Makefile_linux <%= redirect(:compile) %>
+  make -f Makefile_linux_mp <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v ctffind3*.exe ctftilt*.exe ctffind3*.com ctftilt*.com <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
