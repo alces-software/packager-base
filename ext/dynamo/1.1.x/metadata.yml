@@ -1,0 +1,133 @@
+---
+:schema: 1
+:title: Dynamo
+:license: MIT License
+:summary: Software environment for subtomogram averaging of cryo-EM data
+:url: http://dynamo-em.org/
+:description: |
+  Dynamo is a software package for subtomogram averaging of cryo
+  Electron Tomography (cryo-ET) data with three main goals: first,
+  Dynamo allows user-transparent adaptation to a variety of
+  high-performance computing platforms such as GPUs or CPU
+  clusters. Second, Dynamo implements user-friendliness through GUI
+  interfaces and scripting resources. Third, Dynamo offers
+  user-flexibility through a plugin API. Besides the alignment and
+  averaging procedures, Dynamo includes native tools for visualization
+  and analysis of results and data, as well as support for third party
+  visualization software, such as Chimera UCSF or EMAN2.
+:type: apps
+:group: Imaging
+:changelog: |
+  * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: dynamo-v-1.1.x_MCR-8.5.0_GLNXA64.tar
+:src_dir: .
+:type: ext
+:pkg_type: apps
+:requirements:
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:compilers:
+  gcc:
+:sources:
+  - MCR_R2015a_glnxa64_installer.zip
+:params:
+  :tarball: "Path or URL to Dynamo tarball in tar format (pass 'skip' to use an existing download)"
+  :tarversion: "Version of Dynamo being installed in 1.1.X format, for example 1.1.109"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('dynamo-v-1.1.x_MCR-8.5.0_GLNXA64.tar') %>
+  <% else %>
+    wget -O <%= source('dynamo-v-1.1.x_MCR-8.5.0_GLNXA64.tar') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  <% if param('tarversion') !~ /^1\.1\.\d+$/ %>
+    echo ":failure: tar version must be in 1.1.X format: <%= param('tarversion') %>" >/dev/stderr
+    exit 1
+  <% end %>
+  cat <<-EOF
+    :version: '<%= param('tarversion') %>'
+  EOF  
+:compile: |
+  mkdir mcr
+  MCR_DEST=$(mktemp -d /tmp/mcr-target.XXXXXX)
+  cd mcr
+  unzip <%= source('MCR_R2015a_glnxa64_installer.zip') %> <%= redirect(:mcr) %>
+  ./install -mode silent -agreeToLicense yes -destinationFolder "${MCR_DEST}" <%= redirect(:mcr) %>
+  mv ${MCR_DEST} ../mcr-target
+  cd ..
+
+  export LD_LIBRARY_PATH=${MCR_DEST}/lib/mcr/v85/runtime/glnxa64:${MCR_DEST}/lib/mcr/v85/bin/glnxa64:${MCR_DEST}/lib/mcr/v85/sys/os/glnxa64:${MCR_DEST}/lib/mcr/v85/sys/java/jre/glnxa64/jre/lib/amd64/native_threads:${MCR_DEST}/lib/mcr/v85/sys/java/jre/glnxa64/jre/lib/amd64/server:${MCR_DEST}/lib/mcr/v85/sys/java/jre/glnxa64/jre/lib/amd64/client:${MCR_DEST}/lib/mcr/v85/sys/java/jre/glnxa64/jre/lib/amd64:$LD_LIBRARY_PATH
+  source dynamo_setup_linux.sh <%= redirect(:compile) %>
+  source dynamo_setup_cluster.sh mpic++ /dev/null <%= redirect(:compile) %>
+  chmod 644 mpi/*.cc mpi/*.sh
+
+  find -type d -exec chmod 0755 {} \;
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,lib,share}
+  cp -Rv mcr-target <%= dest_dir %>/lib/mcr
+  cp -Rv * \
+    <%= dest_dir %>/share <%= redirect(:install) %>
+
+  cat <<\EOF > <%= dest_dir %>/bin/dynamo-wrapper
+  #!/bin/bash
+  n=$(basename $0)
+  if [ "$n" == 'dynamo-wrapper' ]; then
+    n=$1
+    shift
+  fi
+  if [ -z "$n" ]; then
+    echo "Usage: $0 <application> [<parameters>]"
+  else
+    MCR_LD_LIBRARY_PATH=${DYNAMO_MCR_PREFIX}LD_LIBRARY_PATH
+    MCR_XAPPLRESDIR=${DYNAMO_MCR_PREFIX}XAPPLRESDIR
+    export LD_LIBRARY_PATH=${!MCR_LD_LIBRARY_PATH}:$LD_LIBRARY_PATH
+    export XAPPLRESDIR=${!MCR_XAPPLRESDIR}
+    for a in matlab/bin mex/bin cuda/bin mpi C/bin; do
+      if [ -x "${DYNAMODIR}"/share/${a}/${n} ]; then
+        exec "${DYNAMODIR}"/share/${a}/${n} "$@"
+      fi
+    done
+  fi
+  exit 1
+  EOF
+
+  chmod 755 <%= dest_dir %>/bin/dynamo-wrapper
+
+  for a in matlab/bin mex/bin cuda/bin C/bin mpi; do
+    for x in <%= dest_dir %>/share/$a/dynamo*; do
+      if [ -x "$x" ]; then
+        ln -s dynamo-wrapper <%= dest_dir %>/bin/$(basename "$x")
+      fi
+    done
+  done
+:modules:
+   - :type: apps
+     :content: |
+       set mcrroot ${appdir}/lib/mcr/v85
+       set mcrjre ${mcrroot}/sys/java/jre/glnxa64/jre/lib/amd64
+       set mcrprefix ${appcaps}MCR_
+
+       setenv ${appcaps}_MCR_PREFIX ${mcrprefix}
+
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/client
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/server
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrjre}/native_threads
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/sys/os/glnxa64
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/bin/glnxa64
+       prepend-path ${mcrprefix}LD_LIBRARY_PATH ${mcrroot}/runtime/glnxa64
+
+       setenv ${mcrprefix}XAPPLRESDIR ${mcrroot}/X11/app-defaults
+
+       setenv DYNAMO_ROOT ${appdir}/share
+
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+
+       prepend-path PATH ${appdir}/bin
+      
