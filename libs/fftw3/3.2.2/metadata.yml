@@ -11,6 +11,9 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Additionally enabled OpenMP library build
+    - Additionally enabled threaded library build
   * Thu Dec  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Tweak to allow building on Darwin
   * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -43,7 +46,10 @@
   <%= compiler[:configure_prefix] %> ./configure \
     --prefix=<%= dest_dir %> \
     --enable-mpi \
-    --enable-shared $DARWIN_LD_FLAGS <%= variant[:configure_flags] %> <%= redirect(:configure) %>
+    --enable-threads \
+    --enable-openmp \
+    --enable-shared $DARWIN_LD_FLAGS <%= variant[:configure_flags] %> \
+    --with-pic <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>

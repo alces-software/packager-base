@@ -11,8 +11,10 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Additionally enabled OpenMP library build
   * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - Additionally enabled threads library
+    - Additionally enabled threaded library build
   * Mon Apr  8 2013 - James Donohue <james.donohue@alces-software.com>
     - Updated to v3.3.3
   * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -47,7 +49,9 @@
     --prefix=<%= dest_dir %> \
     --enable-mpi \
     --enable-threads \
-    --enable-shared <%= variant[:configure_flags] %> <%= redirect(:configure) %>
+    --enable-openmp \
+    --enable-shared <%= variant[:configure_flags] %> \
+    --with-pic <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
