@@ -1,0 +1,60 @@
+---
+:schema: 1
+:license: Public domain
+:title: Bsoft
+:summary: Bernard's Software Package
+:url: http://lsbr.niams.nih.gov/bsoft
+:description: |
+  Bsoft is a collection of programs and a platform for development of
+  software for image and molecular processing in structural
+  biology. Problems in structural biology are approached with a highly
+  modular design, allowing fast development of new algorithms without
+  the burden of issues such as file I/O. It provides an easily
+  accessible interface, a resource that can be and has been used in
+  other packages.
+
+  The evolution of Bsoft is unique in the sense that it started from
+  different aims and intentions than the typical image processing
+  package. In stead of solving a particular image processing problem,
+  Bsoft developed to deal with the disparities in approaches in other
+  packages, as well as supporting efforts to handle large volumes of
+  data and processing tasks in heterogeneous environments.
+:group: Imaging
+:changelog: |
+  * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: bsoft1_9_1.tar.gz
+:src_dir: bsoft
+:type: apps
+:version: 1.9.1
+:requirements:
+  :build:
+    - libs/fftw3_float
+  :runtime:
+    - libs/fftw3_float
+:dependencies:
+  el:
+    - tcsh
+    - gcc-gfortran
+    - tcl-devel
+    - tk-devel
+    - bc
+:compilers:
+  gcc:
+:compile: |
+  ./bmake omp fftw3=$FFTW3_FLOATDIR <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>
+  cp -Rv bin doc lib tcltk parameters <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  setenv BSOFT ${appdir}
+  setenv BPARAM ${appdir}/parameters
+  
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
