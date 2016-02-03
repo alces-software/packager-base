@@ -1,0 +1,57 @@
+---
+:schema: 1
+:license: BSD License
+:title: IHRSR++
+:summary: Extension of Iterative Helical Real Space Reconstruction (IHRSR) software
+:url: http://cryoem.ucsd.edu/wikis/software/start.php?id=ihrsr
+:description: |
+  IHRSR++ is a user-friendly extension to Ed Egelman's Iterative
+  Helical Real Space Reconstruction (IHRSR) software.
+
+  It includes all of the original IHRSR functionality plus the
+  capabilities to determine out-of-plane tilt, apply dihedral
+  symmetry, and automatically construct a starting model from the
+  image data.
+
+  IHRSR++ also contains a number of Perl and Spider scripts for
+  performing common preprocessing and data manipulation tasks such as
+  power spectra calculations, application of CTF corrections, image
+  stack generation, image centering, and tube diameter determination.
+:group: Imaging
+:changelog: |
+  * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: IHRSR_v1.5.tar.gz
+:src_dir: IHRSR_v1.5
+:type: apps
+:version: 1.5
+:requirements:
+  el:
+    - gcc-gfortran
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:compile) %>
+  cp himpose hsearch_lorentz ..
+  cd ..
+  mkdir proc doc lib bin
+  mv *.spi *.spd proc
+  mv *.txt doc
+  mv *.so lib
+  mv ?????* bin
+:install: |
+  mkdir -p <%= dest_dir %>/share/spider
+  cp -Rv bin doc lib <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv proc <%= dest_dir %>/share/spider <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}SPPROC ${appdir}/share/spider/proc
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
