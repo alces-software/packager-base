@@ -1,0 +1,103 @@
+---
+:schema: 1
+:title: ANSYS Workbench
+:license: Commercial
+:summary: Suite of advanced engineering simulation tools
+:url: http://www.ansys.com/Products/Workflow+Technology/ANSYS+Workbench+Platform
+:description: |
+  The ANSYS Workbench platform is the framework unifying the
+  industry-leading suite of advanced engineering simulation
+  technology. An innovative project schematic makes it possible to
+  build even complex multiphysics analyses with drag-and-drop
+  simplicity. With bidirectional parametric CAD connectivity, powerful
+  highly automated meshing, an automated project-level update
+  mechanism, pervasive parameter management and integrated
+  optimization tools, the ANSYS Workbench platform delivers
+  unprecedented productivity, enabling process capture and
+  Simulation-Driven Product Development.
+:type: apps
+:group: Engineering
+:changelog: |
+  * Tue Feb 9 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v170
+  * Fri Jun 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ansys.tgz
+:src_dir: .
+:version: '170'
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to ANSYS tarball in tar.gz format (pass 'skip' to use an existing installation/download)"
+  :root: "Directory in which ANSYS is installed (pass 'default' to use standard location)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('ansys.tgz') %>
+    <% else %>
+      wget -O <%= source('ansys.tgz') %> <%= param('tarball') %>
+    <% end %>
+  <% else %>
+     if [ ! -f "<%= source('ansys.tgz') %>" ]; then
+       cd /tmp
+       mkdir ansys
+       tar cvzf "<%= source('ansys.tgz') %>" ansys
+       rmdir ansys
+     fi
+  <% end %>
+:analyse: |
+  if [ -d <%= src_dir %> ]; then
+    exit 0
+  else
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+  <%
+    if param('root') != 'default'
+      def dest_dir
+        File.expand_path(param('root'))
+      end
+    end
+  %>
+:compile: |
+  # no-op
+:install: |
+  # no-op
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+:example_scripts:
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'ANSYS Workbench session'
+    description: 'Executes ANSYS Workbench within an interactive desktop session'
+    template: 'script:stub:interactive:desktop'
+    facts:
+      runMode: single
+      hardMemoryLimitDesktop: 112G
+      hardMemoryLimitPerSlot: 7G
+      smpNumSlots: 16
+    content: |
+      #===================
+      #  ANSYS Workbench
+      #-------------------
+      # ANSYS Workbench requires the current working directory to be
+      # set to the location of the launch scripts.
+      cd $ANSYS_WORKBENCHDIR/Framework/bin/Linux64
+
+      # Sleep for 5 seconds in order to allow the desktop environment
+      # to complete its initialization process.  Without this sleep,
+      # there is a risk that the Workbench client can cause the X
+      # session to fail.
+      sleep 5
+
+      # Set the temporary directory for Fluent etc. -- ensure this
+      # path is present on all compute nodes which will be in use.
+      export TMPDIR="$HOME/tmp"
+      export TMP="$TMPDIR"
+      mkdir -p "$TMPDIR"
+
+      # Launch ANSYS Workbench.
+      ./runwb2
