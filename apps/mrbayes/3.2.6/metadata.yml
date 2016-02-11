@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: MrBayes
+:license: GPLv3+ 
+:summary: Bayesian Inference of Phylogeny
+:url: http://mrbayes.sourceforge.net/
+:description: |
+  MrBayes is a program for Bayesian inference and model choice across
+  a wide range of phylogenetic and evolutionary models. MrBayes uses
+  Markov chain Monte Carlo (MCMC) methods to estimate the posterior
+  distribution of model parameters.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 10 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest version v3.2.6
+  * Thu Aug 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added runtime dependency on libs/beagle
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mrbayes-3.2.6.tar.gz
+:src_dir: mrbayes-3.2.6
+:type: apps
+:version: '3.2.6'
+:dependencies:
+  el:
+    - autoconf
+:variants:
+  default:
+    :configure_options: --with-beagle=no
+  beagle:
+    :configure_options: --with-beagle=${BEAGLEDIR}
+    :requirements:
+      :build: libs/beagle
+      :runtime: libs/beagle
+  mpi:
+    :configure_options: --enable-mpi --with-beagle=no
+    :requirements:
+      :build: mpi/openmpi
+      :runtime: mpi/openmpi
+  mpi-beagle:
+    :configure_options: --enable-mpi --with-beagle=${BEAGLEDIR}
+    :requirements:
+      :build:
+        - mpi/openmpi
+        - libs/beagle
+      :runtime:
+        - mpi/openmpi
+        - libs/beagle
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  autoconf <%= redirect(:autoconf) %>
+  ./configure <%= variant[:configure_options] %> \
+    --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/bin
+  cp -v src/mb <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -rv documentation <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv examples <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin
