@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: mpiBLAST
+:license: GPLv2
+:summary: Open-Source Parallel BLAST
+:url: http://www.mpiblast.org/
+:description: |
+  mpiBLAST is a freely available, open-source, parallel implementation
+  of NCBI BLAST. By efficiently utilizing distributed computational
+  resources through database fragmentation, query segmentation,
+  intelligent scheduling, and parallel I/O, mpiBLAST improves NCBI
+  BLAST performance by several orders of magnitude while scaling to
+  hundreds of processors. mpiBLAST is also portable across many
+  different platforms and operating systems.
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb 10 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mpiBLAST-1.6.0.tgz
+:src_dir: mpiblast-1.6.0
+:requirements:
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:type: apps
+:compilers:
+  gcc:
+:compile: |
+  CC=$(which mpicc)
+  CXX=$(which mpic++)
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make ncbi <%= redirect(:compile_ncbi) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc
+  cp -v LICENSE README GPLv2 AUTHORS <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
