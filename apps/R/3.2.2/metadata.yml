@@ -28,7 +28,24 @@
   :build:
     - libs/lapack
     - libs/blas
+:dependencies:
+  el:
+    - libpng-devel
+    - libjpeg-devel
+    - cairo-devel
+    - libtiff-devel
+    - libxml-devel
+    - libicu-devel
+    - readline-devel
+    - libcurl-devel
+    - xz-devel
+    - zlib-devel
+    - bzip2-devel
+    - pcre-devel
+    - tk-devel
 :changelog: |
+  * Thu Feb 11 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Oct 21 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v3.2.2
   * Wed Jul 1 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
