@@ -25,7 +25,7 @@
     - libs/openlibm >= 0.4.1
     - libs/openblas >= 0.2.15
     - libs/lapack >= 3.5.0
-    - libs/fftw3_double >= 3.3.4
+    - libs/fftw3_double >= 3.3.3
     - libs/suitesparse >= 4.4.2
     - libs/arpack-ng >= 3.2.0
     - libs/libgit2 >= 0.23.4
