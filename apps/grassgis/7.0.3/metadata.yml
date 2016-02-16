@@ -57,7 +57,7 @@
   ./configure --prefix=<%= dest_dir %> \
     --with-proj-includes=$PROJ4INCLUDE \
     --with-proj-libs=$PROJ4LIB \
-    --with-proj-share=$PROJ4SHARE \
+    --with-proj-share=$PROJ4SHARE/proj \
     --with-fftw-libs=$FFTW3_DOUBLELIB \
     --with-fftw-includes=$FFTW3_DOUBLEINCLUDE \
     --with-freetype-includes=/usr/include/freetype2 \
