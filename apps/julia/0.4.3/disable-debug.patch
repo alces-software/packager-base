@@ -1,0 +1,28 @@
+--- Makefile.orig	2016-01-13 06:37:53.000000000 +0900
++++ Makefile	2016-02-16 23:16:26.750388075 +0900
+@@ -16,7 +16,7 @@
+ endif
+ 
+ default: $(JULIA_BUILD_MODE) # contains either "debug" or "release"
+-all: debug release
++all: release
+ 
+ # sort is used to remove potential duplicates
+ DIRS = $(sort $(build_bindir) $(build_libdir) $(build_private_libdir) $(build_libexecdir) $(build_sysconfdir)/julia $(build_datarootdir)/julia $(build_man1dir))
+@@ -205,7 +205,7 @@
+ 
+ 
+ # public libraries, that are installed in $(prefix)/lib
+-JL_LIBS = julia julia-debug
++JL_LIBS = julia
+ 
+ # private libraries, that are installed in $(prefix)/lib/julia
+ JL_PRIVATE_LIBS = ccalltest
+@@ -342,7 +342,6 @@
+ 	# Copy system image
+ 	-$(INSTALL_F) $(build_private_libdir)/sys.ji $(DESTDIR)$(private_libdir)
+ 	$(INSTALL_M) $(build_private_libdir)/sys.$(SHLIB_EXT) $(DESTDIR)$(private_libdir)
+-	$(INSTALL_M) $(build_private_libdir)/sys-debug.$(SHLIB_EXT) $(DESTDIR)$(private_libdir)
+ 	# Copy in system image build script
+ 	$(INSTALL_M) contrib/build_sysimg.jl $(DESTDIR)$(datarootdir)/julia/
+ 	# Copy in standalone executable build script
