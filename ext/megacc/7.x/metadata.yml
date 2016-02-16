@@ -1,0 +1,80 @@
+---
+:schema: 1
+:title: MEGA - Molecular Evolutionary Genetics Analysis
+:license: Proprietary
+:summary: Software suite for analyzing DNA and protein sequence data from species and populations
+:url: http://www.megasoftware.net/
+:description: |
+  Genome sequencing is generating vast amounts of DNA sequence data
+  from a wide range of organisms. As a result, gene sequence databases
+  are growing rapidly. In order to conduct efficient analyses of these
+  data, there is a need for easy-to-use computer programs, containing
+  fast computational algorithms and useful statistical methods.
+  
+  The objective of the MEGA software has been to provide tools for
+  exploring, discovering, and analyzing DNA and protein sequences from
+  an evolutionary perspective. The first version was developed for the
+  limited computational resources that were available on the average
+  personal computer in early 1990s. MEGA1 made many methods of
+  evolutionary analysis easily accessible to the scientific community
+  for research and education.
+
+  MEGA7 is a major refactoring of the MEGA source code and achieves
+  another leap forward in terms of performance. MEGA is now optimized
+  for 64-bit processor architectures and can now utilize many GB of
+  memory. In addition, the Tree Explorer window has been re-factored
+  to handle trees with > 100k taxa (previously it could only handle
+  ~4k taxa), depending on the available graphics processing
+  resources. Beyond increased performance, improvements have been made
+  to the user interface.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Feb 16 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: megacc.tar.gz
+:src_dir: .
+:version: '7.0.14'
+:type: ext
+:pkg_type: apps
+:dependencies:
+  el:
+    - gdk-pixbuf2
+    - gtk2
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to MEGACC tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') != 'skip' %>
+    <% if URI.parse(param('tarball')).scheme.nil? %>
+      cp <%= param('tarball') %> <%= source('megacc.tar.gz') %>
+    <% else %>
+      wget -O <%= source('megacc.tar.gz') %> <%= param('tarball') %>
+    <% end %>
+  <% end %>
+:analyse: |
+  if [ ! -d <%= src_dir %> ]; then
+    echo ":failure: unable to find source directory: <%= src_dir %>"
+    exit 1
+  fi
+  VERSION=$(./megacc --version | grep Version | cut -f2 -d' ')
+  cat <<-EOF
+    :version: '$VERSION'
+  EOF
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,man/man1,example}
+  cp -v megacc megaproto <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv Examples/* <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -v *.pdf *.txt *.chm <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v megacc.1 <%= dest_dir %>/man/man1 <%= redirect(:install) %>
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}DOC ${appdir}/doc
+       setenv ${appcaps}EXAMPLE ${appdir}/example
+
+       prepend-path MANPATH ${appdir}/man
+       prepend-path PATH ${appdir}/bin
