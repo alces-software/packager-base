@@ -1,0 +1,49 @@
+---
+:schema: 1
+:license: MIT License
+:summary: Convert geographic longitude and latitude coordinates into cartesian coordinates
+:title: PROJ.4
+:url: https://github.com/OSGeo/proj.4
+:description: |
+  PROJ is a standard Unix filter function which converts geographic
+  longitude and latitude coordinates into cartesian coordinates,
+  (lambda, phi) -> (x, y), by means of a wide variety of cartographic
+  projection functions.
+
+  The original proj was developed in the early 1980’s as a ratfor (a
+  fortran preprocessor) program (Evenden, 1983) with much of the code
+  derived from the Geological Survey’s General Cartographic
+  Transformation Package (gctp) (superceded by a more portable Version
+  II by Elassal, 1987). Program proj was recoded in the C language
+  when the mapgen package (Evenden and Botbol, 1985), of which proj is
+  an integral part, was transfered to the Unix operating system. Based
+  upon the formularies in the aforementioned publications many new
+  projections have been added to the program. 
+:group: Geography
+:changelog: |
+  * Tue Feb 16 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 4.9.2.tar.gz
+:src_dir: proj.4-4.9.2
+:type: apps
+:version: '4.9.2'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
+  
