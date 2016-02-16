@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: OpenLibm
+:license: MIT, ISC, BSD License
+:summary: High quality, portable, standalone C mathematical library
+:url: http://julialang.org/openlibm/
+:description: |
+  OpenLibm is an effort to have a high quality, portable, standalone C
+  mathematical library (libm). It can be used standalone in
+  applications and programming language implementations.
+
+  The project was born out of a need to have a good libm for the Julia
+  programming langage that worked consistently across compilers and
+  operating systems, and in 32-bit and 64-bit environments.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.4.1.tar.gz
+:version: '0.4.1'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  make install prefix=<%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  
