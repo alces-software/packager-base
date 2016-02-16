@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: LLVM Core
+:license: The University of Illinois/NCSA Open Source License (NCSA)
+:summary: A modern source- and target-independent optimizer with code generation support
+:url: http://llvm.org/
+:description: |
+  The LLVM Project is a collection of modular and reusable compiler
+  and toolchain technologies. Despite its name, LLVM has little to do
+  with traditional virtual machines, though it does provide helpful
+  libraries that can be used to build them. The name "LLVM" itself is
+  not an acronym; it is the full name of the project.
+
+  LLVM began as a research project at the University of Illinois, with
+  the goal of providing a modern, SSA-based compilation strategy
+  capable of supporting both static and dynamic compilation of
+  arbitrary programming languages. Since then, LLVM has grown to be an
+  umbrella project consisting of a number of subprojects, many of
+  which are being used in production by a wide variety of commercial
+  and open source projects as well as being widely used in academic
+  research. Code in the LLVM project is licensed under the "UIUC"
+  BSD-Style license.
+
+  The LLVM Core libraries provide a modern source- and
+  target-independent optimizer, along with code generation support for
+  many popular CPUs (as well as some less common ones!) These
+  libraries are built around a well specified code representation
+  known as the LLVM intermediate representation ("LLVM IR"). The LLVM
+  Core libraries are well documented, and it is particularly easy to
+  invent your own language (or port an existing compiler) to use LLVM
+  as an optimizer and code generator.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: llvm-3.7.1.src.tar
+:src_dir: llvm-3.7.1.src
+:version: '3.7.1'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  ../configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/docs
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
