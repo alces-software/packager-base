@@ -1,4 +1,6 @@
 ---
+:schema: 1
+:title: NAMD
 :license: NONFREE - see http://www.ks.uiuc.edu/Research/namd/license.html
 :summary: A parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems
 :url: http://www.ks.uiuc.edu/Research/namd/
@@ -13,6 +15,9 @@
   and X-PLOR.
 :group: Biophysics
 :changelog: |
+  * Wed Feb 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Made compatible with modern compilers (use -fpermissive)
+    - Added missing fields to metadata
   * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -36,18 +41,27 @@
         - libs/fftw2_float
       :build:
         - libs/fftw2_float
+:dependencies:
+  el:
+    - tcsh
 :compilers:
   gcc:
 :compile: |
   CHARMTAR=charm-*.tar
   tar xf $CHARMTAR
   cd `basename $CHARMTAR .tar`
-  ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared --with-production <%= redirect(:charm_build) %>
+  ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared \
+    --with-production \
+    -c++-option -fpermissive \
+    <%= redirect(:charm_build) %>
   cd ..
   <% fftw_dir_var = ( variant_name == 'mpi' ? 'FFTW2_FLOAT_MPIDIR' : 'FFTW2_FLOATDIR' ) %>
   sed -i -e 's|FFTDIR=.*|FFTDIR=$(<%= fftw_dir_var %>)|g;s|-ls|-l|g;s|\(FFTFLAGS=.*\)|\1 -DNAMD_FFTW_NO_TYPE_PREFIX|g' arch/Linux-x86_64.fftw
   sed -i -e 's|TCLDIR=.*|TCLDIR=/usr|g;s|lib -ltcl8.3|lib64 -ltcl8.5|g' arch/Linux-x86_64.tcl
-  ./config Linux-x86_64-g++ --charm-arch <%= variant_name %>-linux-x86_64 <%= redirect(:config) %>
+  ./config Linux-x86_64-g++ \
+    --charm-arch <%= variant_name %>-linux-x86_64 \
+    --cxx-opts -fpermissive \
+    <%= redirect(:config) %>
   cd Linux-x86_64-g++
   make <%= redirect(:make) %>
 :install: |
