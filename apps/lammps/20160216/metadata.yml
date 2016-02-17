@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: LAMMPS Molecular Dynamics Simulator
+:license: GPL
+:url: http://lammps.sandia.gov/
+:summary: LAMMPS ('Large-scale Atomic/Molecular Massively Parallel Simulator') is a molecular dynamics program from Sandia National Laboratories
+:description: |
+  LAMMPS is a classical molecular dynamics (MD) code with these 
+  general classes of functionality:
+
+    * General features
+    * Particle and model types
+    * Force fields
+    * Atom creation
+    * Ensembles, constraints, and boundary conditions
+    * Integrators
+    * Diagnostics
+    * Output
+    * Multi-replica models
+    * Pre- and post-processing
+    * Specialized features (beyond MD itself)
+:group: Physics
+:type: apps
+:changelog: |
+  * Wed Feb 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest stable 16Feb16
+  * Wed Aug 14 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: lammps-16Feb16.tar.gz
+:src_dir: lammps-16Feb16
+:version: '20160216'
+:patches:
+  - Makefile.alces.patch
+:requirements:
+  :build:
+    - libs/fftw3_double
+    - mpi/openmpi
+  :runtime:
+    - libs/fftw3_double
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  # (Patched) Makefile for OpenMPI is closest fit; make linux also possible
+  make mpi <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,share}
+  cp -v src/lmp_mpi <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -rv bench doc examples <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
