@@ -1,0 +1,39 @@
+---
+:schema: 1
+:name: vasp
+:version: 5.4.1
+:type: apps
+:title: VASP
+:license: Commercial
+:summary: The Vienna Ab initio Simulation Package (VASP)
+:url: https://www.vasp.at/
+:description: |
+  The Vienna Ab initio Simulation Package (VASP) is a computer program for 
+  atomic scale materials modelling, e.g. electronic structure calculations 
+  and quantum-mechanical molecular dynamics, from first principles.
+
+  VASP computes an approximate solution to the many-body Schrödinger 
+  equation, either within density functional theory (DFT), solving the 
+  Kohn-Sham equations, or within the Hartree-Fock (HF) approximation, 
+  solving the Roothaan equations. Hybrid functionals that mix the 
+  Hartree-Fock approach with density functional theory are implemented as 
+  well. Furthermore, Green's functions methods (GW quasiparticles, and 
+  ACFDT-RPA) and many-body perturbation theory (2nd-order Møller-Plesset) 
+  are available in VASP.
+:group: Electronics
+:changelog: |
+  * Thu Feb 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:requirements:
+  :runtime:
+   - mpi/openmpi
+   - libs/atlas
+   - libs/scalapack_atlas_shared
+# alces-modulefile 'compiler' parameter only supports 'bin' and
+# 'noarch' atm, so stick with 'bin' for this, even though it must be
+# built and so, strictly, should be 'gcc'
+:compiler: 'bin'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+  prepend-path PATH ${appdir}/bin/
