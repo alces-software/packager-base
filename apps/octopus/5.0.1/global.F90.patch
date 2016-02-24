@@ -1,0 +1,11 @@
+--- src/basic/global.F90.patch    2016-02-23 17:46:21.307457670 +0000
++++ src/basic/global.F90  2016-02-23 17:46:35.829389394 +0000
+@@ -154,7 +154,7 @@
+     if(share /= "") then
+       conf%share = trim(share)
+     else
+-      conf%share = SHARE_OCTOPUS
++    !  conf%share = SHARE_OCTOPUS
+     end if
+     conf%latest_svn = LATEST_SVN
+     conf%build_time = BUILD_TIME
