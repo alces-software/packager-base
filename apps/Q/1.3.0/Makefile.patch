@@ -1,0 +1,11 @@
+--- src/Makefile.bak	2016-02-24 15:55:04.279982500 +0000
++++ src/Makefile	2016-02-24 15:55:33.911983616 +0000
+@@ -183,7 +183,7 @@
+ top_builddir = ..
+ top_srcdir = ..
+ AM_CXXFLAGS = -lrt -I'seqan/core/include/' -Wall -Wno-long-long \
+-	-pedantic -Wno-variadic-macros -fopenmp -static \
++	-pedantic -Wno-variadic-macros -fopenmp \
+ 	-DSEQAN_HAS_ZLIB=1 -DSEQAN_HAS_BZIP2=1 -O3 -DNDEBUG \
+ 	-DSEQAN_ENABLE_TESTING=0 -DSEQAN_ENABLE_DEBUG=0
+ AM_LDFLAGS = -lbz2 -fopenmp
