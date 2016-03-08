@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: Anaconda (Python 2.7)
+:license: BSD License
+:summary: Completely free Python distribution including popular Python packages
+:url: https://www.continuum.io/why-anaconda
+:description: |
+  Built to complement the rich, open source Python community, the
+  Anaconda platform provides an enterprise-ready data analytics
+  platform that empowers companies to adopt a modern open data science
+  analytics architecture.
+
+  With Python at its core, Anaconda is a platform for connecting your
+  expertise and curiosity with data to explore and deploy innovative
+  analytic apps that solve challenging problems with ease and
+  agility. Processing multi-workload data analytics -- from batch
+  through interactive to real-time -- the platform is used for both ad
+  hoc and production deployments.
+
+  Anaconda is tuned to take advantage of modern computing environments
+  --everything from multi-core servers, to Spark and Hadoop, to GPUs
+  -- delivering flexibility and allowing you to maximize your
+  infrastructure investment. All of this plus the key capabilities
+  required of an open source modern analytics platform -- spanning
+  advanced analytics, interactive visualizations, governance, security
+  and operational support.
+:group: Languages
+:changelog: |
+  * Tue Mar  8 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Anaconda2-2.5.0-Linux-x86_64.sh.sic
+:src_dir: .
+:type: apps
+:version: '2.5.0'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary package
+:install: |
+  ln -s <%= source('Anaconda2-2.5.0-Linux-x86_64.sh.sic') %> install.sh
+  sh install.sh -f -b -p <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  conflict apps/anaconda3
+  conflict apps/python3
+  conflict apps/python
