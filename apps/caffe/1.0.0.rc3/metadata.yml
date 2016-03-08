@@ -1,0 +1,105 @@
+---
+:title: Caffe
+:license: BSD License
+:summary: A fast open framework for deep learning
+:url: http://caffe.berkeleyvision.org/
+:description: |
+  Caffe is a deep learning framework made with expression, speed, and
+  modularity in mind. It is developed by the Berkeley Vision and
+  Learning Center (BVLC) and by community contributors. Yangqing Jia
+  created the project during his PhD at UC Berkeley.
+:group: Libraries
+:changelog: |
+  * Tue Mar  8 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release 1.0.0.rc3; added matlab parameter
+  * Wed Mar 18 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: caffe-1.0.0.rc3.tar.gz
+:src_dir: caffe-rc3
+:type: apps
+:version: '1.0.0.rc3'
+:requirements:
+  :build:
+    - libs/numpy
+    - apps/python
+    - libs/opencv >= 2.4.0
+    - libs/protobuf
+    - libs/gflags
+    - libs/glog
+    - apps/hdf5_serial
+    - libs/boost >= 1.55.0
+    - libs/atlas
+  :runtime:
+    - libs/glog
+    - libs/gflags
+    - libs/protobuf
+    - libs/boost >= 1.55.0
+    - apps/hdf5_serial
+    - libs/opencv >= 2.4.0
+    - apps/python
+  :rpms:
+    - snappy-devel
+    - leveldb-devel
+    - lmdb-devel
+:params:
+  :matlab: "Modulefile to load for building MATLAB library, e.g. 'apps/matlab' (pass 'skip' to continue without building for MATLAB)"
+:compilers:
+  gcc:
+:compile: |
+  <% if param('matlab') != 'skip' %>
+  module load <%= param('matlab') %>
+  MATLAB_VERSION=$(module show <%= param('matlab') %> 2>&1 | grep Version: | awk '{ print $2; }' | tr '[A-Z]' '[a-z]')
+  if [[ "$MATLAB_VERSION" == "r2015"* ]]; then
+    gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+    gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+    if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "7") ]]; then
+       echo GCC version is $gcc_major.$gcc_minor but MATLAB ${MATLAB_VERSION} requires at least v4.7.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+       exit 1
+    fi    
+  fi
+  <% end %>
+  cat <<\EOF > Makefile.config
+  CPU_ONLY := 1
+  BLAS := atlas
+  BLAS_INCLUDE := $(ATLASINCLUDE)
+  BLAS_LIB := $(ATLASLIB)
+  PYTHON_INCLUDE := $(PYTHONINCLUDE)
+  PYTHON_LIB := $(PYTHONLIB)
+  WITH_PYTHON_LAYER := 1
+  INCLUDE_DIRS := $(BOOSTINCLUDE) $(PYTHONINCLUDE) $(PYTHONINCLUDE)/python2.7 $(PROTOBUFINCLUDE) $(OPENCVINCLUDE) $(GFLAGSINCLUDE) $(GLOGINCLUDE) $(HDF5_SERIALINCLUDE)
+  LIBRARY_DIRS := $(PYTHONLIB) $(PROTOBUFLIB) $(OPENCVLIB) $(GFLAGSLIB) $(GLOGLIB) $(HDF5_SERIALLIB) $(BOOSTLIB)
+  BUILD_DIR := build
+  DISTRIBUTE_DIR := <%= dest_dir %>
+  <% if param('matlab') != 'skip' %>
+  MATLAB_DIR := $(MATLABDIR)
+  <% end %>
+  #Q ?= @
+  EOF
+  make <%= redirect(:compile) %>
+  make pycaffe <%= redirect(:compile_python) %>
+  <% if param('matlab') != 'skip' %>
+  make matcaffe <%= redirect(:compile_matlab) %>
+  <% end %>
+:install: |
+  make distribute <%= redirect(:install) %>
+  <% if param('matlab') != 'skip' %>
+  cp -Rv matlab <%= dest_dir %> <%= redirect(:install_matlab) %>
+  <% end %>
+  mkdir -p <%= dest_dir %>/{doc,share}
+  cp -Rv docs/* <%= dest_dir %>/doc <%= redirect(:install_matlab) %>
+  cp -Rv scripts models data examples <%= dest_dir %>/share <%= redirect(:install_matlab) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PYTHONPATH ${appdir}/python
+  <% if param('matlab') != 'skip' %>
+  prepend-path MATLABPATH ${appdir}/matlab
+  <% end %>
