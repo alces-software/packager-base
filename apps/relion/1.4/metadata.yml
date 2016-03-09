@@ -22,6 +22,8 @@
   least one of these papers.
 :group: Imaging
 :changelog: |
+  * Wed Mar  9 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added patch to ensure GUI is built (modify detection of/includes for FLTK)
   * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First Created
 :src: relion-1.4.tar.bz2
@@ -37,6 +39,8 @@
     - libs/fftw3_double
     - libs/fltk
     - mpi/openmpi
+:patches:
+  - gridware-fltk.patch
 :compilers:
   gcc:
 :compile: |
@@ -48,6 +52,7 @@
   make <%= redirect(:compile) %>
 :install: |
   make install <%= redirect(:install) %>
+  mv <%= dest_dir %>/bin/relion_maingui <%= dest_dir %>/bin/relion
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
