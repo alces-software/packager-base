@@ -32,6 +32,10 @@
   :pmilib: "Specify path containing libpmi.so/libpmi2.so for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
 :sources:
   - examples.sge.openmpi.template
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
 :compile: |
   <% if param(:torque) != 'false' %>
     if [ ! -d "<%= param(:torque) %>" ]; then
@@ -79,6 +83,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path MANPATH ${appdir}/share/man
 :changelog: |
+  * Thu Mar 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
   * Thu Jun 11 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to version 1.8.5
     - Add optional support for PMI to allow for SLURM support
