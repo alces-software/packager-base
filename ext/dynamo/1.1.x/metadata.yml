@@ -18,6 +18,8 @@
 :type: apps
 :group: Imaging
 :changelog: |
+  * Fri Mar 18 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated permissions on Matlab binaries
   * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First Created
 :src: dynamo-v-1.1.x_MCR-8.5.0_GLNXA64.tar
@@ -105,6 +107,8 @@
       fi
     done
   done
+  chmod 755 <%= dest_dir %>/share/matlab/bin/dynamo* \
+    <%= dest_dir %>/share/matlab/bin/run_dynamo*
 :modules:
    - :type: apps
      :content: |
