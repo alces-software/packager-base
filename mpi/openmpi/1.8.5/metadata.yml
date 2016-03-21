@@ -78,13 +78,15 @@
   # setenv OMPI_MCA_plm_rsh_num_concurrent 512
 
   setenv MPI_HOME ${appdir}
+  setenv OPAL_PREFIX ${appdir}
 
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path MANPATH ${appdir}/share/man
 :changelog: |
-  * Thu Mar 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - Added distro dependencies
+  * Mon Mar 21 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Set OPAL_PREFIX environment variable to allow relocation of
+      OpenMPI installation.
   * Thu Jun 11 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to version 1.8.5
     - Add optional support for PMI to allow for SLURM support
