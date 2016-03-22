@@ -27,6 +27,8 @@
   :tool: apps/cmake
   :build: libs/atlas
 :changelog: |
+  * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Explicitly link against libstdc++ for EL6 compatibility
   * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to latest v4.5.1 release
   * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -41,15 +43,19 @@
 :version: '4.5.1'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
 :compile: |
   make \
-    BLAS="-L$ATLASDIR/lib -lf77blas -lcblas -latlas" \
+    BLAS="-L$ATLASDIR/lib -lf77blas -lcblas -latlas -lstdc++" \
     LAPACK="-L$ATLASDIR/lib -llapack -lgfortran" \
     <%= redirect(:compile) %>
 :install: |
   mkdir -p <%= dest_dir %>/lib <%= dest_dir %>/include
   make install INSTALL=<%= dest_dir %> \
-    BLAS="-L$ATLASDIR/lib -lf77blas -lcblas -latlas" \
+    BLAS="-L$ATLASDIR/lib -lf77blas -lcblas -latlas -lstdc++" \
     LAPACK="-L$ATLASDIR/lib -llapack -lgfortran" \
     LDFLAGS=-L$(pwd)/lib
     <%= redirect(:install) %>
