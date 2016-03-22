@@ -1,0 +1,100 @@
+---
+:schema: 1
+:license: MIT License
+:summary: High-level, high-performance dynamic programming language for technical computing
+:url: http://julialang.org/
+:description: |
+  Julia is a high-level, high-performance dynamic programming language
+  for technical computing, with syntax that is familiar to users of
+  other technical computing environments. It provides a sophisticated
+  compiler, distributed parallel execution, numerical accuracy, and an
+  extensive mathematical function library. Julia's Base library,
+  largely written in Julia itself, also integrates mature,
+  best-of-breed open source C and Fortran libraries for linear
+  algebra, random number generation, signal processing, and string
+  processing. In addition, the Julia developer community is
+  contributing a number of external packages through Julia's built-in
+  package manager at a rapid pace.
+:group: Languages
+:requirements:
+  :tool:
+    - apps/patchelf >= 0.8
+  :build:
+    - libs/llvm >= 3.7.1
+    - libs/pcre2 >= 10.21
+    - libs/openlibm >= 0.4.1
+    - libs/openblas >= 0.2.15
+    - libs/lapack >= 3.5.0
+    - libs/fftw3_double >= 3.3.3
+    - libs/suitesparse >= 4.4.2
+    - libs/arpack-ng >= 3.2.0
+    - libs/libgit2 >= 0.23.4
+  :runtime:
+    - libs/lapack >= 3.5.0
+    - libs/pcre2 >= 10.21
+    - libs/suitesparse >= 4.4.2
+    - libs/openblas >= 0.2.15
+:sources:
+  - dsfmt-2.2.3.tar.gz
+  - libuv-efb40768b7c7bd9f173a7868f74b92b1c5a61a0e.tar.gz
+  - openspecfun-381db9bc865e51de67be9dcaa1610a6f90029c72.tar.gz
+  - Rmath-julia-0.1.tar.gz
+  - utf8proc-85789180158ac7fff85b9f008828d6ac44f072ea.tar.gz
+  - Make.user
+:patches:
+  - disable-debug.patch
+  - force-gridware-openlibm.patch
+:dependencies:
+  el7:
+    - libunwind-devel
+    - gmp-devel
+    - mpfr-devel
+    - gcc-gfortran
+    - gcc-c++
+:changelog: |
+  * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest available v0.4.5
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.4.5.tar.gz
+:src_dir: julia-0.4.5
+:type: apps
+:version: '0.4.5'
+:compilers:
+  gcc:
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "7") ]]; then
+    echo GCC version is $gcc_major.$gcc_minor but Julia requires at least v4.7.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+  # Place lapack in nocompat mode
+  if [ -z "${GRIDWARE_LAPACK_NOCOMPAT}" ]; then
+    module() { if [ "${cw_ROOT}" ]; then eval "$(${cw_ROOT}/opt/Modules/bin/modulecmd bash $*)"; else module $*; fi }
+    module unload libs/lapack
+    export GRIDWARE_LAPACK_NOCOMPAT=1
+    module load libs/lapack
+  fi
+  <% package.sources.each do |s| %>
+  cp -v <%= source(s) %> deps <%= redirect(:prepare) %>
+  <% end %>
+  mv deps/Make.user .
+  make <%= redirect(:compile) %>
+  mkdir -p doc/_build/html
+:install: |
+  make prefix=<%= dest_dir %> install <%= redirect(:install) %>
+  rmdir <%= dest_dir %>/libexec
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}ETC ${appdir}/etc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/julia
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
+  
