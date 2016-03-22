@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: GMP
+:license: LGPLv3+ / GPLv2+
+:summary: Library for arbitrary precision arithmetic
+:url: https://gmplib.org/
+:description: |
+  GMP is a free library for arbitrary precision arithmetic, operating
+  on signed integers, rational numbers, and floating-point
+  numbers. There is no practical limit to the precision except the
+  ones implied by the available memory in the machine GMP runs on. GMP
+  has a rich set of functions, and the functions have a regular
+  interface.
+
+  The main target applications for GMP are cryptography applications
+  and research, Internet security applications, algebra systems,
+  computational algebra research, etc.
+
+  GMP is carefully designed to be as fast as possible, both for small
+  operands and for huge operands. The speed is achieved by using
+  fullwords as the basic arithmetic type, by using fast algorithms,
+  with highly optimised assembly code for the most common inner loops
+  for a lot of CPUs, and by a general emphasis on speed.
+:group: Libraries
+:changelog: |
+  * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gmp-6.1.0.tar.bz2
+:src_dir: gmp-6.1.0
+:type: libs
+:version: '6.1.0'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - m4
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
