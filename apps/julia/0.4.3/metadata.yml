@@ -52,6 +52,8 @@
     - gcc-gfortran
     - gcc-c++
 :changelog: |
+  * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reworked lapack module handling
   * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: v0.4.3.tar.gz
@@ -69,6 +71,7 @@
   fi
   # Place lapack in nocompat mode
   if [ -z "${GRIDWARE_LAPACK_NOCOMPAT}" ]; then
+    module() { if [ "${cw_ROOT}" ]; then eval "$(${cw_ROOT}/opt/Modules/bin/modulecmd bash $*)"; else module $*; fi }
     module unload libs/lapack
     export GRIDWARE_LAPACK_NOCOMPAT=1
     module load libs/lapack
