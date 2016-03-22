@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: MPFR
+:license: LGPLv3+
+:summary: C library for multiple-precision floating-point computations with correct rounding
+:url: http://www.mpfr.org/
+:description: |
+  The MPFR library is a C library for multiple-precision
+  floating-point computations with correct rounding. MPFR has
+  continuously been supported by the INRIA and the current main
+  authors come from the Caramba and AriC project-teams at Loria
+  (Nancy, France) and LIP (Lyon, France) respectively; see more on the
+  credit page. MPFR is based on the GMP multiple-precision library.
+
+  The main goal of MPFR is to provide a library for multiple-precision
+  floating-point computation which is both efficient and has a
+  well-defined semantics. It copies the good ideas from the
+  ANSI/IEEE-754 standard for double-precision floating-point
+  arithmetic (53-bit significand).
+:group: Libraries
+:changelog: |
+  * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mpfr-3.1.4.tar.bz2
+:src_dir: mpfr-3.1.4
+:type: libs
+:version: '3.1.4'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gmp-devel
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
