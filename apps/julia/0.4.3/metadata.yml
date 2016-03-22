@@ -29,11 +29,13 @@
     - libs/suitesparse >= 4.4.2
     - libs/arpack-ng >= 3.2.0
     - libs/libgit2 >= 0.23.4
+    - libs/mpfr >= 3.0.0
   :runtime:
     - libs/lapack >= 3.5.0
     - libs/pcre2 >= 10.21
     - libs/suitesparse >= 4.4.2
     - libs/openblas >= 0.2.15
+    - libs/mpfr >= 3.0.0
 :sources:
   - dsfmt-2.2.3.tar.gz
   - libuv-efb40768b7c7bd9f173a7868f74b92b1c5a61a0e.tar.gz
@@ -45,15 +47,15 @@
   - disable-debug.patch
   - force-gridware-openlibm.patch
 :dependencies:
-  el7:
+  el:
     - libunwind-devel
     - gmp-devel
-    - mpfr-devel
     - gcc-gfortran
     - gcc-c++
 :changelog: |
   * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Reworked lapack module handling
+    - Use Gridware version of MPFR
   * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: v0.4.3.tar.gz
@@ -71,10 +73,10 @@
   fi
   # Place lapack in nocompat mode
   if [ -z "${GRIDWARE_LAPACK_NOCOMPAT}" ]; then
-    module() { if [ "${cw_ROOT}" ]; then eval "$(${cw_ROOT}/opt/Modules/bin/modulecmd bash $*)"; else module $*; fi }
-    module unload libs/lapack
+    m() { if [ "${cw_ROOT}" ]; then eval "$(${cw_ROOT}/opt/Modules/bin/modulecmd bash $*)"; else module $*; fi }
+    m unload libs/lapack
     export GRIDWARE_LAPACK_NOCOMPAT=1
-    module load libs/lapack
+    m load libs/lapack
   fi
   <% package.sources.each do |s| %>
   cp -v <%= source(s) %> deps <%= redirect(:prepare) %>
