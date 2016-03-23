@@ -16,6 +16,8 @@
 :type: libs
 :group: Mathematics
 :changelog: |
+  * Wed Mar 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Moved atlas paths from compiler section to compile and install section.
   * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Upgraded to v0.17.0
   * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -34,11 +36,17 @@
 :version: '0.17.0'
 :compilers:
   gcc:
-    :blas_dir: '$ATLASDIR'
-    :lapack_dir: '$ATLASDIR'
-    :atlas_dir: '$ATLASDIR'
-    :requirements:
-      :build: libs/atlas
+:requirements:
+  :tool:
+    - apps/patchelf >= 0.9
+  :build:
+    - libs/atlas
+  :runtime:
+    - libs/atlas
+:dependencies:
+  el:
+    - gcc-gfortran
+    - gcc-c++
 :variants:
   default:
     :description: "Builds for Python 2.7.x series"
@@ -74,14 +82,22 @@
         - apps/python3 ~> 3.4.0
         - libs/numpy_python34
 :compile: |
-  export BLAS=<%= compiler[:blas_dir] %>
-  export LAPACK=<%= compiler[:lapack_dir] %>
-  export ATLAS=<%= compiler[:atlas_dir] %>
+  export BLAS=$ATLASDIR
+  export LAPACK=$ATLASDIR
+  export ATLAS=$ATLASDIR
+  export LDFLAGS=-shared
   <%= variant[:python_bin] %> setup.py config_fc --fcompiler=gnu95 --noarch build <%= redirect(:build) %>
+  for a in $(find . | grep so$); do
+    if ldd $a | grep -q gridware.*atlas; then
+      fq_lib=$(ldd $a | grep gridware.*atlas | awk '{print $1;}')
+      short_lib=$(basename $fq_lib)
+      patchelf --replace-needed $fq_lib $short_lib $a
+    fi
+  done
 :install: |
-  export BLAS=<%= compiler[:blas_dir] %>
-  export LAPACK=<%= compiler[:lapack_dir] %>
-  export ATLAS=<%= compiler[:atlas_dir] %>
+  export BLAS=$ATLASDIR
+  export LAPACK=$ATLASDIR
+  export ATLAS=$ATLASDIR
   <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
