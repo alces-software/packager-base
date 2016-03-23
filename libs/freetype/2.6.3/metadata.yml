@@ -1,0 +1,43 @@
+---
+:schema: 1
+:license: GPLv2 + Freetype License 
+:summary:  
+:url: http://www.freetype.org/index.html 
+:description: |
+  FreeType is a software font engine that is designed to be small, efficient, highly 
+  customizable, and portable while capable of producing high-quality output (glyph 
+  images). It can be used in graphics libraries, display servers, font conversion 
+  tools, text image generation tools, and many other products as well.
+
+  Note that FreeType is a font service and doesn't provide APIs to perform 
+  higher-level features like text layout or graphics processing (e.g., colored text 
+  rendering, 'hollowing', etc.). However, it greatly simplifies these tasks 
+  by providing a simple, easy to use, and uniform interface to access the content 
+  of font files.
+:group: Libraries
+:changelog: |
+  * Wed Mar 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: freetype-2.6.3.tar.gz 
+:src_dir: freetype-2.6.3
+:type: libs
+:version: '2.6.3'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}MAN ${appdir}/share/man
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
