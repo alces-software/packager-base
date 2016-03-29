@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: Glasgow Haskell Compiler
+:license: BSD License
+:summary: Compiler and interactive environment for the functional language Haskell
+:url: http://www.haskell.org/ghc/
+:description: |
+  GHC is a state-of-the-art, open source, compiler and interactive
+  environment for the functional language Haskell. Highlights:
+
+    * GHC supports the entire Haskell 2010 language plus a wide
+      variety of extensions.
+    * GHC has particularly good support for concurrency and
+      parallelism, including support for Software Transactional Memory
+      (STM).
+    * GHC generates fast code, particularly for concurrent
+      programs. Take a look at GHC's performance on The Computer
+      Language Benchmarks Game.
+    * GHC works on several platforms including Windows, Mac, Linux,
+      most varieties of Unix, and several different processor
+      architectures. There are detailed instructions for porting GHC
+      to a new platform.
+    * GHC has extensive optimisation capabilities, including
+      inter-module optimisation.
+    * GHC compiles Haskell code either directly to native code or
+      using LLVM as a back-end. GHC can also generate C code as an
+      intermediate target for porting to new platforms. The
+      interactive environment compiles Haskell to bytecode, and
+      supports execution of mixed bytecode/compiled programs.
+    * Profiling is supported, both by time/allocation and various
+      kinds of heap profiling.
+    * GHC comes with several libraries, and thousands more are
+      available on Hackage.
+:type: apps
+:group: Languages
+:changelog: |
+  * Tue Mar 29 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version v7.8.2
+  * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ghc-7.8.2-x86_64-unknown-linux-deb7.tar.bz2
+:version: '7.8.2'
+:compilers:
+  bin:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+:install: |
+  make install <%= redirect(:install) %>
+  # Remove the package cache as this contains hard-coded paths and
+  # makes the package unexportable.
+  rm -f <%= dest_dir %>/lib/ghc-7.8.2/package.conf.d/package.cache
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
