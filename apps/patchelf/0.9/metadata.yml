@@ -1,0 +1,44 @@
+---
+:schema: 1
+:license: GPLv3+
+:summary: Utility to modify the dynamic linker and RPATH of ELF executables
+:url: https://nixos.org/patchelf.html
+:description: |
+  Dynamically linked ELF executables always specify a dynamic linker
+  or interpreter, which is a program that actually loads the
+  executable along with all its dynamically linked libraries. (The
+  kernel just loads the interpreter, not the executable.) For example,
+  on a Linux/x86 system the ELF interpreter is typically the file
+  /lib/ld-linux.so.2. It is sometimes necessary to use a different ELF
+  interpreter, say, when you want to test a version of Glibc installed
+  in a location other than /lib.
+
+  PatchELF is a small utility to modify the dynamic linker and RPATH
+  of ELF executables.
+:group: Tools
+:changelog: |
+  * Tue Mar 29 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest available v0.9
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: patchelf-0.9.tar.gz
+:type: apps
+:version: '0.9'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MANPATH ${appdir}/shar/man
+  
+  prepend-path PATH ${appdir}/bin
