@@ -20,6 +20,9 @@
 :type: libs
 :group: Mathematics
 :changelog: |
+  * Wed Mar 30 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use patchelf to remove hardcoded ATLAS library paths
+    - Added distro dependencies
   * Wed Mar 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Moved atlas paths from compiler section to compile and install section.
   * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
