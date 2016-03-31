@@ -21,6 +21,8 @@
   data and processing tasks in heterogeneous environments.
 :group: Imaging
 :changelog: |
+  * Thu Mar 31 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added tkimg as runtime requirement
   * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First Created
 :src: bsoft1_9_1.tar.gz
@@ -32,9 +34,11 @@
     - libs/fftw3_float
   :runtime:
     - libs/fftw3_float
+    - libs/tkimg
 :dependencies:
   el:
     - tcsh
+    - gcc-c++
     - gcc-gfortran
     - tcl-devel
     - tk-devel
