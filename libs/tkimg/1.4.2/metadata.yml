@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: Img
+:license: GPLv2
+:summary: Support for many image formats for Tk
+:url: http://trinityrnaseq.sourceforge.net/
+:description: |
+  This package enhances Tk, adding support for many other Image
+  formats: BMP, XBM, XPM, GIF (with transparency, but without LZW),
+  PNG, JPEG, TIFF and postscript. The main library is libimg1.2.so
+  (libimg1.2.sl, libimg1.2.a, img12.dll), which handles the BMP, XBM,
+  XPM, GIF formats and the Pixmap image type. This library can be
+  loaded dynamically into Tcl/Tk. If these formats are all you need,
+  no other libraries need to be installed.
+:group: Libraries
+:changelog: |
+  * Wed Mar 30 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tkimg1.4.2.tar.gz
+:src_dir: tkimg1.4
+:version: 1.4.2
+:type: libs
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - tcl-devel
+    - tk-devel
+:compile: |
+  rm -f config.cache
+  sed -i -e 's/^install:.*/install: collate/g' Makefile.in
+  ./configure ./configure --with-tcl=/usr/lib64 --with-tk=/usr/lib64 \
+              --with-tclinclude=/usr/include --with-tkinclude=/usr/include \
+              --prefix=<%= dest_dir %> \
+              --exec-prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}LIB ${appdir}/include
+
+  prepend-path TCLLIBPATH ${appdir}/lib
