@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: grace
+:license: GNU GPL
+:summary: Grace is a WYSIWYG 2D plotting tool for the X Window System and M*tif 
+:url: http://plasma-gate.weizmann.ac.il/Grace/
+:description: |
+  Grace is a WYSIWYG 2D plotting tool for the X Window System and M*tif. 
+  Grace runs on practically any version of Unix-like OS. As well, it has 
+  been successfully ported to VMS, OS/2, and Win9*/NT/2000/XP (some minor
+  functionality may be missing, though). Grace is a descendant of ACE/gr,
+  also known as Xmgr.
+  Grace features at a glance:
+  * WYSIWYG design
+  * Convenient point-and-click graphical user interface
+  * Precise control of graph features
+  * True publication quality
+  * Instant plot refresh
+:group: Apps
+:changelog: |
+  * Thu 31 Mar 2016  Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: grace-5.1.25.tar.gz
+:src_dir: grace-5.1.25
+:type: apps
+:version: '5.1.25'
+:dependencies:
+  el7:
+    - motif
+    - motif-devel
+  el6:
+    - openmotif
+    - openmotif-devel
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %> 
+  mv <%= dest_dir %>/grace/* <%= dest_dir %>/.
+  rmdir <%= dest_dir %>/grace
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}TEMPLATE ${appdir}/template
+  setenv GRACE_HOME ${appdir}
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
