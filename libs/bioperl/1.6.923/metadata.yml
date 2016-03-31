@@ -22,7 +22,15 @@
 :version: '1.6.923'
 :requirements:
   :tool: apps/cpanminus
-  :build: apps/samtools
+  :build: apps/samtools ~> 0.1.18
+:dependencies:
+  el:
+    - perl-ExtUtils-MakeMaker
+    - perl-Data-Dumper
+    - gd-devel
+    - graphviz
+    - openssl-devel
+    - libxml2-devel
 :compilers:
   gcc:
 :additional_prereqs:
@@ -30,6 +38,7 @@
   - XML::LibXML
   - Ace
   - Apache::DBI
+  - parent
 :additional_postreqs:
   - Bio::ASN1::EntrezGene
   - Bio::Tools::Run::Samtools
