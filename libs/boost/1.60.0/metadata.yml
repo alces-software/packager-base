@@ -1,0 +1,80 @@
+---
+:license: OTHER - Boost Software License, Version 1.0
+:summary: Free peer-reviewed portable C++ source libraries
+:url: http://www.boost.org/
+:description: |
+  Boost provides free peer-reviewed portable C++ source libraries. The
+  emphasis is on libraries which work well with the C++ Standard
+  Library, in the hopes of establishing "existing practice" for
+  extensions and providing reference implementations so that the Boost
+  libraries are suitable for eventual standardization. (Some of the
+  libraries have already been proposed for inclusion in the C++
+  Standards Committee's upcoming C++ Standard Library Technical
+  Report.)
+:group: Libraries
+:changelog: |
+  * Fri Apr 1 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - update to 1.60.0
+  * Fri May 29 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - update to 1.58.0
+  * Sat Jan 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - update to 1.57.0
+    - reworked tools installation as structure has changed since 1.56.0
+  * Mon Sep  1 2014 Ben Armston <ben.armston@alces-software.com>
+    - update to 1.55.0
+  * Fri May 10 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - update to 1.53.0
+  * Mon Mar  4 2013 Steve Norledge <steve.norledge@alces-software.com>
+    - include BOOST_ROOT, examples and binaries
+  * Tue Jan  8 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - require apps/python module at build time
+  * Thu Oct 11 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - update to 1.51.0
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - refactored to use packager style
+  * Fri Jun  8 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - update to 1.49.0
+    - refactored to use installer style
+  * Thu Jul 7 2011 Steve Norledge
+    - update to 1.4.6.1
+    - depend on openmpi and python 
+    - add latest link
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: boost_1_60_0.tar.bz2
+:src_dir: boost_1_60_0
+:type: libs
+:version: '1.60.0'
+:patches:
+  - pool_resource.patch 
+:dependencies:
+  el:
+    - bzip2-devel
+:requirements:
+  :runtime: mpi/openmpi
+  :build: 
+    - mpi/openmpi
+    - apps/python
+:compilers:
+  gcc:
+:compile: |
+  ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  echo "using mpi ;" >> project-config.jam
+  ./b2 stage <%= redirect(:stage) %>
+  ./b2 install --prefix=<%= dest_dir %> <%= redirect(:install) %>
+  mkdir -p <%= dest_dir%>/{bin,share}
+  cp -av b2 <%= dest_dir%>/bin <%= redirect(:install) %>
+  cp -av bjam <%= dest_dir%>/bin <%= redirect(:install) %>
+  cp -Rv tools <%=dest_dir%>/share <%= redirect(:install) %>
+  cp -Rv doc <%=dest_dir%>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv BOOST_ROOT ${appdir}
+  setenv BOOST_BUILD_PATH ${appdir}/share/tools/build
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
