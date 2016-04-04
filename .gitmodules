@@ -1,3 +1,0 @@
-[submodule ".gridware-ci"]
-	path = .gridware-ci
-	url = git@github.com:alces-software/gridware-ci.git
