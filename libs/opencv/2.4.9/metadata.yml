@@ -28,6 +28,8 @@
   governmental bodies.
 :group: Libraries
 :changelog: |
+  * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Fix default variant
   * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added support for TBB
   * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
@@ -42,6 +44,7 @@
 :version: '2.4.9'
 :variants:
   default:
+    :cmake_args: ''
   tbb:
     :cmake_args: -DWITH_TBB=ON -DTBB_INCLUDE_DIRS=$TBBINCLUDE
     :requirements:
