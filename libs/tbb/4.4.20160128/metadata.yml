@@ -1,0 +1,58 @@
+---
+:schema: 1
+:title: Threading Building Blocks
+:license: GPLv2
+:summary: C++ template library that simplifies the development of software applications running in parallel
+:url: http://www.threadingbuildingblocks.org/
+:description: |
+  Intel(R) Threading Building Blocks (Intel(R) TBB) is a popular
+  software C++ template library that simplifies the development of
+  software applications running in parallel (key to any multicore
+  computer). Intel(R) TBB extends C++ for parallelism in an easy to
+  use and efficient manner. It is designed to work with any C++
+  compiler thus simplifying development of applications for multi-core
+  systems. Intel(R) TBB is a C++ template library that adds parallel
+  programming for C++ programmers. It uses generic programming to be
+  efficient. Threading Building Blocks includes algorithms, highly
+  concurrent containers, locks and atomic operations, a task scheduler
+  and a scalable memory allocator. These components in Intel(R) TBB
+  can be used individually or all together to ease C++ development for
+  multi-core. Intel(R) TBB provides an abstraction for parallelism
+  that avoids the low level programming inherent in the direct use of
+  threading packages such as p-threads or Windows threads. It has
+  programmers express tasks instead of threads. Intel(R) TBB
+  facilitates scalable performance in a way that works across a
+  variety of machines for today, and readies programs for tomorrow. It
+  detects the number of cores on the hardware platform and makes the
+  necessary adjustments as more cores are added to allow software to
+  adapt. Thus, Intel(R) TBB more effectively takes advantage of
+  multi-core hardware. - See more at:
+  http://www.threadingbuildingblocks.org/faq#sthash.5ryWwww1.dpuf
+:group: Libraries
+:changelog: |
+  * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgrade to latest v4.4 release
+  * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgrade to latest v4.3 release
+  * Thu Aug 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tbb44_20160128oss_src_0.tgz
+:src_dir: tbb44_20160128oss
+:type: libs
+:version: '4.4.20160128'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/lib
+  cp -v build/*_release/*.so* <%= dest_dir %>/lib
+  cp -r include examples doc <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
