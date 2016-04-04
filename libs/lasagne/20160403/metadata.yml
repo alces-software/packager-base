@@ -1,0 +1,86 @@
+---
+:schema: 1
+:title: Lasagne
+:license: MIT License
+:summary: Lightweight library to build and train neural networks in Theano
+:url: https://github.com/Lasagne/Lasagne
+:description: |
+  Lasagne is a lightweight library to build and train neural networks
+  in Theano.
+
+  Its main features are:
+
+    * Supports feed-forward networks such as Convolutional Neural
+      Networks (CNNs), recurrent networks including Long Short-Term
+      Memory (LSTM), and any combination thereof
+    * Allows architectures of multiple inputs and multiple outputs,
+      including auxiliary classifiers
+    * Many optimization methods including Nesterov momentum, RMSprop
+      and ADAM
+    * Freely definable cost function and no need to derive gradients
+      due to Theano's symbolic differentiation
+    * Transparent support of CPUs and GPUs due to Theano's expression
+      compiler
+:group: Libraries
+:changelog: |
+  * Mon Apr  4 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:requirements:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool: apps/setuptools
+      :build: 
+        - apps/python ~> 2.7.0
+        - libs/theano 
+      :runtime: 
+        - apps/python ~> 2.7.0
+        - libs/theano
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool: apps/setuptools_python3
+      :build: 
+        - apps/python3 ~> 3.3.0
+        - libs/theano_python3
+      :runtime: 
+        - apps/python3 ~> 3.3.0
+        - libs/theano_python3
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool: apps/setuptools_python34
+      :build:
+        - apps/python3 ~> 3.4.0
+        - libs/theano_python34
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/theano_python34
+:src: lasagne-20160403.tar.gz
+:src_dir: Lasagne-0440814d4e7936de8423c29bbf9d5423ccc28ee8
+:type: libs
+:version: '20160403'
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages/:$PYTHONPATH
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -Rv examples <%= dest_dir %>/examples <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
