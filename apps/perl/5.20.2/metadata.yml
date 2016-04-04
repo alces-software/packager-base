@@ -17,6 +17,8 @@
   collections of third-party modules.
 :group: Languages
 :changelog: |
+  * Mon Apr 4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to include OS dependencies
   * Tue May 26 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to v5.20.2
   * Tue Jun 25 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
