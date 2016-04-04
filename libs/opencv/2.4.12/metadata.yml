@@ -1,0 +1,101 @@
+---
+:schema: 1
+:title: OpenCV
+:license: BSD License
+:summary: Open source computer vision and machine learning software library
+:url: http://opencv.org/
+:description: |
+  OpenCV (Open Source Computer Vision Library) is an open source
+  computer vision and machine learning software library. OpenCV was
+  built to provide a common infrastructure for computer vision
+  applications and to accelerate the use of machine perception in the
+  commercial products. Being a BSD-licensed product, OpenCV makes it
+  easy for businesses to utilize a nd modify the code.
+
+  The library has more than 2500 optimized algorithms, which includes
+  a comprehensive set of both classic and state-of-the-art computer
+  vision and machine learning algorithms. These algorithms can be used
+  to detect and recognize faces, identify objects, classify human
+  actions in videos, track camera movements, track moving objects,
+  extract 3D models of objects, produce 3D point clouds from stereo
+  cameras, stitch images together to produce a high resolution image
+  of an entire scene, find similar images from an image database,
+  remove red eyes from images taken using flash, follow eye movements,
+  recognize scenery and establish markers to overlay it with augmented
+  reality, etc. OpenCV has more than 47 thousand people of user
+  community and estimated number of downloads exceeding 5 million. The
+  library is used extensively in companies, research groups and by
+  governmental bodies.
+:group: Libraries
+:changelog: |
+  * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgrade to latest v2.4.x release, v2.4.12 release
+  * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added support for TBB
+  * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Upgraded to version 2.4.9
+  * Mon Oct  7 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version and made depend on Python 2
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: opencv-2.4.12.zip
+:src_dir: opencv-2.4.12
+:type: libs
+:version: '2.4.12'
+:variants:
+  default:
+    :cmake_args: ''
+  tbb:
+    :cmake_args: -DWITH_TBB=ON -DTBB_INCLUDE_DIRS=$TBBINCLUDE
+    :requirements:
+      :build:
+        - libs/tbb
+      :runtime:
+        - libs/tbb
+:requirements:
+  :tool:
+    - apps/cmake
+    - apps/setuptools
+  :build:
+    - apps/python < 3.0.0
+    - libs/numpy
+    - libs/eigen >= 3
+    - apps/ffmpeg
+  :runtime:
+    - apps/python < 3.0.0
+    - libs/numpy
+    - libs/eigen >= 3
+    - apps/ffmpeg
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PATH=$PYTHONDEPSDIR:$PATH
+  mkdir $PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  easy_install --install-dir $PYTHONDEPSDIR sphinx <%= redirect(:python) %>
+  cmake -DCMAKE_BUILD_TYPE=RELEASE \
+        -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+        -DEIGEN_INCLUDE_PATH=$EIGENINCLUDE \
+        -DCMAKE_PREFIX_PATH=$PYTHONDIR \
+        <%= variant[:cmake_args] %> \
+        .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  export PYTHONDONTWRITEBYTECODE=true
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/lishare
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
