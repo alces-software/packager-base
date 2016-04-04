@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: BEDTools
+:license: GPLv2
+:summary: A flexible suite of utilities for comparing genomic features
+:url: http://code.google.com/p/bedtools/
+:description: |
+  The BEDTools utilities allow one to address common genomics tasks
+  such as finding feature overlaps and computing coverage. The
+  utilities are largely based on four widely-used file formats: BED,
+  GFF/GTF, VCF, and SAM/BAM. Using BEDTools, one can develop
+  sophisticated pipelines that answer complicated research questions
+  by "streaming" several BEDTools together.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.25.0
+  * Thu Jan 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - updated to version 2.23.0
+  * Fri Dec  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.22.0
+  * Fri Oct  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.21.0
+  * Wed Aug  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.20.1
+  * Sun Nov 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.17.0
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 support
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 2.16.2
+    - Refactored to packager style
+  * Thu Feb 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - updated to version 2.15.0
+    - brought spec file into line with recent macro additions
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: v2.25.0.tar.gz
+:src_dir: bedtools2-2.25.0
+:version: '2.25.0'
+:compilers:
+  gcc:
+  open64:
+:dependencies:
+  el:
+    - gcc-c++
+    - zlib-devel
+:compile: |
+  sed -i -e 's/^\(export CXX.*\)$/#\1/g' Makefile
+  make all <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/doc
+  cp -rv LICENSE README.md RELEASE_HISTORY <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv bin data genomes test <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
