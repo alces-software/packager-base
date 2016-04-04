@@ -45,6 +45,7 @@
 :dependencies:
   el:
     - gcc-c++
+    - zlib-devel
 :compile: |
   sed -i -e 's/^\(export CXX.*\)$/#\1/g' Makefile
   make all <%= redirect(:make) %>
