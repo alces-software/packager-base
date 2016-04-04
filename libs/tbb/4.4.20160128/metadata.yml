@@ -42,6 +42,9 @@
 :version: '4.4.20160128'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   make <%= redirect(:make) %>
 :install: |
