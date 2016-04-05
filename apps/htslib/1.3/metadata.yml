@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: HTSlib
+:license: MIT License & BSD License
+:summary: C library for high-throughput sequencing data formats
+:url: https://github.com/samtools/htslib
+:description: |
+  HTSlib is an implementation of a unified C library for accessing
+  common file formats, such as SAM, CRAM and VCF, used for
+  high-throughput sequencing data, and is the core library used by
+  samtools and bcftools. HTSlib only depends on zlib. It is known to
+  be compatible with gcc, g++ and clang.
+
+  HTSlib implements a generalized BAM index, with file extension .csi
+  (coordinate-sorted index). The HTSlib file reader first looks for
+  the new index and then for the old if the new index is absent.
+
+  This project also includes the popular tabix indexer, which indexes
+  both .tbi and .csi formats, and the bgzip compression utility.
+:group: Bioinformatics
+:changelog: |
+  * Tue Apr 5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v1.3 release
+  * Tue Apr 21 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest 1.2.1 release
+  * Wed Mar 20 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: htslib-1.3.tar.bz2
+:type: apps
+:version: '1.3'
+:compilers:
+  gcc:
+:dependencies:
+  el: 
+    - zlib-devel
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %> 
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc
+  install -D -m 0644 -v README LICENSE NEWS <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
