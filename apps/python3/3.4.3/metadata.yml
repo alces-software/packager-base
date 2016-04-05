@@ -23,6 +23,8 @@
     * embeddable within applications as a scripting interface
 :group: Languages
 :changelog: |
+  * Tue Apr 5 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included OS Dependencies
   * Mon Apr 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to v3.4.3
   * Mon Apr 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -43,9 +45,11 @@
 :compilers:
   gcc:
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   make install <%= redirect(:install) %>
   # Create site-wide distutils config file
   cat <<EOF > <%= dest_dir %>/lib/python3.4/distutils/distutils.cfg
