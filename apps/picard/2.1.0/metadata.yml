@@ -11,6 +11,8 @@
   the [VCF specification]<http://samtools.github.io/hts-specs/VCFv4.3.pdf>.
 :group: Bioinformatics
 :changelog: |
+  * Tue Apr 5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to include OS dependencies
   * Thu Feb 25 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest version 2.1.0
     - Updated license, summary, url, description
