@@ -14,6 +14,8 @@
 :type: apps
 :group: Tools
 :changelog: |
+  * Tue Apr 5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included OS Dependencies
   * Fri Mar 4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to version 3.4.3
   * Wed Mar 18 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -32,6 +34,7 @@
 :dependencies:
   el:
     - ncurses-devel
+    - gcc-c++
 :compilers:
   gcc:
 :compile: |
