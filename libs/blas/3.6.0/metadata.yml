@@ -1,0 +1,54 @@
+---
+:schema: 1
+:license: NONFREE - http://www.netlib.org/blas/faq.html#2
+:summary: Routines that provide standard building blocks for performing basic vector and matrix operations
+:url: http://www.netlib.org/blas/
+:description: |
+  The BLAS (Basic Linear Algebra Subprograms) are routines that
+  provide standard building blocks for performing basic vector and
+  matrix operations. The Level 1 BLAS perform scalar, vector and
+  vector-vector operations, the Level 2 BLAS perform matrix-vector
+  operations, and the Level 3 BLAS perform matrix-matrix
+  operations. Because the BLAS are efficient, portable, and widely
+  available, they are commonly used in the development of high quality
+  linear algebra software, LAPACK for example.
+:group: Libraries
+:changelog: |
+  * Wed Apr  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v3.6.0 release
+    - Added distro dependencies for EL
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 compiler support
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Mar 12 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ported to alces-installer style package
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: blas-3.6.0.tgz 
+:src_dir: BLAS-3.6.0
+:type: libs
+:version: '3.6.0'
+:compilers:
+  gcc:
+  open64:
+:dependencies:
+  el:
+    - gcc-gfortran
+:patches:
+  - blas-alces.patch
+:compile: |
+  #sed -i -e 's/^FORTRAN\s\+=.*$/FORTRAN = \$(F77)/g' make.inc  
+  #sed -i -e 's/^LOADER\s\+=.*$/LOADER = \$(F77)/g' make.inc  
+  make all <%= redirect(:make) %>
+:install: |
+  install -D -m 644 blas_LINUX_ALCES.a <%= dest_dir %>/libblas.a
+:module: |
+  setenv           BLASDIR        ${appdir} 
+  setenv           BLAS_DIR       ${appdir}
+  setenv           BLASLIB        ${appdir}
+  setenv           BLAS_LIB       ${appdir}
+  setenv           BLAS       ${appdir}/libblas.a
+
+  prepend-path LD_LIBRARY_PATH ${appdir}
+  prepend-path --delim " " LDFLAGS " -L${appdir}"
