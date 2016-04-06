@@ -16,6 +16,8 @@
   real and complex matrices, in both single and double precision.
 :group: Libraries
 :changelog: |
+  * Wed Apr 6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to include distro dependencies
   * Tue Feb 16 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to conform to more conventional gridware structure
     - Build shared and static libraries
@@ -38,6 +40,9 @@
 :compilers:
   gcc:
   open64:
+:dependencies:
+   el:
+     - gcc-gfortran
 :compile: |
   mkdir build.static build.shared
   cd build.static
