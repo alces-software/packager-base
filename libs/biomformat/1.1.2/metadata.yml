@@ -33,9 +33,11 @@
   independent of the version of the biom-format software.
 :group: Bioinformatics
 :changelog: |
+  * Wed Apr 6 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
   * Mon Jul 15 2013 James Donohue <james.donohue@alces-software.com>
     - First created
-:src: biom-format-1.1.2.tar.gz
+:src: 1.1.2.tar.gz
 :src_dir: biom-format-1.1.2
 :type: libs
 :version: '1.1.2'
@@ -51,6 +53,7 @@
 :compile: |
   # no-op; this is a distribution of a Python library
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin <%= redirect(:install) %>
 :module: |
