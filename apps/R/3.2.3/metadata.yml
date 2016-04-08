@@ -30,11 +30,12 @@
     - libs/blas
 :dependencies:
   el:
+    - gcc-c++
     - libpng-devel
-    - libjpeg-devel
+    - libjpeg-turbo-devel
     - cairo-devel
     - libtiff-devel
-    - libxml-devel
+    - libxml2-devel
     - libicu-devel
     - readline-devel
     - libcurl-devel
@@ -44,6 +45,10 @@
     - pcre-devel
     - tk-devel
 :changelog: |
+  * Fri Apr  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated fetch URL
+  * Thu Apr  7 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Thu Feb 11 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v3.2.3
     - Added distro dependencies for EL
