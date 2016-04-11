@@ -26,6 +26,8 @@
       low-level or high-performance libraries and applications
 :group: Languages
 :changelog: |
+  * Mon Apr 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Upgraded to v0.23.4
   * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -40,6 +42,9 @@
 :version: '0.23.4'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :variants:
   default:
     :description: "Builds for Python 2.7.x series"
@@ -69,8 +74,10 @@
       :runtime:
         - apps/python3 ~> 3.4.0
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
   mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
   <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
