@@ -23,6 +23,8 @@
     * embeddable within applications as a scripting interface
 :group: Languages
 :changelog: |
+  * Mon Apr 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
     - Upgraded to v2.7.8
   * Tue Sep 24 2013 - James Donohue <james.donohue@alces-software.com>
@@ -44,13 +46,18 @@
     - bzip2-devel
     - zlib-devel
     - tk-devel
+  el6:
+    - db4-devel
+  el7:
     - libdb-devel
 :compilers:
   gcc:
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   make install <%= redirect(:install) %>
   # Create site-wide distutils config file
   cat <<EOF > <%= dest_dir %>/lib/python2.7/distutils/distutils.cfg
