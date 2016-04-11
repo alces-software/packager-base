@@ -38,6 +38,16 @@
 :version: '3.3.3'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - openssl-devel
+    - bzip2-devel
+    - zlib-devel
+    - tk-devel
+  el6:
+    - db4-devel
+  el7:
+    - libdb-devel
 :compile: |
   ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
   make <%= redirect(:make) %>
