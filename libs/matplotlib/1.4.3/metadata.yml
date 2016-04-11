@@ -19,12 +19,15 @@
 :type: libs
 :group: Libraries
 :changelog: |
+  * Fri Apr  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: matplotlib-1.4.3.tar.gz
 :version: '1.4.3'
 :dependencies:
   el:
+    - gcc-c++
     - freetype-devel
     - libpng-devel
     - tk-devel
@@ -71,8 +74,10 @@
         - apps/python3 ~> 3.4.0
         - libs/numpy_python34
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
   PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
   mkdir -p $PYTHONDEPSDIR
