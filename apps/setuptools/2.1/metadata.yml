@@ -9,6 +9,8 @@
 :type: apps
 :group: Tools
 :changelog: |
+  * Fri Apr  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added python34 variant and added distro dependencies for EL
   * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
     - Bumped to v2.1 and added python3 variant
   * Fri Sep 28 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -32,10 +34,22 @@
     :requirements:
       :build: apps/python3 ~> 3.3.0
       :runtime: apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :build: apps/python3 ~> 3.4.0
+      :runtime: apps/python3 ~> 3.4.0
+:dependencies:
+  el:
+    - zlib-devel
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   # no-op; this is a distribution of a Python application
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
   export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages"
   <%= variant[:python_bin] %> setup.py install --prefix=<%= dest_dir %>/python
