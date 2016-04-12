@@ -46,6 +46,7 @@
     - bzip2-devel
     - zlib-devel
     - tk-devel
+    - libffi-devel
   el6:
     - db4-devel
   el7:
