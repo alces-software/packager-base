@@ -47,6 +47,11 @@
     - zlib-devel
     - tk-devel
     - libffi-devel
+    - sqlite-devel
+    - ncurses-devel
+    - readline-devel
+    - gdbm-devel
+    - xz-devel
   el6:
     - db4-devel
   el7:
