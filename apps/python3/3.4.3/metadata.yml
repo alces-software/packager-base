@@ -44,18 +44,25 @@
 :src_dir: Python-3.4.3
 :type: apps
 :version: '3.4.3'
-:compilers:
-  gcc:
 :dependencies:
   el:
+    - gcc-c++
     - openssl-devel
     - bzip2-devel
     - zlib-devel
     - tk-devel
+    - libffi-devel
+    - sqlite-devel
+    - ncurses-devel
+    - readline-devel
+    - gdbm-devel
+    - xz-devel
   el6:
     - db4-devel
   el7:
     - libdb-devel
+:compilers:
+  gcc:
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
   ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
