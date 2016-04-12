@@ -23,6 +23,8 @@
     * embeddable within applications as a scripting interface
 :group: Languages
 :changelog: |
+  * Tue Apr 12 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
     - Bumped to v3.3.3 and migrated to separate python3 package
   * Fri Mar 15 2013 - James Donohue <james.donohue@alces-software.com>
@@ -36,18 +38,24 @@
 :src_dir: Python-3.3.3
 :type: apps
 :version: '3.3.3'
-:compilers:
-  gcc:
 :dependencies:
   el:
     - openssl-devel
     - bzip2-devel
     - zlib-devel
     - tk-devel
+    - libffi-devel
+    - sqlite-devel
+    - ncurses-devel
+    - readline-devel
+    - gdbm-devel
+    - xz-devel
   el6:
     - db4-devel
   el7:
     - libdb-devel
+:compilers:
+  gcc:
 :compile: |
   ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
   make <%= redirect(:make) %>
