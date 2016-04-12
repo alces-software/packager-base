@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: pyBigWig
+:license: MIT License 
+:summary: A python extension, written in C, for quick access to and creation of bigWig files. 
+:url: https://github.com/dpryan79/pyBigWig 
+:description: |
+  A python extension, written in C, for quick access to and creation 
+  of bigWig files. This extension uses libBigWig for local and remote 
+  file access.
+:group: Library
+:changelog: |
+  * Tue Apr 12 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:requirements:
+  :tool: apps/setuptools
+  :build: 
+    - apps/python ~> 2.7.0
+  :runtime: 
+    - apps/python ~> 2.7.0
+:src: pyBigWig-0.2.7.tar.gz 
+:src_dir: pyBigWig-0.2.7
+:type: libs
+:version: '0.2.7'
+:compilers:
+  gcc:
+:dependencies: 
+  el:
+    - libcurl-devel
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:compile) %>  
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages/  
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
