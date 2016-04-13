@@ -1,0 +1,11 @@
+--- CMakeLists.txt	2016-05-05 23:00:36.933463298 +0900
++++ CMakeLists.txt.alces	2016-05-05 23:01:00.780381626 +0900
+@@ -29,7 +29,7 @@
+ endif ()
+
+ if (CMAKE_COMPILER_IS_GNUCXX)
+-    set(CMAKE_CXX_FLAGS "-Wno-long-long -Wall -ansi -pedantic")
++    set(CMAKE_CXX_FLAGS "-Wno-long-long -Wall -ansi -pedantic -Wno-unused-but-set-variable")
+ endif ()
+
+ # make sure to pick up headers from library dirs
