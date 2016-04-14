@@ -14,6 +14,8 @@
   :tool: 
     - apps/cmake >= 2.6.4
 :changelog: |
+  * Thu Apr 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Oct 31 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to version 2.3.0
   * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -23,6 +25,9 @@
     - First created
 :src: bamtools-2.3.0.tar.gz
 :version: '2.3.0'
+:dependencies:
+  el:
+    - zlib-devel
 :compilers:
   gcc:
 :compile: |
