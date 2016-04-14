@@ -26,6 +26,9 @@ before_install:
 script:
 - travis_wait 50 .gridware-ci/build-packages.sh
 - ".gridware-ci/upload-artifacts.sh"
+after_failure:
+- ".gridware-ci/dump-logs.sh"
+- echo "Build failed :'("
 notifications:
   slack:
     secure: e2XI42Slv8KRMhvOjg98MBRq6rSEncA3G1t6R5d2T75Ce3gPcbwxy8oJFSmLg0kk9orUIu8+NjeWCsoYM2YWUehClG5vsbZ60UP2TdesgeRwGLKP7e9Zqc3CsjpDhiwOP0XzAqCUnZG0Z7pRmhiUm8rDGu4Cv9RJmeGr371UTkMiyeEOzW0vT8LIp17ZKo9+huyGPs0e8Q3Wh12NYkBFrGYq8WGMwOyI3T+MVXcSDEnddberAUO/JTw7jPVN4FAL9kmbscUNIhdrQ2GPaDvwW/ULC672vdQPECVKMSGyF4J4XBachx15B/vFoiK1lJiFzaOd55628ESN6K1JRLb6eqYchs8d3YKBSPN4YjhsTjbJDyQm4gCycjCPGVjn1QcyxEaSwrQvAa2EmN1ge+sAIPtiHxytOBdHOTDQaMijxXvOYBxHXsKy6yLILp+VDht2P+PCGP/BiOsxNBj36Q8B8+EKzBZEx8uLVGVz1Wzf7KONtGWZLIjszcPp6OQOsASU7T7E3xrsuFNbOUVXtI/orO2SAbh5yltBq8rx/SMd7kZ0J8IINlflgDYTe+vsA67pxKc4Pgww1OGtyhtLNVYqvK3ctfjD3pTbdbKzxYD5EmQ6lvwI4CqbxMA11XMDGSXlUUATUQcX+baKEiovnfse6anoXgAG6MZHkVKXzoj8Yso=
