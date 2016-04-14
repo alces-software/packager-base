@@ -36,6 +36,8 @@
     * Several small but helpful Perl Utilities
 :group: Bioinformatics
 :changelog: |
+  * Thu 14 Apr 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated patchfile to support alternate versions of Perl in Gridware
   * Mon 18 Feb 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: ViennaRNA-2.1.1.tar.gz
@@ -46,6 +48,9 @@
 :version: '2.1.1'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :requirements:
   :build:
     - apps/perl
@@ -55,10 +60,16 @@
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
-  cat <%= source('perl-makefile.patch') %> | sed "s|%PERLDIR%|${PERLDIR}|g" | patch -p0
+  perl_version=$(perl -e 'print substr($^V,1);')
+  sed <%= source('perl-makefile.patch') %> \
+    -e "s|%PERLDIR%|${PERLDIR}|g" \
+    -e "s/%PERLVERSION%/${perl_version}/g" | \
+    patch -p0 <%= redirect(:patch) %>
   make install GRIDWARE_DEST=<%= dest_dir %> <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib
 
   prepend-path PATH ${appdir}/bin
