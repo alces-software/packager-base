@@ -10,10 +10,15 @@
 :type: apps
 :group: Tools
 :changelog: |
+  * Fri 15 Apr 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: cpanm.sic
 :version: '1.5017'
+:requirements:
+  :build: apps/perl
+  :runtime: apps/perl
 :compilers:
   noarch:
 :compile: |
