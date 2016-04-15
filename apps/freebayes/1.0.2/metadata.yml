@@ -23,6 +23,18 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri Apr 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Jan 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v1.0.2
+  * Tue Mar 03 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated version to 0.9.20
+    - FreeBayes now requires a FreeBayes-specific fork of BamTools
+      rather than upstream/Gridware BamTools.
+  * Thu Nov 20 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated version to 0.9.18
+  * Tue Mar 04 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Updated version to 0.9.14
   * Thu Oct 31 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: v1.0.2.tar.gz
@@ -34,6 +46,10 @@
   - apps/cmake
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - git
+    - gcc-c++
 :compile: |
   sed -i -e 's|BAMTOOLS_ROOT=../bamtools|BAMTOOLS_ROOT=$(BAMTOOLSDIR)|g' \
     -e 's|-I$(BAMTOOLS_ROOT)/src|-I$(BAMTOOLSINCLUDE)|g' src/Makefile
