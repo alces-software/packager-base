@@ -34,6 +34,8 @@
 :type: apps
 :group: Languages
 :changelog: |
+  * Fri Apr 15 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Mar 29 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version v7.8.2
   * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -42,6 +44,9 @@
 :version: '7.8.2'
 :compilers:
   bin:
+:dependencies:
+  el:
+    - gmp-devel
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
 :install: |
