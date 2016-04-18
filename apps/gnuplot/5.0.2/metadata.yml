@@ -15,7 +15,9 @@
    development since 1986.
 :group: Apps
 :changelog: |
-  * Wed Jan 13 20156 Ruan G. Ellis <ruan.ellis@alces-software.com>
+  * Sun Apr 17 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Jan 13 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: gnuplot-5.0.2.tar.gz
 :src_dir: gnuplot-5.0.2
