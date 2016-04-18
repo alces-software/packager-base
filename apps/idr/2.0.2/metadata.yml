@@ -24,7 +24,9 @@
    of identifications i.e the IDR threshold.
 :group: Apps
 :changelog: |
-  * Fri Oct 16 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+ * Mon Apr 18 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+ * Fri Oct 16 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: 2.0.2.zip
 :src_dir: idr-2.0.2
@@ -71,6 +73,7 @@
 #  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 #  noop
 :install: |
+  PYTHONDONTWRITEBYTECODE=true
   PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
   mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
   mkdir -p <%= dest_dir %>/tests
