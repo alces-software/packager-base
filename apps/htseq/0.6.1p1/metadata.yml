@@ -18,6 +18,8 @@
       genes
 :group: Bioinformatics
 :changelog: |
+  * Mon Apr 18 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Jul 25 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest v0.6.1p1
   * Mon Jun 24 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -37,7 +39,11 @@
     - libs/numpy
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
   # XXX - Should probably 'env' the hashbang in the scripts, but we
   # don't in other places at the moment, so we don't here, for
@@ -47,6 +53,7 @@
   # mkdir $PYTHONDEPSDIR
   # easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   # PYTHONDEPSDIR=$(pwd)/python
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   # cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
