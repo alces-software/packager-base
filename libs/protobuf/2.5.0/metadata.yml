@@ -3,7 +3,7 @@
 :title: Protocol Buffers
 :license: BSD
 :summary: Protocol Buffers are a way of encoding structured data in an efficient yet extensible format. Google uses Protocol Buffers for almost all of its internal RPC protocols and file formats.
-:url: http://www.ruby-lang.org/
+:url: https://developers.google.com/protocol-buffers/
 :description: |
   Protocol buffers are a flexible, efficient, automated mechanism for
   serializing structured data – think XML, but smaller, faster, and simpler.
@@ -14,6 +14,12 @@
   are compiled against the "old" format.
 :group: Libraries
 :changelog: |
+  * Wed Apr 20 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Explicitly pin python to ~> 2.7.0
+    - Added distro dependencies
+    - Added PROTOBUFJAVA and PROTOBUFPYTHON variables to modulefile
+    - Updated bad URL metadata field
+    - Create protobuf java jar as part of installation
   * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: protobuf-2.5.0.tar.bz2
@@ -24,11 +30,15 @@
   :tool:
     - apps/setuptools
   :build:
-    - apps/python
+    - apps/python ~> 2.7.0
   :runtime:
-    - apps/python
+    - apps/python ~> 2.7.0
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - java-1.8.0-openjdk-devel
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
@@ -62,11 +72,15 @@
   # Install the java library.
   mkdir -p <%= dest_dir %>/java/com/google/protobuf/ <%= redirect(:install) %>
   cp java/src/main/java/com/google/protobuf/*.class <%= dest_dir %>/java/com/google/protobuf/ <%= redirect(:install) %>
+  cd java/src/main/java
+  jar -cf <%= dest_dir %>/java/protobuf-java.jar com
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}LIB ${appdir}/lib
   setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}PYTHON ${appdir}/python
 
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
