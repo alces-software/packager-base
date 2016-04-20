@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: JAGS
+:license: GPLv2
+:summary: Analysis of Bayesian hierarchical models using Markov Chain Monte Carlo simulation
+:url: http://mcmc-jags.sourceforge.net/
+:description: |
+
+  JAGS is Just Another Gibbs Sampler.  It is a program for analysis of
+  Bayesian hierarchical models using Markov Chain Monte Carlo (MCMC)
+  simulation not wholly unlike BUGS.  JAGS was written with three aims
+  in mind:
+
+    * To have a cross-platform engine for the BUGS language.
+    * To be extensible, allowing users to write their own functions,
+      distributions and samplers.
+    * To be a plaftorm for experimentation with ideas in Bayesian
+      modelling.
+:group: Bioinformatics
+:changelog: |
+  * Wed Apr 20 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v4.2.0 & Added distro dependencies for EL
+  * Fri Feb 28 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: JAGS-4.2.0.tar.gz
+:src_dir: JAGS-4.2.0
+:type: apps
+:version: '4.2.0'
+:requirements:
+  :build:
+    - libs/atlas
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
+:compile: |
+  F77=gfortran LDFLAGS=-L$ATLASLIB \
+    ./configure --prefix=<%= dest_dir %> \
+                --with-included-ltdl
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path PATH ${appdir}/bin
