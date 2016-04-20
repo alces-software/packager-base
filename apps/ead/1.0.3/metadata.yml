@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: EAD - Error Aware Demultiplexer
+:license: MIT License 
+:summary: EAD is a probabilistic demultiplexer for Illumina BCL files.
+:url: https://github.com/edm1/error-aware-demultiplexer 
+:description: |
+  EAD is a probabilistic demultiplexer for Illumina BCL files. It works 
+  with:
+  * single or dual-indexed reads
+  * single or pair-end reads
+  The demultiplexer has only been tested with MiSeq BCLs but 
+  theoretically should work for any Illumina platform.
+:group: Bioinformatics
+:changelog: |
+  * Wed 20 Apr 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: 0541d78a06ae4739b9d62275b0bd18337ea1320b.zip 
+:src_dir: error-aware-demultiplexer-0541d78a06ae4739b9d62275b0bd18337ea1320b 
+:type: apps
+:version: '1.0.3'
+:compilers:
+  bin:
+:requirements:
+  :build:
+    - apps/python3 >= 3.3.0
+  :runtime:
+    - apps/python3 >= 3.3.0
+:compile: |
+  # noop; This is a distribution of a Python application
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/libs
+
+  prepend-path PATH ${appdir}
