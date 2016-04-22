@@ -1,7 +1,7 @@
 ---
 :schema: 1
-:name: intelcsxe
-:version: '2015.3.187'
+:name: intelpsxe
+:version: '0'
 :type: ext
 :title: Intel Parallel Studio XE - Composer Edition
 :license: Commercial
@@ -15,7 +15,10 @@
 :group: Compilers
 :params:
   :license_file: "FlexLM lmgrd Server (<port>@<server> format - probably <port>@headnode1.prv.clustername.compute.estate)"
+  :impi_version: "Intel MPI version released with this PSXE - version name in */intel-psxe/2016u1/impi/<version>"
 :changelog: |
+  * Fri 22 Apr 2016 Ruan G. Ellis - <ruan.ellis@alces-software.com>
+    - Updated to give Intel MPI Modulefile
   * Fri 17 Jul 2015 Ruan G. Ellis - <ruan.ellis@alces-software.com>
     - First created
 :compiler: 'bin'
@@ -52,3 +55,17 @@
     :content: |
       set mkldir ${appdir}/mkl
       setenv INTELMKLDIR ${mkldir}
+  - :type: mpi
+    :name: intel-mpi
+    :tag: bin
+    :content: |
+      setenv LM_LICENSE_FILE <%= param('license_file') %>
+      setenv MPI_HOME    ${appdir}/impi/<%= param('impi_version') %>
+      setenv INTELMPIDIR ${appdir}/impi/<%= param('impi_version') %>
+      setenv INTELMPIBIN ${appdir}/impi/<%= param('impi_version') %>/bin64
+      setenv INTELMPILIB ${appdir}/impi/<%= param('impi_version') %>/lib64
+      setenv INTELMPIINCLUDE ${appdir}/ipmi/<%= param('impi_version') %>/include64
+      setenv INTELMPIMAN ${appdir}/impi/<%= param('impi_version') %>/man
+      prepend-path MANPATH ${appdir}/impi/<%= param('impi_version') %>/man
+      prepend-path PATH ${appdir}/impi/<%= param('impi_version') %>/bin64
+      prepend-path LD_LIBRARY_PATH ${appdir}/impi/<%= param('impi_version') %>/lib64
