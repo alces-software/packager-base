@@ -11,6 +11,8 @@
   non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
 :group: Bioinformatics
 :changelog: |
+  * Mon Apr 25 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Feb  3 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Copy lib and inc directories from source tree into share/src so
       third party tools can link against them if necessary.
@@ -31,6 +33,11 @@
 :version: '303.1'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - libpng-devel
+    - mariadb-devel
+    - rsync
 :compile: |
   OUTDIR="$(pwd)"
   mkdir -p out/bin out/htdocs out/cgi-bin-root out/${OUTDIR}/out/cgi-bin-root/ out/${OUTDIR}/out/cgi-bin-root/loader
@@ -84,7 +91,7 @@
 
   cp -rv kent/src/hg/htdocs/* <%= dest_dir %>/www/htdocs <%= redirect(:install) %>
   cd <%= dest_dir %>/www
-  $TRASH_DIR=/var/cache/kent/trash
+  TRASH_DIR=/var/cache/kent/trash
   # The trash directory must exist and be world-writable 777
   ln -s $TRASH_DIR trash
   cd <%= dest_dir %>/www/htdocs
@@ -98,7 +105,8 @@
     ln -s $a $(basename $a .css)-v<%= version.split('.').first %>.css
   done
   cd <%= dest_dir %>/www
-  chown -R apache:apache htdocs
+  #Removed this as no httpd installed - will fail installation otherwise
+  #chown -R apache:apache htdocs
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
