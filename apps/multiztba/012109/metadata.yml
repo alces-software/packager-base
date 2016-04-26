@@ -28,6 +28,8 @@
   Cruz Genome Browser.
 :group: Bioinformatics
 :changelog: |
+  * Tue Apr 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Tue May 20 2014 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: multiz-tba.012109.tar.gz
