@@ -24,6 +24,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Mon Apr 25 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Oct 20 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to latest version; v2.1.0.20150731
   * Thu Apr 23 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -51,6 +53,7 @@
 :compilers:
   gcc:
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
   gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
   if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "6") ]]; then
@@ -59,6 +62,7 @@
   fi
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
