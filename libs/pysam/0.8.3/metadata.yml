@@ -16,6 +16,9 @@
 :type: libs
 :group: Libraries
 :changelog: |
+  * Tue Apr 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added Python v3.3 and v3.4 variants
+    - Added distro dependencies for EL
   * Tue Aug  4 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to v0.8.3
   * Mon Jun  2 2014 - James Donohue <james.donohue@alces-software.com>
@@ -30,13 +33,15 @@
   :tool:
     - apps/setuptools
     - apps/cython
-  :build: 
+  :build:
     - apps/python
-  :runtime: 
+  :runtime:
     - apps/python
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
