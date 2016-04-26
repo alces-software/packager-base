@@ -13,6 +13,8 @@
   the barriers to producing great applications for Linux.
 :group: Languages
 :changelog: |
+  * Tue Apr 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Mar 13 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Remove absolute paths from dllmap in mono configuration file
   * Mon Mar  4 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -22,6 +24,9 @@
 :version: '3.06'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gettext
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:build) %>
