@@ -1,9 +1,9 @@
 ---
 :schema: 1
-:title: matplotlib
+:title: NucleoATAC 
 :license: MIT
 :summary: Package for calling nucleosomes using ATAC-Seq data
-:url: http://matplotlib.org/
+:url: https://github.com/GreenleafLab/NucleoATAC 
 :description: |
   Python package for calling nucleosomes using ATAC-Seq data. Also 
   includes general scripts for working with paired-end ATAC-Seq 
@@ -14,7 +14,9 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
-  * Tue Jan  26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+  * Tue Apr 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
+  * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: v0.3.1.tar.gz 
 :src_dir: NucleoATAC-0.3.1 
@@ -86,8 +88,10 @@
         - libs/pysam_python34 >= 0.8.1
         - libs/matplotlib_python34
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
   PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
   mkdir -p $PYTHONDEPSDIR
