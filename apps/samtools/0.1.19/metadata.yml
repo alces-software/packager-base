@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Wed Apr 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for El
   * Tue Mar  3 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Corrected permissions on installed files
   * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
@@ -49,6 +51,10 @@
 :version: '0.1.19'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - ncurses-devel
 :compile: |
   sed -i -e 's|^CFLAGS=.*|CFLAGS= -g -Wall -O2 -fPIC|g' Makefile
   make <%= redirect(:make) %>
