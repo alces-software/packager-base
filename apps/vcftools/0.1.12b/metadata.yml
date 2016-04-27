@@ -12,6 +12,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Wed Apr 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Mon Sep  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to v0.1.12b
   * Wed Feb 20 2013 James Donohue <james.donohue@alces-software.com>
@@ -26,8 +28,15 @@
 :src: vcftools_0.1.12b.tar.gz
 :src_dir: vcftools_0.1.12b
 :version: '0.1.12b'
+:requirements:
+  :build: apps/perl
+  :runtime: apps/perl
 :compilers:
   gcc:
+:dependencies:
+  el:
+  - zlib-devel
+  - gcc-c++
 :compile: |
   make <%= redirect(:make) %>
 :install: |
