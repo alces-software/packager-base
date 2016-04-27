@@ -10,6 +10,8 @@
   :tool: apps/cmake
 :group: Mathematics
 :changelog: |
+  * Wed Apr 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Feb 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v3.2.4
   * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -26,6 +28,9 @@
 :version: '3.2.4'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   mkdir build
   cd build
