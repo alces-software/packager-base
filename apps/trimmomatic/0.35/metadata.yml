@@ -38,16 +38,21 @@
   output where a read survived, but the partner read did not.
 :group: Bioinformatics
 :changelog: |
-  * Fri Aug  1 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - First created
+  * Thu Apr 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Jan  14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to v0.35
+  * Fri Aug  1 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
 :src: Trimmomatic-0.35.zip
 :src_dir: Trimmomatic-0.35
 :type: apps
 :version: '0.35'
 :compilers:
   noarch:
+:dependencies:
+  el:
+    - java-1.8.0-openjdk
 :compile: |
   # no-op; this is a binary distribution of a java application
 :install: |
