@@ -23,6 +23,8 @@
   39: 1261-5.
 :group: Bioinformatics
 :changelog: |
+  * Fri Apr 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Jul 25 2013 James Donohue <james.donohue@alces-software.com>
     - Disabled MPI support for the present (re-add as variant?)
   * Fri Jul  5 2013 James Donohue <james.donohue@alces-software.com>
@@ -44,8 +46,10 @@
     #- libs/mpi4py
     - apps/python
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
