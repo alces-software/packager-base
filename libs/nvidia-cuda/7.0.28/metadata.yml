@@ -49,8 +49,6 @@
     - Bump to latest version
   * Tue Jul 26 2011 Steve Norledge
     - First created
-:sources:
-  - nvidia-driver-install.sh
 :src: cuda_7.0.28_linux.run.sic
 :src_dir: .
 :type: libs
