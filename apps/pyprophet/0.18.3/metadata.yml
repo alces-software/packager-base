@@ -11,6 +11,8 @@
   rate) to achieve experiment-wide cutoffs.
 :group: Bioinformatics
 :changelog: |
+  * Fri Apr 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Wed Oct 20 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to v0.18.3
   * Wed Oct 05 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -42,6 +44,7 @@
 :compilers:
   gcc:
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   # XXX - Should probably 'env' the hashbang in the scripts, but we
   # don't in other places at the moment, so we don't here, for
   # consistency.
@@ -52,6 +55,7 @@
   easy_install --install-dir $PYTHONDEPSDIR seaborn <%= redirect(:python) %>
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
   export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages/
