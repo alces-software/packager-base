@@ -13,6 +13,8 @@
   viewing, and analyzing data in the HDF5 format.
 :group: Databases
 :changelog: |
+  * Fri Apr 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Oct 14 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to version 1.8.13
     - Added --enable-cxx flag for serial builds ("the C++ interface
@@ -52,6 +54,9 @@
       :build: mpi/openmpi
   serial:
     :configure_flags: '--enable-cxx'
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
               --prefix=<%= dest_dir %> <%= redirect(:configure) %>
