@@ -61,7 +61,14 @@
 :version: '1.63'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - libjpeg-turbo-devel
+    - mariadb-devel
+    - postgresql
+    - postgresql-devel
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   mkdir $PYTHONDEPSDIR
@@ -73,6 +80,7 @@
   easy_install --install-dir $PYTHONDEPSDIR psycopg2 <%= redirect(:python) %>
   <%= variant[:python_bin] %> setup.py build <%= redirect(:compile) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages <%= redirect(:install) %>
