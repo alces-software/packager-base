@@ -16,6 +16,8 @@
   Q is implemented in C++ making use of the Boost and SeqAn library.
 :group: Bioinformatics
 :changelog: |
+  * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL & pinned to Boost v1.60.0
   * Mon Aug 24 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: 48b789d963e32e39b137bed97b7be6ffe588c2b7.zip
@@ -24,9 +26,9 @@
 :version: '13012015'
 :requirements:
   :build:
-    - libs/boost/1.49.0
+    - libs/boost >= 1.50.0
   :runtime:
-    - libs/boost/1.49.0
+    - libs/boost >= 1.50.0
 :compilers:
   gcc:
 :compile: |
