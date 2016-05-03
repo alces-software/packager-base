@@ -17,6 +17,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Tue Feb 22 2011 Steve Norledge
@@ -26,6 +28,9 @@
 :version: '0.05'
 :compilers:
   gcc:
+:requirements:
+  :build: apps/perl
+  :runtime: apps/perl
 :compile: |
   make <%= redirect(:make) %>
   # sed #!s to use env
