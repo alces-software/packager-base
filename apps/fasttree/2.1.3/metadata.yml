@@ -25,6 +25,8 @@
   (these are the same as PhyML 3's "SH-like local supports").
 :group: Bioinformatics
 :changelog: |
+  * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+      - Updated distro dependencies for EL 
   * Wed Jul 17 2013 James Donohue <james.donohue@alces-software.com>
       - Change metadata to be more version- and compiler-agnostic 
   * Tue Jul 16 2013 James Donohue <james.donohue@alces-software.com>
