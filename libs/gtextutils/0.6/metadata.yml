@@ -11,6 +11,9 @@
   Short-Reads FASTA/FASTQ files preprocessing.
 :group: Bioinformatics
 :changelog: |
+  * Wed May  4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
+    - Modified compile options to stop erroring on more modern GCC
   * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Tue Feb 22 2011 Steve Norledge
@@ -21,8 +24,13 @@
 :version: '0.6'
 :compilers:
   gcc:
+:dependencies: 
+  el:
+    - gcc-c++
 :compile: |
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  CFLAGS="-Wno-unused-but-set-variable" \
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %> \
+  --disable-warnings-as-errors
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
