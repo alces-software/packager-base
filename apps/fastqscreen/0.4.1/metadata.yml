@@ -9,6 +9,8 @@
   build up a picture of where the sequences in your data originate.
 :group: Bioinformatics
 :changelog: |
+  * Wed May  4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+     - Updated distro dependencies for EL
   * Thu Sep 19 2013 - James Donohue <james.donohue@alces-software.com>
      - Bumped to v0.4.1
   * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -27,6 +29,9 @@
 :compilers:
   noarch:
 # requires gd-devel on build host and gd on nodes to support GD::Graph
+:dependencies:
+  el:
+    - gd-devel
 :compile: |
   export TOPDIR=$(pwd)
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
