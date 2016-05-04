@@ -25,6 +25,8 @@
   or not, you can choose an appropriate test for your purpose.
 :group: Bioinformatics
 :changelog: |
+  * Wed May  4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Wed Jan 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First Created
 :src: diffreps-20150410.zip
