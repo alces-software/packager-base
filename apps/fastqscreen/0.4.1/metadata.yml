@@ -27,6 +27,9 @@
 :compilers:
   noarch:
 # requires gd-devel on build host and gd on nodes to support GD::Graph
+:dependencies:
+  el:
+    - gd-devel
 :compile: |
   export TOPDIR=$(pwd)
   export PERL5LIB="${TOPDIR}/perl/lib/perl5"
