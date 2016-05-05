@@ -12,6 +12,8 @@
   typically about 2.2 GB for the human genome (2.9 GB for paired-end).
 :group: Bioinformatics
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
   * Fri Aug  1 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest version v1.1.0
   * Sat Sep  8 2012 - James Donohue <james.donohue@alces-software.com>
@@ -27,6 +29,9 @@
 :version: '1.1.0'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   make all <%= redirect(:make) %>
 :install: |
