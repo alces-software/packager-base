@@ -11,6 +11,8 @@
   aio_read, aio_write.
 :group: Benchmarks
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
   * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
     - Added MPI example script
   * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
