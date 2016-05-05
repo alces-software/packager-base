@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
   * Thu Oct 24 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - add missing bcftools/vcfutils.pl to bin directory
   * Wed Nov 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -43,6 +45,10 @@
 :version: '0.1.18'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - ncurses-devel
 :compile: |
   sed -i -e 's|^CFLAGS=.*|CFLAGS= -g -Wall -O2 -fPIC|g' Makefile
   make <%= redirect(:make) %>
