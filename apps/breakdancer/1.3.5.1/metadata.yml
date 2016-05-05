@@ -18,10 +18,18 @@
 :requirements:
   :tool:
     - apps/cmake
+    - apps/cpanminus
   :build:
     - apps/samtools = 0.1.18
     - libs/boost
+  :runtime:
+    - apps/samtools = 0.1.18
+    - libs/boost
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
+    - Added MakeMaker to Perl lib
+    - Added patch for CMakeLists.txt to support later GCC versions
   * Tue Aug 25 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Pin samtools version to 0.1.18
   * Tue Mar 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -41,6 +49,7 @@
   - GDGraph-1.43.tar.gz
   - GDGraph-histogram-1.1.tar.gz
   - GDTextUtil-0.86.tar.gz
+  - CMakeLists.txt.patch
 :perllibs:
   - Statistics-Descriptive-2.6
   - Math-CDF-0.1
@@ -52,9 +61,15 @@
 :src_dir: genome-breakdancer-0e1ec6d
 :version: '1.3.5.1'
 :revision: 0e1ec6d
+:dependencies:
+  el:
+    - gd-devel
+    - zlib-devel
+    - gcc-c++
 :compilers:
   gcc:
 :compile: |
+  cpanm ExtUtils::MakeMaker <%= redirect(:cpanm) %>
   tar xzf <%= source("build-common.20120420.tar.gz") %>
   mv genome-build-common-bd01ad3/* build-common
   rm -rf genome-build-common-bd01ad3
@@ -67,6 +82,7 @@
   export SAMTOOLS_ROOT=${SAMTOOLSDIR}
   export BOOST_ROOT=${BOOSTDIR}
   mkdir build
+  patch -p0 < <%= source('CMakeLists.txt.patch') %>
   cd build
   cmake .. <%= redirect(:cmake) %>
   make <%= redirect(:make) %>
