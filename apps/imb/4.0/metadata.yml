@@ -11,6 +11,8 @@
   :build:
     - mpi/openmpi >= 1.8.1
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
   * Wed Jul 2 2014 Steve Norledge
     - bump to v4.0
   * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
