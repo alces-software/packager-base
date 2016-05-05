@@ -100,3 +100,7 @@
   append-path PERL5LIB ${perl_site_libs}/perl5/x86_64-linux
   append-path PERL5LIB ${perl_site_libs}/site_perl/${version}
   append-path PERL5LIB ${perl_site_libs}/site_perl/${version}/x86_64-linux
+  append-path PERL5LIB ${appdir}/lib/site_perl/${version}/x86_64-linux
+  append-path PERL5LIB ${appdir}/lib/site_perl/${version}
+  append-path PERL5LIB ${appdir}/lib/${version}/x86_64-linux
+  append-path PERL5LIB ${appdir}/lib/${version}
