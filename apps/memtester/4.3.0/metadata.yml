@@ -8,6 +8,8 @@
   non-deterministic faults. It has many tests to help catch borderline memory.
 :group: Benchmarks
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
   * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
     - Added simple example script
   * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
