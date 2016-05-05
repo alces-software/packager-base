@@ -22,6 +22,8 @@
   FASTX-Toolkit tools perform some of these preprocessing tasks.
 :group: Bioinformatics
 :changelog: |
+  * Wed May  4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Thu Jun  6 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Upgraded to v0.0.14
   * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
