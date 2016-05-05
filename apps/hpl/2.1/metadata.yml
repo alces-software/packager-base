@@ -22,6 +22,8 @@
     * Backward substitution with look-ahead of depth 1
 :group: Benchmarks
 :changelog: |
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
   * Wed May 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Tidied up the description field; added title field
   * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
