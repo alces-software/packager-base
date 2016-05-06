@@ -14,6 +14,8 @@
   of performance.
 :group: Bioinformatics
 :changelog: |
+  * Fri May  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Thu Aug 29 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: seqan-library-1.4.1.tar.bz2
