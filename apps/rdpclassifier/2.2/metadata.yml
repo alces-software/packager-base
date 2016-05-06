@@ -18,6 +18,8 @@
   taxonomies.
 :group: Bioinformatics
 :changelog: |
+  * Fri May  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Wed Jul 24 2013 - James Donohue <james.donohue@alces-software.com>
     - Added RDP_JAR_PATH environment variable for Qiime
   * Wed Jul 17 2013 - James Donohue <james.donohue@alces-software.com>
