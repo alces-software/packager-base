@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: screed
+:license: BSD-3-clause
+:summary: Short read sequence utils in Python.
+:url: https://github.com/dib-lab/screed 
+:description: |
+  screed parses FASTA and FASTQ files, generates databases, and 
+  lets you query these databases. Values such as sequence name, 
+  sequence description, sequence quality, and the sequence 
+  itself can be retrieved from these databases.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon May  9 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v0.9.zip
+:version: '0.9'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - bzip2-devel
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools
+      :build:
+        - apps/python ~> 2.7.0
+      :runtime:
+        - apps/python ~> 2.7.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3
+      :build:
+        - apps/python3 ~> 3.3.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34
+      :build:
+        - apps/python3 ~> 3.4.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+:compile: |
+  # export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages"
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages 
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages"
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
