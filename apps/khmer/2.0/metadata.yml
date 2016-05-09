@@ -1,0 +1,81 @@
+---
+:schema: 1
+:title: khmer
+:license: BSD-3-Clause
+:summary: k-mer counting, filtering and graph traversal 
+:url: https://github.com/dib-lab/khmer
+:description: |
+  The khmer software is a set of command-line tools for working 
+  with DNA shotgun sequencing data from genomes, transcriptomes, 
+  metagenomes, and single cells. khmer can make de novo assemblies 
+  faster, and sometimes better. khmer can also identify (and fix) 
+  problems with shotgun data.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon May  9 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v2.0.zip 
+:version: '2.0'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - zlib-devel
+    - bzip2-devel
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools >= 3.4.1 
+      :build:
+        - apps/python ~> 2.7.0
+        - apps/screed >= 0.9
+      :runtime:
+        - apps/python ~> 2.7.0
+        - apps/screed >= 0.9
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3 >= 3.4.1
+      :build:
+        - apps/python3 ~> 3.3.0
+        - apps/screed_python3 >= 0.9
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - apps/screed_python3 >= 0.9
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34 >= 3.4.1
+      :build:
+        - apps/python3 ~> 3.4.0
+        - apps/screed_python34 >= 0.9
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - apps/screed_python3 >= 0.9
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages"
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
