@@ -11,6 +11,8 @@
   mapping results to identify splice junctions between exons.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to 2.1.0
   * Fri Jan 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -43,6 +45,10 @@
     - apps/bowtie2
 :compilers:
   gcc:
+:dependencies: 
+  el:
+    - automake
+    - gcc-c++
 :compile: |
   ./bootstrap <%= redirect(:bootstrap) %>
   ./configure --prefix=<%= dest_dir %> --with-boost=${BOOSTDIR} <%= redirect(:configure) %>
