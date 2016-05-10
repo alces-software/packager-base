@@ -10,6 +10,8 @@
   files which can also be optionally compressed by gzip.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Sep  9 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: seqtk-1.0.tar.gz
@@ -18,6 +20,9 @@
 :version: '1.0'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    zlib-devel
 :compile: |
   make <%= redirect(:make) %>
 :install: |
