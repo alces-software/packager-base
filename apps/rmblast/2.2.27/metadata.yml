@@ -20,6 +20,8 @@
     * Support for cross_match-like masklevel filtering.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Mar 11 2013 James Donohue <james.donohue@alces-software.com>
     - First created (based on apps/ncbiblast package)
 :src: rmblast-2.2.27-src.tar.gz
@@ -28,6 +30,9 @@
 :version: '2.2.27'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   cd c++
   ./configure --without-boost --with-mt --prefix=<%= dest_dir %> <%= redirect(:configure) %>
