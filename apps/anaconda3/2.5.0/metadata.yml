@@ -26,6 +26,8 @@
   and operational support.
 :group: Languages
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Mar  8 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: Anaconda3-2.5.0-Linux-x86_64.sh.sic
