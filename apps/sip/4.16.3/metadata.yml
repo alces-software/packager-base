@@ -34,6 +34,8 @@
   performance reasons) in C or C++.
 :group: Tools
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Oct 15 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: sip-4.16.3.tar.gz
@@ -46,13 +48,18 @@
     - apps/python
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python configure.py --destdir <%= dest_dir %>/python \
     --bindir <%= dest_dir %>/bin \
     --incdir <%= dest_dir %>/include \
     --sipdir <%= dest_dir %>/share/sip <%= redirect(:configure) %>
   make <%= redirect(:compile) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   make install <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
