@@ -32,6 +32,8 @@
   corroborating the high precision of the STAR mapping strategy.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Aug 13 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to latest version, 2.4.2a
   * Thu Feb 26 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -46,6 +48,11 @@
 :version: '2.4.2a'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - vim-common
+    - zlib-devel
 :compile: |
   cd source
   make clean
