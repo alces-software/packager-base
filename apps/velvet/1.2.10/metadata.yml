@@ -16,6 +16,8 @@
   areas between contigs.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Apr 10 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added example scripts for velveth, velvetg and velveth/velvetg pipeline
     - Added title field
@@ -40,6 +42,10 @@
 :type: apps
 :version: '1.2.10'
 # requires tetex-latex for build
+:dependencies:
+  el:
+    - zlib-devel
+    - texlive-latex
 :params:
   :maxkmerlength: "Set the MAXKMERLENGTH compile time configuration variable [odd integer 31 <= x <= 201 or 'default' to use the default of 31]; please refer to the Velvet docs for notes on the effect."
   :categories: "Set the CATEGORIES compile time configuration variable [integer >= 2 or 'default' to use the default of 2]; please refer to the Velvet docs for notes on the effect."
