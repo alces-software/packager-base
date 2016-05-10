@@ -16,6 +16,9 @@
   genomes like human, about 150 GB memory would be required.
 :group: Bioinformatics
 :changelog: |
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+    - Patched sources to allow compilation on later GCC versions
   * Thu Apr 10 2014 - James Donohue <james.donohue@alces-software.com>
     - Added example script
   * Mon Aug 12 2013 - Steve Norledge
@@ -32,7 +35,14 @@
 :version: '2r240'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    gcc-c++
 :compile: |
+  # patch files to stop breakage on later GCC versions
+  sed -i '/include "stdinc.h"/a #include <unistd.h>' sparsePregraph/multi_threads.cpp
+  sed -i '/include "multi_threads.h"/a #include <unistd.h>'  sparsePregraph/build_preArc.cpp
+  sed -i '/include "core.h"/a #include <unistd.h>' sparsePregraph/pregraph_sparse.cpp
   make <%= redirect(:make) %>
 :install: |
   mkdir <%= dest_dir %>/bin
