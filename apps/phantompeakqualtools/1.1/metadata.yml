@@ -12,6 +12,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Wed May 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Fri Dec  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: ccQualityControl.v.1.1.tar.gz
