@@ -29,6 +29,8 @@
   doesn't access the globally installed libraries either).
 :group: Languages
 :changelog: |
+  * Wed May 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Oct 13 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: virtualenv-13.1.2.tar.gz
@@ -68,6 +70,7 @@
 :compile: |
   #noop
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
   mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
   <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
