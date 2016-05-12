@@ -17,6 +17,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu May 12 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu May 29 2014 - Ben Armston <ben.armston@alces-software.com>
     - Updated Makefiles to link against pthread
   * Wed Nov 21 2012 Steve Norledge
@@ -33,6 +35,9 @@
     - libs/gsl
     - apps/vcftools
     - apps/stampy
+:dependencies:
+  el:
+    - zlib-devel
 :patches:
   - gridware-aware.patch1
   - link-to-pthread.patch1
