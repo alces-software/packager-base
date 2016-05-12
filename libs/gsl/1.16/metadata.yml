@@ -16,6 +16,8 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Thu May 12 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Sep  3 2014 - Ben Armston <ben.armston@alces-software.com>
     - Upgraded to v1.16
   * Wed Oct 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -24,6 +26,9 @@
 :version: 1.16
 :compilers:
   gcc:
+:dependencies:
+  el: 
+    - gcc-c++
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
