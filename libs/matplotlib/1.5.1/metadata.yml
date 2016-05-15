@@ -1,0 +1,91 @@
+---
+:schema: 1
+:title: matplotlib
+:license: PSF License; see http://matplotlib.org/users/license.html
+:summary: 2D plotting library for Python which produces publication quality figures 
+:url: http://matplotlib.org/
+:description: |
+  matplotlib is a python 2D plotting library which produces
+  publication quality figures in a variety of hardcopy formats and
+  interactive environments across platforms. matplotlib can be used in
+  python scripts, the python and ipython shell (ala MATLAB(R) or
+  Mathematica(R)), web application servers, and six graphical user
+  interface toolkits.
+
+  matplotlib tries to make easy things easy and hard things
+  possible. You can generate plots, histograms, power spectra, bar
+  charts, errorcharts, scatterplots, etc, with just a few lines of
+  code.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Sun May 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v1.5.1 version
+  * Fri Apr  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: matplotlib-1.5.1.tar.gz
+:version: '1.5.1'
+:dependencies:
+  el:
+    - gcc-c++
+    - freetype-devel
+    - libpng-devel
+    - tk-devel
+:compilers:
+  gcc:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools
+      :build:
+        - apps/python ~> 2.7.0
+        - libs/numpy
+      :runtime:
+        - apps/python ~> 2.7.0
+        - libs/numpy
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3
+      :build:
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34
+      :build:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
+  mkdir -p $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR mock==1.0.1 <%= redirect(:python) %>
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
