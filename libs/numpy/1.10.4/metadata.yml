@@ -1,0 +1,104 @@
+---
+:schema: 1
+:license: BSD
+:summary: Fundamental package for scientific computing in Python
+:url: http://numpy.scipy.org/
+:description: |
+  NumPy is the fundamental package for scientific computing with
+  Python. It contains among other things:
+
+    * a powerful N-dimensional array object
+    * sophisticated (broadcasting) functions
+    * tools for integrating C/C++ and Fortran code
+    * useful linear algebra, Fourier transform, and random number
+      capabilities
+
+  Besides its obvious scientific uses, NumPy can also be used as an
+  efficient multi-dimensional container of generic data. Arbitrary
+  data-types can be defined. This allows NumPy to seamlessly and
+  speedily integrate with a wide variety of databases.
+:type: libs
+:group: Mathematics
+:changelog: |
+  * Sun May 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v1.10.4
+  * Wed Mar 30 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use patchelf to remove hardcoded ATLAS library paths
+    - Added distro dependencies
+  * Wed Mar 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Moved atlas paths from compiler section to compile and install section.
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added python34 variant for Python 3.4.x
+  * Thu Mar 26 2015 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v1.9.2
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v1.8.0 and added python3 variant
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.7.1
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.6.2
+    - Refactored to packager style
+  * Thu Jul 7 2011 Steve Norledge
+    - First created
+:src: numpy-1.10.4.tar.gz 
+:version: '1.10.4'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/patchelf >= 0.9
+  :build:
+    - libs/atlas
+  :runtime:
+    - libs/atlas
+:dependencies:
+  el:
+    - gcc-gfortran
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build: 
+        - apps/python ~> 2.7.0
+      :runtime: apps/python ~> 2.7.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :build: apps/python3 ~> 3.3.0
+      :runtime: apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :build: apps/python3 ~> 3.4.0
+      :runtime: apps/python3 ~> 3.4.0
+:compile: |
+  export BLAS=$ATLASDIR
+  export LAPACK=$ATLASDIR
+  export ATLAS=$ATLASDIR
+  export LDFLAGS=-shared
+  <%= variant[:python_bin] %> setup.py build --fcompiler=gnu95 <%= redirect(:build) %>
+  for a in $(find . | grep so$); do
+    if ldd $a | grep -q gridware.*atlas; then
+      fq_lib=$(ldd $a | grep gridware.*atlas | awk '{print $1;}')
+      short_lib=$(basename $fq_lib)
+      patchelf --replace-needed $fq_lib $short_lib $a
+    fi
+  done
+:install: |
+  export BLAS=$ATLASDIR
+  export LAPACK=$ATLASDIR
+  export ATLAS=$ATLASDIR
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
