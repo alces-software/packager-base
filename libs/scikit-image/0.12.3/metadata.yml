@@ -1,0 +1,95 @@
+---
+:schema: 1
+:title: scikit-image
+:license: Modified BSD
+:summary: A collection of algorithms for image processing 
+:url: http://scikit-image.org/ 
+:description: |
+  The scikit-image SciKit (toolkit for SciPy) extends scipy.ndimage to 
+  provide a versatile set of image processing routines. It is written 
+  in the Python language.
+
+  This SciKit is developed by the SciPy community. All contributions 
+  are most welcome!
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu Apr  7 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: scikit-image-0.12.3.tar.gz
+:version: '0.12.3'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - libjpeg-turbo
+    - libjpeg-turbo-devel
+:variants:
+  default:
+    :desription: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools
+        - apps/cython
+      :build: 
+        - apps/python ~> 2.7.0
+        - libs/matplotlib >= 1.3.1
+        - libs/numpy >= 1.7.2
+        - libs/scipy >= 0.9.0
+      :runtime: 
+        - apps/python ~> 2.7.0
+        - libs/matplotlib >= 1.3.1
+        - libs/numpy >= 1.7.2
+        - libs/scipy >= 0.9.0
+  python3:
+    :desription: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3
+        - apps/cython_python3
+      :build:
+        - apps/python3 ~> 3.3.0
+        - libs/matplotlib_python3 >= 1.3.1
+        - libs/numpy_python3 >= 1.7.2
+        - libs/scipy_python3 >= 0.9.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - libs/matplotlib_python3 >= 1.3.1
+        - libs/numpy_python3 >= 1.7.2
+        - libs/scipy_python3 >= 0.9.0
+  python34:
+    :desription: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34
+        - apps/cython_python34
+      :build:
+        - apps/python3 ~> 3.4.0
+        - libs/matplotlib_python34 >= 1.3.1
+        - libs/numpy_python34 >= 1.7.2
+        - libs/scipy_python34 >= 0.9.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/matplotlib_python34 >= 1.3.1
+        - libs/numpy_python34 >= 1.7.2
+        - libs/scipy_python34 >= 0.9.0
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+  setenv ${appcaps}LIB ${appdir}/python/lib
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
