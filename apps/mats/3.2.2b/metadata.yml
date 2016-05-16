@@ -1,0 +1,59 @@
+---
+:schema: 1
+:title: rMATS
+:license: OTHER - see http://rnaseq-mats.sourceforge.net/
+:summary: Detect differential alternative splicing events from RNA-Seq data
+:url: http://rnaseq-mats.sourceforge.net/
+:description: |
+  MATS is a computational tool to detect differential alternative
+  splicing events from RNA-Seq data. The statistical model of MATS
+  calculates the P-value and false discovery rate that the difference
+  in the isoform ratio of a gene between two conditions exceeds a
+  given user-defined threshold. From the RNA-Seq data, MATS can
+  automatically detect and analyze alternative splicing events
+  corresponding to all major types of alternative splicing
+  patterns. MATS handles replicate RNA-Seq data from both paired and
+  unpaired study design.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon May 16 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to 3.2.2b
+  * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: rMATS.3.2.2.beta.tgz
+:src_dir: rMATS.3.2.2.beta
+:version: '3.2.2'
+:requirements:
+  :runtime:
+    - apps/python
+    - libs/numpy
+    - libs/scipy
+    - apps/samtools ~> 1.2
+    - apps/star ~> 2.5
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a python app
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,dist}
+  cp -Rv * <%= dest_dir %>/dist
+  cat <<\EOF > <%= dest_dir %>/bin/RNASeq-MATS
+  #!/bin/bash
+  exec python <%= dest_dir %>/dist/RNASeq-MATS.py "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/RNASeq-MATS
+  ln -s <%= dest_dir %>/bin/RNASeq-MATS <%= dest_dir %>/bin/RNASeq-MATS.py
+
+  cat <<\EOF > <%= dest_dir %>/bin/trimFastq
+  #!/bin/bash
+  exec python <%= dest_dir %>/dist/bin/trimFastq.py "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/trimFastq
+  ln -s <%= dest_dir %>/bin/trimFastq <%= dest_dir %>/bin/trimFastq.py
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DIST ${appdir}/dist
+
+  prepend-path PATH ${appdir}/bin
