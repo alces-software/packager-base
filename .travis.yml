@@ -13,11 +13,11 @@ env:
   - secure: shhn4iC6tU0L953x++KElQvtDCWEwueyeKrPHA29bGiCNRuvBf4o6x3sS8xWPvg5dHm7vabax/eH2qUazB4l1TuYG9DwL/s5lq5N8dyMjhUvRtjb2ieAYPKeFvmzcRaUnYwd3IHDKZTiB8dSk3pM6ntMhY+wmtxym8DSC31a71R/T5fiP6fPNHtiTsrEXRVvXXbFLYLREw/hu0m++o/ftp3XiFgLFuRH7zaKNy9oyEvJ4xF4s9+M1tPIMWfRb7JbOyb2GL7JNGEbA3rada000uNr395o3VwbrgJN8Sa2mFe7zplpQ99qJQI6/GpuZxi65i/PbHL1bp7UUwq0FfwWrzbRBtvs9dzY5I9SM1kHYR5GXUxCBHOGJ0DIHwNq2Z6y21FvrSr4aI31hpSlKSWo82yR+9CG5mBd5HtGNbi8Ye0KBVE5xDL6TaKDk/Kgh7vXqCZUmZLYWlBc/o0B/9ECxTPXC2ANYRV78q3ROl+g8jCO0033OJdN6sXoflO6wWA29ShFjK+e88nArrcmQwpEer3myqNQccQ9oggB+7nEcLKJIcrKTPZo6MYAwEvti0771f+WnanNPSNAZyIHXeMsooQjAcxRwA9zwX5EgYkJwOWv/aFDmAd4Y25LPB3FagpIRd5aTkCuJcQf3xGUGsFHedlWA/ZlJZftkRfqKmwVERs=
   - secure: gIqfH0+mTRc4h8HIwdSefCxpxOtKYZLslqohuzzF+aO70aH2by+mv+CSOi78+Sugv1YTi8e4gzRG9G9sD1LTNlZbTq0HdJqSqXMYLpXh4qmGzm0Kv0vvONo7ZHbzgZUYGK0kNBBpgJGa1cqFHsQmn/rxZ8oxa+6GgtebGi+Mz/+/UeeW2J0S+NFCZwo/AK8u8YfCpaQLujW9VPWvG+kyfsJTGelQM8Ep2CAaHO/15KKLFT33ZoKu0yhDAVejW+7z8r+gk2VqJQx79WQnNKvHkupUkNWzu6arRQWOiDXIW6N8UzxgUuEmTGJCvjehQpng6qqOUZGNMtJ1okm9sHOK+1iw3OS2UzRK5vAbW1KF1vjMifzYyQoYbmYjtCkm+AbCSPbZhDL4MZNIMWPpRvGMxXAiU+THHoa1Vw1EWth/bDlIHdruemEY9GJy5JDu+MK5BsZ4LgFnyv9fmaSWJYyiXhB02GG1gnWU/yHBJC9u3MQmWt2UFRG0xEgj9pIH18ePiosF4/K26ZetZ1qFNImhw5SJDUjiokdHvFMlEpjmnFA4GdPRY01IKqOoOR6LdIWw+TGTo5HCjWJCpfzN8+6Mok2DWjO7XRoBODsTTcTDg6713G8q7KwNQ9WJy3vHFVIaA4yNckeX/CxI83IXxcA8j5bSY3WMLjCr9p9osyFIwyE=
   matrix:
-  - cw_DIST=el7 cw_VERSION=1.4.0
-  - cw_DIST=el6 cw_VERSION=1.4.0
+  - cw_DIST=el7 cw_VERSION=1.5
+  - cw_DIST=el6 cw_VERSION=1.5
 matrix:
   allow_failures:
-  - env: cw_DIST=el6 cw_VERSION=1.4.0
+  - env: cw_DIST=el6 cw_VERSION=1.5
 before_install:
 - git clone https://github.com/alces-software/gridware-ci.git .gridware-ci
 - curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install |
