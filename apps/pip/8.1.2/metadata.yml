@@ -1,0 +1,78 @@
+---
+:schema: 1
+:title: pip
+:license: MIT
+:summary: The PyPA recommended tool for installing and managing Python packages.
+:url: https://pypi.python.org/pypi/pip
+:description: |
+  pip is a package management system used to install and manage software
+  packages written in Python. Many packages can be found in the Python Package
+  Index (PyPI).
+:group: Tools
+:changelog: |
+  * Thu May 19 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v8.1.2 version
+    - Added python3 and python34 variants
+  * Wed Nov 12 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correction to PATH in modulefile.
+  * Tue Sep  2 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: pip-8.1.2.tar.gz
+:src_dir: pip-8.1.2
+:type: apps
+:version: '8.1.2'
+:compilers:
+  noarch:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools >= 15.0
+      :build:
+        - apps/python ~> 2.7.3
+      :runtime:
+        - apps/python ~> 2.7.3
+        - apps/setuptools >= 15.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3 >= 15.0
+      :build:
+        - apps/python3 ~> 3.3.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - apps/setuptools_python3 >= 15.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34 >= 15.0
+      :build:
+        - apps/python3 ~> 3.4.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - apps/setuptools_python34 >= 15.0
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHON_DEST_DIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHON_DEST_DIR
+  mkdir -p $PYTHON_DEST_DIR
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
+  prepend-path PATH ${appdir}/bin
