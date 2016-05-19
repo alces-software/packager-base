@@ -23,6 +23,8 @@
   ChIP-seq and other large datasets (MEME-ChIP).
 :group: Bioinformatics
 :changelog: |
+  * Thu May 19 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Prepend to PERL5LIB during compile, don't override entirely
   * Wed Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest v4.11.1
   * Tue Sep  2 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -66,7 +68,7 @@
   - XML::Simple
   - XML::Parser::Expat
 :compile: |
-  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5:$PERL5LIB"
   export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
   for a in <%= package.perl_reqs.join(' ') %>; do
     cpanm $a <%= redirect(:cpanm) %>
