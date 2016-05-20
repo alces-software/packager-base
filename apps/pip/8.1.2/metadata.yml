@@ -10,6 +10,8 @@
   Index (PyPI).
 :group: Tools
 :changelog: |
+  * Fri May 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Trigger rebuild
   * Thu May 19 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to latest v8.1.2 version
     - Added python3 and python34 variants
