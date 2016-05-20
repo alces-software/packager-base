@@ -11,12 +11,18 @@
    one process for reporting the progress.
 :group: Benchmarks
 :changelog: |
+  * Fri May 20 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correct version to 0.6
+    - Added distro dependencies
   * Fri May  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to latest v0.6 version
     - Added alces_gpu_burn script
   * Fri Sep 12 2014 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: gpu_burn-0.6.tar.gz
+:dependencies:
+  el:
+    - gcc-c++
 :requirements:
   :runtime:
     - libs/nvidia-cuda
