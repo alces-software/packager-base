@@ -1,0 +1,2 @@
+scotch: requires libs/scotch (see ARCHIE ~alces/scotch*)
+metis: requires download of http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-5.0pre2.tar.gz
