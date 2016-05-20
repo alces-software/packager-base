@@ -17,6 +17,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri May 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Trigger rebuild
   * Mon May 16 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to 3.2.2b
   * Fri Apr 17 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
