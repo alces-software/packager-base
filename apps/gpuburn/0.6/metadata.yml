@@ -1,0 +1,54 @@
+:schema: 1
+:license: Freeware
+:summary: GPU-Burn is a stress test for multi-GPGPU-setups.
+:url: http://www.wili.cc/blog/gpu-burn.html/
+:description: | 
+   GPU-Burn is a stress test for multi-GPGPU-setups that uses 
+   all of the GPUs' memory and checked the results while keeping 
+   the GPUs burningforks one process for each GPU on the machine.
+   It keeps one process for keeping track of the GPU temperatures 
+   if available (e.g. Fermi Teslas don't have temp. sensors), and 
+   one process for reporting the progress.
+:group: Benchmarks
+:changelog: |
+  * Fri May 20 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correct version to 0.6
+    - Added distro dependencies
+  * Fri May  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v0.6 version
+    - Added alces_gpu_burn script
+  * Fri Sep 12 2014 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: gpu_burn-0.6.tar.gz
+:dependencies:
+  el:
+    - gcc-c++
+:requirements:
+  :runtime:
+    - libs/nvidia-cuda
+  :build:
+    - libs/nvidia-cuda
+:patches: 
+  - alces-gpuburn.patch
+:type: apps
+:version: '0.6'
+:src_dir: .
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect :make %>
+:tgtbin: 
+  - compare.cu
+  - compare.ptx
+  - gpu_burn
+  - gpu_burn-drv.o
+:install: |
+  <%package.tgtbin.each do |f|%>
+    install -D -m 755 <%=f%> <%=dest_dir%>/bin/<%=File::basename(f)%>
+  <%end%>
+  install -D -m 755  <%= source('alces_gpu_burn') %> <%=dest_dir%>/bin/
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin/
+
+  prepend-path PATH ${appdir}/bin/
