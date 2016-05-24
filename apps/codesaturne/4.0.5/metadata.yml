@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: Code_Saturne
+:license: GPL
+:summary: Solve the Navier-Stokes equations for 2D, 2D-axisymmetric and 3D flows
+:url: http://code-saturne.org
+:description: |
+  Code_Saturne solves the Navier-Stokes equations for 2D,
+  2D-axisymmetric and 3D flows, steady or unsteady, laminar or
+  turbulent, incompressible or weakly dilatable, isothermal or not,
+  with scalars transport if required.
+
+  Several turbulence models are available, from Reynolds-Averaged
+  models to Large-Eddy Simulation models. In addition, a number of
+  specific physical models are also available as "modules": gas, coal
+  and heavy-fuel oil combustion, semi-transparent radiative transfer,
+  particle-tracking with Lagrangian modeling, Joule effect, electrics
+  arcs, weakly compressible flows, atmospheric flows, rotor/stator
+  interaction for hydraulic machines.
+:group: Engineering
+:changelog: |
+  * Tue May 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest production version v4.0.5
+  * Fri Aug  9 2013 James Donohue <james.donohue@alces-software.com>
+    - Updated to version 3.0.1
+  * Tue Jun 11 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: code_saturne-4.0.5.tar.gz
+:src_dir: code_saturne-4.0.5
+:type: apps
+:version: '4.0.5'
+:requirements:
+  :build: 
+    - mpi/openmpi
+  :runtime: 
+    - mpi/openmpi
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - PyQt4
+    - PyQt4-devel
+    - libxml2
+    - libxml2-devel
+    - sip
+    - sip-devel 
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  ./configure --prefix=<%= dest_dir %> --with-mpi=$MPI_HOME \
+              --enable-openmp --without-modules <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/lib/python2.6/site-packages/code_saturne
