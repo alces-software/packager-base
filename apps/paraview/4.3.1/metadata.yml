@@ -36,6 +36,8 @@
     * Develop an extensible architecture based on open standards.
 :group: Visualization
 :changelog: |
+  * Wed May 25 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Apr 16 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: ParaView-4.3.1-Linux-64bit-glibc-2.3.6.tar.gz
