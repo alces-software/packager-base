@@ -17,6 +17,8 @@
   numerical simulations.
 :group: Mathematics
 :changelog: |
+  * Wed May 25 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: ParMGridGen-1.0.tar.gz
@@ -28,6 +30,11 @@
   :runtime: mpi/openmpi
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - libtool
+    - automake
+    - autoconf
 :patches:
   - autotools.patch1
 :compile: |
