@@ -22,6 +22,8 @@
   :build: mpi/openmpi
   :runtime: mpi/openmpi
 :changelog: |
+  * Thu May 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated checksum for download link
   * Mon Mar 21 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to v2.25.1 
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
