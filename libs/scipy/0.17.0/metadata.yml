@@ -16,8 +16,6 @@
 :type: libs
 :group: Mathematics
 :changelog: |
-  * Sun May 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
-    - Updated Metadata to re-compile against NumPy v1.10.4
   * Wed Mar 30 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Use patchelf to remove hardcoded ATLAS library paths
     - Added distro dependencies
