@@ -1,43 +1,45 @@
 ---
 :schema: 1
-:title: NucleoATAC 
+:title: NucleoATAC
 :license: MIT
 :summary: Package for calling nucleosomes using ATAC-Seq data
-:url: https://github.com/GreenleafLab/NucleoATAC 
+:url: https://github.com/GreenleafLab/NucleoATAC
 :description: |
-  Python package for calling nucleosomes using ATAC-Seq data. Also 
-  includes general scripts for working with paired-end ATAC-Seq 
+  Python package for calling nucleosomes using ATAC-Seq data. Also
+  includes general scripts for working with paired-end ATAC-Seq
   data (or potentially other paired-end data).
 
-  Published Open Access at Genome Research: 
+  Published Open Access at Genome Research:
   http://genome.cshlp.org/content/early/2015/08/27/gr.192294.115?top=1
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu May 26 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected runtime requirements to include setuptools
   * Tue Apr 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated distro dependencies for EL
   * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
-:src: v0.3.1.tar.gz 
-:src_dir: NucleoATAC-0.3.1 
+:src: v0.3.1.tar.gz
+:src_dir: NucleoATAC-0.3.1
 :version: '0.3.1'
 :compilers:
   gcc:
 :requirements:
-  :tool:
-    - apps/setuptools
   :build:
+    - apps/setuptools
     - apps/python ~> 2.7.0
     - apps/cython >= 0.22
-    - libs/numpy >= 0.9.1
-    - libs/scipy == 0.17.0
+    - libs/numpy >= 1.9.1
+    - libs/scipy >= 0.16.0
     - libs/pysam >= 0.8.1
     - libs/matplotlib
   :runtime:
+    - apps/setuptools
     - apps/python ~> 2.7.0
     - apps/cython >= 0.22
-    - libs/numpy >= 0.9.1
-    - libs/scipy == 0.17.0
+    - libs/numpy >= 1.9.1
+    - libs/scipy >= 0.16.0
     - libs/pysam >= 0.8.1
     - libs/matplotlib
 :compile: |
