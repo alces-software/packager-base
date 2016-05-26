@@ -1,0 +1,176 @@
+---
+:schema: 1
+:license: GPL
+:summary: A C++ toolbox for the development of customized numerical solvers, and pre-/post-processing utilities
+:url: http://www.openfoam.com/
+:description: |
+  OpenFOAM (Open Field Operation and Manipulation) is a C++ toolbox
+  for the development of customized numerical solvers, and
+  pre-/post-processing utilities for the solution of continuum
+  mechanics problems, including computational fluid dynamics (CFD).
+:group: Physics
+:requirements:
+  :build:
+    - mpi/openmpi
+    - libs/scotch
+    - libs/boost
+    - apps/cmake
+    - libs/mgridgen
+  :runtime:
+    - mpi/openmpi
+    - libs/scotch
+    - libs/boost
+    - libs/mgridgen
+:changelog: |
+  * Wed May 25 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v3.0.1
+    - Removed metisDecomposer build due to latest version requiring patching
+    - Enabled parallel build to speed up build process
+  * Mon Aug 19 2013 - James Donohue <james.donohue@alces-software.com>
+    - Fixed typo in compiler check output
+  * Mon Aug  5 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v2.2.1
+    - Removed incomplete ParaView setup
+    - Added GCC version check to prevent OpenFOAM from being installed
+      unless a compatible version is installed
+    - Additional patch to METIS decomposer due to it apparently not
+      having been updated for latest internal API
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v2.1.1
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added dependency on libs/scotch in order to build the SCOTCH
+      decomposer
+    - Added dependency on libs/mgridgen in order to build the MGridGen
+      agglomeration method
+    - Bundle OpenFOAM compatible version of METIS in order to build
+      the METIS decomposer
+    - Tweak build environment variables to ensure PStream is built
+      correctly
+    - Changed dummy library path from a prepend to an append to ensure
+      real libraries are always located first
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Mar 23 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: OpenFOAM-3.0.1.tgz
+:src_dir: OpenFOAM-3.0.1
+:type: apps
+:version: '3.0.1'
+:sources:
+  - ThirdParty-3.0.1.tgz
+  #- metis-5.1.0.tar.gz
+  - thirdparty_makecgal.patch1
+:patches:
+  - openfoam-openmpi.patch1
+  - openfoam-scotch.patch1
+  - openfoam-cgal.patch1
+  - openfoam-cgalscript.patch1 
+  #- openfoam-metis.patch1
+  #- openfoam-metis.patch2
+  - openfoam-mgridgen.patch1
+:compilers:
+  # GCC >= 4.5.0 is required
+  gcc:
+:dependencies:
+  el:
+    - flex
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "5") ]]; then 
+    echo GCC version is $gcc_major.$gcc_minor but OpenFOAM requires at least v4.5.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+
+  cd ..
+  tar -zxvf <%= source('ThirdParty-3.0.1.tgz') %>
+  patch -p0 < <%= source('thirdparty_makecgal.patch1') %> <%= redirect(:patch_cgal) %>
+  export TOPDIR=`pwd`
+ 
+  #tar xvzf <%= source('metis-5.1.0.tar.gz') %>
+  #cd metis-5.1.0
+  #patch -p1 < <%= source('metis-5.0pre2.patch') %> <%= redirect(:patch_metis) %>
+  #make config <%= redirect(:build_metis) %>
+  #make <%= redirect(:build_metis) %>
+
+  if [ -z "$GRIDWARE_MAKE_THREADS" ]; then
+    export BUILD_THREADS=1
+  else 
+    export BUILD_THREADS=$GRIDWARE_MAKE_THREADS
+  fi
+
+  cd "${TOPDIR}/OpenFOAM-3.0.1"
+  export FOAM_INST_DIR="${TOPDIR}"
+  # Need to do this waltz as OpenFOAM unsets MPI_HOME :-/
+  old_MPI_HOME=${MPI_HOME}
+  source etc/bashrc
+  export MPI_HOME=${old_MPI_HOME}
+  export SCOTCH_ROOT=${SCOTCHDIR}
+  unset old_MPI_HOME
+  export MAKEFLAGS="-j $BUILD_THREADS"
+  ./Allwmake <%= redirect(:make) %>
+
+  ## Make the metis decomposer
+  #cd "${TOPDIR}/OpenFOAM-3.0.1/src/parallel/decompose/metisDecomp"
+  #wmake <%= redirect(:make_metisdecomp) %>
+
+  ## Make the mgridgen agglomeration method
+  cd "${TOPDIR}/OpenFOAM-3.0.1/src/fvAgglomerationMethods/MGridGenGamgAgglomeration"
+  wmake <%= redirect(:make_mgridgenagglomeration) %>
+:install: |
+  mkdir <%= dest_dir %>/3rdparty
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+  cd ../ThirdParty-3.0.1/
+  cp -r * <%= dest_dir %>/3rdparty <%= redirect(:install_3rdparty) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv FOAM_APP ${appdir}/applications
+  setenv FOAM_APPBIN ${appdir}/platforms/linux64GccDPInt32Opt/bin
+  setenv FOAM_EXT_LIBBIN ${appdir}/3rdparty/platforms/linux64GccDPInt32Opt/lib
+  setenv FOAM_INST_DIR ${appdir}
+  setenv FOAM_JOB_DIR ${appdir}/jobControl
+  setenv FOAM_LIBBIN ${appdir}/platforms/linux64GccDPInt32Opt/lib
+  setenv FOAM_MPI openmpi
+  setenv FOAM_SETTINGS ""
+  setenv FOAM_SIGFPE ""
+  setenv FOAM_SOLVERS ${appdir}/applications/solvers
+  setenv FOAM_SRC ${appdir}/src
+  setenv FOAM_TUTORIALS ${appdir}/tutorials
+  setenv FOAM_UTILITIES ${appdir}/applications/utilities
+
+  # dummy goes at the end of the LD_LIBRARY_PATH to ensure that all
+  # other locations are tried first before falling back to dummies.
+  append-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/dummy
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32Opt/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib
+
+  setenv MPI_ARCH_PATH $::env(MPI_HOME)
+  setenv MPI_BUFFER_SIZE 20000000
+  setenv OPAL_PREFIX $::env(MPI_HOME)
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${appdir}/platforms/linux64GccDPInt32Opt/bin
+
+  setenv WM_ARCH linux64
+  setenv WM_ARCH_OPTION 64
+  setenv WM_CC gcc
+  setenv WM_CFLAGS '-m64 -fPIC'
+  setenv WM_COMPILER Gcc
+  setenv WM_COMPILER_LIB_ARCH 64
+  setenv WM_COMPILE_OPTION Opt
+  setenv WM_CXX g++
+  setenv WM_CXXFLAGS '-m64 -fPIC'
+  setenv WM_DIR ${appdir}/wmake
+  setenv WM_LDFLAGS -m64
+  setenv WM_LINK_LANGUAGE c++
+  setenv WM_MPLIB OPENMPI
+  setenv WM_OPTIONS linux64GccDPInt32Opt
+  setenv WM_OSTYPE POSIX
+  setenv WM_PRECISION_OPTION DP
+  setenv WM_PROJECT OpenFOAM
+  setenv WM_PROJECT_DIR ${appdir}
+  setenv WM_PROJECT_INST_DIR ${appdir}
+  setenv WM_PROJECT_VERSION ${version}
+  setenv WM_THIRD_PARTY_DIR ${appdir}/3rdparty

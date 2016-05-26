@@ -1,0 +1,11 @@
+--- OpenFOAM-3.0.1.orig/etc/config/scotch.sh	2016-03-02 17:05:23.661216225 +0000
++++ OpenFOAM-3.0.1/etc/config/scotch.sh	2016-03-02 17:04:33.922143814 +0000
+@@ -34,6 +34,7 @@
+ #------------------------------------------------------------------------------
+ 
+ export SCOTCH_VERSION=scotch_6.0.3
+-export SCOTCH_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_LABEL_OPTION/$SCOTCH_VERSION
++export SCOTCH_ARCH_PATH=$SCOTCHDIR
++#export SCOTCH_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_LABEL_OPTION/$SCOTCH_VERSION
+ 
+ # -----------------------------------------------------------------------------

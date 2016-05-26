@@ -1,0 +1,12 @@
+--- ThirdParty-3.0.1.orig/makeCGAL	2016-03-02 23:19:06.038900718 +0000
++++ ThirdParty-3.0.1/makeCGAL	2016-03-02 23:20:56.794120479 +0000
+@@ -128,7 +128,8 @@
+ #
+ #   BOOST_SOURCE_DIR : location of the original sources
+ 
+-BOOST_ARCH_PATH=$installBASE/$boostPACKAGE
++#BOOST_ARCH_PATH=$installBASE/$boostPACKAGE
++BOOST_ARCH_PATH=$BOOSTDIR
+ BOOST_SOURCE_DIR=$WM_THIRD_PARTY_DIR/$boostPACKAGE
+ 
+ if [ -d "$BOOST_ARCH_PATH" ]
