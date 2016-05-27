@@ -53,6 +53,8 @@
     - gcc-gfortran
     - gcc-c++
 :changelog: |
+  * Fri May 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Allow specification of optimized or generic build via a parameter
   * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Reworked lapack module handling
     - Use Gridware version of MPFR
@@ -62,6 +64,8 @@
 :src_dir: julia-0.4.3
 :type: apps
 :version: '0.4.3'
+:params:
+  :optimize: "Specify 'true' to optimize for current architecture or 'false' for a generic (less optimized) build"
 :compilers:
   gcc:
 :compile: |
@@ -82,10 +86,18 @@
   cp -v <%= source(s) %> deps <%= redirect(:prepare) %>
   <% end %>
   mv deps/Make.user .
+  <% if param(:optimize) == 'true' %>
   make <%= redirect(:compile) %>
+  <% else %>
+  make MARCH=x86-64 <%= redirect(:compile) %>
+  <% end %>
   mkdir -p doc/_build/html
 :install: |
+  <% if param(:optimize) == 'true' %>
   make prefix=<%= dest_dir %> install <%= redirect(:install) %>
+  <% else %>
+  make MARCH=x86-64 prefix=<%= dest_dir %> install <%= redirect(:install) %>
+  <% end %>
   rmdir <%= dest_dir %>/libexec
 :module: |
   setenv ${appcaps}DIR ${appdir}
@@ -99,4 +111,3 @@
 
   prepend-path MANPATH ${appdir}/share/man
   prepend-path PATH ${appdir}/bin
-  
