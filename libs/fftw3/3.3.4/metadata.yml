@@ -11,6 +11,8 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v3.3.4
   * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -46,6 +48,9 @@
     :configure_flags: '--enable-long-double'
 :requirements:
   :build: mpi/openmpi
+:dependencies:
+  el:
+    gcc-gfortran
 :compile: |
   <%= compiler[:configure_prefix] %> ./configure \
     --prefix=<%= dest_dir %> \
