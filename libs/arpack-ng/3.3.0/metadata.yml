@@ -29,6 +29,8 @@
   :runtime:
     - mpi/openmpi
 :changelog: |
+  * Fri May 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v3.3.0
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -39,6 +41,11 @@
 :src_dir: arpack-ng-3.3.0
 :type: libs
 :version: '3.3.0'
+:dependencies:
+  el:
+    - autoconf
+    - automake
+    - libtool
 :compilers:
   gcc:
 :compile: |
