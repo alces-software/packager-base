@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: MIT
+:name: pypy
+:summary: Pypy is a fast, compliant alternative implementation of the Python language
+:url: http://pypy.org/
+:description: |
+  PyPy is a fast, compliant alternative implementation of the Python
+  language (2.7.10).
+
+  It has several advantages and distinct features:
+
+  * Speed: thanks to its Just-in-Time compiler, Python programs often
+    run faster on PyPy.
+  * Memory usage: memory-hungry Python programs (several hundreds of
+    MBs or more) might end up taking less space than they do in
+    CPython.
+  * Compatibility: PyPy is highly compatible with existing python
+    code. It supports cffi and can run popular python libraries like
+    twisted and django.
+  * Stackless: PyPy comes by default with support for stackless mode,
+    providing micro-threads for massive concurrency.
+:type: apps
+:group: Languages
+:changelog: |
+  * Mon Jun  6 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: pypy-5.1.1-src.tar.bz2
+:src_dir: pypy-5.1.1-src
+:version: '5.1.1'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/python
+:dependencies:
+  el:
+    - openssl
+    - openssl-devel
+    - libffi
+    - libffi-devel
+    - expat-devel
+    - zlib-devel
+    - bzip2-devel
+    - gdbm
+    - gdbm-devel
+    - xz
+    - xz-libs
+    - xz-devel
+    - sqlite
+    - sqlite-devel
+    - ncurses-devel
+    - tk
+    - tk-devel 
+:compile: |
+  python rpython/bin/rpython -Ojit pypy/goal/targetpypystandalone.py <%= redirect(:compile) %>
+  mkdir -p tmp/target tmp/build
+  ln -s $(pwd)/pypy-c pypy/goal/pypy-c
+  ln -s $(pwd)/libpypy-c.so pypy/goal/libpypy-c.so
+  pypy/tool/release/package.py  --builddir tmp/build --targetdir tmp/target <%= redirect(:package) %>
+:install: |
+  tar --strip-components=1 -C <%= dest_dir %> -xvjf tmp/target/pypy-nightly.tar.bz2 <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
