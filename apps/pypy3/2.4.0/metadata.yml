@@ -1,0 +1,68 @@
+---
+:schema: 1
+:license: MIT
+:name: pypy3
+:summary: Pypy is a fast, compliant alternative implementation of the Python language
+:url: http://pypy.org/
+:description: |
+  PyPy is a fast, compliant alternative implementation of the Python
+  language (3.3.5).
+
+  It has several advantages and distinct features:
+
+  * Speed: thanks to its Just-in-Time compiler, Python programs often
+    run faster on PyPy.
+  * Memory usage: memory-hungry Python programs (several hundreds of
+    MBs or more) might end up taking less space than they do in
+    CPython.
+  * Compatibility: PyPy is highly compatible with existing python
+    code. It supports cffi and can run popular python libraries like
+    twisted and django.
+  * Stackless: PyPy comes by default with support for stackless mode,
+    providing micro-threads for massive concurrency.
+:type: apps
+:group: Languages
+:changelog: |
+  * Mon Jun  6 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Rework for pypy3 v2.4.0
+  * Tue May 31 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Initial work on pypy3
+:src: pypy3-2.4.0-src.zip
+:src_dir: pypy3-2.4.0-src
+:version: '2.4.0'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/python
+:dependencies:
+  el:
+    - openssl
+    - openssl-devel
+    - libffi
+    - libffi-devel
+    - expat-devel
+    - zlib-devel
+    - bzip2-devel
+    - gdbm
+    - gdbm-devel
+    - xz
+    - xz-libs
+    - xz-devel
+    - sqlite
+    - sqlite-devel
+    - ncurses-devel
+    - tk
+    - tk-devel 
+:compile: |
+  python rpython/bin/rpython -Ojit pypy/goal/targetpypystandalone.py <%= redirect(:compile) %>
+  mkdir target
+  ln -s $(pwd)/pypy-c pypy/goal/pypy-c
+  (pypy/tool/release/package.py --targetdir target "" || true) <%= redirect(:package) %>
+:install: |
+  tar --strip-components=1 -C <%= dest_dir %> -xvjf target/pypy-nightly.tar.bz2 <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
