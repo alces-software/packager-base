@@ -20,12 +20,17 @@
   developed within the SCOTCH project.
 :group: Mathematics
 :changelog: |
+  * Mon Jun  6 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: scotch_6.0.3.tar.gz
 :src_dir: scotch_6.0.3
 :type: libs
 :version: '6.0.3'
+:dependencies:
+  el:
+    - zlib-devel
 :requirements:
   :build: mpi/openmpi
   :runtime: mpi/openmpi
