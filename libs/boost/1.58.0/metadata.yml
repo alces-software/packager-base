@@ -13,6 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Tue Jun  7 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
   * Fri May 29 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - update to 1.58.0
   * Sat Jan 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -45,10 +47,11 @@
 :version: '1.58.0'
 :requirements:
   :runtime: mpi/openmpi
-  :build: 
+  :build:
     - mpi/openmpi
     - apps/python
-  :rpms:
+:dependencies:
+  el:
     - bzip2-devel
 :compilers:
   gcc:
