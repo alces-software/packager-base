@@ -23,6 +23,9 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Thu Jun  9 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
+    - Disabled examples and tests to make build faster
   * Wed Oct 21 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Created paackage for v5.4.2
   * Tue Mar  5 2013 - James Donohue <james.donohue@alces-software.com>
@@ -30,13 +33,55 @@
 :src: qt-everywhere-opensource-src-5.4.2.tar.gz
 :src_dir: qt-everywhere-opensource-src-5.4.2
 :version: 5.4.2
-# Requires gstreamer-plugins-base-devel, libicu-devel on build host
 :patches:
   - xinput-compat.patch
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - gperf
+      - bison
+      - flex
+      - ruby
+      - libicu-devel
+      - libxcb-devel
+      - xcb-util-devel
+      - xcb-util-image-devel
+      - xcb-util-keysyms-devel
+      - xcb-util-renderutil-devel
+      - xcb-util-wm-devel
+      - libX11-devel
+      - libXrender-devel
+      - libXi-devel
+      - gstreamer-plugins-base-devel
+      - libxslt-devel
+      - openssl-devel
+      - fontconfig-devel
+      - mesa-libGL-devel
+      - mesa-libEGL-devel
+  :runtime:
+    el:
+      - libxcb
+      - libicu
+      - xcb-util
+      - xcb-util-image
+      - xcb-util-keysyms
+      - xcb-util-renderutil
+      - xcb-util-wm
+      - libX11
+      - libXrender
+      - libXi
+      - gstreamer-plugins-base
+      - libxslt
+      - openssl
+      - fontconfig
+      - mesa-libGL
+      - mesa-libEGL
 :compilers:
   gcc:
 :compile: |
-  ./configure -opensource -confirm-license -prefix <%= dest_dir %> <%= redirect(:configure) %>
+  ./configure -opensource -confirm-license -prefix <%= dest_dir %> \
+    -nomake examples -nomake tests <%= redirect(:configure) %>
   make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
