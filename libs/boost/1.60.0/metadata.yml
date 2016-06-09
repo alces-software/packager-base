@@ -13,6 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Thu Jun  9 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added zlib dependencies for EL
   * Fri Apr 1 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - update to 1.60.0
   * Fri May 29 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -48,8 +50,14 @@
 :patches:
   - pool_resource.patch 
 :dependencies:
-  el:
-    - bzip2-devel
+  :build:
+    el:
+      - bzip2-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - bzip2-libs
+      - zlib
 :requirements:
   :runtime: mpi/openmpi
   :build: 
