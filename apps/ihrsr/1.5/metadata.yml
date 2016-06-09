@@ -19,19 +19,22 @@
   stack generation, image centering, and tube diameter determination.
 :group: Imaging
 :changelog: |
+  * Thu Jun  9 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use gfortran legacy mode when compiling
   * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First Created
 :src: IHRSR_v1.5.tar.gz
 :src_dir: IHRSR_v1.5
 :type: apps
 :version: 1.5
-:requirements:
+:dependencies:
   el:
     - gcc-gfortran
 :compilers:
   gcc:
 :compile: |
   cd src
+  sed -i 's/^FFLAGS = /FFLAGS = -std=legacy /g' Makefile
   make <%= redirect(:compile) %>
   cp himpose hsearch_lorentz ..
   cd ..
