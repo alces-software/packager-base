@@ -13,6 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Thu Jun  9 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added zlib dependencies for EL
   * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Mon Sep  1 2014 Ben Armston <ben.armston@alces-software.com>
@@ -48,8 +50,14 @@
 :compilers:
   gcc:
 :dependencies:
-  el:
-    - bzip2-devel
+  :build:
+    el:
+      - bzip2-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - bzip2-libs
+      - zlib
 :compile: |
   ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   echo "using mpi ;" >> project-config.jam
