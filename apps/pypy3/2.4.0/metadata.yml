@@ -30,6 +30,8 @@
 :src: pypy3-2.4.0-src.zip
 :src_dir: pypy3-2.4.0-src
 :version: '2.4.0'
+:patches:
+  - modern-gcc-compat.patch1
 :compilers:
   gcc:
 :requirements:
