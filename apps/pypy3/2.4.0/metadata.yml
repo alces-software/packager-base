@@ -58,7 +58,7 @@
   python rpython/bin/rpython -Ojit pypy/goal/targetpypystandalone.py <%= redirect(:compile) %>
   mkdir target
   ln -s $(pwd)/pypy-c pypy/goal/pypy-c
-  (pypy/tool/release/package.py --targetdir target "" || true) <%= redirect(:package) %>
+  pypy/tool/release/package.py --targetdir target "" <%= redirect(:package) %> || true
 :install: |
   tar --strip-components=1 -C <%= dest_dir %> -xvjf target/pypy-nightly.tar.bz2 <%= redirect(:install) %>
 :module: |
