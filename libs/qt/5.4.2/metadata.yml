@@ -9,11 +9,11 @@
   the creation of applications and user interfaces for desktop,
   embedded and mobile platforms.
 
-    * Qt Framework - intuitive APIs for C++ and CSS/JavaScript- like 
+    * Qt Framework - intuitive APIs for C++ and CSS/JavaScript- like
       programming with Qt Quick for rapid UI creation
-    * Qt Creator IDE - powerful cross-platform integrated development 
+    * Qt Creator IDE - powerful cross-platform integrated development
       environment, including UI designer tools and on-device debugging
-    * Tools and toolchains - internationalization support, embedded 
+    * Tools and toolchains - internationalization support, embedded
       toolchains and more.
 
   With Qt, you can reuse code efficiently to target multiple platforms
@@ -23,6 +23,9 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Fri Jun 10 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added QT_QPA_PLATFORM_PLUGIN_PATH environment variable to allow QT
+      apps to locate platform plugins
   * Thu Jun  9 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added distro dependencies for EL
     - Disabled examples and tests to make build faster
@@ -90,6 +93,8 @@
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}INCLUDE ${appdir}/include
   setenv ${appcaps}LIB ${appdir}/lib
-  
+
+  setenv QT_QPA_PLATFORM_PLUGIN_PATH ${appdir}/plugins/platforms
+
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
