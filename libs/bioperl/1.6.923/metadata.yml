@@ -12,6 +12,8 @@
   consist of the core of the functionality of bioperl.
 :group: Bioinformatics
 :changelog: |
+  * Fri Jun 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu May  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest v1.6.923
   * Thu Oct  4 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -22,7 +24,11 @@
 :version: '1.6.923'
 :requirements:
   :tool: apps/cpanminus
-  :build: apps/samtools ~> 0.1.18
+  :build:
+    - apps/samtools ~> 0.1.18
+    - apps/perl ~> 5.20.2
+  :runtime:
+    - apps/perl ~> 5.20.2
 :dependencies:
   el:
     - perl-ExtUtils-MakeMaker
@@ -31,6 +37,7 @@
     - graphviz
     - openssl-devel
     - libxml2-devel
+    - bind-devel
 :compilers:
   gcc:
 :additional_prereqs:
@@ -54,7 +61,7 @@
   for a in $(find scripts -name '*.PLS'); do
     sed -e 's|#!.*perl\s*$|#!/usr/bin/env perl|g' -e 's|#!.*perl -w\s*$|#!/usr/bin/env perl\nuse warnings;|g' -i $a
   done
-  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5:$PERL5LIB"  
   export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
   for a in $(./Build prereq_report | grep '!' | awk '{print $2;}') <%= package.additional_prereqs.join(' ') %>; do
     cpanm $a <%= redirect(:cpanm) %>
@@ -62,7 +69,7 @@
   # configure again, now we've got any missing dependencies installed
   perl Build.PL --install_base <%= dest_dir %> <%= redirect(:buildpl) %>
 :install: |
-  export PERL5LIB="<%= dest_dir %>/lib/perl5:<%= dest_dir %>/perl/lib/perl5"
+  export PERL5LIB="<%= dest_dir %>/lib/perl5:<%= dest_dir %>/perl/lib/perl5":$PERL5LIB
   ./Build install <%= redirect(:install) %>
   export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
   # installation of Bio::DB::Sam requires the SAMTOOLS environment
