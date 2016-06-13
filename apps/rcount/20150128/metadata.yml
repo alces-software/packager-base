@@ -17,6 +17,8 @@
    rRNA-coding genes) or to add flanking regions.
 :group: Bioinformatics
 :changelog: |
+  * Fri May  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Tue Feb 10 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: rcount-20150128.tar.gz
@@ -27,17 +29,20 @@
   - qt46-compat.patch
 :compilers:
   gcc:
-:requirements:
-  :rpms: qt4-devel
+:dependencies:
+  el:
+    - zlib-devel
+    - gcc-c++
+    - qt-devel
 :compile: |
   cd source_V2/p502dataAnalysisRNA
-  qmake-qt4 "INCPATH+=.."
+  qmake-qt4 "INCPATH+=.." "LIBS+=-lz"
   make <%= redirect(:compile_distribute) %>
   cd ../p502_format_wizard
-  qmake-qt4 "INCPATH+=.."
+  qmake-qt4 "INCPATH+=.." "LIBS+=-lz"
   make <%= redirect(:compile_format) %>
   cd ../p502_process_multireads
-  qmake-qt4 "INCPATH+=.."
+  qmake-qt4 "INCPATH+=.." "LIBS+=-lz"
   make <%= redirect(:compile_multireads) %>
 :install: |
   mkdir -p <%= dest_dir %>/{bin,doc}
