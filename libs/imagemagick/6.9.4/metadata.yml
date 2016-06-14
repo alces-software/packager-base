@@ -1,0 +1,69 @@
+---
+:schema: 1
+:license: Apache License, Version 2.0
+:summary: An open source software suite for displaying, converting, and editing raster image files
+:url: http://www.imagemagick.org/script/index.php
+:description: |
+  ImageMagick® is a software suite to create, edit, compose, or
+  convert bitmap images. It can read and write images in a variety of
+  formats (over 100) including DPX, EXR, GIF, JPEG, JPEG-2000, PDF,
+  PhotoCD, PNG, Postscript, SVG, and TIFF. Use ImageMagick to resize,
+  flip, mirror, rotate, distort, shear and transform images, adjust
+  image colors, apply various special effects, or draw text, lines,
+  polygons, ellipses and Bézier curves.
+
+  The functionality of ImageMagick is typically utilized from the
+  command line or you can use the features from programs written in
+  your favorite language. Choose from these interfaces: G2F (Ada),
+  MagickCore (C), MagickWand (C), ChMagick (Ch), ImageMagickObject
+  (COM+), Magick++ (C++), JMagick (Java), L-Magick (Lisp), Lua,
+  NMagick (Neko/haXe), Magick.NET (.NET), PascalMagick (Pascal),
+  PerlMagick (Perl), MagickWand for PHP (PHP), IMagick (PHP),
+  PythonMagick (Python), RMagick (Ruby), or TclMagick (Tcl/TK). With a
+  language interface, use ImageMagick to modify or create images
+  dynamically and automagically.
+
+  ImageMagick is free software delivered as a ready-to-run binary
+  distribution or as source code that you may use, copy, modify, and
+  distribute in both open and proprietary applications. It is
+  distributed under the Apache 2.0 license, approved by the OSI and
+  recommended for use by the OSSCC.
+
+  The ImageMagick development process ensures a stable API and ABI.
+  Before each ImageMagick release, we perform a comprehensive security
+  assessment that includes memory error and thread data race detection
+  to prevent security vulnerabilities.
+:group: Libraries
+:changelog: |
+  * Mon Jun 13 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v6.9.4
+  * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Updated to v6.8.9
+  * Thu Sep 19 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: ImageMagick-6.9.4-8.tar.gz
+:src_dir: ImageMagick-6.9.4-8
+:type: libs
+:version: '6.9.4'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}MAN ${appdir}/share/man
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
