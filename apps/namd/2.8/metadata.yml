@@ -15,6 +15,8 @@
   and X-PLOR.
 :group: Biophysics
 :changelog: |
+  * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Feb 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Made compatible with modern compilers (use -fpermissive)
     - Added missing fields to metadata
@@ -44,6 +46,7 @@
 :dependencies:
   el:
     - tcsh
+    - tcl-devel
 :compilers:
   gcc:
 :compile: |
