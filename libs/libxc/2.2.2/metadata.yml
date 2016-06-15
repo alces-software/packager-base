@@ -19,6 +19,8 @@
   functionals, higher-order derivatives are available. 
 :group: Libraries
 :changelog: |
+  * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Feb 11 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: libxc-2.2.2.tar.gz
@@ -28,6 +30,9 @@
 :requirements:
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-gfortran
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:compile) %>
