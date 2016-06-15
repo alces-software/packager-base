@@ -18,6 +18,8 @@
   OpenCL.
 :group: Electronics
 :changelog: |
+  * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Feb 11 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: octopus-5.0.1.tar.gz
@@ -40,6 +42,10 @@
   - libs/libxc
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-gfortran
+    - gcc-c++
 :patches:
   - global.F90.patch
 :params:
