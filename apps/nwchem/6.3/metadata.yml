@@ -20,6 +20,8 @@
   :runtime:
     - mpi/openmpi
 :changelog: |
+  * Tue Jun 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Feb 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added compatibility with OpenMPI 1.8.x
   * Mon Jun  3 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -34,6 +36,12 @@
 :src_dir: nwchem-6.3-src.2013-05-28
 :type: apps
 :version: '6.3'
+:dependencies:
+  el:
+    - gcc-gfortran
+    - openssh-clients
+    - openssh
+    - subversion
 :compilers:
   gcc:
     :compiler_env: 'FC=gfortran CC=gcc'
