@@ -10,6 +10,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest v2.1 release
   * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -20,6 +22,9 @@
 :version: '2.1'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
