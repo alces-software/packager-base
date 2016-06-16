@@ -15,6 +15,9 @@
   structure more than their primary sequence.
 :group: Bioinformatics
 :changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+    - Updated source download link
   * Tue Dec 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: infernal-1.1.tar.gz
