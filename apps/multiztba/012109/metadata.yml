@@ -5,7 +5,7 @@
 :summary: Threaded-Blockset Aligner, a local multiple sequence alignment tool; MULTIZ, aligns highly rearranged or incompletely sequenced genomes
 :url: http://www.bx.psu.edu/miller_lab/
 :description: |
-  We define a “threaded blockset,” which is a novel generalization of
+  We define a "threaded blockset", which is a novel generalization of
   the classic notion of a multiple alignment. A new computer program
   called TBA (for “threaded blockset aligner”) builds a threaded
   blockset under the assumption that all matching segments occur in
@@ -28,6 +28,8 @@
   Cruz Genome Browser.
 :group: Bioinformatics
 :changelog: |
+  * Thu Jun 16 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated for compatibility with GCC >= 4.6
   * Tue May 20 2014 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: multiz-tba.012109.tar.gz
@@ -37,7 +39,8 @@
 :compilers:
   gcc:
 :compile: |
-  sed -i -e 's|\(INSTALLDIR = \).*|\1<%= dest_dir %>/bin|g' Makefile
+  sed -i -e 's|\(INSTALLDIR = \).*|\1<%= dest_dir %>/bin|g' \
+    -e 's|^\(CFLAGS = .*\)|\1 -Wno-error=unused-but-set-variable|g' Makefile
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
@@ -66,10 +69,10 @@
       # Output directory
       OUTPUT_DIR="multiztba/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 
-      # Create output directory if it doesn't already exist
+      # Create output directory if it doesn't already exist
       mkdir -p $OUTPUT_DIR
 
-      # Generate pair-wise alignments
+      # Generate pair-wise alignments
       cd $OUTPUT_DIR
       all_bz - "(((((human chimp) galago)(mouse rat)) chicken)(tetra (fugu zebrafish)))"
 
