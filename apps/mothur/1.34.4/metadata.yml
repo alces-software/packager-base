@@ -35,6 +35,8 @@
   - dynamic-uchime.patch
   - no-tty-output.patch
 :changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu 15 Jan 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest v1.34.4
   * Tue  9 Apr 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -44,6 +46,11 @@
     - First created
 :src: Mothur.1.34.4.zip
 :src_dir: Mothur.1.34.4
+:dependencies:
+  el:
+    - gcc-gfortran
+    - gcc-c++
+    - readline-devel
 :compile: |
   make <%= variant[:make_vars] %> <%= redirect(:compile) %>
 :install: |
