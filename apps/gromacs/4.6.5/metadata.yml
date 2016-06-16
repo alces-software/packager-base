@@ -43,6 +43,8 @@
       :build: 
         - libs/fftw3_double
 :changelog: |
+  * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
     - Added example script
   * Thu Jan 23 2014 - James Donohue <james.donohue@alces-software.com>
@@ -68,6 +70,9 @@
     :float_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_FLOATDIR"
     :double_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_DOUBLEDIR"
     :fft: fftw3
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   cp -r <%= src_dir %> <%= src_dir %>.mpi
   <% if variant_name == 'default' %>
