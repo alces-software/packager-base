@@ -30,6 +30,10 @@
 :version: '1.9.1'
 :compilers:
   bin:
+:dependencies:
+  :runtime:
+    el:
+      - mesa-libGLU
 :compile: |
   # no-op, this is a binary installer.
 :install: |
