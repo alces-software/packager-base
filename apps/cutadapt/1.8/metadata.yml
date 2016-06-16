@@ -11,6 +11,8 @@
   for example when sequencing microRNAs.
 :group: Bioinformatics
 :changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Apr  9 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version 1.8
   * Mon Feb  2 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
