@@ -15,6 +15,8 @@
   features can be in EMBL, GENBANK or GFF format.
 :group: Bioinformatics
 :changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to v14.0.17
   * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
