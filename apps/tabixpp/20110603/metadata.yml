@@ -18,6 +18,9 @@
   case the index file will be downloaded if it is not present locally.
 :group: Bioinformatics
 :changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+    - Updated checksum for source file
   * Mon Feb 25 2013 - James Donohue <james.donohue@alces-software.com>
     - First created (metadata based on apps/tabix package)
 :src: tabixpp-20110603.zip
@@ -30,6 +33,11 @@
   - makefile-tabixo-in-lobjs.patch1
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - zlib-devel
+    - perl-ExtUtils-MakeMaker
 :compile: |
   sed -i -e 's/#-m64/-m64/g' Makefile
   make <%= redirect(:make) %>
