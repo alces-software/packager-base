@@ -11,6 +11,8 @@
   that are the foundation of corporate computing.
 :group: Compilers
 :changelog: |
+  * Thu Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Feb 18 2013 - Steve Norledge <steve.norledge@alces-software.com>
     - First created
 :src: jre-7u13-linux-x64.tar.gz
