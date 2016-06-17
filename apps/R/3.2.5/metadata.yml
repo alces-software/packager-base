@@ -29,22 +29,41 @@
     - libs/lapack
     - libs/blas
 :dependencies:
-  el:
-    - gcc-c++
-    - libpng-devel
-    - libjpeg-turbo-devel
-    - cairo-devel
-    - libtiff-devel
-    - libxml2-devel
-    - libicu-devel
-    - readline-devel
-    - libcurl-devel
-    - xz-devel
-    - zlib-devel
-    - bzip2-devel
-    - pcre-devel
-    - tk-devel
+  :build:
+    el:
+      - gcc-c++
+      - libpng-devel
+      - libjpeg-turbo-devel
+      - cairo-devel
+      - libtiff-devel
+      - libxml2-devel
+      - libicu-devel
+      - readline-devel
+      - libcurl-devel
+      - xz-devel
+      - zlib-devel
+      - bzip2-devel
+      - pcre-devel
+      - tk-devel
+  :runtime:
+    el:
+      - libpng
+      - libjpeg-turbo
+      - cairo
+      - libtiff
+      - libxml2
+      - libicu
+      - readline
+      - libcurl
+      - xz-libs
+      - zlib
+      - bzip2-libs
+      - pcre
+      - tk
 :changelog: |
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reworked site libs directory
+    - Split runtime and development dependencies
   * Fri May 13 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to 3.2.5 version
   * Fri Apr  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -123,7 +142,7 @@
   install -D -m 0644 <%= source('Rprofile') %> <%= dest_dir %>/example <%= redirect(:install) %>
 :module: |
   set r_user_libs $::env(HOME)/gridware/share/R/${version}
-  set r_site_libs <%= File.expand_path(Config.gridware) %>/share/R/${version}
+  set r_site_libs <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/R/${version}
 
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
