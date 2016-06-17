@@ -23,6 +23,9 @@
 :group: Libraries
 :changelog: |
   * Fri Jun 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add libsvm.so symlink for libsvm.so.2 to satisfy awkward build systems
+    - Put svm.h directly in include directory
+  * Fri Jun 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: v321.tar.gz
 :src_dir: libsvm-321
@@ -38,9 +41,10 @@
   make <%= redirect(:compile) %>
   make lib <%= redirect(:compile) %>
 :install: |
-  mkdir -p <%= dest_dir %>/{bin,doc,lib,include/libsvm,share,java,python}
-  cp svm.h <%= dest_dir %>/include/libsvm
+  mkdir -p <%= dest_dir %>/{bin,doc,lib,include,share,java,python}
+  cp svm.h <%= dest_dir %>/include
   cp libsvm.so.2 <%= dest_dir %>/lib
+  ln -s libsvm.so.2 <%= dest_dir %>/lib/libsvm.so
   cp svm-predict svm-scale svm-train <%= dest_dir %>/bin
   cp COPYRIGHT FAQ.html README <%= dest_dir %>/doc
   cp -R matlab tools <%= dest_dir %>/share
