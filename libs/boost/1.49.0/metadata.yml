@@ -1,4 +1,6 @@
 ---
+:schema: 1
+:title: Boost
 :license: OTHER - Boost Software License, Version 1.0
 :summary: Free peer-reviewed portable C++ source libraries
 :url: http://www.boost.org/
@@ -13,6 +15,9 @@
   Report.)
 :group: Libraries
 :changelog: |
+  * Fri Jun 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added zlib dependencies for EL
+    - Made compatible with GCC >= 4.7
   * Tue Jan  8 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - require apps/python module at build time
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -22,7 +27,7 @@
     - refactored to use installer style
   * Thu Jul 7 2011 Steve Norledge
     - update to 1.4.6.1
-    - depend on openmpi and python 
+    - depend on openmpi and python
     - add latest link
   * Tue Feb 22 2011 Steve Norledge
     - First created
@@ -30,14 +35,31 @@
 :src_dir: boost_1_49_0
 :type: libs
 :version: '1.49.0'
+:dependencies:
+  :build:
+    el:
+      - bzip2-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - bzip2-libs
+      - zlib
 :requirements:
   :runtime: mpi/openmpi
-  :build: 
+  :build:
     - mpi/openmpi
     - apps/python
 :compilers:
   gcc:
 :compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  gcc_patch=$(gcc -dumpversion | cut -f3 -d'.')
+  if [[ "$gcc_major" -gt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -gt "6") ]]; then
+    for a in boost/thread/xtime.hpp libs/container/test/util.hpp libs/interprocess/test/condition_test_template.hpp libs/interprocess/test/util.hpp libs/spirit/classic/test/grammar_mt_tests.cpp libs/spirit/classic/test/owi_mt_tests.cpp libs/thread/example/starvephil.cpp libs/thread/example/tennis.cpp libs/thread/example/thread.cpp libs/thread/example/xtime.cpp libs/thread/src/pthread/timeconv.inl libs/thread/src/win32/timeconv.inl libs/thread/test/test_xtime.cpp libs/thread/test/util.inl; do
+      sed -i -e 's/TIME_UTC/TIME_UTC_/g' $a
+    done
+  fi
   ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   echo "using mpi ;" >> project-config.jam
   ./bjam stage <%= redirect(:stage) %>
