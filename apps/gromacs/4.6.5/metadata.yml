@@ -19,30 +19,39 @@
 :requirements:
   :tool: apps/cmake
   :runtime: mpi/openmpi
-  :build: 
+  :build:
     - mpi/openmpi
 :variants:
   default:
     :description: "Builds both double and single precision GROMACS into the same application location."
     :default_precision: float
     :requirements:
-      :build: 
+      :build:
+        - libs/fftw3_float
+        - libs/fftw3_double
+      :runtime:
         - libs/fftw3_float
         - libs/fftw3_double
   float:
     :description: "Builds only a single precision GROMACS."
     :default_precision: float
     :requirements:
-      :build: 
+      :build:
+        - libs/fftw3_float
+      :runtime:
         - libs/fftw3_float
   double:
     :description: "Builds only a double precision GROMACS."
     :default_precision: double
     :default_precision_cmake_flags: -DGMX_DOUBLE=ON
     :requirements:
-      :build: 
+      :build:
+        - libs/fftw3_double
+      :runtime:
         - libs/fftw3_double
 :changelog: |
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add FFTW3 runtime dependencies
   * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
@@ -71,8 +80,9 @@
     :double_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_DOUBLEDIR"
     :fft: fftw3
 :dependencies:
-  el:
-    - gcc-c++
+  :build:
+    el:
+      - gcc-c++
 :compile: |
   cp -r <%= src_dir %> <%= src_dir %>.mpi
   <% if variant_name == 'default' %>
@@ -176,10 +186,10 @@
       OUTPUT_DIR="gromacs/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
       mkdir -p $OUTPUT_DIR
 
-      # Demo molecule
+      # Demo molecule
       MOL=cpeptide
 
-      # Input structure file: gro g96 pdb tpr etc.
+      # Input structure file: gro g96 pdb tpr etc.
       INPUT_FILE=$MOL.pdb
       cp -v $GMXDATA/gromacs/tutor/gmxdemo/$MOL.pdb $INPUT_FILE
 
