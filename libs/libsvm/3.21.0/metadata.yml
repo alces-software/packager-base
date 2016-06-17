@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: LIBSVM
+:license: BSD License
+:summary: A Library for Support Vector Machines
+:url: https://www.csie.ntu.edu.tw/~cjlin/libsvm/
+:description: |
+  LIBSVM is an integrated software for support vector classification,
+  (C-SVC, nu-SVC), regression (epsilon-SVR, nu-SVR) and distribution
+  estimation (one-class SVM). It supports multi-class classification.
+
+  LIBSVM provides a simple interface where users can easily link it
+  with their own programs. Main features of LIBSVM include:
+
+    * Different SVM formulations
+    * Efficient multi-class classification
+    * Cross validation for model selection
+    * Probability estimates
+    * Various kernels (including precomputed kernel matrix)
+    * Weighted SVM for unbalanced data
+    * Both C++ and Java sources
+    * Automatic model selection which can generate contour of cross validation accuracy.
+:group: Libraries
+:changelog: |
+  * Fri Jun 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v321.tar.gz
+:src_dir: libsvm-321
+:type: libs
+:version: '3.21.0'
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+  make lib <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,lib,include/libsvm,share,java,python}
+  cp svm.h <%= dest_dir %>/include/libsvm
+  cp libsvm.so.2 <%= dest_dir %>/lib
+  cp svm-predict svm-scale svm-train <%= dest_dir %>/bin
+  cp COPYRIGHT FAQ.html README <%= dest_dir %>/doc
+  cp -R matlab tools <%= dest_dir %>/share
+  cp java/libsvm.jar <%= dest_dir %>/java
+  cp -R python/*.py <%= dest_dir %>/python
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PYTHONPATH ${appdir}/python
+  prepend-path PATH ${appdir}/bin
