@@ -17,6 +17,10 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Fri Jun 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated requirements for EL7 compatibility and fix use of old zlib headers
+  * Thu May 12 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu May 29 2014 - Ben Armston <ben.armston@alces-software.com>
     - Updated Makefiles to link against pthread
   * Wed Nov 21 2012 Steve Norledge
@@ -26,10 +30,11 @@
 :version: '1.0.5.14'
 :requirements:
   :build:
-    - apps/samtools
+    - apps/samtools ~> 0.1.19
     - libs/gsl
+    - libs/zlib = 1.2.3
   :runtime:
-    - apps/samtools
+    - apps/samtools ~> 0.1.19
     - libs/gsl
     - apps/vcftools
     - apps/stampy
@@ -43,10 +48,13 @@
 :compile: |
   TOPDIR=$(pwd)
   cd "${TOPDIR}/libs/string_buffer"
+  sed -i -e 's/-Wall/-I$(ZLIBINCLUDE) -Wall/g' Makefile
   make clean && make <%= redirect(:build_string_buffer) %>
   cd "${TOPDIR}/libs/seq_file"
+  sed -i -e 's/-Wall/-I$(ZLIBINCLUDE) -Wall/g' Makefile
   make clean && make STRING_BUF_PATH=../string_buffer <%= redirect(:build_seq_file) %>
   cd "${TOPDIR}/scripts/analyse_variants/needleman_wunsch"
+  sed -i -e 's/-Wall/-I$(ZLIBINCLUDE) -Wall/g' Makefile
   make clean && make <%= redirect(:build_needleman_munsch) %>
   cd "${TOPDIR}"
   mkdir bin
