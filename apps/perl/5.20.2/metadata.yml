@@ -17,6 +17,8 @@
   collections of third-party modules.
 :group: Languages
 :changelog: |
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reworked site libs directory
   * Mon Apr 4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to include OS dependencies
   * Tue May 26 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -56,13 +58,13 @@
   make install <%= redirect(:install) %>
   install -D -m 644 <%= source('CPAN-Config.pm') %> <%= dest_dir %>/lib/<%= version %>/CPAN/Config.pm
   install -D -m 644 <%= source('CPAN-MyConfig.pm') %> <%= dest_dir %>/lib/<%= version %>/CPAN/MyConfig.pm.ex
-  sed -e "s|%GRIDWARE%|<%= File.expand_path(Config.gridware) %>|g;s|%VERSION%|<%= version %>|g" -i <%= dest_dir %>/lib/<%= version %>/CPAN/Config.pm
+  sed -e "s|%GRIDWARE%|<%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>|g;s|%VERSION%|<%= version %>|g" -i <%= dest_dir %>/lib/<%= version %>/CPAN/Config.pm
 :module: |
   set perl_user_base $::env(HOME)/gridware/share/perl/${version}
   set perl_user_libs ${perl_user_base}/lib
   set perl_user_bin ${perl_user_base}/bin
   set perl_user_man ${perl_user_base}/man
-  set perl_site_libs <%= File.expand_path(Config.gridware) %>/share/perl/${version}/lib
+  set perl_site_libs <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/perl/${version}/lib
 
   set cpan_usercfg $::env(HOME)/.cpan/CPAN/MyConfig.pm
   set cpan_usercfg_dir $::env(HOME)/.cpan/CPAN
