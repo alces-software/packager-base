@@ -23,6 +23,9 @@
     * embeddable within applications as a scripting interface
 :group: Languages
 :changelog: |
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reworked site libs directory
+    - Split runtime and development dependencies
   * Mon Apr 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
@@ -41,21 +44,39 @@
 :type: apps
 :version: '2.7.8'
 :dependencies:
-  el:
-    - openssl-devel
-    - bzip2-devel
-    - zlib-devel
-    - tk-devel
-    - libffi-devel
-    - sqlite-devel
-    - ncurses-devel
-    - readline-devel
-    - gdbm-devel
-    - xz-devel
-  el6:
-    - db4-devel
-  el7:
-    - libdb-devel
+:dependencies:
+  :build:
+    el:
+      - openssl-devel
+      - bzip2-devel
+      - zlib-devel
+      - tk-devel
+      - libffi-devel
+      - sqlite-devel
+      - ncurses-devel
+      - readline-devel
+      - gdbm-devel
+      - xz-devel
+    el6:
+      - db4-devel
+    el7:
+      - libdb-devel
+  :runtime:
+    el:
+      - openssl
+      - bzip2-libs
+      - zlib
+      - tk
+      - libffi
+      - sqlite
+      - ncurses
+      - readline
+      - gdbm
+      - xz-libs
+    el6:
+      - db4
+    el7:
+      - libdb
 :compilers:
   gcc:
 :compile: |
@@ -68,7 +89,7 @@
   # Create site-wide distutils config file
   cat <<EOF > <%= dest_dir %>/lib/python2.7/distutils/distutils.cfg
   [install]
-  prefix=<%= File.expand_path(Config.gridware) %>/share/python/<%= version %>
+  prefix=<%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/python/<%= version %>
   EOF
   # Create basic non-root user distutils config file
   cat <<EOF > <%= dest_dir %>/lib/python2.7/distutils/pydistutils-tmpl.cfg
@@ -78,8 +99,8 @@
 :module: |
   set python_user_libs $::env(HOME)/gridware/share/python/${version}/lib/python2.7/site-packages
   set python_user_bin $::env(HOME)/gridware/share/python/${version}/bin
-  set python_site_libs <%= File.expand_path(Config.gridware) %>/share/python/${version}/lib/python2.7/site-packages
-  set python_site_bin <%= File.expand_path(Config.gridware) %>/share/python/${version}/bin
+  set python_site_libs <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/python/${version}/lib/python2.7/site-packages
+  set python_site_bin <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/python/${version}/bin
 
   set distutils_usercfg $::env(HOME)/.pydistutils.cfg
   set distutils_usercfg_template ${appdir}/lib/python2.7/distutils/pydistutils-tmpl.cfg
