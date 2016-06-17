@@ -16,6 +16,8 @@
 # :build_requires: ant
 :group: Biochemistry
 :changelog: |
+  * Fri Jun 17 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Web Mar 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to latest v2.1.1
   * Thu Jun  6 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
