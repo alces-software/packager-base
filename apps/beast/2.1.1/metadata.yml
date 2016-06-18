@@ -33,7 +33,7 @@
 :dependencies:
   :runtime:
     el:
-      - java-openjdk
+      - java-1.8.0-openjdk
 :compilers:
   noarch:
 :compile: |
