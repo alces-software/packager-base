@@ -88,10 +88,12 @@
   for a in $(grep -lr cblas_libs sklearn/**/*.py); do
     sed -i -e "s/cblas_libs.append('m')/cblas_libs.append('m'); cblas_libs.append('tatlas')/g" $a
   done
+  export PYTHONDONTWRITEBYTECODE=1
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
 :install: |
   PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
   mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONDONTWRITEBYTECODE=1
   <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
