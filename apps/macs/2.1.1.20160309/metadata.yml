@@ -1,0 +1,204 @@
+---
+:schema: 1
+:license: BSD License
+:summary: Novel algorithm for identifying transcript factor binding sites
+:url: https://github.com/taoliu/MACS/
+:description: |
+  Model-based Analysis of ChIP-Seq (MACS), a novel algorithm for short
+  reads sequencers such as Genome Analyzer (Illumina / Solexa).
+
+  Next generation parallel sequencing technologies made chromatin
+  immunoprecipitation followed by sequencing (ChIP-Seq) a popular
+  strategy to study genome-wide protein-DNA interactions, while
+  creating challenges for analysis algorithms. 
+
+  MACS empirically models the length of the sequenced ChIP fragments,
+  which tends to be shorter than sonication or library construction
+  size estimates, and uses it to improve the spatial resolution of
+  predicted binding sites. MACS also uses a dynamic Poisson
+  distribution to effectively capture local biases in the genome
+  sequence, allowing for more sensitive and robust prediction. MACS
+  compares favorably to existing ChIP-Seq peak-finding algorithms, is
+  publicly available open source, and can be used for ChIP-Seq with or
+  without control samples.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Jun 20 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest version; v2.1.1.20160309
+  * Mon Apr 25 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Tue Oct 20 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest version; v2.1.0.20150731
+  * Thu Apr 23 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version; v2.1.0.20150420
+  * Wed Sep  3 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version; v2.1.0
+    - Updated URL to point to modern distribution
+    - Updated license as project now uses BSD License
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: MACS2-2.1.1.20160309.tar.gz
+:src_dir: MACS2-2.1.1.20160309
+:sources:
+  - CTCF_ChIP_200K.bed.gz
+  - CTCF_Control_200K.bed.gz
+:version: '2.1.1.20160309'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :runtime:
+    - apps/setuptools
+    - libs/numpy >= 1.6
+    - apps/python ~> 2.7.0
+  :build: libs/numpy >= 1.6
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "6") ]]; then
+    echo GCC version is $gcc_major.$gcc_minor but MACS 2.1.1.20160309 requires at least v4.6.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  mkdir -p <%= dest_dir %>/{doc,share/example_data}
+  install -v -D -m 0644 ChangeLog COPYING README.rst <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -v -D -m 0644 \
+    <%= source('CTCF_ChIP_200K.bed.gz') %> \
+    <%= source('CTCF_Control_200K.bed.gz') %> \
+    <%= dest_dir %>/share/example_data/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}EXAMPLE ${appdir}/share/example_data
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'Call peaks from alignment results (narrow)'
+    description: |
+      
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full `MACS callpeak` usage information see:
+      #   https://github.com/taoliu/MACS#call-peaks
+
+      # Input directory
+      INPUT_DIR="macs/input"
+
+      # Output directory
+      OUTPUT_DIR="macs/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Additional command-line options
+      MACS_OPTIONS=""
+ 
+      # Format of tag file, can be "ELAND", "BED", "ELANDMULTI",
+      # "ELANDEXPORT", "ELANDMULTIPET" (for pair-end tags), "SAM",
+      # "BAM", "BOWTIE" or "BAMPE". Default is "AUTO" which will allow
+      # MACS to decide the format automatically. "AUTO" is also
+      # usefule when you combine different formats of files.
+      FORMAT="AUTO"
+
+      # The name string of the experiment. MACS will use this string
+      # NAME to create output files like 'NAME_peaks.xls',
+      # 'NAME_negative_peaks.xls', 'NAME_peaks.bed' ,
+      # 'NAME_summits.bed', 'NAME_model.r' and so on. So please avoid
+      # any confliction between these filenames and your existing
+      # files.
+      NAME="run_callpeak_narrow"
+
+      # Variables governing input
+      IN_CHIP="$INPUT_DIR/CTCF_ChIP_200K.bed.gz"
+      IN_CTRL="$INPUT_DIR/CTCF_Control_200K.bed.gz"
+
+      # Set up input data
+      if [ ! -d "$INPUT_DIR" ]; then
+          mkdir -p "$INPUT_DIR"
+          cp -v "$MACSEXAMPLE"/* "$INPUT_DIR"
+      fi
+
+      # Create output directory
+      mkdir -p "$OUTPUT_DIR"
+
+      # Execute MACS
+      macs2 callpeak \
+        -f $FORMAT \
+        -t "$IN_CHIP" \
+        -c "$IN_CTRL" \
+        --outdir "$OUTPUT_DIR" \
+        -n "$NAME" \
+        -B --call-summits $MACS_OPTIONS 2>&1 | tee -a "$OUTPUT_DIR/$NAME.log"
+  - tags: ['script:type=batch']
+    name: 'Call peaks from alignment results (broad)'
+    description: |
+      
+    template: 'script:stub:simple'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full `MACS callpeak` usage information see:
+      #   https://github.com/taoliu/MACS#call-peaks
+
+      # Input directory
+      INPUT_DIR="macs/input"
+
+      # Output directory
+      OUTPUT_DIR="macs/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Additional command-line options
+      MACS_OPTIONS=""
+ 
+      # Format of tag file, can be "ELAND", "BED", "ELANDMULTI",
+      # "ELANDEXPORT", "ELANDMULTIPET" (for pair-end tags), "SAM",
+      # "BAM", "BOWTIE" or "BAMPE". Default is "AUTO" which will allow
+      # MACS to decide the format automatically. "AUTO" is also
+      # usefule when you combine different formats of files.
+      FORMAT="AUTO"
+
+      # The name string of the experiment. MACS will use this string
+      # NAME to create output files like 'NAME_peaks.xls',
+      # 'NAME_negative_peaks.xls', 'NAME_peaks.bed' ,
+      # 'NAME_summits.bed', 'NAME_model.r' and so on. So please avoid
+      # any confliction between these filenames and your existing
+      # files.
+      NAME="run_callpeak_broad"
+
+      # Variables governing input
+      IN_CHIP="$INPUT_DIR/CTCF_ChIP_200K.bed.gz"
+      IN_CTRL="$INPUT_DIR/CTCF_Control_200K.bed.gz"
+
+      # Set up input data
+      if [ ! -d "$INPUT_DIR" ]; then
+          mkdir -p "$INPUT_DIR"
+          cp -v "$MACSEXAMPLE"/* "$INPUT_DIR"
+      fi
+
+      # Create output directory
+      mkdir -p "$OUTPUT_DIR"
+
+      # Execute MACS
+      macs2 callpeak \
+        -f $FORMAT \
+        -t "$IN_CHIP" \
+        -c "$IN_CTRL" \
+        --outdir "$OUTPUT_DIR" \
+        -n "$NAME" \
+        -B --broad $MACS_OPTIONS 2>&1 | tee -a "$OUTPUT_DIR/$NAME.log"
