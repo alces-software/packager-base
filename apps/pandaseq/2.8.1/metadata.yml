@@ -1,0 +1,44 @@
+---
+:schema: 1
+:license: GNU GPL
+:name: pandaseq 
+:summary: Program to align Illumina reads 
+:url: https://github.com/neufeld/pandaseq 
+:description:
+  PANDASEQ is a program to align Illumina reads, optionally 
+  with PCR primers embedded in the sequence, and reconstruct 
+  an overlapping sequence.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jun 21 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v2.8.1.tar.gz 
+:src_dir: pandaseq-2.8.1 
+:version: '2.8.1'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - automake
+    - autoconf
+    - pkgconfig
+    - zlib-devel
+    - bzip2-devel
+    - libtool
+    - libtool-ltdl-devel
+:compile: |
+  ./autogen.sh <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path MANPATH ${appdir}/share/man  
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
