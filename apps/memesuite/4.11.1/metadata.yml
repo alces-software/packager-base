@@ -23,6 +23,8 @@
   ChIP-seq and other large datasets (MEME-ChIP).
 :group: Bioinformatics
 :changelog: |
+  * Tue Jun 21 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Remove hard-coded path to mpirun from mpi variant
   * Thu May 19 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Prepend to PERL5LIB during compile, don't override entirely
   * Wed Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -79,6 +81,9 @@
   cp gomo_databases/gomo_db.csv etc
   ./configure --with-url="http://meme-suite.org" \
     --prefix="<%= dest_dir %>" <%= redirect(:configure) %>
+  <% if variant_name == 'mpi' %>
+  sed -i -e 's/^MPI\(.*\) = .*mpirun/MPI\1 = mpirun/g' $(find . | grep Makefile$)
+  <% end %>
   make <%= redirect(:compile) %>
 :install: |
   make install <%= redirect(:install) %>
