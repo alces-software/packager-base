@@ -1,0 +1,47 @@
+---
+:schema: 1
+:license: MIT
+:name: SeqPrep
+:summary: Merge paired end Illumina reads
+:url: https://github.com/jstjohn/SeqPrep/
+:description: |
+  SeqPrep is a program to merge paired end Illumina reads
+  that are overlapping into a single longer read. It may 
+  also just be used for its adapter trimming feature without 
+  doing any paired end overlap. When an adapter sequence is 
+  present, that means that the two reads must overlap (in 
+  most cases) so they are forcefully merged. When reads do 
+  not have adapter sequence they must be treated with care 
+  when doing the merging, so a much more specific approach 
+  is taken. The default parameters were chosen with 
+  specificity in mind, so that they could be ran on 
+  libraries where very few reads are expected to overlap.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jun 21 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v1.2.tar.gz  
+:src_dir: SeqPrep-1.2 
+:version: '1.2'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+:compile: |
+  make all <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -D -m 0755 -v SeqPrep <%= dest_dir %>/bin/SeqPrep <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -Rv Test <%= dest_dir %>/example <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv README.md <%= dest_dir %>/doc <%= redirect(:install) %> 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
