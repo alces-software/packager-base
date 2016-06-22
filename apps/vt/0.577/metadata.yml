@@ -1,0 +1,39 @@
+---
+:schema: 1
+:license: MIT
+:name: vt 
+:summary: Tool set for short variant discovery in genetic sequence data. 
+:url: https://github.com/atks/vt 
+:description: |
+  vt is a variant tool set that discovers short variants from Next 
+  Generation Sequencing data.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Jun 22 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: 0.577.tar.gz
+:src_dir: vt-0.577
+:version: '0.577'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - zlib-devel
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -D -m 0755 -v vt <%= dest_dir %>/bin/vt <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv README.md <%= dest_dir %>/doc <%= redirect(:install) %> 
+  mkdir -p <%= dest_dir %>/example <%= redirect(:install) %>
+  cp -Rv test <%= dest_dir %>/example <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
