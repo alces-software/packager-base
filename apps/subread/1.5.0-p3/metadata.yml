@@ -1,0 +1,51 @@
+---
+:schema: 1
+:license: GPL v3
+:summary: High-performance read alignment, quantification and mutation discovery
+:url: http://subread.sourceforge.net/
+:description: |
+  The Subread package comprises a suite of software programs 
+  for processing next-gen sequencing read data including:
+
+  * Subread - an accurate and efficient aligner for mapping 
+  both genomic DNA-seq reads and RNA-seq reads (for the 
+  purpose of expression analysis).
+  * Subjunc - an RNA-seq aligner suitable for all purposes of 
+  RNA-seq analyses.
+  * featureCounts - a highly efficient and accurate read 
+  summarization program.
+  * exactSNP - a SNP caller that discovers SNPs by testing signals 
+  against local background noises.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: subread-1.5.0-p3-source.tar.gz
+:src_dir: subread-1.5.0-p3-source
+:version: '1.5.0-p3'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+:compile: |
+  cd src
+  make -f Makefile.Linux <%= redirect(:make) %>
+:install: |  
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd bin
+  install -D -m 775 exactSNP featureCounts subindel subjunc subread-align \
+  subread-buildindex <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv utilities <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd ..
+  cp -Rv doc test annotation <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv LICENSE README.txt <%= dest_dir %>/doc <%= redirect(:install) %>  
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}TEST ${appdir}/test  
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${appdir}/bin/utilities
