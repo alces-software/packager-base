@@ -1,0 +1,39 @@
+---
+:schema: 1
+:license: Artistic 2.0
+:name: bitseq
+:summary: Expression estimation for RNA-seq
+:url: http://bitseq.github.io/
+:description: |
+  Transcript isoform level expression and differential expression estimation for RNA-seq
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v0.7.5.tar.gz
+:src_dir: BitSeq-0.7.5
+:version: '0.7.5'
+:requirements:
+  :runtime: libs/numpy
+:compilers:
+  gcc:
+:dependencies:
+  el:
+     - gcc-c++
+     - zlib-devel
+:compile: |
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  install -D -m 775 convertSamples estimateDE estimateExpression estimateHyperPar \
+  estimateVBExpression extractSamples getFoldChange getGeneExpression getPPLR getVariance \
+  getWithinGeneExpression parseAlignment transposeLargeFile <%= dest_dir %>/bin <%= redirect(:install) %>
+  install -D -m 775 checkTR.py extractTranscriptInfo.py getCounts.py \
+  parseAlignment.py releaseDo.sh <%= dest_dir %>/bin <%= redirect(:install) %> 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
