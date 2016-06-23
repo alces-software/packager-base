@@ -1,0 +1,52 @@
+---
+:schema: 1
+:license: GPL v3
+:name: chromhmm
+:summary: Software for learning and characterizing chromatin states
+:url: http://compbio.mit.edu/ChromHMM/
+:description: |
+  ChromHMM is software for learning and characterizing chromatin 
+  states. ChromHMM can integrate multiple chromatin datasets such
+  as ChIP-seq data of various histone modifications to discover de 
+  novo the major re-occuring combinatorial and spatial patterns of 
+  marks. ChromHMM is based on a multivariate Hidden Markov Model 
+  that explicitly models the presence or absence of each chromatin 
+  mark. The resulting model can then be used to systematically 
+  annotate a genome in one or more cell types. By automatically 
+  computing state enrichments for large-scale functional and 
+  annotation datasets ChromHMM facilitates the biological 
+  characterization of each state. ChromHMM also produces files 
+  with genome-wide maps of chromatin state annotations that can be
+  directly visualized in a genome browser. 
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: ChromHMM.zip
+:src_dir: ChromHMM
+:version: '1.2'
+:compilers:
+  noarch:
+:compile: |
+  #noop
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %> 
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %> 
+  mkdir -p <%= dest_dir %>/example <%= redirect(:install) %> 
+  install -D -m 775 ChromHMM.jar <%= dest_dir %>/bin <%= redirect(:install) %> 
+  cat <<\EOF > <%= dest_dir %>/bin/ChromHMM
+  #!/bin/bash
+    exec java `eval echo $CHROMHMM_JAVA_OPTS` -jar "<%= dest_dir %>/bin/ChromHMM.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/ChromHMM
+  cp -Rv CHROMSIZES COORDS SAMPLEDATA_HG18 <%= dest_dir %>/example <%= redirect(:install) %> 
+  cp -Rv ChromHMM_manual.pdf <%= dest_dir %>/doc <%= redirect(:install) %> 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}_JAVA_OPTS "-mx1600M"
+
+  prepend-path PATH ${appdir}/bin
