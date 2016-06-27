@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: Exonerate
+:license: GPLv3
+:summary: Generic tool for pairwise sequence comparison
+:url: http://www.ebi.ac.uk/~guy/exonerate/
+:description: |
+  Exonerate is a general tool for sequence comparison.
+
+  It uses the C4 dynamic programming library and is designed to be
+  both general and fast. It can produce either gapped or ungapped
+  alignments, according to a variety of different alignment
+  models.
+
+  The C4 library allows sequence alignment using a reduced space full
+  dynamic programming implementation, but also allows automated
+  generation of heuristics from the alignment models, using bounded
+  sparse dynamic programming, so that these alignments may also be
+  rapidly generated. Alignments generated using these heuristics will
+  represent a valid path through the alignment model, yet (unlike the
+  exhaustive alignments), the results are not guaranteed to be
+  optimal.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jun 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated links to 2.4.0.20141001 version
+    - Added distro dependencies for EL
+  * Wed Mar 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v2.4.0 from https://github.com/nathanweeks/exonerate
+  * Mon Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: exonerate-2.4.0.20141001.tar.gz
+:src_dir: exonerate-2.4.0 
+:type: apps
+:version: '2.4.0.20141001'
+:dependencies:
+  el:
+    - glib2-devel
+    - automake
+    - autoconf
+:compilers:
+  gcc:
+:compile: |
+  autoreconf -i <%= redirect(:autoreconf) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir <%= dest_dir %>/doc
+  make install <%= redirect(:install) %>
+  cp -av AUTHORS COPYING ChangeLog README <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
