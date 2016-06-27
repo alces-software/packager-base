@@ -101,3 +101,30 @@
 
       # Launch ANSYS Workbench.
       ./runwb2
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'ANSYS Fluent session'
+    description: 'Executes ANSYS Fluent within an interactive desktop session'
+    template: 'script:stub:interactive:desktop'
+    facts:
+      runMode: single
+      hardMemoryLimitDesktop: 112G
+      hardMemoryLimitPerSlot: 7G
+      smpNumSlots: 16
+    content: |
+      #================
+      #  ANSYS Fluent
+      #----------------
+      # Sleep for 5 seconds in order to allow the desktop environment
+      # to complete its initialization process.  Without this sleep,
+      # there is a risk that the GUI client can cause the X
+      # session to fail.
+      sleep 5
+
+      # Set the temporary directory for Fluent etc. -- ensure this
+      # path is present on all compute nodes which will be in use.
+      export TMPDIR="$HOME/tmp"
+      export TMP="$TMPDIR"
+      mkdir -p "$TMPDIR"
+
+      # Launch ANSYS Fluent.
+      $ANSYS_WORKBENCHDIR/fluent/bin/fluent
