@@ -21,6 +21,8 @@
     * rbox - generate point distributions for qhull
 :group: Mathematics
 :changelog: |
+  * Tue Jun 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Sat Nov 17 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Add additional symlink inside include directory for apps that
       expect the include subdirectory to be named 'qhull' rather than
@@ -34,6 +36,9 @@
 :version: '2012.1'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :compile: |
   # patch the Makefile to addd -fno-strict-aliasing
   patch -p1 <<\EOF
