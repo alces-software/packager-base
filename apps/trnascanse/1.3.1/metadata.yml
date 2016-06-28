@@ -33,6 +33,8 @@
   (1997).
 :group: Bioinformatics
 :changelog: |
+  * Tue Jun 28 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correct permissions on perl modules directory
   * Tue Dec 17 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :patches:
@@ -53,7 +55,7 @@
   make install <%= redirect(:install) %>
   mkdir <%= dest_dir %>/perl
   mv <%= dest_dir %>/bin/tRNAscanSE <%= dest_dir %>/perl
-  chmod 755 perl/tRNAscanSE
+  chmod 755 <%= dest_dir %>/perl/tRNAscanSE
   sed -i -e 's|#!.*perl.*|#!/usr/bin/env perl|g' <%= dest_dir %>/bin/tRNAscan-SE
 :module: |
   setenv ${appcaps}DIR ${appdir}
