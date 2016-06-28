@@ -20,6 +20,8 @@
     - libs/boost >= 1.37.0
   # Also requires libpng-devel, libjpeg-devel and libtiff-devel on build host
 :changelog: |
+  * Tue Jun 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Mar 30 2015 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: povray-3.7.0.0.tar.gz
@@ -28,9 +30,17 @@
 :version: '3.7.0.0'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - autoconf
+    - automake
+    - libtool
+    - libpng-devel
+    - libjpeg-turbo-devel
+    - libtiff-devel
 :compile: |
   (cd unix; ./prebuild.sh <%= redirect(:prebuild) %>)
-  ./configure --prefix=<%= dest_dir %> --with-boost=${BOOSTDIR} \
+  LDFLAGS="-L$BOOSTLIB -lboost_system" ./configure --prefix=<%= dest_dir %> --with-boost=${BOOSTDIR} \
     COMPILED_BY="Alces Software <support@alces-software.com>" <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
