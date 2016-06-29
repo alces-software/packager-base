@@ -28,6 +28,9 @@
 :patches:
   - gridware.patch1
 :changelog: |
+  * Wed Jun 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated download link
+    - Added distro dependencies for EL
   * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to latest v4.2.1 release
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -40,6 +43,10 @@
 :version: '4.2.1'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
 :compile: |
   make library <%= redirect(:make) %>
 :install: |
