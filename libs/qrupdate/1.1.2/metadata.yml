@@ -20,6 +20,8 @@
 :requirements:
   :build: libs/atlas
 :changelog: |
+  * Wed Jun 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
   * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -29,6 +31,10 @@
 :version: '1.1.2'
 :compilers:
   gcc:
+:dependencies: 
+  el:
+    - gcc-c++
+    - gcc-gfortran
 :compile: |
   # patch the build parameters file to use ATLAS
   patch -p1 <<\EOF
