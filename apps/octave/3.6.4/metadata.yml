@@ -22,7 +22,7 @@
     - libs/fltk
     - apps/qhull
     - libs/qrupdate
-    - libs/suitesparse
+    - libs/suitesparse <= 4.2.1
     - apps/hdf5_serial
     - libs/graphicsmagick
     - libs/fftw3_double
@@ -30,6 +30,9 @@
   :runtime:
     - libs/qrupdate
 :changelog: |
+  * Wed Jun 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
+    - Patch Makefiles for SuiteSparse_time
   * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v3.6.4
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -41,6 +44,17 @@
 :version: '3.6.4'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - pcre
+    - pcre-devel
+    - readline-devel
+    - zlib-devel
+    - libcurl-devel
+    - libcurl
+    - texinfo
+    - texinfo-tex
 :compile: |
   ./configure --with-qhull-includedir=$QHULLINCLUDE --with-qhull-libdir=$QHULLLIB \
     --with-hdf5-includedir=$HDF5_SERIALINCLUDE --with-hdf5-libdir=$HDF5_SERIALLIB \
@@ -57,11 +71,15 @@
     --with-cholmod-includedir=$SUITESPARSEINCLUDE --with-cholmod-libdir=$SUITESPARSELIB \
     --with-cxsparse-includedir=$SUITESPARSEINCLUDE --with-cxsparse-libdir=$SUITESPARSELIB \
     --with-umfpack-includedir=$SUITESPARSEINCLUDE --with-umfpack-libdir=$SUITESPARSELIB \
-    --with-arpack-libdir=$ARPACK_NGLIB \
+    --with-arpack-libdir=$ARPACK_NGLIB --disable-docs \
     --prefix=<%= dest_dir %> \
     CPPFLAGS=-I$HDF5_SERIALINCLUDE \
     LDFLAGS="-L$ATLASDIR/lib -L$QRUPDATELIB" <%= redirect(:configure) %>
-  
+  for makefile in `find . | grep Makefile` ; do
+    echo "Patching $makefile"
+    sed -i "s|CHOLMOD_LIBS = -lcholmod|CHOLMOD_LIBS = -lcholmod -lsuitesparseconfig -lrt|" $makefile
+    sed -i "s|UMFPACK_LIBS = -lumfpack|UMFPACK_LIBS = -lumfpack -lsuitesparseconfig -lrt|" $makefile
+  done <%= redirect(:patch) %> 
   make check <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
