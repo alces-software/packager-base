@@ -24,6 +24,8 @@
   ordering). MPICH2 does not yet support those systems.
 :group: MPI
 :changelog: |
+  * Thu Jun 30 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Oct  7 2013 - James Donohue <james.donohue@alces.software.com>
     - Upgraded to version 1.5; updated URLs
   * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -33,6 +35,10 @@
 :src: mpich2-1.5.tar.gz
 :type: mpi
 :version: 1.5
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
 :compilers:
   gcc:
     :configure_prefix:
