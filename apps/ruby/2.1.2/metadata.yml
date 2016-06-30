@@ -9,6 +9,8 @@
   natural to read and easy to write.
 :group: Languages
 :changelog: |
+  * Thu Jun 30 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
     - Updated to v2.1.2
   * Thu Dev  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
