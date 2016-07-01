@@ -77,9 +77,12 @@
     LDFLAGS="-L$ATLASDIR/lib -L$QRUPDATELIB" <%= redirect(:configure) %>
   for makefile in `find . | grep Makefile` ; do
     echo "Patching $makefile"
+    cat "$makefile" | grep -i CHOLMOD
     sed -i "s|CHOLMOD_LIBS = -lcholmod|CHOLMOD_LIBS = -lcholmod -lsuitesparseconfig -lrt|" $makefile
+    cat "$makefile" | grep -i CHOLMOD
     sed -i "s|UMFPACK_LIBS = -lumfpack|UMFPACK_LIBS = -lumfpack -lsuitesparseconfig -lrt|" $makefile
-  done <%= redirect(:patch) %> 
+  done <%= redirect(:patch) %>
+  exit 1
   make check <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
