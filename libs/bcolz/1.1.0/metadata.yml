@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: bcolz
+:license: BSD License
+:summary: A columnar data container that can be compressed
+:url: http://bcolz.blosc.org/
+:description: |
+  bcolz provides columnar, chunked data containers that can be
+  compressed either in-memory and on-disk. Column storage allows for
+  efficiently querying tables, as well as for cheap column addition
+  and removal. It is based on NumPy, and uses it as the standard data
+  container to communicate with bcolz objects, but it also comes with
+  support for import/export facilities to/from HDF5/PyTables tables
+  and pandas dataframes.
+:group: Libraries
+:changelog: |
+  * Mon  4 Jul 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 1.1.0.tar.gz
+:src_dir: bcolz-1.1.0
+:type: libs
+:version: '1.1.0'
+:requirements:
+  :tool:
+    - apps/cython >= 0.22.0
+  :build:
+    - apps/setuptools >= 18.0
+    - apps/python ~> 2.7.0
+    - libs/numpy >= 1.8.0
+  :runtime:
+    - apps/setuptools >= 18.0
+    - apps/python ~> 2.7.0
+    - libs/numpy >= 1.8.0
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build_ext --inplace <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
