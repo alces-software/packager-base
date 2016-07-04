@@ -1,0 +1,11 @@
+--- scripts/variant_effect_predictor/INSTALL.pl.orig	2016-04-28 19:28:05.000000000 +0900
++++ scripts/variant_effect_predictor/INSTALL.pl	2016-07-04 20:10:53.662960821 +0900
+@@ -544,7 +544,7 @@
+ 
+   print "Attempting to install Bio::DB::HTS and htslib.\n\n>>> If this fails, try re-running with --NO_HTSLIB\n\n";
+ 
+-  my $htslib_location = install_htslib();
++  my $htslib_location = $ENV{'HTSLIBLIB'};
+   rmtree( $DEST_DIR.'/tmp' );
+ 
+   #Now install Bio::DB::HTS proper

@@ -1,0 +1,72 @@
+---
+:schema: 1
+:title: Ensembl Variant Effect Predictor
+:license: Apache License
+:summary: Predict the functional consequences of known and unknown variants
+:url: http://www.ensembl.org/info/docs/tools/vep/index.html
+:description: |
+  Ensembl provides the facility to predict the functional consequences
+  of known and unknown variants using the Variant Effect Predictor
+  (VEP).
+
+  The VEP was formerly known as the SNP Effect Predictor, and was
+  published under this name. Please reference the following
+  publication:
+
+  McLaren W, Pritchard B, Rios D, Chen Y, Flicek P, Cunningham F.
+  Deriving the consequences of genomic variants with the Ensembl API
+  and SNP Effect Predictor.  BMC Bioinformatics26(16):2069-70(2010)
+  doi:10.1093/bioinformatics/btq330
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release (ensembl-84)
+  * Tue Sep  9 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release (ensembl-76)
+  * Mon Feb 18 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+    - apps/htslib >= 1.3
+  :runtime:
+    - apps/perl
+    - apps/htslib >= 1.3
+:patches:
+  - gridware-htslib.patch
+:src: 84.zip
+:src_dir: ensembl-tools-release-84
+:type: apps
+:version: '84'
+:compilers:
+  noarch:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5:${PERL5LIB}"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm LWP::Simple DBI File::Copy::Recursive Archive::Zip Archive::Extract <%= redirect(:cpanm) %>
+  cd scripts/variant_effect_predictor
+  echo "y" | perl INSTALL.pl -d "${TOPDIR}/perl/lib/perl5" <%= redirect(:fetcher) %>
+  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' gtf2vep.pl
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,example}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  cd scripts/variant_effect_predictor
+  install -v -D -m 0755 convert_cache.pl filter_vep.pl gtf2vep.pl variant_effect_predictor.pl <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  install -v -D -m 0644 README.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
+  install -v -D -m 0644 example*.vcf <%= dest_dir %>/example/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
+
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+  prepend-path PATH ${appdir}/bin
