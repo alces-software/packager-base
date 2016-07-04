@@ -1,0 +1,82 @@
+---
+:schema: 1
+:title: GEMINI
+:license: MIT License
+:summary: A flexible framework for exploring genome variation
+:url: https://gemini.readthedocs.io/
+:description: |
+  GEMINI (GEnome MINIng) is a flexible framework for exploring genetic
+  variation in the context of the wealth of genome annotations
+  available for the human genome. By placing genetic variants, sample
+  phenotypes and genotypes, as well as genome annotations into an
+  integrated database framework, GEMINI provides a simple, flexible,
+  and powerful system for exploring genetic variation for disease and
+  population genetics.
+
+  Using the GEMINI framework begins by loading a VCF file (and an
+  optional PED file) into a database. Each variant is automatically
+  annotated by comparing it to several genome annotations from source
+  such as ENCODE tracks, UCSC tracks, OMIM, dbSNP, KEGG, and HPRD. All
+  of this information is stored in portable SQLite database that
+  allows one to explore and interpret both coding and non-coding
+  variation using "off-the-shelf" tools or an enhanced SQL engine.
+:group: Bioinformatics
+:changelog: |
+  * Mon  4 Jul 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.18.3.tar.gz
+:src_dir: gemini-0.18.3
+:type: apps
+:version: '0.18.3'
+:requirements:
+  :tool:
+    - apps/pip
+  :build:
+    - apps/setuptools
+    - apps/python ~> 2.7.0
+    - libs/numpy >= 1.7.1
+    - libs/numexpr >= 2.4.3
+    - libs/pysam >= 0.6.0
+    - apps/cython >= 0.22.1
+    - libs/pybedtools >= 0.6.2
+    - libs/scipy >= 0.12.0
+    - libs/pandas >= 0.11.0
+    - libs/bcolz >= 0.11.3
+    - apps/ipython ~> 4.0
+  :runtime:
+    - apps/setuptools
+    - apps/python ~> 2.7.0
+    - libs/numexpr >= 2.4.3
+    - libs/numpy >= 1.7.1
+    - libs/pysam >= 0.6.0
+    - apps/cython >= 0.22.1
+    - libs/pybedtools >= 0.6.2
+    - libs/scipy >= 0.12.0
+    - libs/pandas >= 0.11.0
+    - libs/bcolz >= 0.11.3
+    - apps/ipython ~> 4.0
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  sed -i -e 's/python -Es$/python/g' <%= dest_dir %>/bin/gemini
+  cp <%= dest_dir %>/python/lib/python2.7/site-packages/gemini-0.18.3-py2.7.egg/gemini/install-data.py <%= dest_dir %>/bin
+  chmod 755 <%= dest_dir %>/bin/install-data.py
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
