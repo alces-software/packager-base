@@ -1,0 +1,44 @@
+---
+:schema: 1
+:title: SWATH Prophet
+:license: LGPLv3
+:summary: Tool for the analysis of SWATH (DIA) data
+:url: http://tools.proteomecenter.org/wiki/index.php?title=Software:SWATHProphet
+:description: |
+  SWATH Prophet is a software tool for the analysis of SWATH (DIA) data.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul  4 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SWATHProphet.zip
+:src_dir: SWATHProphet
+:type: apps
+:version: '20150223'
+:compilers:
+  noarch:
+:compile: |
+  # no-op
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,dist}
+  cp COPYING LICENSE Tutorial.docx <%= dest_dir %>/doc
+  cp -R swathprophet.1.0/* <%= dest_dir %>/dist
+  cat <<\EOF > <%= dest_dir %>/bin/swathprophet-wrapper
+  #!/bin/bash
+  if [ -x "${SWATHPROPHETDIST}"/src/bin/"$(basename "$0")" ]; then
+    cd "${SWATHPROPHETDIST}"/src/bin
+    exec "${SWATHPROPHETDIST}"/src/bin/"$(basename "$0")" "$@"
+  else
+    echo "Not found: $(basename $0)"
+  fi
+  EOF
+  chmod 755 <%= dest_dir %>/bin/swathprophet-wrapper
+  for a in <%= dest_dir %>/dist/src/bin/*.pl; do
+    ln -s swathprophet-wrapper <%= dest_dir %>/bin/$(basename "$a")
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DIST ${appdir}/dist
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
