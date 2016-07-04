@@ -1,0 +1,67 @@
+---
+:schema: 1
+:title: fastq_screen
+:license: GPLv3
+:summary: A screening application for high throughput sequence data
+:url: http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/
+:description: |
+  FastQ Screen is a simple application which allows you to search a
+  large sequence dataset against a panel of different databases to
+  build up a picture of where the sequences in your data originate.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v0.6.1
+  * Thu Sep 19 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.4.1
+  * Wed Dec 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated sed for perl hashbang to remove trailing parameters
+  * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Nov 30 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: fastq_screen_v0.6.1.tar.gz
+:src_dir: fastq_screen_v0.6.1
+:type: apps
+:version: '0.6.1'
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/bowtie
+    - apps/bowtie2
+    - apps/perl
+:compilers:
+  gcc:
+:dependencies:
+  :build:
+    el:
+      - gd-devel
+      - perl-ExtUtils-MakeMaker
+  :runtime:
+    el:
+      - gd
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5:${PERL5LIB}"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm GD::Graph IO::Uncompress::Gunzip Compress::Raw::Zlib <%= redirect(:cpanm) %>
+  sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' fastq_screen
+:install: |
+  mkdir -p <%= dest_dir %>/doc
+  mkdir -p <%= dest_dir %>/bin
+  cp -v fastq_screen fastq_screen.conf.example *.ttf <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v license.txt README.txt RELEASE_NOTES.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv perl <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5/x86_64-linux
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
