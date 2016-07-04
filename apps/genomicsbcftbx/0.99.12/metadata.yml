@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: genomics/bcftbx
+:license: Artistic License 2.0
+:summary: Scripts, utilities and programs for genomic bioinformatics
+:url: https://github.com/fls-bioinformatics-core/genomics
+:description: |
+  Utilities for NGS and genomics-related bioinformatics developed
+  within the Bioinformatics Core Facility (BCF) within the Faculty of
+  Life Sciences (FLS) at the University of Manchester (UoM).
+
+  The utilities are divided into broad categories:
+
+   * Handling data from SOLiD and Illumina sequencers (solid2cluster,
+     illumina2cluster)
+   * Performing QC and manipulation of NGS data (QC-pipeline)
+   * Setting up reference data (build-indexes)
+   * Supporting analysis of ChIP-seq, RNA-seq and microarray data
+     (ChIP-seq, RNA-seq, microarray, NGS-general)
+   * General non-bioinformatics utilities (utils)
+
+  There is also a Python package called bcftbx which is used by many
+  of the programs, and which provides a wide range of utility
+  functions.
+:group: Bioinformatics
+:changelog: |
+  * Mon  4 Jul 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 0.99.12.tar.gz
+:src_dir: genomics-0.99.12
+:type: apps
+:version: '0.99.12'
+:requirements:
+  :build:
+    - apps/setuptools
+    - apps/python ~> 2.7.0
+  :runtime:
+    - apps/setuptools
+    - apps/python ~> 2.7.0
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
