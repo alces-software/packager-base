@@ -1,0 +1,74 @@
+---
+:schema: 1
+:title: IPython
+:license: BSD License
+:summary: Rich architecture for interactive computing
+:url: http://ipython.org/
+:description: |
+  IPython provides a rich architecture for interactive computing with:
+
+    * Powerful interactive shells (terminal and Qt-based).
+    * A browser-based notebook with support for code, text,
+      mathematical expressions, inline plots and other rich media.
+    * Support for interactive data visualization and use of GUI
+      toolkits.
+    * Flexible, embeddable interpreters to load into your own
+      projects.
+    * Easy to use, high performance tools for parallel computing.
+:group: Languages
+:changelog: |
+  * Mon Jul  4 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version v4.2.1
+  * Mon Jul  4 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added dependency on Gridware matplotlib
+    - Added distro dependencies
+  * Wed Oct 15 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ipython-4.2.1.tar.gz
+:type: apps
+:version: '4.2.1'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+    - libs/numpy
+    - libs/matplotlib
+  :runtime:
+    - apps/python
+    - libs/numpy
+    - libs/matplotlib
+:dependencies:
+  :build:
+    el:
+      - ncurses-devel
+  :runtime:
+    el:
+      - ncurses
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  for a in jinja2 sphinx pyzmq pygments tornado nose readline; do
+    easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
+  done
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  python setup.py install --prefix <%= dest_dir %>/python
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  mv <%= dest_dir %>/python/share <%= dest_dir %>/share
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
