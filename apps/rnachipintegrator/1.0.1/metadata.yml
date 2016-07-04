@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: RnaChipIntegrator
+:license: Artistic Licens 2.0
+:summary: A utility that performs integrated analyses of gene data with peak data
+:url: https://github.com/fls-bioinformatics-core/RnaChipIntegrator
+:description: |
+  RnaChipIntegrator is a utility that performs integrated analyses of
+  'gene' data (a set of genes or other genomic features) with 'peak'
+  data (a set of regions, for example ChIP peaks) to identify the
+  genes nearest to each peak, and vice versa.
+
+  The program was originally written specifically for ChIP-Seq and
+  RNA-Seq data but works equally well for ChIP-chip and microarray
+  expression data, and can also be used to integrate any set of
+  genomic features (e.g. canonical genes, CpG islands) with peak data.
+:group: Bioinformatics
+:changelog: |
+  * Mon  4 Jul 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v1.0.1.tar.gz
+:src_dir: RnaChipIntegrator-1.0.1
+:type: apps
+:version: '1.0.1'
+:requirements:
+  :build:
+    - apps/setuptools
+    - apps/python ~> 2.7.0
+  :runtime:
+    - apps/setuptools
+    - apps/python ~> 2.7.0
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
