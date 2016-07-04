@@ -1,0 +1,55 @@
+---
+:schema: 1
+:title: ProteoWizard
+:license: Apache License 2.0
+:summary: Tools to perform proteomics data analyses
+:url: http://proteowizard.sourceforge.net/
+:description: |
+  ProteoWizard provides a modular and extensible set of open-source,
+  cross-platform tools and libraries. The tools perform proteomics
+  data analyses; the libraries enable rapid tool creation by providing
+  a robust, pluggable development framework that simplifies and
+  unifies data file access, and performs standard chemistry and LCMS
+  dataset computations.
+:group: Bioinformatics
+:requirements:
+  :build:
+    - libs/boost >= 1.43.0
+  :runtime:
+    - libs/boost >= 1.43.0
+:changelog: |
+  * Mon Jul  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: libpwiz_src_3_0_9844.tgz
+:src_dir: pwiz
+:type: apps
+:version: '3.0.9844'
+:compilers:
+  gcc:
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libtool
+      - zlib-devel
+  :runtime:
+    el:
+      - zlib
+:compile: |
+  cd autotools
+  autoreconf -i <%= redirect(:autoreconf) %>
+  cd ..
+  autotools/configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/include
+  tar -c $(find pwiz -name '*.hpp') | tar -C <%= dest_dir %>/include -x
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
