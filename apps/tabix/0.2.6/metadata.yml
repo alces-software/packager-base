@@ -3,7 +3,7 @@
 :license: BSD License
 :title: Tabix
 :summary: Generic indexer for TAB-delimited genome position files
-:url: http://staden.sourceforge.net/
+:url: https://github.com/samtools/tabix
 :description: |
   Tabix indexes a TAB-delimited genome position file in.tab.bgz and
   creates an index file in.tab.bgz.tbi when region is absent from the
@@ -15,6 +15,8 @@
   case the index file will be downloaded if it is not present locally.
 :group: Bioinformatics
 :changelog: |
+  * Mon Jul  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies; corrected URL field
   * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to latest v0.2.6
   * Tue Oct  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -24,6 +26,14 @@
 :src: tabix-0.2.6.tar.bz2
 :type: apps
 :version: '0.2.6'
+:dependencies:
+  :build:
+    el:
+      - perl-ExtUtils-MakeMaker
+      - zlib-devel
+  :runtime:
+    el:
+      - zlib
 :compilers:
   gcc:
 :compile: |
