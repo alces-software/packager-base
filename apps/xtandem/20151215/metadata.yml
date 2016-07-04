@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: X! Tandem
+:license: Artistic License 1.0
+:summary: Protein identification by matching tandem mass spectra with peptide sequences
+:url: http://www.thegpm.org/TANDEM/index.html
+:description: |
+  X! Tandem open source is software that can match tandem mass spectra
+  with peptide sequences, in a process that has come to be known as
+  protein identification.
+
+  This software has a very simple, sophisticated application
+  programming interface (API): it simply takes an XML file of
+  instructions on its command line, and outputs the results into an
+  XML file, which has been specified in the input XML file. The output
+  format is described at
+  <http://www.thegpm.org/docs/X_series_output_form.pdf> (PDF). This
+  format is used for all of the X! series search engines, as well as
+  the GPM and GPMDB.
+
+  Unlike some earlier generation search engines, all of the X! Series
+  search engines calculate statistical confidence (expectation values)
+  for all of the individual spectrum-to-sequence assignments. They
+  also reassemble all of the peptide assignments in a data set onto
+  the known protein sequences and assign the statistical confidence
+  that this assembly and alignment is non-random. The formula for
+  which can be found at
+  <http://www.thegpm.org/docs/peptide_protein_expect.pdf>. Therefore,
+  separate assembly and statistical analysis software,
+  e.g. PeptideProphet and ProteinProphet, do not need to be used.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jul  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tandem-linux-15-12-15-2.zip
+:src_dir: tandem-linux-15-12-15-2
+:type: apps
+:version: '20151215'
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - expat-devel
+  :runtime:
+    el:
+      - expat
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,example/input}
+  cp bin/tandem.exe <%= dest_dir %>/bin/tandem
+  ln -s tandem <%= dest_dir %>/bin/tandem.exe
+  cp README LICENSE <%= dest_dir %>/doc
+  cp bin/*.xml bin/*.xsl bin/*.css bin/*.mgf <%= dest_dir %>/example/input
+  cp -R fasta <%= dest_dir %>/example
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
