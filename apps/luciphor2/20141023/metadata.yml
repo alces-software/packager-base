@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: Luciphor2
+:license: Apache License 2.0
+:summary: Perform PTM-site localization on MS/MS data
+:url: http://luciphor2.sourceforge.net/
+:description: |
+  Luciphor2 performs PTM-site localization on MS/MS data. It
+  implements the algorithm originally described in Fermin et al. 2014,
+  <http://www.ncbi.nlm.nih.gov/pubmed/23918812>, but expands it to
+  work on any post-translational modification.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko
+    - First created
+:src: luciphor2.jar.sic
+:src_dir: .
+:type: apps
+:version: '20141023'
+:compilers:
+  noarch:
+:dependencies:
+  el:
+    - java-1.8.0-openjdk
+:compile: |
+  # no-op
+:install: |
+  mkdir -p <%= dest_dir %>/{java,bin} <%= redirect(:install) %>
+  cp -v luciphor2.jar.sic <%= dest_dir %>/java/luciphor2.jar <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/luciphor2
+  #!/bin/bash
+  exec java `eval echo $LUCIPHOR2_JAVA_OPTS` -jar "<%= dest_dir %>/java/luciphor2.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/luciphor2
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else {
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}JAVA ${appdir}/java
+
+  prepend-path PATH ${appdir}/bin
