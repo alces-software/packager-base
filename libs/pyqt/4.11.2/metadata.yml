@@ -12,6 +12,8 @@
   implemented as a set of Python modules and contain over 620 classes.
 :group: Libraries
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
   * Wed Oct 15 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: PyQt-x11-gpl-4.11.2.tar.gz
@@ -20,7 +22,7 @@
 :version: '4.11.2'
 :requirements:
   :tool:
-    - apps/sip
+    - apps/sip >= 4.16.0
   :build:
     - apps/python
     - libs/qt ~> 4.8.4
