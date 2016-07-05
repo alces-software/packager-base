@@ -1,0 +1,33 @@
+--- Makefile   2014-09-26 17:03:57.000000000 +0100
++++ Makefile     2016-07-05 17:37:03.438497873 +0100
+@@ -98,10 +98,10 @@
+ XMLFLAGS=
+ endif
+
+-CFLAGS= ${OSFLAGS} ${XMLFLAGS} ${LGPLFLAG} -D__INTEL__ -DINLINING -DTPPLIB  ${FPIC}
++TPPCFLAGS= ${OSFLAGS} ${XMLFLAGS} ${LGPLFLAG} -D__INTEL__ -DINLINING -DTPPLIB  ${FPIC}
+
+ # -DPWIZ_USER_VERSION_INFO_H=<TPPVersion.h> lets us insert TPP version info into ProteoWizard executables like msconvert
+-NAIVE_CC=g++ ${CFLAGS} ${DEBUG} ${INCLUDE}  -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPWIZ_USER_VERSION_INFO_H=\"common/TPPVersion.h\" -DWITHOUT_MZ5
++NAIVE_CC=g++ ${TPPCFLAGS} ${DEBUG} ${INCLUDE}  -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DPWIZ_USER_VERSION_INFO_H=\"common/TPPVersion.h\" -DWITHOUT_MZ5
+ ifneq  ($(strip $(PERL_BIN)),)
+ NAIVE_CC += -DPERL_BIN=\"${PERL_BIN}\"
+ endif
+@@ -109,7 +109,7 @@
+ NAIVE_CC += -DGNUPLOT_BINARY=\"${GNUPLOT_BINARY}\"
+ endif
+
+-CC=${NAIVE_CC} -Werror -Dlint -Wformat -Wstrict-aliasing  -Wno-deprecated -Wno-char-subscripts
++TPPCC=${NAIVE_CC} -Werror -Dlint -Wformat -Wstrict-aliasing  -Wno-deprecated -Wno-char-subscripts
+
+
+ # put here the complete directory path for the include subdirectory
+@@ -133,7 +133,7 @@
+ # rules
+ #
+
+-COMPILE = $(CC) $(OLD) $(DEBUG) $(CCOPT) $(CCINC) -c $(OPT)
++COMPILE = $(TPPCC) $(OLD) $(DEBUG) $(CCOPT) $(CCINC) -c $(OPT)
+
+ # you had better have a good reason for ignoring warnings, such as generated code
+ NAIVE_COMPILE = $(NAIVE_CC) $(OLD) $(DEBUG) $(CCOPT) $(CCINC) -c $(OPT)
