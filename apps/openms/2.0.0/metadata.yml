@@ -26,21 +26,30 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added patch to fix python variant
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated distro dependencies for EL, download links and compatibility with EL7
+    - Added libsvm and qt as build dependencies
   * Thu Apr 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version, v2.0.0
   * Wed Mar 25 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: OpenMS-2.0.0.tar.gz
 :src_dir: OpenMS-2.0.0
+:sources:
+  - glpk-4.46.tar.gz
+  - WildMagic5.tar.gz
+:patches:
+  - fix-python-setup.patch
 :variants:
   default:
   python:
     :requirements:
       :build:
         - apps/python >= 2.6.0
-        - libs/numpy 
+        - libs/numpy
         - apps/cython >= 0.19
-   
 :requirements:
   :tool:
     - apps/cmake
@@ -49,19 +58,33 @@
     - libs/boost >= 1.46.0
     - libs/eigen ~> 3.2.0
     - libs/seqan >= 1.4.0
+    - libs/libsvm
+    - libs/qt ~> 4.8.4
   :runtime:
-    - libs/boost
-  :rpms:
-    - gsl-devel
-    - zlib-devel
-    - bzip2-devel
-    - libsvm-devel
-    - qtwebkit-devel
+    - libs/boost >= 1.46.0
+    - libs/libsvm
+    - libs/qt ~> 4.8.4
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libtool
+      - gsl-devel
+      - zlib-devel
+      - bzip2-devel
+      - xerces-c-devel
+  :runtime:
+    el:
+      - gsl
+      - zlib
+      - bzip2-libs
+      - xerces-c
 :version: '2.0.0'
 :compilers:
   gcc:
 :compile: |
   <% if variant_name == 'python' %>
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   mkdir $PYTHONDEPSDIR
@@ -69,10 +92,15 @@
   <% end %>
 
   cd contrib
+  mkdir archives
+  cp <%= source('glpk-4.46.tar.gz') %> archives
   cmake -DBUILD_TYPE=GLPK . <%= redirect(:cmake_contrib) %>
+  cp <%= source('WildMagic5.tar.gz') %> archives
   cmake -DBUILD_TYPE=WILDMAGIC . <%= redirect(:cmake_contrib) %>
-  # Requires 3.1.1 and EL6 only provides 3.0.1
-  cmake -DBUILD_TYPE=XERCESC . <%= redirect(:cmake_contrib) %>
+  if [ "$cw_DIST" == "el6" ]; then
+    # Requires 3.1.1 and EL6 only provides 3.0.1
+    cmake -DBUILD_TYPE=XERCESC . <%= redirect(:cmake_contrib) %>
+  fi
   cd ..
 
   mkdir build
@@ -85,31 +113,37 @@
   cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
     -DBOOST_ROOT:PATH=$BOOSTDIR \
     -DBoost_NO_SYSTEM_PATHS=ON \
-    -DQT_QMAKE_EXECUTABLE=/usr/bin/qmake-qt4 \
+    -DQT_QMAKE_EXECUTABLE=$QTBIN/qmake \
+    -DQT_MOC_EXECUTABLE=$QTBIN/moc \
+    -DQT_RCC_EXECUTABLE=$QTBIN/rcc \
     -DSEQAN_INCLUDE_DIR=$SEQANINCLUDE \
     -DEIGEN3_INCLUDE_DIR=$(pwd)/eigen3 \
+    -DQT_INCLUDE_DIR=$QTINCLUDE \
     -DBOOST_USE_STATIC=OFF \
     -DHAS_XSERVER=OFF \
     -DWITH_GUI=OFF \
     -DPYOPENMS=<%= variant_name == 'python' ? 'ON' : 'OFF' %> \
     .. <%= redirect(:configure) %>
 
-  make <%= redirect(:compile) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:compile) %>
 
   <% if variant_name == 'python' %>
   rm -f ../src/pyOpenMS/pxds/ConsensusID.pxd
-  make pyopenms <%= redirect(:compile) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} pyopenms <%= redirect(:compile) %>
   <% end %>
 :install: |
   cd build
   make install <%= redirect(:install) %>
 
   <% if variant_name == 'python' %>
+  export PYTHONDONTWRITEBYTECODE=true
+  cd ..
   PYTHONDEPSDIR=$(pwd)/python
-  cd pyOpenMS
+  cd build/pyOpenMS
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
 
-  cp -Rv $PYTHONDEPSDIR <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   <% end %>
 :module: |
