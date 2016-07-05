@@ -16,36 +16,74 @@
 :type: libs
 :group: Libraries
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
   * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: PyQwt-5.2.1.tar.gz
 :src_dir: PyQwt5-ca9d20d571ebea0f268d145a1ceed1deefc7d097
 :sources:
   - qwt-5.2.3.tar.bz2
+  - pyqtconfig.py
 :version: '5.2.1'
 :compilers:
   gcc:
+:variants:
+  qt46:
+    :requirements:
+      :build:
+        - apps/sip = 4.14.2
+        - libs/pyqt = 4.9.6
+        - libs/qt ~> 4.6.0
+      :runtime:
+        - apps/sip = 4.14.2
+        - libs/pyqt = 4.9.6
+        - libs/qt ~> 4.6.0
+  qt48:
+    :requirements:
+      :build:
+        - apps/sip = 4.16.3
+        - libs/pyqt = 4.11.2
+        - libs/qt ~> 4.8.0
+      :runtime:
+        - apps/sip = 4.16.3
+        - libs/pyqt = 4.11.2
+        - libs/qt ~> 4.8.0
 :requirements:
   :build:
-    - apps/sip = 4.14.2
     - apps/python ~> 2.7.0
     - libs/numpy
-    - libs/pyqt >= 4.9
-    - libs/qt ~> 4.6.0
   :runtime:
-    - apps/sip = 4.14.2
     - apps/python ~> 2.7.0
     - libs/numpy
-    - libs/pyqt >= 4.9
-    - libs/qt ~> 4.6.0
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libX11-devel
+      - libXext-devel
+  :runtime:
+    el:
+      - libX11
+      - libXext
+:patches:
+  - disable-bytecode.patch
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   tar xjf <%= source('qwt-5.2.3.tar.bz2') %>
+  <% if variant_name == 'qt48' %>
+  mkdir -p python/PyQt4
+  touch python/PyQt4/__init__.py
+  cp <%= source('pyqtconfig.py') %> python/PyQt4
+  PYTHONPATH=$(pwd)/python:$PYTHONPATH
+  <% end %>
   cd configure
-  python configure.py -Q ../qwt-5.2.3 -L $QT4LIB -I $QT4INCLUDE \
+  python configure.py -Q ../qwt-5.2.3 -L $QTLIB -I $QTINCLUDE \
     -lpython2.7 \
     --module-install-path=<%=dest_dir %>/python/lib/PyQt4/Qwt5 <%= redirect(:python) %>
   make <%= redirect(:compile) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   cd configure
   make install <%= redirect(:install) %>
   cat <<EOF > <%= dest_dir %>/python/lib/PyQt4/__init__.py
