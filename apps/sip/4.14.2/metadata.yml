@@ -34,6 +34,8 @@
   performance reasons) in C or C++.
 :group: Tools
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
   * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Created package for v4.14.2
   * Wed Oct 15 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -48,6 +50,10 @@
     - apps/python
 :compilers:
   gcc:
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
 :compile: |
   python configure.py --destdir <%= dest_dir %>/python \
     --bindir <%= dest_dir %>/bin \
