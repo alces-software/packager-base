@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: LGPLv2
+:name: tpp
+:summary: Trans-Proteomic Pipeline
+:url: https://sourceforge.net/projects/sashimi
+:description: |
+  The Sashimi project hosts the Trans-Proteomic Pipeline (TPP),
+  a mature suite of tools for mass-spec (MS, MS/MS) based
+  proteomics statistical validation, quantitation, visualization,
+  and converters from raw MS data to our open mzXML format.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul 5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: TPP_4.8.0-src.tgz
+:src_dir: TPP-4.8.0/trans_proteomic_pipeline/src
+:version: '4.8.0'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/gnuplot
+  :runtime:
+    - apps/gnuplot
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - zlib-devel
+      - bzip2-devel
+      - gd-devel
+      - libpng-devel
+      - libxslt
+      - perl-CGI
+      - perl-XML-Parser
+      - perl-IO-Compress
+      - subversion
+  :runtime:
+    el:
+      - zlib
+      - bzip2-libs
+      - gd
+      - libpng
+      - libxslt
+      - perl-CGI
+      - perl-XML-Parser
+      - perl-IO-Compress
+:patches:
+  - makefile.patch
+:compile: |
+  export TPP_ROOT=<%= dest_dir %>/
+  export TPP_WEB=<%= dest_dir %>/web/
+  export GNUPLOT_BINARY=$GNUPLOTBIN/gnuplot
+  export XSLT_PROC=`which xsltproc`
+  make all <%= redirect(:make) %>
+:install: |
+  export TPP_ROOT=<%= dest_dir %>/
+  export TPP_WEB=<%= dest_dir %>/web/
+  export GNUPLOT_BINARY=$GNUPLOTBIN/gnuplot
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
