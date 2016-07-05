@@ -1,0 +1,80 @@
+---
+:schema: 1
+:title: RAxML - Randomized Axelerated Maximum Likelihood
+:license: GPLv2+
+:summary: Sequential and parallel inference of large phylogenies with maximum likelihood
+:url: http://sco.h-its.org/exelixis/web/software/raxml/index.html
+:description: |
+  RAxML-VI-HPC (randomized axelerated maximum likelihood for high
+  performance computing) is a sequential and parallel program for
+  inference of large phylogenies with maximum likelihood
+  (ML). Low-level technical optimizations, a modification of the
+  search algorithm, and the use of the GTR+CAT approximation as
+  replacement for GTR+gamma yield a program that is between 2.7 and 52
+  times faster than the previous version of RAxML. A large-scale
+  performance comparison with GARLI, PHYML, IQPNNI and MrBayes on real
+  data containing 1000 up to 6722 taxa shows that RAxML requires at
+  least 5.6 times less main memory and yields better trees in similar
+  times than the best competing program (GARLI) on datasets up to 2500
+  taxa. On datasets >=4000 taxa it also runs 2-3 times faster than
+  GARLI. RAxML has been parallelized with MPI to conduct parallel
+  multiple bootstraps and inferences on distinct starting trees. The
+  program has been used to compute ML trees on two of the largest
+  alignments to date containing 25 057 (1463 bp) and 2182 (51 089 bp)
+  taxa, respectively.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul 5  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added older v8.1.16 version
+  * Wed Feb 10 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v8.1.16.tar.gz
+:src_dir: standard-RAxML-8.1.16
+:requirements:
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:type: apps
+:compilers:
+  gcc:
+:compile: |
+  features=()
+  if grep -q 'flags.*\bpni\b' /proc/cpuinfo; then
+    features+=(SSE3)
+    if grep -q 'flags.*\bavx\b' /proc/cpuinfo; then
+      features+=(AVX)
+      if grep -q 'flags.*\bavx2\b' /proc/cpuinfo; then
+        features+=(AVX2)
+      fi
+    fi
+  fi
+
+  chmod 755 usefulScripts/*
+  sed -i 's,#define _PORTABLE_PTHREADS,/* #define _PORTABLE_PTHREADS */,g' axml.c
+
+  for t in "" "PTHREADS." "MPI." "HYBRID."; do
+    for f in "${features[@]}"; do
+      make -f Makefile.${f}.${t}gcc
+      rm *.o
+    done
+    make -f Makefile.${t}gcc
+    rm *.o
+  done
+
+  make -f Makefile.QuartetMPI.gcc
+  rm *.o
+  if [ "${#features}" -gt 0 ]; then
+    make -f Makefile.SSE3.QuartetMPI.gcc
+    rm *.o
+  fi
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v raxmlHPC* usefulScripts/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv gpl-3.0.txt manual/* README Release-Notes <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
