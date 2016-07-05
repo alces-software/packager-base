@@ -9,11 +9,13 @@
   and provides powerful image processing and graphics capabilities.
 :group: Libraries
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
   * Wed Feb  6 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Add explicit dependency on gridware python
     - Move bin/ directory for consistency with other python packages
   * Mon Sep 10 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - Refactored to packager style  
+    - Refactored to packager style
   * Mon Aug 8 2011 Steve Norledge
     - fixed version
     - made source file autodownload
@@ -28,12 +30,30 @@
   :runtime: apps/python
 :compilers:
   gcc:
-# BuildRequires:  readline readline-devel ncurses ncurses-devel gdbm gdbm-devel glibc-devel autoconf gcc unzip openssl-devel db4-devel byacc
+:dependencies:
+  :build:
+    el:
+      - readline-devel
+      - ncurses-devel
+      - gdbm-devel
+      - autoconf
+      - openssl-devel
+      - libdb-devel
+      - byacc
+  :runtime:
+    el:
+      - readline
+      - ncurses
+      - gdbm
+      - openssl
+      - libdb
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
-  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin  
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
