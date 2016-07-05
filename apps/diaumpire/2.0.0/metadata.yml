@@ -1,0 +1,75 @@
+---
+:schema: 1
+:title: DIA-Umpire
+:license: 
+:summary: Computational analysis pipeline for DIA proteomics data
+:url: http://diaumpire.sourceforge.net/
+:description: |
+  DIA-Umpire is an open source Java program for computational analysis
+  of data independent acquisition (DIA) mass spectrometry-based
+  proteomics data. It enables untargeted peptide and protein
+  identification and quantitation using DIA data, and also
+  incorporates targeted extraction to reduce the number of cases of
+  missing quantitation. For more details about the algorithms used and
+  performance evaluation, please refer to the following publications:
+
+   * Tsou CC, Avtonomov A, Larsen B, Tucholska M, Choi H, Gingras AC,
+     Nesvizhskii AI, "DIA-Umpire: comprehensive computational
+     framework for data independent acquisition proteomics," Nature
+     Methods 12:258-64 (2015).
+     <http://www.nature.com/nmeth/journal/v12/n3/full/nmeth.3255.html>
+   * Tsou CC, Tsai CF, Teo G, Chen YJ, Nesvizhskii AI, "Untargeted,
+     spectral library-free analysis of data independent acquisition
+     proteomics data generated using Orbitrap mass spectrometers",
+     Proteomics [Epub ahead of print] PubMed PMID: 27246681
+     (2016). <http://onlinelibrary.wiley.com/doi/10.1002/pmic.201500526/full>
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko
+    - First created
+:src: DIA-Umpire_v2_0.zip
+:src_dir: .
+:type: apps
+:version: '2.0.0'
+:compilers:
+  noarch:
+:dependencies:
+  el:
+    - java-1.8.0-openjdk
+:compile: |
+  # no-op
+:install: |
+  mkdir -p <%= dest_dir %>/{java,bin,share} <%= redirect(:install) %>
+  cp -Rv *.jar lib <%= dest_dir %>/java <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/DIA_Umpire_Quant
+  #!/bin/bash
+  exec java `eval echo $DIAUMPIRE_JAVA_OPTS` -jar "<%= dest_dir %>/java/DIA_Umpire_Quant.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/DIA_Umpire_Quant
+  cat <<\EOF > <%= dest_dir %>/bin/DIA_Umpire_SE
+  #!/bin/bash
+  exec java `eval echo $DIAUMPIRE_JAVA_OPTS` -jar "<%= dest_dir %>/java/DIA_Umpire_SE.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/DIA_Umpire_SE
+  cp -v *.params <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else {
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
