@@ -26,6 +26,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added patch to fix python variant
   * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated distro dependencies for EL, download links and compatibility with EL7
     - Added libsvm and qt as build dependencies
@@ -38,6 +40,8 @@
 :sources:
   - glpk-4.46.tar.gz
   - WildMagic5.tar.gz
+:patches:
+  - fix-python-setup.patch
 :variants:
   default:
   python:
@@ -80,6 +84,7 @@
   gcc:
 :compile: |
   <% if variant_name == 'python' %>
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   mkdir $PYTHONDEPSDIR
@@ -120,17 +125,18 @@
     -DPYOPENMS=<%= variant_name == 'python' ? 'ON' : 'OFF' %> \
     .. <%= redirect(:configure) %>
 
-  make <%= redirect(:compile) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:compile) %>
 
   <% if variant_name == 'python' %>
   rm -f ../src/pyOpenMS/pxds/ConsensusID.pxd
-  make pyopenms <%= redirect(:compile) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} pyopenms <%= redirect(:compile) %>
   <% end %>
 :install: |
   cd build
   make install <%= redirect(:install) %>
 
   <% if variant_name == 'python' %>
+  export PYTHONDONTWRITEBYTECODE=true
   cd ..
   PYTHONDEPSDIR=$(pwd)/python
   cd build/pyOpenMS
