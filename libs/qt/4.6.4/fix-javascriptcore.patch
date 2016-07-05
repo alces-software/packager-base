@@ -1,0 +1,9 @@
+--- src/3rdparty/javascriptcore/JavaScriptCore/wtf/RefPtr.h.orig	2016-07-05 16:19:11.488919749 +0000
++++ src/3rdparty/javascriptcore/JavaScriptCore/wtf/RefPtr.h	2016-07-05 16:17:46.000000000 +0000
+@@ -24,5 +24,6 @@
+ #include <algorithm>
+ #include "AlwaysInline.h"
+ #include "FastAllocBase.h"
++#include "PassRefPtr.h"
+ 
+ namespace WTF {
