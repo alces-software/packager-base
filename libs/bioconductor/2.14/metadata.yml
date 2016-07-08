@@ -35,6 +35,9 @@
   :runtime:
     - apps/R >= 3.1.0
 :changelog: |
+  * Fri Jul 8  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+    - Updated to use R instead of Rscript
   * Fri Jul 11 2014 - Ben Armston <ben.armston@alces-software.com>
     - Updated to v2.14
   * Tue Jun 25 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -58,7 +61,7 @@
   unset R_LIBS_USER
   export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
   R CMD INSTALL --library=<%= dest_dir %>/R BiocInstaller <%= redirect(:biocinstaller) %>
-  Rscript --vanilla - <%= redirect(:install) %> <<RSCRIPT
+  R --vanilla <%= redirect(:install) %> <<RSCRIPT
     require("BiocInstaller")
     biocLite(suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
   RSCRIPT
