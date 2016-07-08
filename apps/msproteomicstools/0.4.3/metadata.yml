@@ -1,0 +1,105 @@
+---
+:schema: 1
+:title: MS Proteomics Tools
+:license: BSD License
+:summary: Some hopefully useful tools for mass spectrometry applied to proteomics
+:url: https://github.com/msproteomicstools/msproteomicstools
+:description: |
+  This package contains some hopefully useful tools for mass
+  spectrometry applied to proteomics. Specifically, it contains:
+
+    * the TAPIR visualization software
+    * the MS Proteomics Tools Library
+    * a set of executables and scripts
+
+  TAPIR is a visualization software for chromatographic data obtained
+  by mass spectrometry. It provides efficient visualization of
+  high-throughput targeted proteomics experiments.
+
+  The TAPIR software is a fast and efficient Python visualization
+  software for chromatograms and peaks identified in targeted
+  proteomics experiments. The input formats are open, community-driven
+  standardized data formats (mzML for raw data storage and TraML
+  encoding the hierarchical relationships between transitions,
+  peptides and proteins).
+
+  TAPIR is scalable to proteome-wide targeted proteomics studies (as
+  enabled by SWATH-MS), allowing researchers to visualize
+  high-throughput datasets. The framework integrates well with
+  existing automated analysis pipelines and can be extended beyond
+  targeted proteomics to other types of analyses.
+
+  The mass spectrometric (MS) Proteomics Tools Library contains
+  multiple Python functions useful for MS-based proteomics.
+:type: apps
+:group: Biochemistry
+:changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
+  * Fri Feb 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v0.4.3
+  * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 0a58bac44c508476ae012ca362b330634a7003f1.zip
+:src_dir: msproteomicstools-0a58bac44c508476ae012ca362b330634a7003f1
+:version: '0.4.3'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/setuptools >= 18.1
+  :build:
+    - apps/python ~> 2.7.0
+    - apps/cython
+    - libs/numpy
+    - libs/biopython
+    - libs/scipy
+    - apps/sip = 4.16.3
+    - libs/pil >= 1.1.6
+    - libs/pyqt = 4.11.2
+    - libs/pyqwt_qt48
+  :runtime:
+    - apps/setuptools >= 18.1
+    - apps/python ~> 2.7.0
+    - apps/cython
+    - libs/numpy
+    - libs/biopython
+    - libs/scipy
+    - apps/sip = 4.16.3
+    - libs/pil >= 1.1.6
+    - libs/pyqt = 4.11.2
+    - libs/pyqwt_qt48
+:dependencies:
+  :build:
+    el:
+      - libxml2-devel
+      - libxslt-devel
+  :runtime:
+    el:
+      - libxml2
+      - libxslt
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:build) %>
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR/lib/python2.7/site-packages
+  mkdir -p $PYTHONDEPSDIR/lib/python2.7/site-packages
+  easy_install --prefix $PYTHONDEPSDIR . <%= redirect(:python) %>
+  easy_install -Z --prefix $PYTHONDEPSDIR guidata <%= redirect(:python) %>
+  easy_install -Z --prefix $PYTHONDEPSDIR guiqwt <%= redirect(:python) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  sed -i -e 's/sip.setapi(\([^,]*\), 2)/sip.setapi(\1, 1)/g' \
+    python/lib/python2.7/site-packages/PythonQwt-*.egg/qwt/qt/__init__.py \
+    python/lib/python2.7/site-packages/guidata-*.egg/guidata/qt/__init__.py
+  mkdir -p <%= dest_dir %>/python
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
