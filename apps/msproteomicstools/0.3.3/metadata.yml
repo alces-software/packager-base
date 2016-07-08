@@ -34,6 +34,9 @@
 :type: apps
 :group: Biochemistry
 :changelog: |
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
+    - Relaxed setuptools restriction from ~> 18.1 to >= 18.1
   * Thu Dec  3 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: msproteomicstools-0.3.3.zip
@@ -43,7 +46,7 @@
   gcc:
 :requirements:
   :tool:
-    - apps/setuptools ~> 18.1
+    - apps/setuptools >= 18.1
     - apps/sip = 4.14.2
   :build:
     - apps/python ~> 2.7.0
@@ -52,26 +55,38 @@
     - libs/biopython
     - libs/scipy
     - libs/pil >= 1.1.6
-    - libs/pyqwt
+    - libs/pyqwt_qt46
     - libs/pyqt = 4.9.6
   :runtime:
+    - apps/setuptools >= 18.1
     - apps/python ~> 2.7.0
     - apps/cython
     - libs/numpy
     - libs/biopython
     - libs/scipy
     - libs/pil >= 1.1.6
-    - libs/pyqwt
+    - libs/pyqwt_qt46
     - libs/pyqt = 4.9.6
+:dependencies:
+  :build:
+    el:
+      - libxml2-devel
+      - libxslt-devel
+  :runtime:
+    el:
+      - libxml2
+      - libxslt
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
   PYTHONDEPSDIR=$(pwd)/python
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR/lib/python2.7/site-packages
   mkdir -p $PYTHONDEPSDIR/lib/python2.7/site-packages
   easy_install --prefix $PYTHONDEPSDIR . <%= redirect(:python) %>
-  easy_install --prefix $PYTHONDEPSDIR guidata <%= redirect(:python) %>
-  easy_install --prefix $PYTHONDEPSDIR guiqwt <%= redirect(:python) %>
+  easy_install -Z --prefix $PYTHONDEPSDIR guidata <%= redirect(:python) %>
+  easy_install -Z --prefix $PYTHONDEPSDIR guiqwt <%= redirect(:python) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   sed -i -e 's/sip.setapi(\([^,]*\), 2)/sip.setapi(\1, 1)/g' \
     python/lib/python2.7/site-packages/PythonQwt-*.egg/qwt/qt/__init__.py \
