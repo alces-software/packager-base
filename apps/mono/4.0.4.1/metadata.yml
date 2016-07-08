@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: Mono
+:license: GPL, LGPLv2, MIT License; see http://www.mono-project.com/FAQ:_Licensing
+:summary: A software platform designed to allow developers to easily create cross platform applications
+:url: http://www.mono-project.com/
+:description: |
+  Mono is a software platform designed to allow developers to easily
+  create cross platform applications. It is an open source
+  implementation of Microsoft's .Net Framework based on the ECMA
+  standards for C# and the Common Language Runtime. We feel that by
+  embracing a successful, standardized software platform, we can lower
+  the barriers to producing great applications for Linux.
+:group: Languages
+:changelog: |
+  * Tue Jul  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v4.0.4.1 version
+  * Tue Apr 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Mar 13 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Remove absolute paths from dllmap in mono configuration file
+  * Mon Mar  4 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mono-4.0.4.1.tar.bz2
+:type: apps
+:src_dir: 'mono-4.0.4'
+:version: '4.0.4.1'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gettext
+    - libtool
+    - gcc-c++
+:compile: |
+  ./autogen.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+  sed -i -e "s|<%= dest_dir %>/lib/||g" <%= dest_dir %>/etc/mono/config
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
+  
