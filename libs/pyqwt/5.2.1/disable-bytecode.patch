@@ -1,0 +1,11 @@
+--- configure/configure.py.orig	2011-01-09 09:26:05.000000000 +0900
++++ configure/configure.py	2016-07-08 22:59:01.699865548 +0900
+@@ -852,7 +852,7 @@
+     inform('%s file(s) lazily copied.\n' % lazy_copies)
+ 
+     # byte-compile the Python files
+-    compileall.compile_dir(build_dir, ddir=options.module_install_path)
++    #compileall.compile_dir(build_dir, ddir=options.module_install_path)
+ 
+     # files to be installed
+     installs = []
