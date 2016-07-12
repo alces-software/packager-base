@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: QUAST
+:license: GPLv2
+:summary: QUality ASsessment Tool for Genome Assemblies
+:url: http://quast.sourceforge.net/
+:description: |
+  QUAST evaluates genome assemblies.
+
+  QUAST works both with and without a reference genome.
+
+  The tool accepts multiple assemblies, thus is suitable for
+  comparison.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: quast-2.3.tar.gz
+:version: '2.3'
+:compilers:
+  gcc:
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - make
+      - tcsh
+  :runtime:
+    el:
+      - tcsh
+:requirements:
+  :build:
+    - apps/python
+    - libs/matplotlib
+  :runtime:
+    - apps/python
+    - libs/matplotlib
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python quast.py --test <%= redirect(:compile) %>
+  python metaquast.py --test <%= redirect(:compile) %>
+  sed -i -e "s/quast_dirpath, 'libs'/quast_dirpath, '..', 'python'/g" \
+    -e "s/'python', 'site_packages'/'python', 'libs', 'site_packages'/g" \
+    quast.py metaquast.py
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/{bin,doc,python,share}
+  cp -Rv libs <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -v quast.py metaquast.py <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v CHANGES INSTALL LICENSE README manual.html <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv test_data <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
