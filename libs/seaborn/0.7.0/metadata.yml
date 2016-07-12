@@ -27,73 +27,38 @@
 :type: libs
 :group: Libraries
 :changelog: |
-  * Fri Jan  29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+  * Tue Jul 12 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
+    - removed non-functional python3/python34 variants
+  * Fri Jan 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
 :src: seaborn-0.7.0.tar.gz
 :version: 'seaborn-0.7.0'
 :compilers:
   gcc:
-:variants:
-  default:
-    :description: "Builds for Python 2.7.x series"
-    :python_bin: python
-    :python_libdir: python2.7
-    :requirements:
-      :tool:
-        - apps/setuptools
-      :build:
-        - apps/python ~> 2.7.0
-        - libs/scipy
-        - libs/matplotlib 
-        - libs/pandas
-      :runtime:
-        - apps/python ~> 2.7.0
-        - libs/scipy
-        - libs/matplotlib
-        - libs/pandas
-  python3:
-    :description: "Builds for Python 3.3.x series"
-    :python_bin: python3
-    :python_libdir: python3.3
-    :requirements:
-      :tool:
-        - apps/setuptools_python3
-      :build:
-        - apps/python3 ~> 3.3.0
-        - libs/scipy_python3
-        - libs/matplotlib_python3
-        - libs/pandas_python3
-      :runtime:
-        - apps/python3 ~> 3.3.0
-        - libs/scipy_python3
-        - libs/matplotlib_python3
-        - libs/pandas_python3
-  python34:
-    :description: "Builds for Python 3.4.x series"
-    :python_bin: python3
-    :python_libdir: python3.4
-    :requirements:
-      :tool:
-        - apps/setuptools_python34
-      :build:
-        - apps/python34 ~> 3.4.0
-        - libs/scipy_python34
-        - libs/matplotlib_python34
-        - libs/pandas_python34
-      :runtime:
-        - apps/python34 ~> 3.4.0
-        - libs/scipy_python34
-        - libs/matplotlib_python34
-        - libs/pandas_python34
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python ~> 2.7.0
+    - libs/scipy
+    - libs/matplotlib
+    - libs/pandas
+  :runtime:
+    - apps/python ~> 2.7.0
+    - libs/scipy
+    - libs/matplotlib
+    - libs/pandas
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 :install: |
-  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
-  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
-  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
 
-  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
-
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
