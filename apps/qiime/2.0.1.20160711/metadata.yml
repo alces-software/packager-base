@@ -1,0 +1,91 @@
+---
+:schema: 1
+:title: QIIME 2
+:license: BSD License
+:summary: Quantitative Insights Into Microbial Ecology
+:url: https://github.com/qiime2/qiime2
+:description: |
+  QIIME (pronounced "chime") stands for Quantitative Insights Into
+  Microbial Ecology. QIIME is an open source software package for
+  comparison and analysis of microbial communities, primarily based on
+  high-throughput amplicon sequencing data (such as SSU rRNA)
+  generated on a variety of platforms, but also supporting analysis of
+  other types of data (such as shotgun metagenomic data). QIIME takes
+  users from their raw sequencing output through initial analyses such
+  as OTU picking, taxonomic assignment, and construction of
+  phylogenetic trees from representative sequences of OTUs, and
+  through downstream statistical analysis, visualization, and
+  production of publication-quality graphics. QIIME has been applied
+  to single studies based on billions of sequences from thousands of
+  samples.
+
+  QIIME 2 is ready for experimental use while it's in its alpha
+  release stage. It currently has limited microbiome analysis
+  functionality as we have focused our initial efforts on building the
+  underlying framework.
+
+  Until the QIIME 2 microbiome analysis functionality has expanded, we
+  recommend that you continue to use QIIME 1 and Qiita for your
+  microbiome analyses, as these will provide you with complete
+  analysis solutions.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to prerelease alpha of QIIME 2, v2.0.1.dev0
+  * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.9.1
+    - Readded dependency on pycogent
+    - Removed lanemask_in_1s_and_0s (not required in 1.9.0+)
+    - Removed obsolete configuration variables (template_alignment_lanemask_fp, qiime_scripts_dir)
+  * Tue Mar 26 2015 James Donohue <james.donohue@alces-software.com>
+    - Updated to v1.9.0
+  * Tue May 27 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.8.0
+    - Remove obsolete patches for denoiser
+    - Pin numpy to <= 1.7.1 to fulfil QIIME requirement for >= 1.5.1, <= 1.7.1
+  * Wed Apr 23 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Depends on setuptools during installation
+    - Build FlowAlignment utility as part of installation to enable use of denoiser
+    - Now depends on ghc to build FlowAlignment utility
+    - Added patch and source file to correct upstream bugs with denoiser
+  * Wed Jul 24 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: qiime2-b46636bacccc9d050103f05624438098a74f44df.zip
+:sources:
+  - q2cli-83c6391f9a489738064c61489e7f500d139613a2.zip
+  - q2-diversity-cc80a3ab0543f06e7472e29980e17be6cdec3641.zip
+  - q2-emperor-e311d3735587d5aff711c8ef868068753784083c.zip
+  - q2-feature-table-4b81b8cd4bb1a9dd72756ca42448524483b1acd9.zip
+  - q2-types-248a45348b571dafadc4f1f150237328b5622af2.zip
+:src_dir: qiime2-b46636bacccc9d050103f05624438098a74f44df
+:type: apps
+:version: '2.0.1.20160711'
+:compilers:
+  bin:
+:requirements:
+  :tool:
+    - apps/anaconda3
+:compile: |
+  # no-op
+:install: |
+  rmdir <%= dest_dir %>
+  export CONDA_ENVS_PATH=<%= dest_dir %>
+  export PYTHONDONTWRITEBYTECODE=true
+  conda create --copy -q -p <%= dest_dir %> python=3.5 jupyter scikit-bio -c biocore <%= redirect(:create) %>
+  rm -rf <%= dest_dir %>/.pkgs
+  source activate <%= dest_dir %> <%= redirect(:activate) %>
+  pip install <%= source('qiime2-b46636bacccc9d050103f05624438098a74f44df.zip') %> \
+    <%= source('q2cli-83c6391f9a489738064c61489e7f500d139613a2.zip') %> <%= redirect(:install) %>
+  pip install <%= source('q2-types-248a45348b571dafadc4f1f150237328b5622af2.zip') %> <%= redirect(:install) %>
+  pip install <%= source('q2-feature-table-4b81b8cd4bb1a9dd72756ca42448524483b1acd9.zip') %> <%= redirect(:install) %>
+  pip install <%= source('q2-diversity-cc80a3ab0543f06e7472e29980e17be6cdec3641.zip') %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  conflict apps/python3
+  conflict apps/python
+  conflict apps/anaconda
+  conflict apps/anaconda3
