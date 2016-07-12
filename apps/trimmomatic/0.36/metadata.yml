@@ -1,0 +1,90 @@
+---
+:schema: 1
+:title: Trimmomatic
+:license: GPLv3
+:summary: A flexible read trimming tool for Illumina NGS data
+:url: http://www.usadellab.org/cms/?page=trimmomatic
+:description: |
+  Trimmomatic performs a variety of useful trimming tasks for illumina
+  paired-end and single ended data.The selection of trimming steps and
+  their associated parameters are supplied on the command line.
+
+  The current trimming steps are:
+
+   * ILLUMINACLIP: Cut adapter and other illumina-specific sequences
+     from the read.
+   * SLIDINGWINDOW: Perform a sliding window trimming, cutting once
+     the average quality within the window falls below a threshold.
+   * LEADING: Cut bases off the start of a read, if below a threshold
+     quality
+   * TRAILING: Cut bases off the end of a read, if below a threshold
+     quality
+   * CROP: Cut the read to a specified length
+   * HEADCROP: Cut the specified number of bases from the start of the
+     read
+   * MINLEN: Drop the read if it is below a specified length
+   * TOPHRED33: Convert quality scores to Phred-33
+   * TOPHRED64: Convert quality scores to Phred-64
+
+  It works with FASTQ (using phred + 33 or phred + 64 quality scores,
+  depending on the Illumina pipeline used), either uncompressed or
+  gzipp'ed FASTQ. Use of gzip format is determined based on the .gz
+  extension.
+
+  For single-ended data, one input and one output file are specified,
+  plus the processing steps. For paired-end data, two input files are
+  specified, and 4 output files, 2 for the 'paired' output where both
+  reads survived the processing, and 2 for corresponding 'unpaired'
+  output where a read survived, but the partner read did not.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul 12 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v0.36
+  * Thu Apr 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Jan 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v0.35
+  * Fri Aug  1 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Trimmomatic-0.36.zip
+:src_dir: Trimmomatic-0.36
+:type: apps
+:version: '0.36'
+:compilers:
+  noarch:
+:dependencies:
+  el:
+    - java-1.8.0-openjdk
+:compile: |
+  # no-op; this is a binary distribution of a java application
+:install: |
+  mkdir -p <%= dest_dir %>/{java,doc,share/adapters,bin}
+  install -v -m 0644 trimmomatic-<%= version %>.jar <%= dest_dir %>/java/trimmomatic.jar <%= redirect(:install) %>
+  install -v -m 0644 LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -v -m 0644 adapters/* <%= dest_dir %>/share/adapters <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/trimmomatic
+  #!/bin/bash
+  exec java `eval echo $TRIMMOMATIC_JAVA_OPTS` -jar "<%= dest_dir %>/java/trimmomatic.jar" "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/trimmomatic
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else {
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
