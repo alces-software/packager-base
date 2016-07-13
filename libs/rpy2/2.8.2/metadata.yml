@@ -28,6 +28,7 @@
     - apps/python
     - apps/R
   :runtime: 
+    - apps/setuptools
     - apps/python
     - apps/R
 :dependencies:
