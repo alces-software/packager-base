@@ -28,6 +28,10 @@
 :version: '1.2'
 :compilers:
   noarch:
+:dependencies:
+  :runtime:
+    el:
+      - java-1.8.0-openjdk
 :compile: |
   #noop
 :install: |
