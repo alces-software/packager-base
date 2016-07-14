@@ -59,12 +59,20 @@
   gcc:
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  for a in jinja2; do
+    easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
+  done
   python setup.py build <%= redirect(:build) %>
 :install: |
   export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
   # XXX - Should probably 'env' the hashbang in the scripts, but we
   # don't in other places at the moment, so we don't here, for
   # consistency.
