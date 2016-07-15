@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: PyMOL
+:license: Python License (CNRI Python License) 
+:summary: PyMOL is a Python-enhanced molecular graphics tool 
+:url: https://www.pymol.org/
+:description: |
+  PyMOL is a Python-enhanced molecular graphics tool. It excels at 3D 
+  visualization of proteins, small molecules, density, surfaces, and 
+  trajectories. It also includes molecular editing, ray tracing, and 
+  movies. Open Source PyMOL is free to everyone!
+:group: Molecular Dynamics
+:changelog: |
+  * Thu Jul 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pymol-v1.8.2.1.tar.bz2
+:type: apps
+:src_dir: 'pymol'
+:version: '1.8.2.1'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/python
+    - libs/numpy
+  :runtime:
+    - apps/python
+    - libs/numpy
+:dependencies:
+  el:
+    - gcc-c++
+    - glew
+    - glew-devel
+    - libpng-devel
+    - freetype-devel
+    - libxml2-devel 
+    - freeglut
+    - freeglut-devel 
+:compile: |
+  python setup.py build <%= redirect(:configure) %>
+:install: |
+  python setup.py install --prefix=<%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages 
