@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: molscript
+:license: MIT License 
+:summary: MolScript is a program for displaying molecular 3D structures 
+:url: http://www.avatar.se/molscript/ 
+:description: |
+  MolScript is a program for displaying molecular 3D structures, such as 
+  proteins, in both schematic and detailed representations.
+
+  MolScript has for a long time been a standard tool in the science of 
+  macromolecular structures. The paper describing it appears as number 
+  82 in the list of the Nature feature article "The Top 100 Papers. 
+  Nature explores the most-cited research of all time" by Richard Van 
+  Noorden, Brendan Maher & Regina Nuzzo published 30 Oct 2014.
+:group: Molecular Dynamics
+:changelog: |
+  * Fri Jul 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: molscript-2.1.2.tar.gz 
+:type: apps
+:src_dir: 'molscript-2.1.2'
+:version: '2.1.2'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - libjpeg-turbo-devel
+    - libpng-devel
+    - freeglut
+    - freeglut-devel 
+:compile: |
+  mv Makefile.basic Makefile <%= redirect(:compile) %>
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %> 
+  install -D -m 0755 molscript molauto <%= dest_dir %>/bin/. <%= redirect(:install) %>
+  cp -Rv examples <%= dest_dir %>/. <%= redirect(:install) %>
+  cp -Rv doc <%= dest_dir %>/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path PATH ${appdir}/bin
