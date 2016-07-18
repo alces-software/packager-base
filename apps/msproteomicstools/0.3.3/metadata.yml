@@ -34,6 +34,8 @@
 :type: apps
 :group: Biochemistry
 :changelog: |
+  * Mon Jul 18 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add patch to include missing library and data file
   * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added distro dependencies
     - Relaxed setuptools restriction from ~> 18.1 to >= 18.1
@@ -76,6 +78,8 @@
     el:
       - libxml2
       - libxslt
+:patches:
+  - include-graphs-and-data_structures.patch
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>

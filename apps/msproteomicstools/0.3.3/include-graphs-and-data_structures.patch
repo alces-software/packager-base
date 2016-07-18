@@ -1,0 +1,19 @@
+--- setup.py.orig	2015-10-05 22:51:53.000000000 +0100
++++ setup.py	2016-07-18 10:55:00.757619021 +0100
+@@ -26,6 +26,7 @@
+                   "msproteomicstoolslib.algorithms.alignment",
+                   "msproteomicstoolslib.algorithms.shared",
+                   "msproteomicstoolslib.algorithms.PADS",
++                  "msproteomicstoolslib.algorithms.graphs",
+                   "msproteomicstoolslib.data_structures",
+                   "msproteomicstoolslib.format",
+                   "msproteomicstoolslib.math",
+@@ -37,6 +38,8 @@
+       package_dir = {
+           'openswathgui': 'gui/openswathgui',
+       },
++      package_data={'msproteomicstoolslib.data_structures':
++          ['modifications_default.tsv']},
+       scripts=all_scripts,
+       description='Tools for MS-based proteomics',
+       long_description='msproteomicstools - python module for MS-based proteomics',
