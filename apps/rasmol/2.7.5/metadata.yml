@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: rasmol
+:license: GNU GPL 
+:summary: RasMol is a program for molecular graphics visualisation 
+:url: http://www.openrasmol.org/
+:description: |
+  The program reads in a molecule coordinate file and interactively displays 
+  the molecule on the screen in a variety of colour schemes and molecule 
+  representations. Currently available representations include depth-cued 
+  wireframes, 'Dreiding' sticks, spacefilling (CPK) spheres, ball and stick, 
+  solid and strand biomolecular ribbons, atom labels and dot surfaces.
+:group: Molecular Dynamics
+:changelog: |
+  * Fri Jul 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: RasMol_2.7.5.tar.gz 
+:type: apps
+:src_dir: 'rasmol-2.7.5-23Jul09'
+:version: '2.7.5'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - libjpeg-turbo-devel
+    - glibc-devel.i686
+    - zlib-devel
+    - gcc-c++
+    - libX11.i686
+    - libX11-devel.x86_64
+    - libX11-devel.i686
+    - libXext-devel.x86_64
+    - libXext-devel.i686
+    - libXi-devel.x86_64
+    - libXi-devel.i686
+    - libXpm
+    - libXpm-devel
+    - libXpm.i686
+    - libXpm-devel.i686
+    - imake
+:compile: |
+  cd src
+  ./build_all.sh <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %> 
+  cd src
+  install -v -D -m 0755 rasmol_16BIT rasmol_32BIT rasmol_48x48.xpm rasmol_8BIT \
+  rasmol_run.sh rasmol_XFORMS_16BIT  rasmol_XFORMS_32BIT  rasmol_XFORMS_8BIT <%= dest_dir %>/bin/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
