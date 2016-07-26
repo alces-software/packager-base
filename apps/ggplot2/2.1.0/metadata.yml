@@ -1,0 +1,52 @@
+---
+:schema: 1
+:license: GPL 
+:summary: An implementation of the grammar of graphics in R 
+:url: http://ggplot2.org/ 
+:description: |
+  ggplot2 is a plotting system for R, based on the grammar of 
+  graphics, which tries to take the good parts of base and 
+  lattice graphics and none of the bad parts. It takes care 
+  of many of the fiddly details that make plotting a hassle 
+  (like drawing legends) as well as providing a powerful model 
+  of graphics that makes it easy to produce complex 
+  multi-layered graphics.
+:type: apps
+:group: Statistics 
+:changelog: |
+  * Tue 26 July 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: ggplot2_2.1.0.tar.gz 
+:src_dir: ggplot2
+:version: '2.1.0'
+:requirements:
+  :runtime: apps/R
+  :build: apps/R
+:compilers:
+  gcc:
+:dependencies: 
+  el:
+    - gcc-c++
+    - zlib-devel
+:compile: |
+  #noop
+:install: |
+  mkdir -p <%= dest_dir %>/R
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  #Install dependencies
+  R CMD BATCH <(cat <<EOF
+    local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+    install.packages("digest","<%= dest_dir %>/R")
+    install.packages("gtable","<%= dest_dir %>/R")
+    install.packages("plyr","<%= dest_dir %>/R")
+    install.packages("reshape2","<%= dest_dir %>/R")
+    install.packages("scales","<%= dest_dir %>/R")
+  EOF) <%= redirect(:rlibs) %>
+  R CMD INSTALL -l <%= dest_dir %>/R . <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PATH ${appdir}/bin
