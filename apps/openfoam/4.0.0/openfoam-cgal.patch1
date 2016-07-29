@@ -1,0 +1,13 @@
+--- OpenFOAM-4.0/etc/config.sh/CGAL.old	2016-06-24 22:33:52.000000000 +0100
++++ OpenFOAM-4.0/etc/config.sh/CGAL	2016-07-28 17:40:38.314188262 +0100
+@@ -45,8 +45,8 @@
+
+     common_path=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER
+
+-    export BOOST_ARCH_PATH=$common_path/$boost_version
+-    export CGAL_ARCH_PATH=$common_path/$cgal_version
++    export BOOST_ARCH_PATH=$BOOSTDIR
++    export CGAL_ARCH_PATH=$CGALDIR
+
+     if [ "$FOAM_VERBOSE" -a "$PS1" ]
+     then
