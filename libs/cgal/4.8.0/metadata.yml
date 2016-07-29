@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: CGAL 
+:license: GPL - Unless Specified
+:summary: Computational Geometry Algorithms Library 
+:url: https://github.com/CGAL/cgal 
+:description: |
+  The Computational Geometry Algorithms Library (CGAL) is a C++ library 
+  that aims to provide easy access to efficient and reliable algorithms 
+  in computational geometry.
+:group: Mathematics
+:changelog: |
+  * Thu 27 Jul 2016 - Ruan G. Ellis <mark.titorenko@alces-software.com>
+    - First created
+:src: CGAL-4.8.zip
+:src_dir: CGAL-4.8
+:type: libs
+:version: '4.8.0'
+:requirements:
+  :tool: apps/cmake
+  :build: libs/boost > 1.49.0
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gmp-devel
+    - mpfr-devel
+:compile: |
+  cmake . -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+
