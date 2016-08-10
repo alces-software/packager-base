@@ -75,6 +75,7 @@
   gcc:
 :dependencies:
   el:
+    - zlib-devel
     - flex
     - mesa-libGL-devel
     - mesa-libGLU-devel
