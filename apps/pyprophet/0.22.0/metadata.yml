@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: pyprophet
+:license: BSD
+:summary: Analyse MRM data
+:url: https://github.com/uweschmitt/pyprophet
+:description: |
+  The pyprophet algorithm is a python reimplementation of mProphet algorithm
+  and can take targeted proteomics data, learn a linear separation between
+  true signal and the noise signal and then compute a q-value (false discovery
+  rate) to achieve experiment-wide cutoffs.
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 18 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v0.22.0
+  * Tue Jul 12 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use Gridware versions of seaborn and scikitlearn
+  * Fri Apr 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
+  * Wed Oct 20 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v0.18.3
+  * Wed Oct 05 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v0.17.0
+  * Wed Sept 16 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pyprophet-0.22.0.tar.gz
+:src_dir: pyprophet-0.22.0
+:type: apps
+:version: '0.22.0'
+:requirements:
+  :build:
+    - apps/python
+    - libs/numpy >= 1.7.0
+    - libs/pandas >= 0.13
+    - libs/numexpr >= 2.1
+    - libs/scipy
+    - libs/matplotlib
+    - libs/seaborn
+    - libs/scikitlearn >= 0.13
+    - apps/setuptools
+  :runtime:
+    - apps/python
+    - libs/numpy >= 1.7.0
+    - libs/pandas >= 0.13
+    - libs/numexpr >= 2.1
+    - libs/scipy
+    - libs/matplotlib
+    - libs/seaborn
+    - libs/scikitlearn >= 0.13
+    - apps/setuptools
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages/
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
