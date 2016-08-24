@@ -32,6 +32,8 @@
   corroborating the high precision of the STAR mapping strategy.
 :group: Bioinformatics
 :changelog: |
+  * Wed Aug 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added long variant
   * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Thu Aug 13 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -48,18 +50,31 @@
 :version: '2.4.2a'
 :compilers:
   gcc:
+:variants:
+  default:
+  long:
 :dependencies:
   el:
     - gcc-c++
     - vim-common
     - zlib-devel
 :compile: |
+  <% if variant_name == 'default' %>
   cd source
   make clean
   make <%= redirect(:compile) %>
+  <% elsif variant_name == 'long' %>
+  cd source
+  make clean
+  make STARlong <%= redirect(:compile) %>
+  <% end %>
 :install: |
   mkdir -p <%= dest_dir %>/{bin,doc}
+  <% if variant_name == 'default' %>
   install -v -D -m 0755 source/STAR <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  <% elsif variant_name == 'long' %>
+  install -v -D -m 0755 source/STARlong <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  <% end %>
   install -v -D -m 0644 CHANGES LICENSE README doc/STARmanual.pdf <%= dest_dir %>/doc/ <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
