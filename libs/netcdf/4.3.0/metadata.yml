@@ -30,6 +30,8 @@
       supported by current and future versions of the software
 :group: Libraries
 :changelog: |
+  * Wed Aug 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Sep 23 2013 - James Donohue <james.donohue@alces-software.com>
     - Bumped to version 4.3.0
   * Tue Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -42,6 +44,11 @@
   :runtime: apps/hdf5_serial
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
+    - zlib-devel
 :compile: |
   export CFLAGS=-I$HDF5_SERIALINCLUDE
   export LDFLAGS=-L$HDF5_SERIALLIB
