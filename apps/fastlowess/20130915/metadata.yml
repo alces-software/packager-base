@@ -1,0 +1,66 @@
+---
+:schema: 1
+:license: Other 
+:summary: An improved version of statsmodel's lowess.
+:url: https://github.com/carljv/Will_it_Python 
+:description: |
+  Files for an improved version of statsmodel's lowess.
+
+  cylowess.pyx is Cython code for a faster version of the lowess function
+  in statsmodels.nonparametric.lowess.
+
+  This code is more or less a from-scratch re-write, borrowing from both 
+  statsmodel's lowess, and from W. Cleveland's original lowess.f Fortran code.
+
+  The main speed improvements come from:
+
+  1. Replacing expensive lstsq() calls in the statsmodel versions with direct
+     calculations of the fitted y-values.
+  2. General Cython-based speedups for simple procedures in tight loops (like
+     updating k-nearest neighbors).
+  3. But mostly the implementation of local linear interpolation via the new
+     delta parameter. This vastly reduces the amount of times weighted regressions
+     are run with minimal effect on the results. The idea, is to only run regression
+     at points spaced at most `delta` apart, then linearly interpolate between those
+     two results.
+     For moderate to large data (N > 5000) this cuts timings about 50-100x--from 
+     seconds to milliseconds Currently, the default delta is zero, so the feature
+     is not implemented unless explicitly set by the user. This should probably
+     change.
+:type: apps
+:group: Mathematics
+:changelog: |
+  * Fri Sep 2  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: wip_20130915.zip
+:src_dir: Will_it_Python-5feb80e4023d73bff12040c5aa5f14177794d459
+:version: '20130915'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/setuptools > 15.0
+  :build:
+    - libs/atlas
+    - libs/numpy
+    - apps/cython
+    - apps/python ~> 2.7.0
+  :runtime:
+    - libs/atlas
+    - libs/numpy
+    - apps/cython 
+    - apps/python ~> 2.7.0
+:dependencies:
+  el:
+    - gcc-gfortran
+:compile: |
+  cd MLFH/CH2/lowess\ work/ 
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  cd MLFH/CH2/lowess\ work/
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
