@@ -11,6 +11,8 @@
   :build:
     - mpi/openmpi >= 1.8.1
 :changelog: |
+  * Tue Sep  6 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated distro dependencies for EL 
   * Wed Jul 2 2014 Steve Norledge
@@ -45,6 +47,9 @@
   - ReadMe_IMB.txt
   - license/license.txt
   - license/use-of-trademark-license.txt
+:sources:
+  - imb-4proc.sh.tpl
+  - imb-4proc.sh.md
 :install: |
   <%package.tgtbin.each do |f|%>
     install -D -m 755 <%=f%> <%=dest_dir%>/bin/<%=File::basename(f)%>
@@ -52,33 +57,18 @@
   <%package.tgtdoc.each do |f|%>
     install -D -m 644 <%=f%> <%=dest_dir%>/doc/<%=File::basename(f)%>
   <%end%>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('imb-4proc.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('imb-4proc.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin/
   setenv ${appcaps}DOC ${appdir}/doc/
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
   prepend-path PATH ${appdir}/bin/
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'mpirun/imb; 4 processes'
-    description: 'Execute IMB via mpirun using 4 processes'
-    template: 'script:stub:mpi-multislot'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For more information about IMB options see:
-      #   http://www.intel.com/software/imb
-
-      # Output directory
-      OUTPUT_DIR="imb/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Number of processes to start
-      NUM_PROCESSES=4
-
-      # Additional command-line options ('IMB-MPI1 -help' for a list)
-      #IMB_OPTIONS=
-
-      mkdir -p $OUTPUT_DIR
-      mpirun -np $NUM_PROCESSES IMB-MPI1 $IMB_OPTIONS > $OUTPUT_DIR/IMB-MPI1.report 2>&1
