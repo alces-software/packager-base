@@ -22,6 +22,8 @@
     * Backward substitution with look-ahead of depth 1
 :group: Benchmarks
 :changelog: |
+  * Tue Sep  6 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated distro dependencies for EL 
     - Removed symlink in blas
@@ -46,15 +48,20 @@
     - mpi/openmpi
     - libs/atlas
 :sources:
-  - 4node_hpl.alces.dat
+  - hpl-8proc.alces.dat
+  - hpl-8proc.sh.tpl
+  - hpl-8proc.sh.md
 :compile: |
   export TOPdir=`pwd`
   make arch=<%= compiler[:build_name]%> <%= redirect :make %>
 :install: |
   (cd bin && ln -snf <%=compiler[:build_name]%>/* .) <%= redirect(:install) %>
   cp -pav . <%= dest_dir %> <%= redirect(:install) %>
-  mkdir -v <%= dest_dir %>/examples <%= redirect(:install) %>
-  cp -v <%= source('4node_hpl.alces.dat') %> <%= dest_dir %>/examples <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('hpl-8proc.alces.dat') %> <%= dest_dir %>/examples <%= redirect(:install) %>
+  cp -v <%= source('hpl-8proc.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('hpl-8proc.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
   BLAS_MAKE=`readlink <%= dest_dir %>/src/blas/Linux-gcc/Make.inc`
   rm <%= dest_dir %>/src/blas/Linux-gcc/Make.inc
   cp $BLAS_MAKE <%= dest_dir %>/src/blas/Linux-gcc/Make.inc
@@ -62,32 +69,9 @@
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin/
   setenv ${appcaps}EXAMPLES ${appdir}/examples
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
 
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
   prepend-path PATH ${appdir}/bin/
   prepend-path MANPATH ${appdir}/man/
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'hpl; tuned 4-node usage'
-    description: 'Execute HPL using an Alces-tuned input data file for 4-node/64-process operation'
-    template: 'script:stub:mpi-multinode'
-    facts:
-      hardMemoryLimit: 64G
-      multinodeNumNodes: 4
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For more information about configuring HPL see:
-      #   http://www.netlib.org/benchmark/hpl/
-
-      # Directory containing the HPL.dat input data file, tuned as required
-      # (An example is supplied in the HPLEXAMPLES directory)
-      HPLDAT_DIR="hpl"
-      mkdir -p "$HPLDAT_DIR"
-      cp "$HPLEXAMPLES/4node_hpl.alces.dat" "$HPLDAT_DIR/HPL.dat"
-
-      # Number of processes to start
-      NUM_PROCESSES=64
-
-      cd "$HPLDAT_DIR" && mpirun -np $NUM_PROCESSES xhpl
