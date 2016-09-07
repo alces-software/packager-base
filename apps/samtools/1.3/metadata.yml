@@ -21,6 +21,8 @@
   alignments in a per-position format.
 :group: Bioinformatics
 :changelog: |
+  * Wed Sep  7 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Fri May 29 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to latest 1.3 version and included OS dependencies
   * Fri May 29 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -73,6 +75,9 @@
   for a in misc/*.py; do
     sed -e 's|#!.*|#!/usr/bin/env python|g' -i $a
   done
+:sources:
+  - samtools.sh.tpl
+  - samtools.sh.md
 :install: |
   make prefix=<%= dest_dir %> install
   mkdir -p <%= dest_dir %>/include <%= dest_dir %>/doc <%= dest_dir %>/lib
@@ -80,6 +85,8 @@
   cp *.a <%= dest_dir %>/lib
   cp *.h <%= dest_dir %>/include
   cp -r examples <%= dest_dir %>
+  cp -v <%= source('samtools.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('samtools.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -87,6 +94,8 @@
   setenv ${appcaps}INCLUDE ${appdir}/include
   setenv ${appcaps}EXAMPLES ${appdir}/examples
   setenv ${appcaps} ${appdir}/lib/libbam.a
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
