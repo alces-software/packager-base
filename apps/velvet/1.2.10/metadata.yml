@@ -16,6 +16,8 @@
   areas between contigs.
 :group: Bioinformatics
 :changelog: |
+  * Wed Sep  7 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Thu Apr 10 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -74,220 +76,31 @@
   for a in contrib/*/*.pl; do
     sed -i -e 's|#!/usr/bin/perl.*|#!/usr/bin/env perl|g' $a
   done
+:sources:
+  - velvet.sh.tpl
+  - velvet.sh.md
 :install: |
   mkdir <%= dest_dir %>/build <%= dest_dir %>/bin <%= dest_dir %>/doc
   cp -rv obj src <%= dest_dir %>/build <%= redirect(:install) %>
   cp velvetg velveth <%= dest_dir %>/bin <%= redirect(:install) %>
   cp ChangeLog *.txt *.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
-  cp -rv data contrib <%= dest_dir %> <%= redirect(:install) %>
+
+  mkdir -p <%= dest_dir %>/examples
+  cp -rv contrib <%= dest_dir %> <%= redirect(:install) %>
+  cp -rv data/* <%= dest_dir %>/examples/. <%= redirect(:install) %>
+
+  mkdir -p <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('velvet.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('velvet.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}BUILD ${appdir}/build
-  setenv ${appcaps}DATA ${appdir}/data
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'velveth; single input file'
-    description: 'Execute velveth for a single input file'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Velvet usage information see:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/Manual.pdf
-      #   or: $VELVETDIR/doc/Manual.pdf
-      # For more information about Velvet, please refer to the website:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/
-      
-      # Output directory
-      OUTPUT_DIR=velvet/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
-
-      # Hash length.
-      # Either: an odd integer <= the max kmer length
-      #     Or: m,M,s where m and M are odd integers with m < M <= the max kmer
-      #         length
-      #
-      # If an odd integer is provided it will be decremented, and if a value
-      # higher than the max kmer length is specified (usually 31), it will
-      # be reduced to the max.
-      {% comment %}
-      TODO: replace with `default` filter when available, i.e.
-      {{ fact.apps_velvet_hashLength | default: "31" }}
-      {% endcomment %}
-      HASH_LENGTH={% if fact.apps_velvet_hashLength %}{{ fact.velvet_hashLength }}{% else %}31{% endif %}
-
-      # One of: -fasta, -fastq, -raw, -fasta.gz, -fastq.gz, -raw.gz, -sam,
-      #   -bam, -fmtAuto.
-      # The default of `-fmtAuto` detects fasta or fastq (and will try the
-      #   following programs for decompression : gunzip, pbunzip2, bunzip2)
-      FILE_FORMAT="-fmtAuto"
-
-      # One of: -short, -shortPaired, -short2, -shortPaired2, -long,
-      #   -longPaired, -reference
-      READ_TYPE="-short"
-
-      # File layout options for paired reads (only for fasta and fastq formats)
-      # One or of -interleaved or -separate.
-      #FILE_OPTIONS="-interleaved"
-
-      # Additional command-line options (run velveth with no options for a
-      # list)
-      #VELVETH_OPTIONS=""
-
-      # Input file (or files)
-      INPUT_FILES=("$VELVETDATA/test_reads.fa")
-
-      # Create the directory to contain the output files
-      mkdir -p "$OUTPUT_DIR"
-
-      # Execute velveth
-      velveth "$OUTPUT_DIR" \
-        "$HASH_LENGTH" \
-        "$FILE_FORMAT" "$READ_TYPE" $FILE_OPTIONS "${INPUT_FILES[@]}" \
-        $VELVETH_OPTIONS
-
-      echo ""
-      echo "-------------------"
-      echo " velveth completed"
-      echo "-------------------"
-      echo " Output is available in: $OUTPUT_DIR"
-  - tags: ['script:type=batch']
-    name: 'velvet pipeline; single input file'
-    description: 'Execute velveth for a single input file and velvetg on the results'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Velvet usage information see:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/Manual.pdf
-      #   or: $VELVETDIR/doc/Manual.pdf
-      # For more information about Velvet, please refer to the website:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/
-      
-      # Output/working data directory
-      DATA_DIR=velvet/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
-
-      # Hash length.
-      # Either: an odd integer <= the max kmer length
-      #     Or: m,M,s where m and M are odd integers with m < M <= the max kmer
-      #         length
-      #
-      # If an odd integer is provided it will be decremented, and if a value
-      # higher than the max kmer length is specified (usually 31), it will
-      # be reduced to the max.
-      {% comment %}
-      TODO: replace with `default` filter when available, i.e.
-      {{ fact.apps_velvet_hashLength | default: "31" }}
-      {% endcomment %}
-      HASH_LENGTH={% if fact.apps_velvet_hashLength %}{{ fact.velvet_hashLength }}{% else %}31{% endif %}
-
-      # One of: -fasta, -fastq, -raw, -fasta.gz, -fastq.gz, -raw.gz, -sam,
-      #   -bam, -fmtAuto.
-      # The default of `-fmtAuto` detects fasta or fastq (and will try the
-      #   following programs for decompression : gunzip, pbunzip2, bunzip2)
-      FILE_FORMAT="-fmtAuto"
-
-      # One of: -short, -shortPaired, -short2, -shortPaired2, -long,
-      #   -longPaired, -reference
-      READ_TYPE="-short"
-
-      # File layout options for paired reads (only for fasta and fastq formats)
-      # One or of -interleaved or -separate.
-      #FILE_OPTIONS="-interleaved"
-
-      # Additional command-line options (run velveth with no options for a
-      # list)
-      #VELVETH_OPTIONS=""
-
-      # Input file (or files)
-      INPUT_FILES=("$VELVETDATA/test_reads.fa")
-
-      # Command-line options (run velvetg with no options for a list).
-      # Some common options are:
-      #   -cov_cutoff <floating-point|auto>
-      #     removal of low coverage nodes AFTER tour bus or allow the system to infer it (default: no removal)
-      #   -ins_length <integer>
-      #     expected distance between two paired end reads (default: no read pairing)
-      #   -read_trkg <yes|no>
-      #     tracking of short read positions in assembly (default: no tracking)
-      #   -min_contig_lgth <integer>
-      #     minimum contig length exported to contigs.fa file (default: hash length * 2)
-      #   -amos_file <yes|no>
-      #     export assembly to AMOS file (default: no export)
-      #   -exp_cov <floating point|auto>
-      #     expected coverage of unique regions or allow the system to infer it 
-      #     (default: no long or paired-end read resolution)
-      #   -long_cov_cutoff <floating-point>
-      #     removal of nodes with low long-read coverage AFTER tour bus (default: no removal)
-      #VELVETG_OPTIONS=""
-
-      # Create the directory to contain the output files
-      mkdir -p "$DATA_DIR"
-
-      # Execute velveth
-      velveth "$DATA_DIR" \
-        "$HASH_LENGTH" \
-        "$FILE_FORMAT" "$READ_TYPE" $FILE_OPTIONS "${INPUT_FILES[@]}" \
-        $VELVETH_OPTIONS
-
-      # Execute velvetg
-      velvetg "$DATA_DIR" \
-        $VELVETG_OPTIONS
-
-      echo ""
-      echo "---------------------------"
-      echo " velvet pipeline completed"
-      echo "---------------------------"
-      echo " Output is available in: $DATA_DIR"
-  - tags: ['script:type=batch']
-    name: 'velvetg; existing data directory'
-    description: 'Execute velvetg tool on a directory containing existing output from a velveth run'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Velvet usage information see:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/Manual.pdf
-      #   or: $VELVETDIR/doc/Manual.pdf
-      # For more information about Velvet, please refer to the website:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/
-      
-      # Input directory - from a previous velveth run
-      INPUT_DIR=velvet/input
-
-      # Command-line options (run velvetg with no options for a list).
-      # Some common options are:
-      #   -cov_cutoff <floating-point|auto>
-      #     removal of low coverage nodes AFTER tour bus or allow the system to infer it (default: no removal)
-      #   -ins_length <integer>
-      #     expected distance between two paired end reads (default: no read pairing)
-      #   -read_trkg <yes|no>
-      #     tracking of short read positions in assembly (default: no tracking)
-      #   -min_contig_lgth <integer>
-      #     minimum contig length exported to contigs.fa file (default: hash length * 2)
-      #   -amos_file <yes|no>
-      #     export assembly to AMOS file (default: no export)
-      #   -exp_cov <floating point|auto>
-      #     expected coverage of unique regions or allow the system to infer it 
-      #     (default: no long or paired-end read resolution)
-      #   -long_cov_cutoff <floating-point>
-      #     removal of nodes with low long-read coverage AFTER tour bus (default: no removal)
-      #VELVETG_OPTIONS=""
-
-      # Execute velvetg
-      velvetg "$INPUT_DIR" \
-        $VELVETG_OPTIONS
-
-      echo ""
-      echo "-------------------"
-      echo " velvetg completed"
-      echo "-------------------"
-      echo " Output is available in: $INPUT_DIR"
