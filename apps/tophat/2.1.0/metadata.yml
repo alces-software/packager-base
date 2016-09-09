@@ -11,6 +11,8 @@
   mapping results to identify splice junctions between exons.
 :group: Bioinformatics
 :changelog: |
+  * Thu Sep  8 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -49,45 +51,27 @@
   el:
     - automake
     - gcc-c++
+    - zlib-devel
 :compile: |
   ./bootstrap <%= redirect(:bootstrap) %>
   ./configure --prefix=<%= dest_dir %> --with-boost=${BOOSTDIR} <%= redirect(:configure) %>
   make <%= redirect(:make) %>
+:sources:
+  - tophat.sh.tpl
+  - tophat.sh.md
 :install: |
   make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('tophat.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('tophat.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'tophat; alignment of paired reads'
-    description: 'Execute TopHat to align paired reads from test data (available separately)'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full TopHat usage information see:
-      #   http://tophat.cbcb.umd.edu/manual.html
-      # Test data may be downloaded from:
-      #   http://tophat.cbcb.umd.edu/downloads/test_data.tar.gz
-
-      # Output directory (default is 'tophat_out')
-      OUTPUT_DIR="tophat/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Base name of genome index to be searched (i.e. up to first period)
-      GENOME_INDEX_BASE=test_data/test_ref
-
-      # Comma-separated list of FASTQ/FASTA files of reads ('left')
-      READS_1=test_data/reads_1.fq
-
-      # Optional: comma-sep list of FASTQ/FASTA files of reads ('right')
-      READS_2=test_data/reads_2.fq
-
-      # Additional command-line options (tophat -h for a list)
-      TOPHAT_OPTIONS="-r 20"
-
-      tophat -o $OUTPUT_DIR $TOPHAT_OPTIONS $GENOME_INDEX_BASE $READS_1 $READS_2
