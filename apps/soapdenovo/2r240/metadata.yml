@@ -16,6 +16,8 @@
   genomes like human, about 150 GB memory would be required.
 :group: Bioinformatics
 :changelog: |
+  * Wed Sep 14 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
     - Patched sources to allow compilation on later GCC versions
@@ -44,49 +46,26 @@
   sed -i '/include "multi_threads.h"/a #include <unistd.h>'  sparsePregraph/build_preArc.cpp
   sed -i '/include "core.h"/a #include <unistd.h>' sparsePregraph/pregraph_sparse.cpp
   make <%= redirect(:make) %>
+:sources:
+  - soapdenovo.sh.md
+  - soapdenovo.sh.tpl
 :install: |
   mkdir <%= dest_dir %>/bin
   mkdir <%= dest_dir %>/doc
   cp -rv SOAPdenovo-127mer <%= dest_dir %>/bin/. <%= redirect(:install) %>
   cp -rv SOAPdenovo-63mer <%= dest_dir %>/bin/. <%= redirect(:install) %>
   cp -v LICENSE MANUAL <%= dest_dir %>/doc <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('soapdenovo.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('soapdenovo.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'SOAPdenovo-63mer; all command usage'
-    description: 'Execute SOAPdenovo-63mer using the all command and specified config file (not supplied)'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # Note that to use SOAPdenovo requires both data files and a configuration
-      # file that tells the assembler where to find these files (not included)
-      #
-      # For full SOAPdenovo usage information see:
-      #   http://soap.genomics.org.cn/soapdenovo.html
-
-      # Output directory
-      OUTPUT_DIR="soapdenovo/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # SOAPdenovo executable to use (SOAPdenovo-63mer or SOAPdenovo-127mer)
-      SOAPDENOVO=SOAPdenovo-63mer
-
-      # SOAPdenovo command to run
-      COMMAND=all
-
-      # Path to configuration file
-      CONFIG_FILE="/path/to/config"
-
-      # Additional command-line options ('SOAPdenovo-63mer all' for a list)
-      #SOAPDENOVO_OPTIONS=
-
-      # Create output directory if it doesn't already exist
-      mkdir -p "$OUTPUT_DIR"
-
-      $SOAPDENOVO $COMMAND -s "$CONFIG_FILE" $SOAPDENOVO_OPTIONS
