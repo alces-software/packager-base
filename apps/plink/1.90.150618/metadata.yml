@@ -15,6 +15,8 @@
   visualization, annotation and storage of results.
 :group: Bioinformatics
 :changelog: |
+  * Wed Sep 14 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
     - Use patchelf to remove hardcoded ATLAS library paths
@@ -32,8 +34,10 @@
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :sources:
-  - example_data.zip
   - zlib-1.2.8.tar.gz
+  - plink.sh.md
+  - plink-1proc.sh.tpl
+  - plink-2proc.sh.tpl
 :patches:
   - gridware-atlas-and-static-zlib.patch
 :src: plink_src.zip
@@ -68,155 +72,24 @@
     fi
   done
 :install: |
-  mkdir <%= dest_dir %>/{bin,doc,example}
+  mkdir <%= dest_dir %>/{bin,doc,examples}
   install -D -m 0755 plink <%= dest_dir %>/bin <%= redirect(:install) %>
   install -D -m 0644 LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
-  install -D -m 0644 <%= source('example_data.zip') %> <%= dest_dir %>/example <%= redirect(:install) %>
-  install -D -m 0644 toy.map toy.ped <%= dest_dir %>/example <%= redirect(:install) %>
+  install -D -m 0644 toy.map toy.ped <%= dest_dir %>/examples <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('plink-1proc.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('plink-2proc.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('plink.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
-  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'plink; (single thread) generate summary statistics about missing data rates'
-    description: 'Create a binary PED file and generate some simple summary statistics on rates of missing data in the file.'
-    template: 'script:stub:smp-simple'
-    facts:
-      hardMemoryLimit: 4G
-    content: |
-      #=========
-      #  PLINK
-      #---------
-      # For more plink usage information see:
-      #   https://www.cog-genomics.org/plink2/general_usage
-
-      # The example data used in this script is available from
-      # http://pngu.mgh.harvard.edu/~purcell/plink/hapmap1.zip
-
-      # Create the output/working data directory and change to the directory
-      # to ensure that any files will be created there.
-      DATA_DIR="plink/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-      mkdir -p "$DATA_DIR"
-      cd "$DATA_DIR"
-
-      # Copy the example data to the output directory.
-      unzip ${PLINKEXAMPLE}/example_data.zip
-
-      #=================================================================
-      # PLEASE NOTE
-      #-----------------------------------------------------------------
-      # 1. each of the plink invocations below is set to use a single
-      #    thread (`--threads 1`).  If you want to use multiple
-      #    threads, you should use the SMP multi-slot template
-      #    (available by selecting the alternative, SMP version of this
-      #    script).
-      # 2. the memory specified, 3968MiB (`--memory 3968`) allows for
-      #    128MiB of overhead for the binary process given a 4GiB
-      #    request for this job.  If you need more RAM, you should
-      #    increase the amout you request and modify this number.
-      #=================================================================
-
-      # Verify that the file is intact and get some basic summary statistics.
-      plink --threads 1 --memory 3968 \
-        --file hapmap1
-
-      # Create a binary PED file. This more compact representation of the data
-      # saves space and speeds up subsequent analysis.
-      plink --threads 1 --memory 3968 \
-        --file hapmap1 --make-bed --out hapmap1
-
-      # Generate some simple summary statistics on rates of missing data in
-      # the file, using the --missing option. Note that we use the option
-      # --bfile to specify the binary file created in the previous step.
-      plink --threads 1 --memory 3968 \
-        --bfile hapmap1 --missing --out miss_stat
-
-      echo ""
-      echo "--------------------------"
-      echo "PLINK processing completed"
-      echo "--------------------------"
-      echo "Output is available in: $DATA_DIR"
-  - tags: ['script:type=batch']
-    name: 'plink; (SMP/multithreaded) generate summary statistics about missing data rates'
-    description: |
-      Create a binary PED file and generate some simple summary
-      statistics on rates of missing data in the file.
-
-      This script contains additional configuration for
-      SMP/multithreaded use.
-    template: 'script:stub:smp-multislot'
-    facts:
-      hardMemoryLimitPerSlot: 4G
-      smpNumSlots: 4
-    content: |
-      #=========
-      #  PLINK
-      #---------
-      # For more plink usage information see:
-      #   https://www.cog-genomics.org/plink2/general_usage
-
-      # The example data used in this script is available from
-      # http://pngu.mgh.harvard.edu/~purcell/plink/hapmap1.zip
-
-      # Change the following to match the amount of memory required
-      # per core. (ie. the total memory the PLINK job will require /
-      # the number of cores being requested.)
-      #   (For GridScheduler tasks, this should match the amount of
-      #   memory per core requested in the "-l h_vmem" scheduler
-      #   directive above.)
-      MEM_GB_PER_CORE={{ fact.hardMemoryLimitPerSlot | replace: 'G', '' }}
-
-      # Calculate how much RAM we should make available for a PLINK
-      # process, given the number of slots allocated and the default
-      # of {{ fact.hardMemoryLimitPerSlot | replace: 'G', '' }}GiB per slot (allowing 128MiB overhead).
-      PLINK_MEM_MB=$(($NSLOTS * $MEM_GB_PER_CORE * 1024 - 128))
-
-      # Create the output/working data directory and change to the directory
-      # to ensure that any files will be created there.
-      DATA_DIR="plink/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-      mkdir -p "$DATA_DIR"
-      cd "$DATA_DIR"
-
-      # Copy the example data to the output directory.
-      unzip ${PLINKEXAMPLE}/example_data.zip
-
-      #=================================================================
-      # PLEASE NOTE
-      #-----------------------------------------------------------------
-      # 1. each of the plink invocations below is set to use multiple threads
-      #    thread (`--threads $NSLOTS`).  If you only need a single thread
-      #    threads, you should use the single-core template
-      #    (available by selecting the alternative, single-core version of this
-      #    script).
-      # 2. the memory specified, `$PLINK_MEM_MB` MiB (`--memory
-      #    $PLINK_MEM_MB`) is calculated above based on the default
-      #    value of 4GiB per slot, allowing for 128MiB of overhead for
-      #    the binary process (4096 * $NSLOTS - 128).  If you need
-      #    more RAM, you should increase the amount you request per
-      #    slot and modify this number.
-      #=================================================================
-
-      # Verify that the file is intact and get some basic summary statistics.
-      plink --threads $NSLOTS --memory $PLINK_MEM_MB \
-        --file hapmap1
-
-      # Create a binary PED file. This more compact representation of the data
-      # saves space and speeds up subsequent analysis.
-      plink --threads $NSLOTS --memory $PLINK_MEM_MB \
-        --file hapmap1 --make-bed --out hapmap1
-
-      # Generate some simple summary statistics on rates of missing data in
-      # the file, using the --missing option. Note that we use the option
-      # --bfile to specify the binary file created in the previous step.
-      plink --threads $NSLOTS --memory $PLINK_MEM_MB \
-        --bfile hapmap1 --missing --out miss_stat
-
-      echo ""
-      echo "--------------------------"
-      echo "PLINK processing completed"
-      echo "--------------------------"
-      echo "Output is available in: $DATA_DIR"
