@@ -1,0 +1,48 @@
+--- NPB3.3-MPI.orig/config/make.def.template	2006-07-24 23:20:27.000000000 +0100
++++ NPB3.3-MPI/config/make.def.template	2016-09-15 14:46:24.362528696 +0100
+@@ -29,19 +29,19 @@
+ #---------------------------------------------------------------------------
+ # This is the fortran compiler used for MPI programs
+ #---------------------------------------------------------------------------
+-MPIF77 = f77
++MPIF77 = mpif77
+ # This links MPI fortran programs; usually the same as ${MPIF77}
+ FLINK	= $(MPIF77)
+
+ #---------------------------------------------------------------------------
+ # These macros are passed to the linker to help link with MPI correctly
+ #---------------------------------------------------------------------------
+-FMPI_LIB  = -L/usr/local/lib -lmpi
++FMPI_LIB  = -L${MPI_HOME}/lib -lmpi
+
+ #---------------------------------------------------------------------------
+ # These macros are passed to the compiler to help find 'mpif.h'
+ #---------------------------------------------------------------------------
+-FMPI_INC = -I/usr/local/include
++FMPI_INC = -I${MPI_HOME}/include
+
+ #---------------------------------------------------------------------------
+ # Global *compile time* flags for Fortran programs
+@@ -75,19 +75,19 @@
+ #---------------------------------------------------------------------------
+ # This is the C compiler used for MPI programs
+ #---------------------------------------------------------------------------
+-MPICC = cc
++MPICC = mpicc
+ # This links MPI C programs; usually the same as ${MPICC}
+ CLINK	= $(MPICC)
+
+ #---------------------------------------------------------------------------
+ # These macros are passed to the linker to help link with MPI correctly
+ #---------------------------------------------------------------------------
+-CMPI_LIB  = -L/usr/local/lib -lmpi
++CMPI_LIB  = -L${MPI_HOME} -lmpi
+
+ #---------------------------------------------------------------------------
+ # These macros are passed to the compiler to help find 'mpi.h'
+ #---------------------------------------------------------------------------
+-CMPI_INC = -I/usr/local/include
++CMPI_INC = -I${MPI_HOME}/include
+
+ #---------------------------------------------------------------------------
+ # Global *compile time* flags for C programs
