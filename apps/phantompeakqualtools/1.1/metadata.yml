@@ -12,6 +12,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Wed Sep 14 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Wed May 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Fri Dec  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -21,13 +23,15 @@
 :version: '1.1'
 :requirements:
   :build:
-    - apps/R >= 2.10
+    - apps/R = 3.0.0
     - libs/boost
   :runtime:
-    - apps/R >= 2.10
+    - apps/R = 3.0.0
     - apps/samtools
 :sources:
   - example.tagAlign.gz
+  - phantompeakqualtools.sh.md
+  - phantompeakqualtools.sh.tpl
 :compilers:
   gcc:
 :compile: |
@@ -47,10 +51,10 @@
     install.packages('spp_1.10.1.tar.gz',"<%= dest_dir %>/R",dependencies=TRUE)
   EOF) /dev/stdout <%= redirect(:rlibs) %>
 :install: |
-  mkdir <%= dest_dir %>/{bin,doc,share,example}
+  mkdir -p <%= dest_dir %>/{bin,doc,share,examples}
   install -D -m 0644 -v run_spp_nodups.R run_spp.R <%= dest_dir %>/share/ <%= redirect(:install) %>  
   install -D -m 0644 -v README.txt peakCallingPipelineForIdr.txt <%= dest_dir %>/doc/ <%= redirect(:install) %>
-  install -D -m 0644 -v <%= source('example.tagAlign.gz') %> <%= dest_dir %>/example/ <%= redirect(:install) %>
+  install -D -m 0644 -v <%= source('example.tagAlign.gz') %> <%= dest_dir %>/examples/ <%= redirect(:install) %>
   for a in run_spp run_spp_nodups; do
     cat <<EOF > <%= dest_dir %>/bin/$a
   #!/bin/bash
@@ -58,41 +62,22 @@
   EOF
     chmod 755 <%= dest_dir %>/bin/$a
   done
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('phantompeakqualtools.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('phantompeakqualtools.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
   setenv ${appcaps}R ${appdir}/R
   setenv ${appcaps}SHARE ${appdir}/share
-  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
 
   prepend-path PATH ${appdir}/bin
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
   append-path R_LIBS_SITE ${appdir}/R
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Typical usage'
-    description: 'Determine strand cross-correlation peak / predominant fragment length OR print out quality measures'
-    template: 'script:stub:simple'
-    content: |
-      #========================
-      #  phantompeakqualtools
-      #------------------------
-      # For more usage information see:
-      #   https://code.google.com/p/phantompeakqualtools/
-
-      # Output directory
-      OUTPUT_DIR="phantompeakqualtools/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Change these as necessary
-      INPUT_DIR="${PHANTOMPEAKQUALTOOLSEXAMPLE}"
-      INPUT_FILE="example.tagAlign.gz"
-
-      # Additional command-line options (execute `run_spp` for list)
-      RUNSPP_OPTIONS="-savp"
-
-      # Create output directory
-      mkdir -p $OUTPUT_DIR
-
-      run_spp -c="${INPUT_DIR}/${INPUT_FILE}" \
-        -out="${OUTPUT_DIR}/example.out.tsv" \
-        $RUNSPP_OPTIONS
