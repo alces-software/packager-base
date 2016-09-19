@@ -28,6 +28,8 @@
   Cruz Genome Browser.
 :group: Bioinformatics
 :changelog: |
+  * Fri Sep 16 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu Jun 16 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated for compatibility with GCC >= 4.6
   * Tue May 20 2014 - James Donohue <james.donohue@alces-software.com>
@@ -42,39 +44,26 @@
   sed -i -e 's|\(INSTALLDIR = \).*|\1<%= dest_dir %>/bin|g' \
     -e 's|^\(CFLAGS = .*\)|\1 -Wno-error=unused-but-set-variable|g' Makefile
   make <%= redirect(:make) %>
+:sources:
+  - multiztba.sh.md
+  - multiztba.sh.tpl
 :install: |
   make install <%= redirect(:install) %>
   mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -v README README2 <%= dest_dir %>/doc <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('multiztba.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('multiztba.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'all_bz and tba; example usage'
-    description: 'Execute all_bz to generate pair-wise alignments; use tba to create multiple alignment'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Multiz/TBA usage information see:
-      #   http://www.bx.psu.edu/miller_lab/dist/tba_howto.pdf
-      # NB these examples require sequence data (not included) to run
 
-      # Output directory
-      OUTPUT_DIR="multiztba/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Create output directory if it doesn't already exist
-      mkdir -p $OUTPUT_DIR
-
-      # Generate pair-wise alignments
-      cd $OUTPUT_DIR
-      all_bz - "(((((human chimp) galago)(mouse rat)) chicken)(tetra (fugu zebrafish)))"
-
-      # Create multiple aligment
-      tba "(((((((human chimp) gorilla) baboon) (rat mouse)) (cow pig)) chicken) fugu)" *.*.maf tba.maf
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
