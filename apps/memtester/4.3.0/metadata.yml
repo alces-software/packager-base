@@ -8,6 +8,8 @@
   non-deterministic faults. It has many tests to help catch borderline memory.
 :group: Benchmarks
 :changelog: |
+  * Mon Sep 19 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated distro dependencies for EL 
   * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
@@ -25,35 +27,25 @@
   gcc:
 :compile: |
   make <%= redirect(:make) %>
+:sources:
+  - memtester.sh.md
+  - memtester.sh.tpl
 :install: |
   mkdir <%= dest_dir%>/bin/
   cp -rv memtester <%= dest_dir %>/bin/.
   chmod 755 <%=dest_dir%>/bin/memtester
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('memtester.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('memtester.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin/
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+
   prepend-path PATH ${appdir}/bin/
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'memtester; 1MB/5 runs'
-    description: 'Execute memtester, limiting number of runs to 5 and memory to 1MB'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For more information about memtester see:
-      #   http://pyropus.ca/software/memtester/
 
-      # Amount of memory to test, with suffix B, K, M or G
-      MEMORY=1M
-
-      # Limit to number of runs (default: none)
-      RUNS=5
-
-      # Additional command-line options ('memtester' for list)
-      #MEMTESTER_OPTIONS=
-
-      memtester $MEMTESTER_OPTIONS $MEMORY $RUNS
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
