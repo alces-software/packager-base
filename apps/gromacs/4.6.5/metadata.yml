@@ -50,6 +50,8 @@
       :runtime:
         - libs/fftw3_double
 :changelog: |
+  * Tue Sep 20 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Add FFTW3 runtime dependencies
   * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -129,6 +131,9 @@
 
   make -j 4 <%= redirect(:make) %>
   <% end %>
+:sources:
+  - gromacs.sh.md
+  - gromacs.sh.tpl
 :install: |
   cd build
   make install <%= redirect(:install) %>
@@ -140,6 +145,11 @@
   cd <%= src_dir %>.double_mpi/build
   make install <%= redirect(:install) %>
   <% end %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('gromacs.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('gromacs.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -150,6 +160,10 @@
   setenv GMXLDLIB ${appdir}/lib
   setenv GMXMAN ${appdir}/share/man
   setenv GMXDATA ${appdir}/share
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
@@ -165,44 +179,4 @@
     set completion_data [exec zsh -c "compctl >& /dev/null && echo source ${appdir}/bin/completion.zsh"]
   }
 
-  puts $completion_data
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'pdb2gmx; generate topology from PDB'
-    description: 'Execute pdb2gmx to generate a topology file from a bundled sample PDB'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # GROMACS offers many different commands; this example batch script uses
-      # pdb2gmx to generate a topology file from a sample PDB
-      #
-      # For full GROMACS documentation see:
-      #   http://www.gromacs.org/Documentation
-
-      # Output directory
-      OUTPUT_DIR="gromacs/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-      mkdir -p $OUTPUT_DIR
-
-      # Demo molecule
-      MOL=cpeptide
-
-      # Input structure file: gro g96 pdb tpr etc.
-      INPUT_FILE=$MOL.pdb
-      cp -v $GMXDATA/gromacs/tutor/gmxdemo/$MOL.pdb $INPUT_FILE
-
-      # Output structure file
-      OUTPUT_STRUCTURE=$OUTPUT_DIR/$MOL.gro
-
-      # Output topology file
-      OUTPUT_TOPOLOGY=$OUTPUT_DIR/$MOL.top
-
-      # Output include file
-      OUTPUT_INCLUDE=$OUTPUT_DIR/posre.itp
-
-      pdb2gmx -f $INPUT_FILE -o $OUTPUT_STRUCTURE -p $OUTPUT_TOPOLOGY -i $OUTPUT_INCLUDE &> $OUTPUT_DIR/output.pdb2gmx <<EOT
-      1
-      1
-      EOT
+  puts -nonewline "$completion_data;"
