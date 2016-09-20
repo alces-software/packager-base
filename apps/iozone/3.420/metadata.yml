@@ -11,6 +11,8 @@
   aio_read, aio_write.
 :group: Benchmarks
 :changelog: |
+  * Tue Sep 20 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated distro dependencies for EL 
   * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
@@ -40,29 +42,24 @@
   - src/current/gengnuplot.sh
   - src/current/iozone_visualizer.pl
   - src/current/report.pl
+:sources:
+  - iozone.sh.md
+  - iozone.sh.tpl
 :install: |
   <%package.tgtbin.each do |f|%>
     install -D -m 755 <%=f%> <%=dest_dir%>/bin/<%=File::basename(f)%>
   <%end%>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('iozone.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('iozone.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin/
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
   prepend-path PATH ${appdir}/bin/
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'iozone; automatic mode'
-    description: 'Execute IOzone using automatic mode'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For detailed IOzone usage information see:
-      #   http://www.iozone.org/docs/IOzone_msword_98.pdf
-
-      # Command-line options ('iozone -h' for a list)
-      IOZONE_OPTIONS="-a"
-
-      iozone $IOZONE_OPTIONS
