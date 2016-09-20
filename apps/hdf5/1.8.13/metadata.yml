@@ -13,6 +13,9 @@
   viewing, and analyzing data in the HDF5 format.
 :group: Databases
 :changelog: |
+  * Tue Sep 20 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added flag to enable fortran support for static build
+    - Added zlib-devel library to enable building with zlib support
   * Fri Apr 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Tue Oct 14 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -53,10 +56,12 @@
       :runtime: mpi/openmpi
       :build: mpi/openmpi
   serial:
-    :configure_flags: '--enable-cxx'
+    :configure_flags: '--enable-cxx --enable-fortran'
 :dependencies:
   el:
     - gcc-c++
+    - gcc-gfortran
+    - zlib-devel
 :compile: |
   ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
               --prefix=<%= dest_dir %> <%= redirect(:configure) %>
