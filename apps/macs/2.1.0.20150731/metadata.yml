@@ -24,6 +24,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Mon Sep 19 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Mon Apr 25 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Tue Oct 20 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -39,8 +41,8 @@
 :src: MACS2-2.1.0.20150731.tar.gz
 :src_dir: MACS2-2.1.0.20150731
 :sources:
-  - CTCF_ChIP_200K.bed.gz
-  - CTCF_Control_200K.bed.gz
+  - macs.sh.md
+  - macs.sh.tpl
 :version: '2.1.0.20150731'
 :requirements:
   :tool:
@@ -67,18 +69,22 @@
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
-  mkdir -p <%= dest_dir %>/{doc,share/example_data}
+  mkdir -p <%= dest_dir %>/doc
   install -v -D -m 0644 ChangeLog COPYING README.rst <%= dest_dir %>/doc/ <%= redirect(:install) %>
-  install -v -D -m 0644 \
-    <%= source('CTCF_ChIP_200K.bed.gz') %> \
-    <%= source('CTCF_Control_200K.bed.gz') %> \
-    <%= dest_dir %>/share/example_data/ <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('macs.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('macs.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
   setenv ${appcaps}SHARE ${appdir}/share
-  setenv ${appcaps}EXAMPLE ${appdir}/share/example_data
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   prepend-path PATH ${appdir}/bin
 
