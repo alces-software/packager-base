@@ -1,0 +1,51 @@
+---
+:schema: 1
+:license: GPL 
+:summary: Quantifying abundances of transcripts from RNA-Seq data 
+:url: https://github.com/pachterlab/kallisto 
+:description: |
+  kallisto is a program for quantifying abundances of transcripts from RNA-Seq 
+  data, or more generally of target sequences using high-throughput sequencing 
+  reads. It is based on the novel idea of pseudoalignment for rapidly 
+  determining the compatibility of reads with targets, without the need for 
+  alignment. On benchmarks with standard RNA-Seq data, kallisto can quantify 30 
+  million human reads in less than 3 minutes on a Mac desktop computer using 
+  only the read sequences and a transcriptome index that itself takes less than 
+  10 minutes to build. Pseudoalignment of reads preserves the key information 
+  needed for quantification, and kallisto is therefore not only fast, but also 
+  as accurate than existing quantification tools. In fact, because the 
+  pseudoalignment procedure is robust to errors in the reads, in many benchmarks 
+  kallisto significantly outperforms existing tools.
+:type: apps
+:group: Bioinformatics 
+:changelog: |
+  * Mon 19 Sept 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v0.43.0.tar.gz 
+:src_dir: kallisto-0.43.0 
+:version: '0.43.0'
+:requirements:
+  :tool: apps/cmake
+  :runtime: apps/hdf5_serial 
+  :build: apps/hdf5_serial
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+:compile: |
+  mkdir build && cd build <%= redirect(:cmake) %>
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> .. <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build <%= redirect(:install) %>
+  make install <%= redirect(:install) %>
+  cd .. <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v license.txt README.md <%= dest_dir %>/doc/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc 
+
+  prepend-path PATH ${appdir}/bin
