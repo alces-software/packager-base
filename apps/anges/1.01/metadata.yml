@@ -50,6 +50,9 @@
     in Comput. Sci. 6661:90–103, 2011.
 :group: Bioinformatics
 :changelog: |
+  * Fri Sep 23 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated source checksum as files have been updated.
+    - Changed filename of documentation copied.
   * Fri Jul 25 2014 Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: anges_1.01.tar.gz
@@ -86,7 +89,7 @@
   cp -av src <%= dest_dir %> <%= redirect(:install) %>
   cp -av bin <%= dest_dir %> <%= redirect(:install) %>
 
-  cp -v  COPYING anges_1_01.pdf README <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v  COPYING anges_1_01_v2.pdf README <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -av  examples <%= dest_dir %> <%= redirect(:install) %>
 
   mv <%= dest_dir %>/examples <%= dest_dir %>/example
