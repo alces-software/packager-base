@@ -50,6 +50,8 @@
     in Comput. Sci. 6661:90–103, 2011.
 :group: Bioinformatics
 :changelog: |
+  * Mon Sep 26 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Fri Sep 23 2016 - Andrew Provis <andrew.provis@alces-software.com>
     - Updated source checksum as files have been updated.
     - Changed filename of documentation copied.
@@ -83,6 +85,9 @@
   done
 
   sed -e 's|../../|$ANGESDIR/|' -i examples/RUN_ALL.sh
+:sources:
+  - anges.sh.md
+  - anges.sh.tpl
 :install: |
   mkdir -p <%= dest_dir %>/doc
 
@@ -92,57 +97,18 @@
   cp -v  COPYING anges_1_01_v2.pdf README <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -av  examples <%= dest_dir %> <%= redirect(:install) %>
 
-  mv <%= dest_dir %>/examples <%= dest_dir %>/example
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('anges.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('anges.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
-  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Infer the organization of an ancestral fungal genome'
-    description: |
-      This example infers the organization of an ancestral fungal genome. The
-      data, files MARKERS and SPECIES_TREE are taken from (Gavranovic et al,
-      Yeast ancestral genome reconstructions: the possibilities of computational
-      methods II. J. Comput. Biol.  17:1097-1112. 2010).
 
-      The markers in the file MARKERS are unique and universal. It produces the
-      three result sets:
-
-      1. PARAMETERS_TEL_BAB: results using the chromosome model "linear
-         chromosomes with telomeres" and the branch-and-bound approach.  The
-         results will be in directory TEL_BAB
-
-      2. PARAMETERS_TEL_HEUR: results using the chromosome model "linear
-         chromosomes with telomeres" and the greedy heuristic approach.
-
-      3. PARAMETERS_SERIATION: results using the spectral seriation approach.
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full ANGES usage information see:
-      #   $ANGESDOC/anges_1_01.pdf
-      #
-      # This example script is based on the example scripts which ship with
-      # ANGES.
-
-      # Output directory
-      OUTPUT_DIR="anges/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Directory where tutorial data has been extracted (see above)
-      EXAMPLE_DATA_DIR="$ANGESEXAMPLE"/fungal_genomes/
-
-      # Create output directory and copy tutorial data
-      mkdir -p "$OUTPUT_DIR"
-      cd "$OUTPUT_DIR"
-      cp -v "$EXAMPLE_DATA_DIR"/* .
-
-      anges_CAR PARAMETERS_TEL_BAB
-      anges_CAR PARAMETERS_TEL_HEUR
-      anges_CAR PARAMETERS_SERIATION
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
