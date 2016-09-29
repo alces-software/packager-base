@@ -1,0 +1,45 @@
+---
+:schema: 1
+:license: GPLv2
+:summary: Allows developers to use a wide range of encryption functions, without making drastic changes to their code 
+:url: https://github.com/php-memcached-dev/php-memcached 
+:description: |
+  MCrypt is a replacement for the old crypt() package and 
+  crypt(1) command, with extensions. It allows developers 
+  to use a wide range of encryption functions, without 
+  making drastic changes to their code. It allows users 
+  to encrypt files or data streams without having to be 
+  cryptographers. Above all, it allows you to have some 
+  really neat code on your machine. :)
+
+  The companion to MCrypt is Libmcrypt, which contains the 
+  actual encryption functions themselves, and provides a 
+  standardized mechanism for accessing them.
+:group: Libraries
+:changelog: |
+  * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: libmcrypt-2.5.8.tar.gz  
+:src_dir: libmcrypt-2.5.8
+:type: libs
+:version: '2.5.8'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MANPATH ${appdir}/man
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
