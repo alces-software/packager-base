@@ -1,0 +1,76 @@
+---
+:schema: 1
+:license: PHP License
+:summary: Interface to the mcrypt library 
+:url: http://php.net/manual/en/book.mcrypt.php
+:description: |
+  This is an interface to the mcrypt library, which 
+  supports a wide variety of block algorithms such as 
+  DES, TripleDES, Blowfish (default), 3-WAY, SAFER-SK64, 
+  SAFER-SK128, TWOFISH, TEA, RC2 and GOST in CBC, OFB, 
+  CFB and ECB cipher modes. Additionally, it supports 
+  RC6 and IDEA which are considered "non-free". CFB/OFB 
+  are 8bit by default.
+:group: Libraries
+:changelog: |
+  * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: php-7.0.11.tar.gz 
+:src_dir: php-7.0.11
+:type: libs
+:version: '7.0.11'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/php ~> 7.0.0
+    - libs/libmcrypt
+  :runtime:
+    - apps/php ~> 7.0.0
+    - libs/libmcrypt
+:dependencies:
+  el:
+    - autoconf
+    - automake
+    - libtool
+:compile: |
+  cd ext/mcrypt <%= redirect(:phpize) %>
+  phpize <%= redirect(:phpize) %>
+  ./configure --with-mcrypt=$LIBMCRYPTDIR <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/lib <%= redirect(:install) %>
+  LIB_UUID=`uuid -v4 | cut -d - -f5`
+  export LIBSO_NAME="mcrypt-${LIB_UUID}.so"
+  export INI_NAME="mcrypt-${LIB_UUID}.ini"
+  install -D -m 0755 ext/mcrypt/.libs/mcrypt.so <%= dest_dir %>/lib/$LIBSO_NAME <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/include  <%= redirect(:install) %>
+  cp -Rv ext/mcrypt/*.h <%= dest_dir %>/include/. <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/conf.d  <%= redirect(:install) %>
+  echo "extension=$LIBSO_NAME" > <%= dest_dir %>/conf.d/$INI_NAME
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PHP_INI_SCAN_DIR ${appdir}/conf.d
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  set php_user_libs $::env(HOME)/gridware/share/php/lib/
+  set php_source_lib <%= File.basename(Dir.glob(File.join(dest_dir,'lib','mcrypt-*.so'))[0]) %>
+
+  setenv ${appcaps}SRCLIB ${appdir}/lib/${php_source_lib}
+  setenv ${appcaps}USERLIB ${php_user_libs}/${php_source_lib}
+
+  if { $::env(USER) != "root" } {
+    if { [module-info mode load] } {
+      # Link library into user libdir
+      if { ! [file exists "${php_user_libs}"] } {
+        file mkdir "${php_user_libs}"
+      }
+    if { ! [file exists "${php_user_libs}/${php_source_lib}"] } {
+      file delete "${php_user_libs}/${php_source_lib}"
+      }
+    file link -symbolic "${php_user_libs}/${php_source_lib}" "${appdir}/lib/${php_source_lib}"
+    }
+  }
