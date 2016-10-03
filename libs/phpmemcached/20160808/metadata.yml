@@ -1,0 +1,69 @@
+---
+:schema: 1
+:license: PHP License
+:summary: A widely-used general-purpose scripting language that is especially suited for Web development
+:url: https://github.com/php-memcached-dev/php-memcached 
+:description: |
+  memcached is a high-performance, distributed memory object caching 
+  system, generic in nature, but intended for use in speeding up 
+  dynamic web applications by alleviating database load.
+:group: Languages
+:changelog: |
+  * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: php-memcached-20160808.zip 
+:src_dir: php-memcached-583ecd68faec886ac9233277531f78fb6e2043c7
+:type: libs
+:version: '20160808'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/php ~> 7.0.0
+  :runtime:
+    - apps/php ~> 7.0.0
+:dependencies:
+  el:
+    - libmemcached-devel
+    - autoconf
+    - automake
+    - libtool
+:compile: |
+  phpize <%= redirect(:phpize) %>
+  ./configure <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/lib <%= redirect(:install) %>
+  LIB_UUID=`uuid -v4 | cut -d - -f5`
+  export LIBSO_NAME="memcached-${LIB_UUID}.so"
+  export INI_NAME="memcached-${LIB_UUID}.ini"
+  install -D -m 0755 .libs/memcached.so <%= dest_dir %>/lib/$LIBSO_NAME <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/include  <%= redirect(:install) %>
+  cp -Rv *.h <%= dest_dir %>/include/. <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/conf.d  <%= redirect(:install) %>
+  echo "extension=$LIBSO_NAME" > <%= dest_dir %>/conf.d/$INI_NAME
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PHP_INI_SCAN_DIR ${appdir}/conf.d
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  set php_user_libs $::env(HOME)/gridware/share/php/lib/
+  set php_source_lib <%= File.basename(Dir.glob(File.join(dest_dir,'lib','memcached-*.so'))[0]) %> 
+  
+  setenv ${appcaps}SRCLIB ${appdir}/lib/${php_source_lib}
+  setenv ${appcaps}USERLIB ${php_user_libs}/${php_source_lib}
+
+  if { $::env(USER) != "root" } {
+    if { [module-info mode load] } {
+      # Link library into user libdir
+      if { ! [file exists "${php_user_libs}"] } {
+        file mkdir "${php_user_libs}"
+      }
+      if { ! [file exists "${php_user_libs}/${php_source_lib}"] } {
+        file link -symbolic "${php_user_libs}/${php_source_lib}" "${appdir}/lib/${php_source_lib}"
+      }
+    }
+  }
