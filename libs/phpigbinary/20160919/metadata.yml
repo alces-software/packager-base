@@ -1,0 +1,81 @@
+---
+:schema: 1
+:license: PHP License
+:summary: Igbinary is a drop in replacement for the standard php serializer. 
+:url: https://github.com/igbinary/igbinary 
+:description: |
+  Igbinary is a drop in replacement for the standard php serializer. 
+  Instead of time and space consuming textual representation, 
+  igbinary stores php data structures in compact binary form. 
+  Savings are significant when using memcached or similar memory 
+  based storages for serialized data. About 50% reduction in storage 
+  requirement can be expected. Specific number depends on your data.
+
+  Unserialization performance is at least on par with the standard 
+  PHP serializer. Serialization performance depends on the 
+  "compact_strings" option which enables duplicate string tracking. 
+  String are inserted to a hash table which adds some overhead. In 
+  usual scenarios this does not have much significance since usage 
+  pattern is "serialize rarely, unserialize often". With 
+  "compact_strings" option igbinary is usually a bit slower than 
+  the standard serializer. Without it, a bit faster.
+:group: Languages
+:changelog: |
+  * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: php-igbinary-20160919.zip 
+:src_dir: igbinary-4e5f2d289adefc092ea01b7a5070e5f5d50fbd74
+:type: libs
+:version: '20160919'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/php ~> 7.0.0
+  :runtime:
+    - apps/php ~> 7.0.0
+:dependencies:
+  el:
+    - autoconf
+    - automake
+    - libtool	
+:compile: |
+  phpize <%= redirect(:phpize) %>
+  ./configure <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/lib <%= redirect(:install) %>
+  LIB_UUID=`uuid -v4 | cut -d - -f5`
+  export LIBSO_NAME="igbinary-${LIB_UUID}.so"
+  export INI_NAME="igbinary-${LIB_UUID}.ini"
+  install -D -m 0755 .libs/igbinary.so <%= dest_dir %>/lib/$LIBSO_NAME <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/include
+  cp -Rv *.h <%= dest_dir %>/include/. <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/conf.d
+  echo "extension=$LIBSO_NAME" > <%= dest_dir %>/conf.d/$INI_NAME
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}include
+
+  prepend-path PHP_INI_SCAN_DIR ${appdir}/conf.d
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  set php_user_libs $::env(HOME)/gridware/share/php/lib/
+  set php_source_lib <%= File.basename(Dir.glob(File.join(dest_dir,'lib','igbinary-*.so'))[0]) %>
+
+  setenv ${appcaps}SRCLIB ${appdir}/lib/${php_source_lib}
+  setenv ${appcaps}USERLIB ${php_user_libs}/${php_source_lib}
+
+  if { $::env(USER) != "root" } {
+    if { [module-info mode load] } {
+      # Link library into user libdir
+      if { ! [file exists "${php_user_libs}"] } {
+        file mkdir "${php_user_libs}"
+      }
+    if { ! [file exists "${php_user_libs}/${php_source_lib}"] } {
+      file delete "${php_user_libs}/${php_source_lib}"
+      }
+    file link -symbolic "${php_user_libs}/${php_source_lib}" "${appdir}/lib/${php_source_lib}"
+    }
+  }
