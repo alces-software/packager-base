@@ -60,7 +60,10 @@
       - bzip2-libs
       - pcre
       - tk
+      - libgfortran
 :changelog: |
+  * Wed Oct  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added libgfortran to runtime dependencies for some build environments
   * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Reworked site libs directory
     - Split runtime and development dependencies
