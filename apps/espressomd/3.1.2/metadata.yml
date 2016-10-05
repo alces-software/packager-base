@@ -30,6 +30,7 @@
 :changelog: |
   * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
+    - Added binary patching for bin/Espresso 
   * Tue Mar 19 2013 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: espresso-3.1.2.tar.gz
