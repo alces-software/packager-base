@@ -189,9 +189,13 @@
   prepend-path PATH ${appdir}/platforms/linux64GccDPInt32Opt/bin
   prepend-path PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.0.1/bin/
 
-  setenv MPI_ARCH_PATH $::env(MPI_HOME)
+  if { [info exists ::env(MPI_HOME)] } {
+    setenv MPI_ARCH_PATH $::env(MPI_HOME)
+  }
   setenv MPI_BUFFER_SIZE 20000000
-  setenv OPAL_PREFIX $::env(MPI_HOME)
+  if { [info exists ::env(MPI_HOME)] } {
+    setenv OPAL_PREFIX $::env(MPI_HOME)
+  }
 
   setenv WM_ARCH linux64
   setenv WM_ARCH_OPTION 64
