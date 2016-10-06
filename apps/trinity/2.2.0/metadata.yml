@@ -51,6 +51,7 @@
     - zlib-devel
     - git
     - ncurses-devel
+    - perl-Data-Dumper
 :compilers:
   gcc:
 :compile: |
