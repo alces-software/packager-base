@@ -17,6 +17,8 @@
   tease apart transcripts derived from paralogous genes.
 :group: Bioinformatics
 :changelog: |
+  * Thu Sep  8 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Wed Mar 30 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version, v2.2.0
   * Wed Oct  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -64,11 +66,20 @@
 
   make <%= redirect(:compile) %>
   make plugins <%= redirect(:compile) %>
+:sources:
+  - trinity.sh.tpl
+  - trinity.sh.md
 :install: |
   cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('trinity.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('trinity.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
 
   # This variable tunes the virtual memory system to work better with
   # abstracted languages, such as Java.  If you need this setting to
@@ -85,88 +96,5 @@
   prepend-path PATH ${appdir}/util
   prepend-path PATH ${appdir}
   prepend-path LD_LIBRARY_PATH ${appdir}/trinity-plugins/jellyfish/lib
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Trinity.pl; general usage'
-    description: 'Execute Trinity using the supplied example reads'
-    template: 'script:stub:smp-multislot'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Trinity usage information see:
-      #   http://trinityrnaseq.sourceforge.net/#running_trinity
 
-      # Change the following to match the number of cores you want to
-      # run on.
-      #   (For GridScheduler tasks, this should match the number of
-      #   slots you request for use in the -pe scheduler directive
-      #   above.)
-      CORES={{ fact.smpNumSlots }}
-
-      # Change the following to match the amount of memory required
-      # per core. (ie. the total memory the Trinity job will require /
-      # the number of cores being requested.)
-      #   (For GridScheduler tasks, this should match the amount of
-      #   memory per core requested in the "-l h_vmem" scheduler
-      #   directive above.)
-      MEM_GB_PER_CORE={{ fact.hardMemoryLimitPerSlot | replace: 'G', '' }}
-
-      # This calculation is performed as Trinity requires the total
-      # amount of RAM available, which is calculated using the values
-      # specified for CORES and MEM_GB_PER_CORE above.
-      # Usually, you would not need to change this.
-      MEM_GB_TOTAL=$(($MEM_GB_PER_CORE * $CORES))
-
-      # Java has an overhead of around 1GB that needs to be accounted
-      # for, so we reduce the amount of memory that will be provided
-      # to Trinity by 1G per core (so that Parafly is able to
-      # parallelize correctly) and 1G in total (so that single
-      # processes are able to make use of all the RAM available to
-      # this task).
-      JAVA_MEM_GB_PER_CORE=$(($MEM_GB_PER_CORE - 1))
-      JAVA_MEM_GB_TOTAL=$(($MEM_GB_TOTAL - 1))
-
-      # Output directory
-      OUTPUT_DIR=trinity/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
-
-      # Type of reads ('fa' or 'fq')
-      SEQ_TYPE=fq
-
-      # Input directory
-      INPUT_DIR=trinity/input
-
-      # Left reads
-      LEFT_READS="$INPUT_DIR/reads.left.fq"
-
-      # Right reads
-      RIGHT_READS="$INPUT_DIR/reads.right.fq"
-
-      # Additional command-line options (run Trinity with no options for a list)
-      #TRINITY_OPTIONS=
-
-      # Prepare input data.
-      # This example retrieves test data bundles with the Trinity
-      # application, and places it in the INPUT_DIR directory.
-      if [ ! -f $LEFT_READS -o ! -f $RIGHT_READS ]; then
-        mkdir -p "$INPUT_DIR"
-        cp "$TRINITYDIR"/sample_data/test_Trinity_Assembly/reads.{left,right}.fq.gz "$INPUT_DIR"
-        for a in "$INPUT_DIR"/*.fq.gz; do
-          gunzip $a
-        done
-      fi
-
-      Trinity $TRINITY_OPTIONS \
-        --seqType $SEQ_TYPE \
-        --left "$LEFT_READS" --right "$RIGHT_READS" \
-        --output "$OUTPUT_DIR" \
-        --JM ${JAVA_MEM_GB_TOTAL}G \
-        --bflyHeapSpaceMax ${JAVA_MEM_GB_PER_CORE}G \
-        --CPU $CORES
-
-      echo ""
-      echo "-------------------"
-      echo " Trinity completed"
-      echo "-------------------"
-      echo " Output is available in: $OUTPUT_DIR"
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
