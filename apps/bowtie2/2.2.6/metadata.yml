@@ -15,6 +15,8 @@
   gapped, local, and paired-end alignment modes.
 :group: Bioinformatics
 :changelog: |
+  * Wed Sep 21 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Fri Apr 08 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -51,45 +53,23 @@
     - gcc-c++
 :compile: |
   make all <%= redirect(:make) %>
+:sources:
+  - bowtie2.sh.md
+  - bowtie2.sh.tpl
 :install: |
   mkdir -p <%= dest_dir %>
   cp -pav * <%= dest_dir %> <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('bowtie2.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('bowtie2.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
   prepend-path PATH ${appdir}
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Lambda phage example'
-    description: 'Execute bowtie2-build to index Lambda phage reference genome and then call bowtie2 to align example reads'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Bowtie 2 usage information see:
-      #   http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml
-
-      # Output directory
-      OUTPUT_DIR="bowtie2/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Base name of index for reference genome (up to final .1.bt2 etc.)
-      INDEX_BASE=$OUTPUT_DIR/lambda_virus
-
-      # Comma-separated list of files containing unpaired reads to be aligned
-      UNPAIRED_READS=$BOWTIE2DIR/example/reads/reads_1.fq
-
-      # File to write SAM alignments to (default is stdout)
-      OUTPUT_FILE=$OUTPUT_DIR/eg1.sam
-
-      # Additional command-line options (bowtie2 -h for a list)
-      #BOWTIE2_OPTIONS=
-
-      # Create output directory if it doesn't already exist
-      mkdir -p $OUTPUT_DIR
-      # Index reference genome
-      bowtie2-build $BOWTIE2DIR/example/reference/lambda_virus.fa $INDEX_BASE
-      # Align example reads
-      bowtie2 -x $INDEX_BASE -U $UNPAIRED_READS -S $OUTPUT_FILE $BOWTIE2_OPTIONS
