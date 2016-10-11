@@ -2,7 +2,7 @@
 :schema: 1
 :license: OTHER - Boost Software License, Version 1.0
 :summary: Assembles transcripts, estimates their abundances, and tests for differential expression and regulation in RNA-Seq samples
-:url: http://cufflinks.cbcb.umd.edu/
+:url: http://cole-trapnell-lab.github.io/cufflinks/
 :description: |
   Cufflinks assembles transcripts, estimates their abundances, and
   tests for differential expression and regulation in RNA-Seq
@@ -21,9 +21,11 @@
     - apps/samtools ~> 0.1.18
     - libs/eigen ~> 3.0
 :changelog: |
- * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+  * Wed Sep 21 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated distro dependencies for EL
- * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+  * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest prerelease 2.2.2 2015-07-01
   * Tue May  5 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - updated to latest prerelease 2.2.2 2015-01-10
@@ -66,6 +68,8 @@
     - autoconf
 :sources:
   - alces-gridware-samtools.patch
+  - cufflinks.sh.md
+  - cufflinks.sh.tpl
 :compile: |
   ./autogen.sh <%= redirect(:autogen) %>
   patch -p0 < <%= source('alces-gridware-samtools.patch') %>
@@ -74,34 +78,18 @@
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('cufflinks.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('cufflinks.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'cufflinks; general usage'
-    description: 'Execute Cufflinks using a test file SAM alignments (available separately)'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Cufflinks usage information see:
-      #   http://cufflinks.cbcb.umd.edu/manual.html
-      # Test data may be downloaded from:
-      #   http://cufflinks.cbcb.umd.edu/downloads/test_data.sam
-
-      # Output directory (default is '.')
-      OUTPUT_DIR="cufflinks/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Input file of RNA-Seq read alignments in the SAM format
-      ALIGNED_READS=test_data.sam
-
-      # Additional command-line options (cufflinks -h for list)
-      #CUFFLINKS_OPTIONS=
-
-      cufflinks -o $OUTPUT_DIR $CUFFLINKS_OPTIONS $ALIGNED_READS
