@@ -12,6 +12,8 @@
   capable of assembling larger genomes.
 :group: Bioinformatics
 :changelog: |
+  * Thu Sep 22 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue Nov 18 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v1.5.2
     - Modified example script heading to reflect modern convention
@@ -23,7 +25,8 @@
     - First created
 :src: abyss-1.5.2.tar.gz
 :sources:
-  - test-data.tar.gz
+  - abyss.sh.md
+  - abyss.sh.tpl
 :type: apps
 :version: '1.5.2'
 :requirements:
@@ -46,61 +49,18 @@
 :install: |
   make install <%= redirect(:install) %>
 
-  mkdir <%= dest_dir %>/example
-  tar -C <%= dest_dir %>/example -xzf <%= source('test-data.tar.gz') %>
-  <% if Process.euid == 0 %>
-  chown -R root:root <%= dest_dir %>/example/test-data
-  <% end %>
-  chmod 644 <%= dest_dir %>/example/test-data/*
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('abyss.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('abyss.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/share/doc/abyss
-  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Paired-end assembly'
-    description: 'Execute abyss-pe tool to assemble paired short reads into contigs'
-    template: 'script:stub:simple'
-    content: |
-      #=========
-      #  ABySS
-      #---------
-      # For full ABySS usage information see:
-      #   https://github.com/bcgsc/abyss/blob/1.5.2/README.md
-      #   or: $ABYSSDOC/README.md
-      # For more information about ABySS, please refer to the website:
-      #   http://www.bcgsc.ca/platform/bioinfo/software/abyss
-
-      # Output/working data directory
-      DATA_DIR=abyss/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
-
-      # Command-line options
-      KMER_LENGTH=25
-      MIN_JOIN_PAIRS=10
-      ANALYSIS_NAME=test
-
-      ABYSS_OPTIONS="k=$KMER_LENGTH n=$MIN_JOIN_PAIRS name=$ANALYSIS_NAME"
-
-      # Input file (or files)
-      INPUT_FILES="reads1.fastq reads2.fastq"
-
-      # Create the output/working data directory
-      mkdir -p "$DATA_DIR"
-      cd "$DATA_DIR"
-
-      # Copy in the input files
-      cp "$ABYSSEXAMPLE"/test-data/*.fastq .
-
-      # Execute abyss-pe
-      abyss-pe $ABYSS_OPTIONS \
-        in="${INPUT_FILES}"
-
-      echo ""
-      echo "-----------------"
-      echo " abyss completed"
-      echo "-----------------"
-      echo " Output is available in: $DATA_DIR"
