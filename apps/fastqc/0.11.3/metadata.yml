@@ -22,6 +22,8 @@
       without running the interactive application
 :group: Bioinformatics
 :changelog: |
+  * Tue Sep 27 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue May 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version 0.11.3
   * Wed Nov 12 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -36,7 +38,8 @@
     - First created
 :src: fastqc_v0.11.3.zip
 :sources:
-  - ilmn_example.fq
+  - fastqc.sh.md
+  - fastqc.sh.tpl
 :src_dir: FastQC
 :type: apps
 :version: '0.11.3'
@@ -46,68 +49,23 @@
   sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i fastqc
   chmod 755 fastqc
 :install: |
-  mkdir -p <%= dest_dir %>/{app,bin,doc,example}
+  mkdir -p <%= dest_dir %>/{app,bin,doc}
   cp -av *.jar fastqc Configuration Templates Help uk net org <%= dest_dir %>/app <%= redirect(:install) %>
   cp -av *.txt <%= dest_dir %>/doc <%= redirect(:install) %>
-  install -v -D -m 0644 <%= source('ilmn_example.fq') %> <%= dest_dir %>/example/ <%= redirect(:install) %>
   ln -s <%= dest_dir %>/app/fastqc <%= dest_dir %>/bin/fastqc
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('fastqc.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('fastqc.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}APP ${appdir}/app
   setenv ${appcaps}DOC ${appdir}/doc
-  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    template: 'script:stub:smp-multislot'
-    name: 'Process an example FASTQ file'
-    description: 'Execute fastqc tool on a bundled example FASTQ file'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full FastQC usage information see:
-      #   http://www.bioinformatics.babraham.ac.uk/projects/fastqc/
-      #
-      # For command-line options, run: fastqc --help
-
-      # Configure output directory
-      OUTPUT_DIR=fastqc/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
-
-      # Specify the number of files which can be processed
-      # simultaneously.  Each thread will be allocated 250MB of
-      # memory.
-      #   (For GridScheduler tasks, you should update the amount of
-      #   memory per core requested in the "-l h_vmem" scheduler
-      #   directive above to 250M.)
-      THREADS={{ fact.smpNumSlots }}
-
-      # Specify the length of Kmer to look for in the Kmer content
-      # module. Specified Kmer length must be between 2 and 10. Default
-      # length is 5 if -k parameter is not specified.
-      KMER_LENGTH=5
-
-      # Input file (or files)
-      INPUT_FILES=("$FASTQCEXAMPLE/ilmn_example.fq")
-
-      # Command-line options (run `fastqc --help` for a list).
-      #FASTQC_OPTIONS=""
-
-      # Create output directory if it doesn't already exist
-      mkdir -p "$OUTPUT_DIR"
-
-      # Execute fastqc
-      fastqc -o "$OUTPUT_DIR" \
-        -t $THREADS \
-        -k $KMER_LENGTH \
-        $FASTQC_OPTIONS \
-        "${INPUT_FILES[@]}"
-
-      echo ""
-      echo "------------------"
-      echo " fastqc completed"
-      echo "------------------"
-      echo " Output is available in: $OUTPUT_DIR"
