@@ -17,6 +17,8 @@
   tease apart transcripts derived from paralogous genes.
 :group: Bioinformatics
 :changelog: |
+  * Mon Oct 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added java-1.8.0-openjdk as dependency
   * Thu Sep  8 2016 Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Wed Mar 30 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -54,6 +56,7 @@
     - git
     - ncurses-devel
     - perl-Data-Dumper
+    - java-1.8.0-openjdk
 :compilers:
   gcc:
 :compile: |
