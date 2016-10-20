@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: Oligotyping
+:license: GPLv2+
+:summary: The oligotyping and minimum entropy decomposition (MED) pipeline for the analysis of marker gene amplicons
+:url: http://merenlab.org/software/oligotyping/
+:description: |
+  Oligotyping is a novel supervised computational method to decompose
+  very closely related taxa within microbial communities by utilizing
+  very subtle nucleotide variation among 16S Ribosomal RNA gene
+  amplicon reads. It can reveal previously unobserved ecological
+  patterns, and hidden diversity concealed within environmental
+  datasets.
+
+  With oligotyping, depending on the hyper-variable region, similarity
+  threshold between different types can be as low as 0.2%, more than a
+  magnitude lower than de facto 3% similarity threshold that is being
+  used by OTU clustering methods.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v2.1.tar.gz
+:src_dir: oligotyping-2.1
+:type: apps
+:version: '2.1'
+:compilers:
+  noarch:
+:requirements:
+  :tool:
+    - apps/pip
+  :build:
+    - apps/python
+    - libs/scipy
+    - libs/biopython
+    - libs/matplotlib
+    - apps/R
+  :runtime:
+    - apps/python
+    - libs/scipy
+    - libs/biopython
+    - libs/matplotlib
+    - apps/R
+    - apps/ncbiblast ~> 2.2.0
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  cat <<EOF | R --no-save <%= redirect(:rlibs) %>
+  local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+  install.packages(c('vegan', 'ggplot2', 'gplots', 'gtools', 'reshape', 'optparse', 'pheatmap', 'RColorBrewer', 'compute.es'), "<%= dest_dir %>/R")
+  EOF
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONPATH="<%= dest_dir %>/python/lib/python2.7/site-packages":$PYTHONPATH
+  mkdir -p "<%= dest_dir %>/python/lib/python2.7/site-packages"
+  python setup.py install --prefix "<%= dest_dir %>/python" <%= redirect(:install) %>
+  mv "<%= dest_dir %>/python/bin" "<%= dest_dir %>/bin"
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}R ${appdir}/R
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path PATH ${appdir}/bin
