@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: Scala
+:license: Modified BSD License; see http://www.scala-lang.org/node/146
+:summary: Multi-paradigm programming language built on top of the Java virtual machine.
+:url: http://www.scala-lang.org/
+:description: |
+  Scala is a general purpose programming language designed to express
+  common programming patterns in a concise, elegant, and type-safe
+  way. It smoothly integrates features of object-oriented and
+  functional languages, enabling Java and other programmers to be more
+  productive. Code sizes are typically reduced by a factor of two to
+  three when compared to an equivalent Java application.
+  
+  Many existing companies who depend on Java for business critical
+  applications are turning to Scala to boost their development
+  productivity, applications scalability and overall reliability.
+:group: Languages
+:changelog: |
+  * Thu Oct 20 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest stable release v2.11.8
+    - Added distro dependencies
+  * Fri Apr  5 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:dependencies:
+  :runtime:
+    el:
+      - java-openjdk
+:src: scala-2.11.8.tgz
+:src_dir: scala-2.11.8
+:type: apps
+:version: 2.11.8
+:compilers:
+  noarch:
+:requirements:
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
