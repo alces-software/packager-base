@@ -17,6 +17,8 @@
   databases.
 :group: Bioinformatics
 :changelog: |
+  * Thu Sep 15 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue Apr 26 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Tue Sep  8 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -48,57 +50,26 @@
   ./configure --without-boost --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   sed -i -e 's|/usr/bin/touch|touch|g' ReleaseMT/build/Makefile.meta ReleaseMT/build/Makefile.mk
   make <%= redirect(:make) %>
+:sources:
+  - blast.sh.md
+  - blast.sh.tpl
 :install: |
   cd c++
   patch -p0 < <%= source('Makefile.patch') %>
   make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('blast.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('blast.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'blastdbcmd and blastn; basic search'
-    description: 'Execute blastdbcmd to extract the specified sequence and run a test blastn search using it as query (test data available separately)'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For detailed usage information for BLAST commands see:
-      #   http://www.ncbi.nlm.nih.gov/books/NBK1763/
-      #
-      # Example script for 'blastn' use case based on:
-      #   http://www.ncbi.nlm.nih.gov/books/NBK52640/#chapter1._Basic_use_1
-      # Requires test BLAST database (~1.9GB) downloaded and extracted from:
-      #   ftp://ftp.ncbi.nlm.nih.gov/blast/db/refseq_rna.00.tar.gz
-      #   ftp://ftp.ncbi.nlm.nih.gov/blast/db/refseq_rna.01.tar.gz
-      #   ftp://ftp.ncbi.nlm.nih.gov/blast/db/refseq_rna.02.tar.gz
 
-      # Output directory
-      OUTPUT_DIR="blast/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # BLAST database name
-      DB_NAME=refseq_rna
-
-      # Comma-delimited search string(s) of sequence identifiers
-      DB_SEQ_IDS=nm_000249
-
-      # Query file name
-      QUERY_FILE=test_query.fa
-
-      # Alignment view option (7 = tabular with comment lines)
-      OUTPUT_FORMAT=7
-
-      # Show alignments for this number of database sequences
-      NUM_ALIGNS=2
-
-      # Additional command-line options (blastn -h for a list)
-      BLASTN_OPTIONS="-task blastn -dust no -num_alignments $NUM_ALIGNS"
-
-      mkdir -p $OUTPUT_DIR
-      blastdbcmd -db $DB_NAME -entry $DB_SEQ_IDS -out $OUTPUT_DIR/$QUERY_FILE \
-        && blastn -query $OUTPUT_DIR/$QUERY_FILE -db $DB_NAME -outfmt $OUTPUT_FORMAT $BLASTN_OPTIONS
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
