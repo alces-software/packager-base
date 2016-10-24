@@ -19,7 +19,7 @@
   pattern is "serialize rarely, unserialize often". With 
   "compact_strings" option igbinary is usually a bit slower than 
   the standard serializer. Without it, a bit faster.
-:group: Languages
+:group: Libraries
 :changelog: |
   * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First Created

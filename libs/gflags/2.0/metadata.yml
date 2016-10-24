@@ -10,7 +10,7 @@
   increased flexibility, including built-in support for C++ types like
   string, and the ability to define flags in the source file in which
   they're used.
-:group: Library
+:group: Libraries
 :changelog: |
   * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created

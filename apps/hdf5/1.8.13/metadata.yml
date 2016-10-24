@@ -1,5 +1,6 @@
 ---
 :schema: 1
+:title: HDF5
 :license: BSD-style, see http://www.hdfgroup.org/products/licenses.html
 :summary: Data model, library, and file format for storing and managing data
 :url: http://www.hdfgroup.org/HDF5/
@@ -11,7 +12,7 @@
   applications to evolve in their use of HDF5. The HDF5 Technology
   suite includes tools and applications for managing, manipulating,
   viewing, and analyzing data in the HDF5 format.
-:group: Databases
+:group: Libraries
 :changelog: |
   * Tue Sep 20 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added flag to enable fortran support for static build

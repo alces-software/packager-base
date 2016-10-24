@@ -7,7 +7,7 @@
   memcached is a high-performance, distributed memory object caching 
   system, generic in nature, but intended for use in speeding up 
   dynamic web applications by alleviating database load.
-:group: Languages
+:group: Libraries
 :changelog: |
   * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First Created

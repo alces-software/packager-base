@@ -8,7 +8,7 @@
   The glog library implements application-level logging. This library
   provides logging APIs based on C++-style streams and various helper
   macros.
-:group: Library
+:group: Libraries
 :changelog: |
   * Tue Sep 23 2014 James Donohue <james.donohue@alces-software.com>
     - Compile with gflags support by default; add variant with gflags disabled

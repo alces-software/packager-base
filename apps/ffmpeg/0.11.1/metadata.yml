@@ -15,7 +15,7 @@
   used by applications, as well as ffmpeg, ffserver, ffplay and
   ffprobe which can be used by end users for transcoding, streaming
   and playing.
-:group: Multimedia
+:group: Graphics
 :changelog: |
   * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created

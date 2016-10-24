@@ -15,7 +15,7 @@
   used by applications, as well as ffmpeg, ffserver, ffplay and
   ffprobe which can be used by end users for transcoding, streaming
   and playing.
-:group: Multimedia
+:group: Graphics
 :changelog: |
   * Fri May 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added distro dependencies for EL

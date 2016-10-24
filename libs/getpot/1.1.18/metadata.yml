@@ -9,7 +9,7 @@
   Python, Ruby and Java (others to come). This tool provides many
   features, such as separate treatment for options, variables, and
   flags, unrecognized object detection, prefixes and much more.
-:group: Library
+:group: Libraries
 :changelog: |
   * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created

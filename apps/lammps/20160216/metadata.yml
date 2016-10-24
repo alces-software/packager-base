@@ -19,7 +19,7 @@
     * Multi-replica models
     * Pre- and post-processing
     * Specialized features (beyond MD itself)
-:group: Physics
+:group: Chemistry
 :type: apps
 :changelog: |
   * Wed Feb 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>

@@ -28,7 +28,7 @@
   line as arguments. If no command is given, the line of input is
   executed. Several lines will be run in parallel. GNU parallel can
   often be used as a substitute for xargs or cat | bash.
-:group: Apps
+:group: Tools
 :changelog: |
   * Thu Jan 14 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to v20151222

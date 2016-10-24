@@ -10,7 +10,7 @@
   representations. Currently available representations include depth-cued 
   wireframes, 'Dreiding' sticks, spacefilling (CPK) spheres, ball and stick, 
   solid and strand biomolecular ribbons, atom labels and dot surfaces.
-:group: Molecular Dynamics
+:group: Chemistry
 :changelog: |
   * Fri Jul 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

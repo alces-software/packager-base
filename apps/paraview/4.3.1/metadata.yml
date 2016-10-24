@@ -34,7 +34,7 @@
       sets.
     * Create an open, flexible, and intuitive user interface.
     * Develop an extensible architecture based on open standards.
-:group: Visualization
+:group: Graphics
 :changelog: |
   * Wed May 25 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL

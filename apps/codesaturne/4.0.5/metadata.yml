@@ -17,7 +17,7 @@
   particle-tracking with Lagrangian modeling, Joule effect, electrics
   arcs, weakly compressible flows, atmospheric flows, rotor/stator
   interaction for hydraulic machines.
-:group: Engineering
+:group: Fluid Dynamics
 :changelog: |
   * Tue May 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to latest production version v4.0.5

@@ -10,7 +10,7 @@
   volume rendering, scientific visualization, and information 
   visualization. VTK also includes ancillary support for 3D interaction 
   widgets, two- and three-dimensional annotation, and parallel computing.   
-:group: Image
+:group: Graphics
 :changelog: |
   * Tue Jul 07 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

@@ -13,7 +13,7 @@
   the popular molecular graphics program VMD for simulation setup and
   trajectory analysis, but is also file-compatible with AMBER, CHARMM,
   and X-PLOR.
-:group: Biophysics
+:group: Chemistry
 :changelog: |
   * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL

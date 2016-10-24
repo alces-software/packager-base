@@ -10,7 +10,7 @@
    * Download landsat images.
    * Image processing and pan sharpening on landsat images.
   These three functions have to be performed separately.
-:group: Bioinformatics
+:group: Geography
 :changelog: |
   * Sun 15 May 2016  - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

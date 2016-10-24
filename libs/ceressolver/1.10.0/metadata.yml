@@ -21,7 +21,7 @@
   vision, computer graphics, astronomy and physics. e.g., Willow
   Garage uses it to solve SLAM problems and Blender uses it for for
   planar tracking and bundle adjustment.
-:group: Library
+:group: Libraries
 :changelog: |
   * Fri Feb 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v1.10.0

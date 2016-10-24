@@ -13,7 +13,7 @@
    It is also used as a plotting engine by third-party applications 
    like Octave. Gnuplot has been supported and under active 
    development since 1986.
-:group: Apps
+:group: Graphics
 :changelog: |
   * Sun Apr 17 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL

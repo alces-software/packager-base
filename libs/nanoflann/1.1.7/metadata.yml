@@ -14,7 +14,7 @@
   Muja and David G. Lowe, and born as a child project of
   MRPT. Following the original license terms, nanoflann is distributed
   under the BSD license.
-:group: Library
+:group: Libraries
 :changelog: |
   * Tue Jun 30 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created

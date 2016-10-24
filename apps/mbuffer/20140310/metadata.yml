@@ -21,7 +21,7 @@
   lifetime of the motors.  mbuffer can prevent buffer underruns, if
   used correctly and speed up the whole backup process.
 :type: apps
-:group: Utilities
+:group: Tools
 :changelog: |
   * Tue Aug  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created

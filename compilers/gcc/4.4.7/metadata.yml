@@ -9,7 +9,7 @@
   these languages (libstdc++, libgcj,...). GCC was originally written
   as the compiler for the GNU operating system.
 :type: compilers
-:group: Compilers
+:group: Languages
 :changelog: |
   * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Created package for 4.4.7

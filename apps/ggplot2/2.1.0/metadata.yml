@@ -12,7 +12,7 @@
   of graphics that makes it easy to produce complex 
   multi-layered graphics.
 :type: apps
-:group: Statistics 
+:group: Graphics
 :changelog: |
   * Tue 26 July 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

@@ -28,7 +28,7 @@
   multi-step process in which data is analyzed by multiple and
   typically independent tools, each passing their output as the input
   to the next step).
-:group: Visualization
+:group: Graphics
 :changelog: |
   * Mon May 19 2014 - James Donohue <james.donohue@alces-software.com>
     - First created

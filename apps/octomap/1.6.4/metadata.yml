@@ -41,7 +41,7 @@
       usage or convenient exchange between robots even under 
       bandwidth constraints.
 :type: apps
-:group: Visualization
+:group: Graphics
 :requirements:
   :tool: apps/cmake
   :build: libs/qt >= 4.8

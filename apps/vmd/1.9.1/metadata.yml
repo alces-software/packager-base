@@ -16,7 +16,7 @@
   (MD) simulation. In particular, VMD can act as a graphical front end
   for an external MD program by displaying and animating a molecule
   undergoing simulation on a remote computer.
-:group: Biophysics
+:group: Chemistry
 :changelog: |
   * Thu Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL

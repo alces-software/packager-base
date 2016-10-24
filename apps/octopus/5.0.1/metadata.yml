@@ -16,7 +16,7 @@
   MPI and OpenMP and can scale to tens of thousands of processors.
   It also has support for graphical processing units (GPUs) through
   OpenCL.
-:group: Electronics
+:group: Chemistry
 :changelog: |
   * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL

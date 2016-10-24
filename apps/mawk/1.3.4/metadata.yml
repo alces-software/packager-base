@@ -6,7 +6,7 @@
 :url: http://invisible-island.net/mawk/ 
 :description: |
   mawk is an interpreter for the AWK Programming Language.
-:group: Apps
+:group: Tools
 :changelog: |
   * Wed Jan 13 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

@@ -18,7 +18,7 @@
     * Models with nonlinear utility functions
     * Models designed for panel data
     * Heteroscedastic models
-:group: Statistics
+:group: Mathematics
 :changelog: |
   * Wed Sep 18 2013 James Donohue <james.donohue@alces-software.com>
     - First created

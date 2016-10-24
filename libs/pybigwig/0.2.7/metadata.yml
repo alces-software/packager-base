@@ -8,7 +8,7 @@
   A python extension, written in C, for quick access to and creation 
   of bigWig files. This extension uses libBigWig for local and remote 
   file access.
-:group: Library
+:group: Libraries
 :changelog: |
   * Tue Apr 12 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

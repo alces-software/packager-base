@@ -18,7 +18,7 @@
   Open64 includes advanced interprocedural optimizations, loop nest
   optimizations, global scalar optimizations, and code generation with
   advanced global register allocation and software pipelining.
-:group: Compilers
+:group: Languages
 :changelog: |
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Refactored to packager style
