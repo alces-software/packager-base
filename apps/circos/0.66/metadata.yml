@@ -30,6 +30,8 @@
   to the next step).
 :group: Graphics
 :changelog: |
+  * Fri Oct 21 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Mon May 19 2014 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: circos-0.66.tgz
@@ -40,10 +42,21 @@
   :tool: apps/cpanminus
 :compilers:
   noarch:
-# requires perl-devel, gd-devel on build host and gd on nodes
+:dependencies:
+  el:
+    - perl-devel
+    - gd-devel
+    - perl-Clone
+    - perl-Digest-MD5
+    - perl-GD
+    - perl-List-MoreUtils
+    - perl-Params-Validate
+:sources:
+  - circos.sh.md
+  - circos.sh.tpl
 :compile: |
   export TOPDIR=$(pwd)
-  export PERL5LIB="${TOPDIR}/perl/lib/perl5"
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5:$PERL5LIB"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   failed_mods="$(cd bin; ./test.modules | grep fail | cut -d ' ' -f 2)"
   cpanm $failed_mods Set::IntSpan Math::Bezier <%= redirect(:cpanm) %>
@@ -54,45 +67,25 @@
   mkdir doc
   mv $(find . -maxdepth 1 -type f) doc
   cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+
+  mv <%= dest_dir %>/example <%= dest_dir %>/examples
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('circos.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('circos.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
-  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
 
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5
   prepend-path MANPATH ${appdir}/perl/man
   prepend-path PATH ${appdir}/perl/bin
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Circos demonstration usage'
-    description: 'Execute Circos to produce an image using the bundled example configuration files and data'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Circos usage information see:
-      #   http://circos.ca/documentation/
 
-      # Output directory
-      OUTPUT_DIR="circos/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Path to configuration file
-      CONF_FILE=etc/circos.conf
-
-      # Additional command-line options (circos -help for a list)
-      #CIRCOS_OPTIONS=
-
-      # Create output directory if it doesn't already exist
-      mkdir -p $OUTPUT_DIR
-
-      # Copy example configuration and data
-      cd $OUTPUT_DIR
-      cp -r $CIRCOSEXAMPLE/* .
-
-      # Launch Circos
-      circos -conf $CONF_FILE $CIRCOS_OPTIONS
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
