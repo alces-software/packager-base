@@ -24,6 +24,8 @@
   electronic, optical and tunnel types.
 :group: Physics
 :changelog: |
+  * Thu Oct 27 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Wed Apr  1 2015 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: freeda-2.0.tar.gz
@@ -34,16 +36,25 @@
   # Patch to use Gridware FFTW2 in place of bundled version and use Trilinos 
   # headers from installed Gridware package instead of source tree
   - makefile.defs.patch
+:dependencies:
+  el:
+    - gcc-c++
+    - bison
+    - flex
 :requirements:
   :build:
     - libs/blas
     - libs/lapack
     - libs/fftw2_double
-    - libs/trilinos
+    - libs/trilinos = 10.0.2
   :runtime:
+    - libs/lapack
     - libs/fftw2_double
 :compilers:
   gcc:
+:sources:
+  - freeda.sh.md
+  - freeda.sh.tpl
 :compile: |
   cd simulator
   make <%= redirect(:make) %>
@@ -52,6 +63,11 @@
   cp -rv test <%= dest_dir %> <%= redirect(:install) %>
   mkdir -p <%= dest_dir %>/bin
   cp -v simulator/freeda <%= dest_dir %>/bin <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('freeda.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('freeda.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -59,26 +75,7 @@
   setenv ${appcaps}TEST ${appdir}/test
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'fREEDA; run simulator using sample netlist'
-    description: 'Execute the fREEDA simulator using one of the sample netlists provided.'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
 
-      # Output directory.
-      OUTPUT_DIR="freeda/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      mkdir -p "$OUTPUT_DIR"
-
-      # The netlist to use; change this to use a different netlist
-      INPUT_FILE="$FREEDATEST/testcir.net"
-
-      # The file under OUTPUT_DIR where command output should be written
-      OUTPUT_FILE="testcir.out"
-
-      cd "$OUTPUT_DIR"
-      freeda "$INPUT_FILE" "$OUTPUT_FILE"
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
