@@ -16,18 +16,24 @@
   but around 1,000 fold faster.
 :group: Bioinformatics
 :changelog: |
+  * Thu Oct 27 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added dependency for glib
   * Fri Jan 31 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: wise2.2.3-rc7.tar.gz
 :src_dir: wise2.2.3-rc7
 :type: apps
 :version: '2.2.3'
-# Requires glib and glib-devel
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - glib2-devel
+    - tcsh
 :compile: |
   cd src
   sed -i 's/getline/getline_new/' HMMer2/sqio.c
+  find ./ -name makefile |xargs sed -i -e 's/glib-config --libs/pkg-config --libs glib-2.0/' -e 's/glib-config --cflags/pkg-config --cflags glib-2.0/'
   make clean <%= redirect(:compile) %>
   make all <%= redirect(:compile) %>
 :install: |
