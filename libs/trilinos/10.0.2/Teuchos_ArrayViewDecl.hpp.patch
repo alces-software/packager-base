@@ -1,0 +1,10 @@
+--- packages/teuchos/src/Teuchos_ArrayViewDecl.hpp.unmod	2017-01-18 16:06:02.462448380 +0000
++++ packages/teuchos/src/Teuchos_ArrayViewDecl.hpp	2017-01-18 13:58:45.363153173 +0000
+@@ -29,6 +29,7 @@
+ #ifndef TEUCHOS_ARRAY_VIEW_DECL_HPP
+ #define TEUCHOS_ARRAY_VIEW_DECL_HPP
+ 
++#include <stddef.h>
+ 
+ #include "Teuchos_RCPNode.hpp"
+ #include "Teuchos_ENull.hpp"
