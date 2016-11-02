@@ -19,6 +19,8 @@
   variety of formats.
 :group: Bioinformatics
 :changelog: |
+  * Wed Nov  2 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu Mar  6 2014 James Donohue <james.donohue@alces-software.com>
     - Added example script
   * Thu Jan 30 2014 - James Donohue <james.donohue@alces-software.com>
@@ -30,8 +32,18 @@
 :type: apps
 :version: '5.3.46.0'
 # requires Java >= 1.6 and Perl on node
+:dependencies:
+  el:
+    - java-1.7.0-openjdk-headless
+:requirements:
+  :runtime:
+    - apps/perl = 5.20.2
+    - apps/python
 :compilers:
-  bin:
+  gcc:
+:sources:
+  - iprscan.sh.md
+  - iprscan.sh.tpl
 :compile: |
   # no-op; this is a distribution of a binary/Java application
 :install: |
@@ -42,34 +54,20 @@
   mkdir -v <%= dest_dir %>/test <%= redirect(:install) %>
   cp -Rv test_* <%= dest_dir %>/test <%= redirect(:install) %>
 
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('iprscan.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('iprscan.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+
   # Instructions for Panther modules deferred until required
 :module: |
   setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DATA ${appdir}/data
+  setenv ${appcaps}TEST ${appdir}/test
 
   prepend-path PATH ${appdir}
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Test run with example data'
-    description: 'Execute InterProScan using bundled protein test sequences'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For InterProScan usage information see:
-      #   https://code.google.com/p/interproscan/wiki/HowToRun
 
-      # Output directory
-      OUTPUT_DIR="iprscan/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Path to FASTA file that should be loaded on Master startup
-      # NB location must be writeable
-      INPUT_FILE=test_proteins.fasta
-      cp -v $IPRSCANDIR/test/test_proteins.fasta $INPUT_FILE
-
-      # Comma separated list of output formats
-      OUTPUT_FORMATS=tsv
-
-      mkdir -p $OUTPUT_DIR
-      interproscan.sh -i $INPUT_FILE -f $OUTPUT_FORMATS -d $OUTPUT_DIR
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
