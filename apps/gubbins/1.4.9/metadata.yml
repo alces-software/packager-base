@@ -1,0 +1,80 @@
+---
+:schema: 1
+:title: gubbins
+:license: GPLv2
+:summary: Genealogies Unbiased By recomBinations In Nucleotide Sequences 
+:url: http://sanger-pathogens.github.io/gubbins/
+:description: 
+  Since the introduction of high-throughput, second-generation DNA 
+  sequencing technologies, there has been an enormous increase in the 
+  size of datasets being used for estimating bacterial population 
+  phylodynamics. Although many phylogenetic techniques are scalable 
+  to hundreds of bacterial genomes, methods which have been used for 
+  mitigating the effect of mechanisms of horizontal sequence transfer 
+  on phylogenetic reconstructions cannot cope with these new datasets. 
+  Gubbins (Genealogies Unbiased By recomBinations In Nucleotide 
+  Sequences) is an algorithm that iteratively identifies loci 
+  containing elevated densities of base substitutions while 
+  concurrently constructing a phylogeny based on the putative point 
+  mutations outside of these regions. Simulations demonstrate the 
+  algorithm generates highly accurate reconstructions under realistic 
+  models of short-term bacterial evolution, and can be run in only a 
+  few hours on alignments of hundreds of bacterial genome sequences
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v1.4.9.tar.gz
+:src_dir: gubbins-1.4.9
+:type: apps
+:version: '1.4.9'
+:compilers:
+  noarch:
+:requirements:
+  :build: 
+    - apps/python3 = 3.4.3
+    - apps/setuptools_python34
+    - apps/fasttree
+    - apps/fastml
+    - apps/raxml
+  :runtime:
+    - apps/python3
+    - apps/fasttree
+    - apps/fastml
+    - apps/raxml
+:dependencies:
+  el:
+    - automake
+    - autoconf
+    - libtool
+    - zlib-devel
+    - libjpeg-turbo
+    - libjpeg-turbo-devel	
+:compile: |
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/python3.4/site-packages"
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/python3.4/site-packages
+  PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
+  mkdir -p $PYTHONDEPSDIR
+  libtoolize <%= redirect(:configure) %>
+  aclocal <%= redirect(:configure) %>
+  autoheader <%= redirect(:configure) %>
+  automake --add-missing <%= redirect(:configure) %>
+  autoconf <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/python3.4/site-packages"
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/python3.4/site-packages
+  PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
+  make install <%= redirect(:install_gubbins) %>
+  easy_install --install-dir $PYTHONDEPSDIR python <%= redirect(:python) %>
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -R src/gubbins <%= dest_dir %>/bin/. <%= redirect(:install) %>
+  cp -R python/scripts/* <%= dest_dir %>/bin/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python3.4/site-packages
