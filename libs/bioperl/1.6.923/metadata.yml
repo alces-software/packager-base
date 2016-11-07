@@ -12,14 +12,16 @@
   consist of the core of the functionality of bioperl.
 :group: Bioinformatics
 :changelog: |
+  * Mon Nov  7 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated source download location and md5sum of BioPerl 1.6.923 package
   * Fri Jun 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Thu May  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest v1.6.923
   * Thu Oct  4 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: BioPerl-1.6.923.tar.gz
-:src_dir: BioPerl-1.6.923
+:src: release-1-6-923.tar.gz
+:src_dir: bioperl-live-release-1-6-923
 :type: libs
 :version: '1.6.923'
 :requirements:
