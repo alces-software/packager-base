@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: FastML
+:license: GNU GPL
+:summary: Maximum Likelihood ancestral sequence reconstruction
+:url: http://sanger-pathogens.github.io/gubbins/
+:description: 
+  The FastML server is a bioinformatics tool for the reconstruction 
+  of ancestral sequences based on the phylogenetic relations between 
+  homologous sequences. The server runs several algorithms that 
+  reconstruct the ancestral sequences with emphasis on an accurate 
+  reconstruction of both indels and characters.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: FastML.v3.1.tgz
+:src_dir: FastML.v3.1
+:type: apps
+:version: '3.1'
+:compilers:
+  noarch:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  make all <%= redirect(:compile) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,lib,doc}
+  cp -R programs/fastml/fastml programs/gainLoss/gainLoss programs/indelCoder/indelCoder <%= dest_dir %>/bin/.
+  cp -R libs/phylogeny/* <%= dest_dir %>/lib/.
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
