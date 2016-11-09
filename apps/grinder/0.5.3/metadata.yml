@@ -50,6 +50,8 @@
        GUI, CLI and API
 :group: Bioinformatics
 :changelog: |
+  * Fri Nov  4 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Mon Sep  1 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: Grinder-0.5.3.tar.gz
@@ -61,8 +63,11 @@
   :runtime: libs/bioperl >= 1.6.901
 :compilers:
   noarch:
+:sources:
+  - grinder.sh.md
+  - grinder.sh.tpl
 :compile: |
-  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5:$PERL5LIB"
   export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
   cpanm parent Getopt::Euclid Math::Random::MT <%= redirect(:cpanm) %>
 
@@ -71,6 +76,11 @@
 :install: |
   make install <%= redirect(:install) %>
   mv <%= dest_dir %>/perl/bin <%= dest_dir %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('grinder.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('grinder.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -78,39 +88,7 @@
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/perl/man
   prepend-path PERL5LIB ${appdir}/perl/lib/perl5
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Shotgun DNA library with specified coverage'
-    description: 'Run Grinder on a FASTA database (not supplied) with a specified coverage'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Grinder usage information see:
-      #   http://sourceforge.net/projects/biogrinder/files/?source=navbar
 
-      # Input directory
-      INPUT_DIR="grinder/input"
-
-      # Output directory
-      OUTPUT_DIR="grinder/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # FASTA file that contains the input reference sequences
-      INPUT_SEQS="$INPUT_DIR/genomes.fna"
-
-      # Desired fold coverage of the input reference sequences
-      COVERAGE_FOLD="0.1"
-
-      # Additional command-line options
-      GRINDER_OPTIONS=""
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Run Grinder command line
-      grinder "$GRINDER_OPTIONS" \
-          -reference_file "$INPUT_SEQS" \
-          -coverage_fold "$COVERAGE_FOLD" \
-          -output_dir "$OUTPUT_DIR" 
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
