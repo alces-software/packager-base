@@ -84,6 +84,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path MANPATH ${appdir}/share/man
 :changelog: |
+  * Thu Nov 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Tue Apr  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to version 1.10.2
   * Mon Mar 21 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
