@@ -23,6 +23,8 @@
   (approx. 1 Gbp / hour) on a processor Intel(R) Xeon CPU 2.80 Ghz.
 :group: Bioinformatics
 :changelog: |
+  * Thu Nov 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Fri Jan 31 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: geneid_v1.4.4.Jan_13_2011.tar.gz
