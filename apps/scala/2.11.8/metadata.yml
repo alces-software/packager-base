@@ -25,7 +25,7 @@
 :dependencies:
   :runtime:
     el:
-      - java-openjdk
+      - java-openjdk-1.8.0
 :src: scala-2.11.8.tgz
 :src_dir: scala-2.11.8
 :type: apps
