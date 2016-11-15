@@ -24,11 +24,17 @@
       which includes conditionals, loops, user-defined recursive
       functions and input and output facilities.
 :group: Languages
+:dependencies:
+  el:
+    - readline-devel
+    - libXt-devel
 :requirements: 
   :build:
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Tue Nov 15 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added dependencies to fix compilation on EL7.
   * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Reinstate compilation of BLAS shared library
   * Tue Apr 30 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
