@@ -22,6 +22,8 @@
       without running the interactive application
 :group: Bioinformatics
 :changelog: |
+  * Thu Nov 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated script to invoke fastqc
   * Tue Sep 27 2016 - Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Tue May 12 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -52,7 +54,12 @@
   mkdir -p <%= dest_dir %>/{app,bin,doc}
   cp -av *.jar fastqc Configuration Templates Help uk net org <%= dest_dir %>/app <%= redirect(:install) %>
   cp -av *.txt <%= dest_dir %>/doc <%= redirect(:install) %>
-  ln -s <%= dest_dir %>/app/fastqc <%= dest_dir %>/bin/fastqc
+
+  cat <<\EOF > <%= dest_dir %>/bin/fastqc
+  #!/bin/bash
+  exec $FASTQCAPP/fastqc "$@"
+  EOF
+  chmod +x <%= dest_dir %>/bin/fastqc
 
   mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
   mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
