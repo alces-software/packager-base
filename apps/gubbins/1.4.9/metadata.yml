@@ -39,12 +39,14 @@
     - apps/fasttree
     - apps/fastml
     - apps/raxml
+    - libs/bioconductor
   :runtime:
     - apps/python3 ~> 3.4.0
     - apps/fasttree
     - apps/fastml
     - apps/raxml
     - apps/setuptools_python34
+    - libs/bioconductor
 :dependencies:
   el:
     - automake
