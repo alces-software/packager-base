@@ -1,0 +1,72 @@
+---
+:schema: 1
+:title: InterProScan
+:license: Apache License 2.0 - citation may also be required; see ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/4/FAQs.html
+:summary: Allows sequences to be scanned against InterPro's signatures
+:url: http://www.ebi.ac.uk/interpro/interproscan.html
+:description: |
+  InterPro is a database which integrates together predictive
+  information about proteins' function from a number of partner
+  resources, giving an overview of the families that a protein
+  belongs to and the domains and sites it contains.
+
+  Users who have novel nucleotide or protein sequences that they
+  wish to functionally characterise can use the software package
+  InterProScan to run the scanning algorithms from the InterPro
+  database in an integrated way. Sequences are submitted in FASTA
+  format. Matches are then calculated against all of the required
+  member database's signatures and the results are then output in a
+  variety of formats.
+:group: Bioinformatics
+:changelog: |
+  * Fri Nov 18 2016 - Andrew Provis <james.donohue@alces-software.com>
+    - Created new version of InterProScan as older one no longer runs.
+  * Thu Mar  6 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script
+  * Thu Jan 30 2014 - James Donohue <james.donohue@alces-software.com>
+    - Rewritten for v5 series
+  * Mon 18 Feb 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: interproscan-5.21-60.0-64-bit.tar.gz
+:src_dir: interproscan-5.21-60.0
+:type: apps
+:version: '5.3.46.0'
+:requirements:
+  :runtime:
+    - apps/perl
+    - apps/python
+:dependencies:
+  el:
+    - java-1.8.0-openjdk
+# requires Java >= 1.6 and Perl on node
+:compilers:
+  gcc:
+:sources:
+  - iprscan.sh.md
+  - iprscan.sh.tpl
+:patches:
+  - interproscan.sh.patch
+:compile: |
+  # no-op; this is a distribution of a binary/Java application
+:install: |
+  sed -i -e 's|$@|-T /tmp $@|' interproscan.sh
+  # NB requires startup script/properties and .jar to live in root dir
+  cp -Rv bin data lib work interproscan.* interproscan-5.jar <%= dest_dir %> <%= redirect(:install) %>
+
+  mkdir -v <%= dest_dir %>/test <%= redirect(:install) %>
+  cp -Rv test_* <%= dest_dir %>/test <%= redirect(:install) %>
+
+  # Instructions for Panther modules deferred until required
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('iprscan.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('iprscan.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PATH ${appdir}
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
