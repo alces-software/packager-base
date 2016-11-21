@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: Bazel
+:license: Apache License 2.0
+:summary: Correct, reproducible, fast builds for everyone
+:url: http://bazel.io/
+:description: |
+  Bazel is a tool that automates software builds and tests. Supported
+  build tasks include running compilers and linkers to produce
+  executable programs and libraries, and assembling deployable
+  packages for Android, iOS and other target environments. Bazel is
+  similar to other tools like Make, Ant, Gradle, Buck, Pants and
+  Maven.
+:type: apps
+:group: Tools
+:changelog: |
+  * Mon Nov 21 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest available release, v0.4.0
+  * Mon Dec  7 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bazel-0.4.0.tar.gz
+:version: '0.4.0'
+:compilers:
+  gcc:
+:params:
+  :javahome: "Path to JAVA_HOME for Java 1.8 [specify path excluding bin/ directory, or 'default' for '/usr/lib/jvm/java-1.8.0']"
+:dependencies:
+  el:
+    - java-1.8.0-openjdk-devel
+    - gcc-c++
+    - zip
+:compile: |
+  gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+  gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+  if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "8") ]]; then
+    echo GCC version is $gcc_major.$gcc_minor but Bazel 0.4.0 requires at least v4.8.0 to compile. If a compatible version is available, please specify it with --compiler gcc/x.y.z >/dev/stderr
+    exit 1
+  fi
+  <% java_home = ( param(:javahome) == 'default' ? '/usr/lib/jvm/java-1.8.0' : param(:javahome) ) %>
+  if [ ! -x <%= java_home %>/bin/java ]; then
+    echo Java could not be found in <%= java_home %>/bin/java. >/dev/stderr
+  fi
+  # no-op; this is a distribution of a Java application
+  java_version=$(<%= java_home %>/bin/java -version 2>&1 | egrep "^(java|openjdk) version" | cut -d'"' -f2)
+  java_major=$(echo "$java_version" | cut -d'.' -f1)
+  java_minor=$(echo "$java_version" | cut -d'.' -f2)
+  if [[ "$java_major" -ne "1" || "$java_minor" -le "7" ]]; then
+    echo Java version is $java_version but Bazel 0.4.0 requires v1.8.0. Please ensure a compatible version is installed. >/dev/stderr
+    exit 1
+  fi
+  export JAVA_HOME="<%= java_home %>"
+  # The iconv dance below is to ensure that UTF-8 characters don't
+  # upset environments configured to only accept ASCII.
+  /bin/bash ./compile.sh 2>&1 | iconv -c -f utf-8 -t ascii <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share,doc}
+  cp -v output/bazel <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv examples third_party tools <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v CHANGELOG.md CONTRIBUTING.md LICENSE.txt README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  setenv JAVA_HOME <%= param(:javahome) == 'default' ? '/usr/lib/jvm/java-1.8.0' : param(:javahome) %>
+
+  prepend-path PATH ${appdir}/bin
