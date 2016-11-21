@@ -2,26 +2,28 @@
 :schema: 1
 :title: gubbins
 :license: GPLv2
-:summary: Genealogies Unbiased By recomBinations In Nucleotide Sequences 
+:summary: Genealogies Unbiased By recomBinations In Nucleotide Sequences
 :url: http://sanger-pathogens.github.io/gubbins/
-:description: 
-  Since the introduction of high-throughput, second-generation DNA 
-  sequencing technologies, there has been an enormous increase in the 
-  size of datasets being used for estimating bacterial population 
-  phylodynamics. Although many phylogenetic techniques are scalable 
-  to hundreds of bacterial genomes, methods which have been used for 
-  mitigating the effect of mechanisms of horizontal sequence transfer 
-  on phylogenetic reconstructions cannot cope with these new datasets. 
-  Gubbins (Genealogies Unbiased By recomBinations In Nucleotide 
-  Sequences) is an algorithm that iteratively identifies loci 
-  containing elevated densities of base substitutions while 
-  concurrently constructing a phylogeny based on the putative point 
-  mutations outside of these regions. Simulations demonstrate the 
-  algorithm generates highly accurate reconstructions under realistic 
-  models of short-term bacterial evolution, and can be run in only a 
+:description:
+  Since the introduction of high-throughput, second-generation DNA
+  sequencing technologies, there has been an enormous increase in the
+  size of datasets being used for estimating bacterial population
+  phylodynamics. Although many phylogenetic techniques are scalable
+  to hundreds of bacterial genomes, methods which have been used for
+  mitigating the effect of mechanisms of horizontal sequence transfer
+  on phylogenetic reconstructions cannot cope with these new datasets.
+  Gubbins (Genealogies Unbiased By recomBinations In Nucleotide
+  Sequences) is an algorithm that iteratively identifies loci
+  containing elevated densities of base substitutions while
+  concurrently constructing a phylogeny based on the putative point
+  mutations outside of these regions. Simulations demonstrate the
+  algorithm generates highly accurate reconstructions under realistic
+  models of short-term bacterial evolution, and can be run in only a
   few hours on alignments of hundreds of bacterial genome sequences
 :group: Bioinformatics
 :changelog: |
+  * Mon Nov 21 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Fixed installation location of python dependencies for binaries
   * Tue Nov  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Fixed requirements to load setuptools & explicit python version
   * Thu Oct 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -33,20 +35,18 @@
 :compilers:
   noarch:
 :requirements:
-  :build: 
+  :build:
     - apps/python3 ~> 3.4.0
     - apps/setuptools_python34
     - apps/fasttree
     - apps/fastml
     - apps/raxml
-    - libs/bioconductor
   :runtime:
     - apps/python3 ~> 3.4.0
     - apps/fasttree
     - apps/fastml
     - apps/raxml
     - apps/setuptools_python34
-    - libs/bioconductor
 :dependencies:
   el:
     - automake
@@ -54,7 +54,7 @@
     - libtool
     - zlib-devel
     - libjpeg-turbo
-    - libjpeg-turbo-devel	
+    - libjpeg-turbo-devel
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
   export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/python3.4/site-packages"
@@ -67,6 +67,8 @@
   automake --add-missing <%= redirect(:configure) %>
   autoconf <%= redirect(:configure) %>
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  export PYTHONDESTDIR=<%= dest_dir %>/python
+  sed -ie "s|setup.py install|setup.py install --prefix=$PYTHONDESTDIR|g" python/Makefile
   make <%= redirect(:compile) %>
 :install: |
   export PYTHONDONTWRITEBYTECODE=true
