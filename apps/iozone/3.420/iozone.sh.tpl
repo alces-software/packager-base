@@ -35,6 +35,6 @@
 module load apps/iozone/3.420
 
 # Command-line options ('iozone -h' for a list)
-IOZONE_OPTIONS="-s 16m -t 2"
+IOZONE_OPTIONS="-s 16m -t 2 ~/."
 
 iozone $IOZONE_OPTIONS

@@ -11,6 +11,8 @@
   aio_read, aio_write.
 :group: Benchmarks
 :changelog: |
+  * Wed Nov 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated Clusterware literal script run dir 
   * Tue Sep 20 2016 Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
