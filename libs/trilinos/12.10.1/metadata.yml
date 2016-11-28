@@ -1,0 +1,58 @@
+---
+:schema: 1
+:license: OTHER - see http://trilinos.org/download/license/
+:title: Trilinos
+:summary: Algorithms for the solution of multi-physics engineering and scientific problems
+:url: http://trilinos.org/
+:description: |
+  The Trilinos Project is an effort to develop and implement robust algorithms
+  and enabling technologies using modern object-oriented software design, while
+  still leveraging the value of established libraries such as PETSc,
+  Metis/ParMetis, SuperLU, Aztec, the BLAS and LAPACK. It emphasizes abstract
+  interfaces for maximum flexibility of component interchanging, and provides a
+  full-featured set of concrete classes that implement all abstract interfaces.
+:group: Libraries
+:changelog: |
+  * Mon Nov 28 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated to version 12.10.1
+  * Tue Mar 31 2015 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: trilinos-12.10.1-Source.tar.gz
+:src_dir: trilinos-12.10.1-Source
+:type: libs
+:version: '12.10.1'
+:requirements:
+  :tool: apps/cmake
+  :build:
+    - libs/blas
+    - libs/lapack
+    - libs/boost
+    - libs/netcdf
+  :runtime:
+    - libs/netcdf
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -D CMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -D Trilinos_ENABLE_ALL_PACKAGES=ON \
+    -D BLAS_LIBRARY_DIRS=${BLASDIR} \
+    -D LAPACK_LIBRARY_DIRS=${LAPACKDIR} \
+    -D Boost_INCLUDE_DIRS=${BOOSTDIR} \
+    -D NETCFD_LIBRARY_DIRS=${NETCFDDIR} \
+    -DTPL_ENABLE_X11=OFF \
+    -DTPL_ENABLE_Matio=OFF .. <%= redirect(:cmake) %>
+  make -j ${GRIDWARE_MAKE_THREADS} <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/doc
+  cp README RELEASE_NOTES <%= dest_dir %>/doc
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
