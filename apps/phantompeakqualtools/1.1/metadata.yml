@@ -23,10 +23,10 @@
 :version: '1.1'
 :requirements:
   :build:
-    - apps/R = 3.0.0
+    - apps/R
     - libs/boost
   :runtime:
-    - apps/R = 3.0.0
+    - apps/R
     - apps/samtools
 :sources:
   - example.tagAlign.gz
