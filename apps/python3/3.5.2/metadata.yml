@@ -1,0 +1,149 @@
+---
+:schema: 1
+:license: Python License
+:summary: A remarkably powerful dynamic programming language
+:url: http://www.python.org/
+:description: |
+  Python is a remarkably powerful dynamic programming language that is
+  used in a wide variety of application domains. Python is often
+  compared to Tcl, Perl, Ruby, Scheme or Java. Some of its key
+  distinguishing features include:
+
+    * very clear, readable syntax
+    * strong introspection capabilities
+    * intuitive object orientation
+    * natural expression of procedural code
+    * full modularity, supporting hierarchical packages
+    * exception-based error handling
+    * very high level dynamic data types
+    * extensive standard libraries and third party modules for
+      virtually every task
+    * extensions and modules easily written in C, C++ (or Java for
+      Jython, or .NET languages for IronPython)
+    * embeddable within applications as a scripting interface
+:group: Languages
+:changelog: |
+  * Fri Dec  2 2015 Andrew Provis <andrew.provis@alces-software.com>
+    - Bumped to v3.5.2
+    - Added new variant for python35
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reworked site libs directory
+    - Split runtime and development dependencies
+  * Fri Apr 8 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated OS Dependencies
+  * Tue Apr 5 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included OS Dependencies
+  * Mon Apr 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v3.4.3
+  * Mon Apr 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v3.4.0
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v3.3.3 and migrated to separate python3 package
+  * Fri Mar 15 2013 - James Donohue <james.donohue@alces-software.com>
+    - Add site-wide and user-specific dirs to PYTHONPATH
+  * Tue Aug 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v3.2.3
+    - Refactored to packager style
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: Python-3.5.2.tgz
+:src_dir: Python-3.5.2
+:type: apps
+:version: '3.5.2'
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - openssl-devel
+      - bzip2-devel
+      - zlib-devel
+      - tk-devel
+      - libffi-devel
+      - sqlite-devel
+      - ncurses-devel
+      - readline-devel
+      - gdbm-devel
+      - xz-devel
+    el6:
+      - db4-devel
+    el7:
+      - libdb-devel
+  :runtime:
+    el:
+      - openssl
+      - bzip2-libs
+      - zlib
+      - tk
+      - libffi
+      - sqlite
+      - ncurses
+      - readline
+      - gdbm
+      - xz-libs
+    el6:
+      - db4
+    el7:
+      - libdb
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  ./configure --prefix=<%= dest_dir %> --enable-shared <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  make install <%= redirect(:install) %>
+  # Create site-wide distutils config file
+  cat <<EOF > <%= dest_dir %>/lib/python3.5/distutils/distutils.cfg
+  [install]
+  prefix=<%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/python/<%= version %>
+  EOF
+  # Create basic non-root user distutils config file
+  cat <<EOF > <%= dest_dir %>/lib/python3.5/distutils/pydistutils-tmpl.cfg
+  [install]
+  prefix=~/gridware/share/python/<%= version %>
+  EOF
+:module: |
+  set python_user_libs $::env(HOME)/gridware/share/python/${version}/lib/python3.5/site-packages
+  set python_user_bin $::env(HOME)/gridware/share/python/${version}/bin
+  set python_site_libs <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/python/${version}/lib/python3.5/site-packages
+  set python_site_bin <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/python/${version}/bin
+
+  set distutils_usercfg $::env(HOME)/.pydistutils.cfg
+  set distutils_usercfg_template ${appdir}/lib/python3.5/distutils/pydistutils-tmpl.cfg
+
+  setenv PYTHONDIR ${appdir}
+  setenv PYTHONBIN ${appdir}/bin
+  setenv PYTHONLIB ${appdir}/lib
+  setenv PYTHONINCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${python_site_bin}
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/python3.5
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LIBRARY_PATH ${appdir}/lib
+
+  if { $::env(USER) != "root" } {
+    if { [module-info mode load] } {
+      # make the user libs directory if it doesn't exist
+      if { ! [file exists "${python_user_libs}"] } {
+        file mkdir "${python_user_libs}"
+      }
+      # copy basic non-root distutils config file if one doesn't exist
+      if { ! [file exists "${distutils_usercfg}"] } {
+        file copy "${distutils_usercfg_template}" "${distutils_usercfg}"
+      }
+    }
+    append-path PYTHONPATH ${python_user_libs}
+    prepend-path PATH ${python_user_bin}
+  } {
+    if { [module-info mode load] } {
+      # make the site libs directory if it doesn't exist
+      if { ! [file exists "${python_site_libs}"] } {
+        file mkdir "${python_site_libs}"
+      }
+    }
+  }
+  append-path PYTHONPATH ${python_site_libs}
