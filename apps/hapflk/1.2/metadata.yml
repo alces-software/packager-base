@@ -10,6 +10,8 @@
   genotyping data.
 :group: Bioinformatics
 :changelog: |
+  * Tue Dec 06 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu Jun 05 2014 Ben Armston <ben.armston@alces-software.com>
     - Install R libraries ape and phangorn
   * Fri May 30 2014 James Donohue <james.donohue@alces-software.com>
@@ -31,7 +33,11 @@
     - apps/R
 :compilers:
   gcc:
+:sources:
+  - hapflk.sh.md
+  - hapflk.sh.tpl
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 
   # Install R packages
@@ -43,8 +49,14 @@
     install.packages("phangorn","<%= dest_dir %>/R")
   EOF) <%= redirect(:rlibs) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('hapflk.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('hapflk.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -53,37 +65,7 @@
 
   prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
   append-path  R_LIBS_SITE ${appdir}/R
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Hapmap data/LCT gene'
-    description: 'Execute hapflk to perform an example of analysis on a small portion of HapMap phase III data around the LCT gene'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full hapflk usage information see:
-      #   https://forge-dga.jouy.inra.fr/projects/hapflk/wiki/Options
-      #
-      # This example script is based on the tutorial at:
-      #   https://forge-dga.jouy.inra.fr/projects/hapflk/wiki/Tutorial
-      # It requires the tutorial genome data which be downloaded from:
-      #   https://forge-dga.jouy.inra.fr/documents/222
-      # Download, extract it and set TUTORIAL_DATA_DIR below
 
-      # Output directory
-      OUTPUT_DIR="hapflk/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Directory where tutorial data has been extracted (see above)
-      TUTORIAL_DATA_DIR="/path/to/hapflk-tutorial"
-
-      # Additional command-line options (hapflk -h for list)
-      HAPFLK_OPTIONS="-K 15 --nfit=1 --ncpu=2"
-
-      # Create output directory and copy tutorial data
-      mkdir -p $OUTPUT_DIR
-      cd $OUTPUT_DIR
-      cp -v $TUTORIAL_DATA_DIR/* .
-
-      hapflk --file hapmap3-lct --kinship kinship.txt $HAPFLK_OPTIONS
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
