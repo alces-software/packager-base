@@ -21,7 +21,7 @@
 #$ -j y
 #$ -o $HOME/hpl_out.$JOB_ID
 #$ -N hpl
-#$ -l h_vmem=8G
+#$ -l h_vmem=1536M
 #$ -pe mpislots-verbose 8
 
 
@@ -32,14 +32,22 @@
 # For more information about configuring HPL see:
 #   http://www.netlib.org/benchmark/hpl/
 
-# Load module
+# Loading HPL module
 module load apps/hpl/2.1
 
-# Directory containing the HPL.dat input data file, tuned as required
+# Output directory
+OUTPUT_DIR="${HOME}/hpl/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+mkdir -p $OUTPUT_DIR
+
+# Copying the example HPL.dat input data file, tuned as required
 # (An example is supplied in the HPLEXAMPLES directory)
-HPLDAT_DIR="hpl"
-mkdir -p "$HPLDAT_DIR"
-cp "$HPLEXAMPLES/8proc_hpl.alces.dat" "$HPLDAT_DIR/HPL.dat"
+cp "$HPLEXAMPLES/hpl-8proc.alces.dat" "$OUTPUT_DIR/HPL.dat"
 
 # Change the working directory and run the job
-cd "$HPLDAT_DIR" && mpirun xhpl
+cd "$OUTPUT_DIR" && mpirun xhpl
+
+echo ""
+echo "---------------"
+echo " hpl completed "
+echo "---------------"
+echo " Output is available in: $OUTPUT_DIR"
