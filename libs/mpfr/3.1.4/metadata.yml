@@ -19,6 +19,8 @@
   arithmetic (53-bit significand).
 :group: Libraries
 :changelog: |
+  * Wed Dec 14 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Fixed source download link that changed.
   * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: mpfr-3.1.4.tar.bz2
