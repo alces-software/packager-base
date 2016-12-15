@@ -1,0 +1,91 @@
+---
+:schema: 1
+:license: AGPLv3
+:title: RStudio Desktop
+:summary: A free and open source integrated development environment for R
+:url: http://www.rstudio.com/ide/
+:description: |
+  RStudio is an integrated development environment (IDE) for the
+  R programming language (http://www.r-project.org). Some of its
+  features include:
+
+    * Customizable workbench with all of the tools required to work
+      with R in one place (console, source, plots, workspace, help,
+      history, etc.).
+    * Syntax highlighting editor with code completion.
+    * Execute code directly from the source editor (line, selection,
+      or file).
+    * Full support for authoring Sweave and TeX documents.
+    * Runs on all major platforms (Windows, Mac, and Linux) and can
+      also be run as a server, enabling multiple users to access the
+      RStudio IDE using a web browser.
+:group: Bioinformatics
+:changelog: |
+  * Fri Dec  8 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+    - Upgraded to latest stable release 1.1.11
+  * Thu Jun  9 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest stable release 0.99.902
+  * Thu Oct 22 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest available release 0.99.730
+  * Thu Nov 06 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest available release 0.98.1091
+    - Added interactive session example script
+    - Added missing title metadata field
+  * Mon Mar 04 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: v1.1.11.tar.gz
+:src_dir: rstudio-1.1.11
+:type: apps
+:version: '1.1.11'
+:dependencies:
+  :build:
+    el:
+      - libuuid-devel
+      - ant
+      - openssl-devel
+      - git
+      - freeglut-devel
+  :runtime:
+    el:
+      - libuuid
+      - openssl
+      - freeglut
+:requirements:
+  :tool: apps/cmake >= 2.8
+  :build:
+    - apps/R >= 2.11.1
+    - libs/boost >= 1.50
+    - libs/qt ~> 5.4.0
+  :runtime:
+    - apps/R >= 2.11.1
+    - libs/boost >= 1.50
+    - libs/qt ~> 5.4.0
+:compilers:
+  gcc:
+:compile: |
+  cd dependencies/common
+  ./install-gwt <%= redirect(:extra_deps) %>
+  ./install-dictionaries <%= redirect(:extra_deps) %>
+  ./install-mathjax <%= redirect(:extra_deps) %>
+  ./install-pandoc <%= redirect(:extra_deps) %>
+  ./install-libclang <%= redirect(:extra_deps) %>
+  ./install-packages <%= redirect(:extra_deps) %>
+  cd ../..
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DRSTUDIO_TARGET=Desktop -DCMAKE_BUILD_TYPE=Release \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DQT_QMAKE_EXECUTABLE=$(which qmake) <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  mv -v <%= dest_dir %>/{COPYING,INSTALL,NOTICE,README.md,SOURCE,VERSION} <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
