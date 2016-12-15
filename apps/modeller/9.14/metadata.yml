@@ -24,6 +24,8 @@
   Modeller in graphical or web interfaces or other frameworks.
 :group: Bioinformatics
 :changelog: |
+  * Thu Dec 15 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu Feb 12 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v9.14
     - Reworked license file/text handling
@@ -41,6 +43,9 @@
   :runtime: apps/python # Claims support for versions v2.3-3.2
 :params:
   :license: "Path or URL to file containing the license key string (pass 'skip' to continue without a license)"
+:sources:
+  - modeller.sh.md
+  - modeller.sh.tpl
 :compile: |
   # no-op; this is a binary distribution
 :install: |
@@ -60,6 +65,10 @@
   (echo 3; echo <%= dest_dir %>; echo "${license_key}") | ./Install <%= redirect(:install) %>
   mv -v <%= dest_dir %>/INSTALLATION <%= dest_dir %>/README <%= dest_dir %>/doc <%= redirect(:install) %>
 
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('modeller.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('modeller.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -68,25 +77,7 @@
   setenv ${appcaps}EXAMPLES ${appdir}/examples
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Comparative modelling with PDB files'
-    description: 'Execute model-default.py using bundled example Protein Data Bank (PDB) files and alignment/script file'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For detailed MODELLER usage information see:
-      #  http://salilab.org/modeller/9.14/manual/
 
-      # Output directory
-      OUTPUT_DIR="modeller/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      mkdir -p $OUTPUT_DIR
-      cd $OUTPUT_DIR
-      cp -v $MODELLEREXAMPLES/automodel/model-default.py \
-        $MODELLEREXAMPLES/automodel/alignment.ali \
-        $MODELLEREXAMPLES/atom_files/* .
-      mod9.14 model-default.py > model-default.log
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
