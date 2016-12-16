@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: OpenDroneMap
+:license: GPL 3.0
+:summary: Open Source Toolkit for processing Civilian Drone Imagery
+:url: http://opendronemap.github.io/odm/
+:description: |
+  OpenDroneMap is an open source toolkit for processing aerial drone
+  imagery. Typical drones use simple point-and-shoot cameras, so the
+  images from drones, while from a different perspective, are similar
+  to any pictures taken from point-and-shoot cameras, i.e. non-metric
+  imagery. OpenDroneMap turns those simple images into three
+  dimensional geographic data that can be used in combination with
+  other geographic datasets.
+:group: Geography
+:changelog: |
+  * Fri Dec 16 - 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - First created
+:src: v0.2-RC1.tar.gz
+:src_dir: OpenDroneMap-0.2-RC1
+:type: apps
+:version: '0.2'
+:compilers:
+  gcc:
+:compile: |
+  # Nothing to compile just yet :)
+:install: |
+  # Nothing to install either :)
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
