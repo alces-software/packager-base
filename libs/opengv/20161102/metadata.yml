@@ -1,0 +1,65 @@
+---
+:schema: 1
+:title: OpenGV
+:license: BSD-2-Clause
+:summary: OpenGV is a collection of computer vision methods for solving geometric vision problems.
+:url: https://github.com/laurentkneip/opengv
+:description: |
+  OpenGV is a collection of computer vision methods for solving
+  geometric vision problems. It contains absolute-pose, relative-pose,
+  triangulation, and point-cloud alignment methods for the calibrated
+  case. All problems can be solved with central or non-central cameras,
+  and embedded into a random sample consensus or nonlinear optimization
+  context.
+:group: Libraries
+:changelog: |
+  * Mon Dec 19 - 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - First created
+:src: 02697d3e2521a7e764aceea5cc1b7799aca081e6.zip
+:src_dir: opengv-02697d3e2521a7e764aceea5cc1b7799aca081e6
+:type: libs
+:version: '20161102'
+:dependencies:
+  el:
+    - gcc-c++
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - libs/eigen
+    - libs/boost
+    - libs/numpy
+    - apps/python ~> 2.7.0
+  :runtime:
+    - libs/eigen
+    - libs/boost
+    - libs/numpy
+    - apps/python ~> 2.7.0
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHON_INSTALL_DIR=<%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages"
+  cmake -DBUILD_TESTS=OFF \
+    -DEIGEN_INCLUDE_DIR=${EIGENINCLUDE} \
+    -DBUILD_PYTHON=ON \
+    -DPYTHON_INCLUDE_DIR=${PYTHONINCLUDE}/python2.7/ \
+    -DPYTHON_LIBRARY=${PYTHONLIB} \
+    -DPYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR} \
+    -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> .. <%= redirect(:cmake) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
