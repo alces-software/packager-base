@@ -12,12 +12,17 @@
   they're used.
 :group: Libraries
 :changelog: |
+  * Wed Dec 21 - 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Corrected md5sum.
   * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: v2.0.zip
 :src_dir: gflags-2.0
 :type: libs
 :version: '2.0'
+:dependencies:
+  el:
+    - gcc-c++
 :compilers:
   gcc:
 :compile: |
