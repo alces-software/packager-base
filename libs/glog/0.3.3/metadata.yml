@@ -10,6 +10,8 @@
   macros.
 :group: Libraries
 :changelog: |
+  * Wed Dec 21 - 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated source download url
   * Tue Sep 23 2014 James Donohue <james.donohue@alces-software.com>
     - Compile with gflags support by default; add variant with gflags disabled
   * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
