@@ -26,7 +26,6 @@
     - glibc-devel.i686
     - zlib-devel
     - gcc-c++
-    - libX11.i686
     - libX11-devel.x86_64
     - libX11-devel.i686
     - libXext-devel.x86_64
@@ -35,7 +34,6 @@
     - libXi-devel.i686
     - libXpm
     - libXpm-devel
-    - libXpm.i686
     - libXpm-devel.i686
     - imake
 :compile: |
