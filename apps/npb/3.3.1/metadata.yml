@@ -1,0 +1,70 @@
+---
+:schema: 1
+:title: NPB
+:license: GPL 
+:summary: NAS Parallel Benchmarks
+:url: http://www.nas.nasa.gov/publications/npb.html 
+:description: |
+  The NAS Parallel Benchmarks (NPB) are a small set of programs designed to 
+  help evaluate the performance of parallel supercomputers. The benchmarks 
+  are derived from computational fluid dynamics (CFD) applications and 
+  consist of five kernels and three pseudo-applications in the original 
+  "pencil-and-paper" specification (NPB 1). The benchmark suite has been 
+  extended to include new benchmarks for unstructured adaptive mesh, parallel 
+  I/O, multi-zone applications, and computational grids.  Problem sizes in 
+  NPB are predefined and indicated as different classes. Reference 
+  implementations of NPB are available in commonly-used programming models 
+  like MPI and OpenMP (NPB 2 and NPB 3).
+:group: Benchmarks
+:changelog: |
+  * Wed Sep 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: NPB3.3.1.tar.gz 
+:src_dir: NPB3.3.1
+:type: apps
+:version: '3.3.1'
+:requirements:
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:dependencies:
+  el:
+    - gcc-gfortran 
+:patches:
+  - mpi.make.def.patch 
+:params:
+  :nprocs: "Specify default processors to run on [NPROCS]"
+  :class: "Specify Benchmark Class [S/W/A/B/C/D/E]"
+:compilers:
+  gcc:
+:compile: |
+  cd NPB3.3-MPI <%= redirect(:compile) %>
+  mv config/make.def.template config/make.def <%= redirect(:compile) %>
+  make bt NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make cg NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make dt NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make ep NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make ft NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make is NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make lu NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make mg NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+  make sp NPROCS=<%= param(:nprocs) %> CLASS=<%= param(:class) %> <%= redirect(:compile) %>
+:install: |
+  install -D -m 0755 NPB3.3-MPI/bin/bt.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/bt.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/cg.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/cg.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/dt.<%= param(:class) %>.x <%= dest_dir %>/bin/dt.<%= param(:class) %>.x <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/ep.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/ep.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/ft.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/ft.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/is.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/is.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/lu.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/lu.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/mg.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/mg.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  install -D -m 0755 NPB3.3-MPI/bin/sp.<%= param(:class) %>.<%= param(:nprocs) %> <%= dest_dir %>/bin/sp.<%= param(:class) %>.<%= param(:nprocs) %> <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/src <%= redirect(:install) %>
+  cp -Rv NPB3.3-MPI NPB3.3-OMP NPB3.3-SER <%= dest_dir %>/src/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SRC ${appdir}/src
+
+  prepend-path PATH ${appdir}/bin
