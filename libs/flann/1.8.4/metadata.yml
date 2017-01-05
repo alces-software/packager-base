@@ -1,0 +1,59 @@
+---
+:schema: 1
+:title: FLANN
+:license: BSD
+:summary: A library for performing fast approximate nearest neighbor searches in high dimensional spaces.
+:url: http://www.cmake.org/
+:description: |
+  FLANN is a library for performing fast approximate nearest neighbor
+  searches in high dimensional spaces. It contains a collection of
+  algorithms we found to work best for nearest neighbor search and a
+  system for automatically choosing the best algorithm and optimum
+  parameters depending on the dataset.
+
+  FLANN is written in C++ and contains bindings for the following
+  languages- C, MATLAB and Python. 
+:type: libs
+:group: Libraries
+:changelog: |
+  * Tue Jan 03 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - First created
+:src: flann-1.8.4-src.zip
+:src_dir: flann-1.8.4-src
+:version: '1.8.4'
+:dependencies:
+  el:
+    - doxygen-latex
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - apps/hdf5_mpi
+    - apps/octave
+  :runtime:
+    - apps/hdf5_mpi
+    - apps/octave
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -- -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DHDF5_LIBRARIES=${HDF5_MPILIB} \
+    -DHDF5_INCLUDE_DIRS=${HDF5_MPIINCLUDE} \
+    -DBUILD_MATLAB_BINDINGS=OFF \
+    .. <%= redirect(:cmake) %>
+
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
