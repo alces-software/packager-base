@@ -1,0 +1,51 @@
+---
+:schema: 1
+:license: MPL2
+:summary: 'C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms'
+:url: http://eigen.tuxfamily.org/
+:description: |
+  Eigen is a C++ template library for linear algebra: matrices,
+  vectors, numerical solvers, and related algorithms.
+:requirements:
+  :tool: apps/cmake
+:group: Mathematics
+:changelog: |
+  * Fri Jan  6 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v3.3.0
+  * Wed Apr 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Mon Feb 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.2.4
+  * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.2.2
+  * Fri Nov 15 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.2.0
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Jun  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 3.3.0.tar.gz
+:src_dir: eigen-eigen-26667be4f70b 
+:type: libs
+:version: '3.3.0'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:configure) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  mv include/eigen3/* include
+  rmdir include/eigen3
+  sed -i 's/include\/eigen3/include/' share/pkgconfig/eigen3.pc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/share/pkgconfig
