@@ -23,6 +23,8 @@
   planar tracking and bundle adjustment.
 :group: Libraries
 :changelog: |
+  * Thu Jan 05 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Fixed error where Ceres Solver would not compile
   * Fri Feb 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgraded to v1.10.0
     - Build as a shared library
@@ -32,6 +34,8 @@
 :src_dir: ceres-solver-1.10.0
 :type: libs
 :version: '1.10.0'
+:patches:
+  - compressed_col_sparse_matrix_utils_test-libraries.patch1
 :requirements:
   :tool:
     - apps/cmake
@@ -46,14 +50,20 @@
 :compile: |
   mkdir build
   cd build
+
   cmake -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> \
     -DEIGEN_INCLUDE_DIR:PATH=$EIGENINCLUDE \
-    -DGFLAGS_INCLUDE_DIR:PATH=$GFLAGSINCLUDE -DGFLAGS_LIBRARY:PATH=$GFLAGSLIB/libgflags.so \
-    -DGLOG_INCLUDE_DIR:PATH=$GLOGINCLUDE -DGLOG_LIBRARY:PATH=$GLOGLIB/libglog.so \
-    -DLAPACK_LIBRARIES:PATH=$ATLASLIB/libsatlas.so -DBLAS_LIBRARIES:PATH=$ATLASLIB/libsatlas.so \
-    -DSUITESPARSE_INCLUDE_DIR_HINTS=$SUITESPARSEINCLUDE -DSUITESPARSE_LIBRARY_DIR_HINTS=$SUITESPARSELIB \
+    -DGFLAGS_INCLUDE_DIR:PATH=$GFLAGSINCLUDE \
+    -DGFLAGS_LIBRARY:PATH=$GFLAGSLIB/libgflags.so \
+    -DGLOG_INCLUDE_DIR:PATH=$GLOGINCLUDE \
+    -DGLOG_LIBRARY:PATH=$GLOGLIB/libglog.so \
+    -DLAPACK_LIBRARIES:PATH=$ATLASLIB/liblapack.a \
+    -DBLAS_LIBRARIES="$ATLASLIB/libcblas.a;$ATLASLIB/libatlas.a" \
+    -DSUITESPARSE_INCLUDE_DIR_HINTS=$SUITESPARSEINCLUDE \
+    -DSUITESPARSE_LIBRARY_DIR_HINTS=$SUITESPARSELIB \
     -DBUILD_SHARED_LIBS=1 \
-    ..
+    .. <%= redirect(:cmake) %>
+
   make <%= redirect(:compile) %>
 :install: |
   cd build
