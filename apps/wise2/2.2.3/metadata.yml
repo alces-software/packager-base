@@ -16,6 +16,8 @@
   but around 1,000 fold faster.
 :group: Bioinformatics
 :changelog: |
+  * Fri Jan 06 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Created example templates as Clusterware literal scripts
   * Thu Oct 27 2016 - Andrew Provis <andrew.provis@alces-software.com>
     - Added dependency for glib
   * Fri Jan 31 2014 James Donohue <james.donohue@alces-software.com>
@@ -30,6 +32,9 @@
   el:
     - glib2-devel
     - tcsh
+:sources:
+  - wise2.sh.md
+  - wise2.sh.tpl
 :compile: |
   cd src
   sed -i 's/getline/getline_new/' HMMer2/sqio.c
@@ -40,6 +45,11 @@
   rm -fr wisecfg/CVS test_data/CVS docs/CVS
   cp -Rv src/bin wisecfg test_data docs <%= dest_dir %> <%= redirect(:install) %>
   cp -v INSTALL LICENSE README <%= dest_dir %>/docs <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('wise2.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('wise2.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -49,3 +59,7 @@
   setenv WISECONFIGDIR ${appdir}/wisecfg
 
   prepend-path PATH ${appdir}/bin
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
