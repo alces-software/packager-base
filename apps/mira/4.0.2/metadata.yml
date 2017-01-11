@@ -14,6 +14,8 @@
   much manual work into finishing the assembly.
 :group: Bioinformatics
 :changelog: |
+  * Fri Dec  9 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu Jun 26 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest stable version 4.0.2
   * Thu Apr 10 2014 - James Donohue <james.donohue@alces-software.com>
@@ -25,12 +27,25 @@
 :src_dir: mira-4.0.2
 :type: apps
 :version: '4.0.2'
-# Requires expat-devel and vim (for xxd)
 :requirements:
-  :build: libs/boost >= 1.49.0
-  :runtime: libs/boost >= 1.49.0
+  :build:
+    - libs/boost >= 1.49.0
+    - libs/expat
+  :runtime:
+    - libs/boost >= 1.49.0
+    - libs/expat
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - bzip2-devel
+    - flex-devel
+    - flex
+    - vim-common
+:sources:
+  - mira.sh.md
+  - mira.sh.tpl
 :compile: |
   gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
   gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
@@ -39,7 +54,9 @@
     exit 1
   fi
 
-  ./configure --prefix="<%= dest_dir %>" --with-boost="${BOOSTDIR}" <%= redirect(:configure) %>
+  sed -i '26 i #include <iostream>' src/progs/quirks.C
+
+  ./configure --prefix="<%= dest_dir %>" --with-boost="${BOOSTDIR}" --with-expat=${EXPATDIR} <%= redirect(:configure) %>
   make <%= redirect(:compile) %>
   # XXX - build docbook docs?
 :install: |
@@ -47,41 +64,18 @@
   mkdir <%= dest_dir %>/doc
   cp -av AUTHORS ChangeLog COPYING GETTING_STARTED HELP_WANTED NEWS README THANKS <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -av minidemo <%= dest_dir %>/minidemo <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('mira.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('mira.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'mira; generic script for genome/EST/RNASeq mode'
-    description: 'Execute MIRA using specified manifest file (not included)'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # Note that to use MIRA requires both sequence data and one or more
-      # appropriately configured manifest files (not included)
-      #
-      # For full MIRA usage information see:
-      #   http://mira-assembler.sourceforge.net/docs/DefinitiveGuideToMIRA.html
 
-      # Output directory
-      OUTPUT_DIR="mira/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # File to read assembly configuration details from
-      MANIFEST_FILE="/path/to/manifest"
-
-      # Additional command-line options (mira -h for a list)
-      #MIRA_OPTIONS=""
-
-      # Create output directory if it doesn't already exist
-      mkdir -p "$OUTPUT_DIR"
-
-      # NB remove the following line after configuring manifest file
-      exit 1
-
-      mira -c "$OUTPUT_DIR" "$MANIFEST_FILE"
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
