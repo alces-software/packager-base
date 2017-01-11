@@ -1,0 +1,99 @@
+---
+:schema: 1
+:title: Protocol Buffers
+:license: BSD
+:summary: Protocol Buffers are a way of encoding structured data in an efficient yet extensible format. Google uses Protocol Buffers for almost all of its internal RPC protocols and file formats.
+:url: http://www.ruby-lang.org/
+:description: |
+  Protocol buffers are a flexible, efficient, automated mechanism for
+  serializing structured data – think XML, but smaller, faster, and simpler.
+  You define how you want your data to be structured once, then you can use
+  special generated source code to easily write and read your structured data
+  to and from a variety of data streams and using a variety of languages. You
+  can even update your data structure without breaking deployed programs that
+  are compiled against the "old" format.
+:group: Libraries
+:changelog: |
+  * Tue Jan 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v3.0.2 version
+  * Mon Apr 4 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to 2.6.1 version
+  * Fri Aug 22 2014 - Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: v3.0.2.tar.gz
+:src_dir: protobuf-3.0.2
+:type: libs
+:version: '3.0.2'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python ~> 2.7.0
+  :runtime:
+    - apps/python ~> 2.7.0
+:dependencies:
+  el:
+    - automake
+    - autoconf
+    - pkgconfig
+    - libtool
+    - gcc-c++
+    - java-1.8.0-openjdk-devel
+:compilers:
+  gcc:
+:compile: |
+  ./autogen.sh <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+
+  # Build the python library.
+  cd python
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:make) %>
+  cd ../
+
+  # Build the java library.
+  cd java
+  mkdir -p core/src/main/java
+  # Use the protoc compiler we've just built but not yet installed.
+  ../src/protoc --java_out=core/src/main/java -I../src/google/protobuf/ ../src/google/protobuf/descriptor.proto <%= redirect(:make_java) %>
+  cd ..
+  ./generate_descriptor_proto.sh <%= redirect(:make_java) %>
+  cd java
+  javac core/src/main/java/com/google/protobuf/*.java <%= redirect(:make_java) %> 
+:install: |
+  make install <%= redirect(:install) %>
+
+  # Install the python library.
+  cd python
+  # Add the python installation directory to PYTHONPATH so that `python
+  # setup.py install` doesn't complain. This needs to be the same as used in
+  # the module file.
+  PYTHON_ROOT_DIR=<%= dest_dir %>/python
+  PYTHON_SITE_DIR=$PYTHON_ROOT_DIR/lib/python2.7/site-packages
+  mkdir -p $PYTHON_SITE_DIR
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=$PYTHONPATH:$PYTHON_SITE_DIR
+  python setup.py install --prefix $PYTHON_ROOT_DIR <%= redirect(:install) %>
+  cd ../
+
+  # Install the java library.
+  mkdir -p <%= dest_dir %>/java/com/google/protobuf/ <%= redirect(:install) %>
+  cp java/core/src/main/java/com/google/protobuf/*.class <%= dest_dir %>/java/com/google/protobuf/ <%= redirect(:install) %>
+  cd java/core/src/main/java
+  jar -cf <%= dest_dir %>/java/protobuf-java.jar com
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}JAVA ${appdir}/java
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path CLASSPATH ${appdir}/java
