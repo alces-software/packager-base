@@ -18,6 +18,8 @@
   available, to construct transcript isoforms.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jan 12 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue Apr 22 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Derive MAXKMERLENGTH and CATEGORIES build parameters from velvet binary
   * Thu Apr 10 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -41,6 +43,10 @@
   :runtime: apps/velvet >= 1.2.06
 :compilers:
   gcc:
+:sources:
+  - oases.md
+  - oases-1.sh.tpl
+  - oases-2.sh.tpl
 :compile: |
   MAKE_PARAMS=$(velveth | grep "Compilation settings:" -A2 | tail -n+2 | sed 's/ = /=/g' | xargs)
   make VELVET_DIR=${VELVETBUILD} ${MAKE_PARAMS} <%= redirect(:make) %>
@@ -49,128 +55,19 @@
   cp oases scripts/oases_pipeline.py <%= dest_dir %>/bin <%= redirect(:install) %>
   cp ChangeLog OasesManual.pdf LICENSE.txt README.txt <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -rv data <%= dest_dir %> <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('oases.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('oases-1.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('oases-2.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DATA ${appdir}/data
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Process an existing velvet data directory'
-    description: 'Execute oases tool on a directory containing existing output from a velvet run'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Oases usage information see:
-      #   http://www.ebi.ac.uk/~zerbino/oases/OasesManual.pdf
-      #   or: $OASESDIR/doc/OasesManual.pdf
-      # For more information about Oases, please refer to the website:
-      #   http://www.ebi.ac.uk/~zerbino/oases/
-      
-      # Input directory - from a previous velveth run
-      DATA_DIR=velvet/input
 
-      # Command-line options (run oases with no options for a list).
-      #OASES_OPTIONS=""
-
-      # Execute velvetg
-      oases "$DATA_DIR" \
-        $OASES_OPTIONS
-
-      echo ""
-      echo "-----------------"
-      echo " oases completed"
-      echo "-----------------"
-      echo " Output is available in: $DATA_DIR"
-  - tags: ['script:type=batch']
-    name: 'Velvet and Oases; single input file'
-    description: 'Execute velveth for a single input file and velvetg and oases on the results'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Velvet usage information see:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/Manual.pdf
-      #   or: $VELVETDIR/doc/Manual.pdf
-      # For more information about Velvet, please refer to the website:
-      #   http://www.ebi.ac.uk/~zerbino/velvet/
-      #
-      # For full Oases usage information see:
-      #   http://www.ebi.ac.uk/~zerbino/oases/OasesManual.pdf
-      #   or: $OASESDIR/doc/OasesManual.pdf
-      # For more information about Oases, please refer to the website:
-      #   http://www.ebi.ac.uk/~zerbino/oases/
-      
-      # Output/working data directory
-      DATA_DIR=velvet/output.${JOB_ID-${PORTAL_TASK_ID-$$}}
-
-      # Hash length.
-      # Either: an odd integer <= the max kmer length
-      #     Or: m,M,s where m and M are odd integers with m < M <= the max kmer
-      #         length
-      #
-      # If an odd integer is provided it will be decremented, and if a value
-      # higher than the max kmer length is specified (usually 31), it will
-      # be reduced to the max.
-      {% comment %}
-      TODO: replace with `default` filter when available, i.e.
-      {{ fact.apps_velvet_hashLength | default: "31" }}
-      {% endcomment %}
-      HASH_LENGTH={% if fact.apps_velvet_hashLength %}{{ fact.velvet_hashLength }}{% else %}31{% endif %}
-
-      # One of: -fasta, -fastq, -raw, -fasta.gz, -fastq.gz, -raw.gz, -sam,
-      #   -bam, -fmtAuto.
-      # The default of `-fmtAuto` detects fasta or fastq (and will try the
-      #   following programs for decompression : gunzip, pbunzip2, bunzip2)
-      FILE_FORMAT="-fmtAuto"
-
-      # One of: -short, -shortPaired, -short2, -shortPaired2, -long,
-      #   -longPaired, -reference
-      READ_TYPE="-short"
-
-      # File layout options for paired reads (only for fasta and fastq formats)
-      # One or of -interleaved or -separate.
-      #FILE_OPTIONS="-interleaved"
-
-      # Additional command-line options (run velveth with no options for a
-      # list)
-      #VELVETH_OPTIONS=""
-
-      # Input file (or files)
-      INPUT_FILES=("$VELVETDATA/test_reads.fa")
-
-      # Command-line options (run velvetg with no options for a list).
-      # This pipeline requires the -read_trkg option.
-      VELVETG_OPTIONS="-read_trkg yes"
-
-      # Command-line options (run oases with no options for a list).
-      #OASES_OPTIONS=""
-
-      # Create the directory to contain the output files
-      mkdir -p "$DATA_DIR"
-
-      # Execute velveth
-      velveth "$DATA_DIR" \
-        "$HASH_LENGTH" \
-        "$FILE_FORMAT" "$READ_TYPE" $FILE_OPTIONS "${INPUT_FILES[@]}" \
-        $VELVETH_OPTIONS
-
-      # Execute velvetg
-      velvetg "$DATA_DIR" \
-        $VELVETG_OPTIONS
-
-      # Execute oases
-      oases "$DATA_DIR" \
-        $OASES_OPTIONS
-
-      echo ""
-      echo "--------------------------"
-      echo " oases pipeline completed"
-      echo "--------------------------"
-      echo " Output is available in: $DATA_DIR"
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
