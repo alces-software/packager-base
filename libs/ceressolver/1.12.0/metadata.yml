@@ -1,0 +1,75 @@
+---
+:schema: 1
+:title: Ceres Solver
+:license: BSD License
+:summary: C++ library for modeling and solving large complicated nonlinear least squares problems
+:url: http://ceres-solver.org/
+:description: |
+  Ceres Solver is an open source C++ library for modeling and solving
+  large complicated nonlinear least squares problems. It is a feature
+  rich, mature and performant library which has been used in
+  production since 2010. At Google, Ceres Solver is used to:
+
+    * Estimate the pose of Street View cars, aircrafts, and
+      satellites.
+    * Build 3D models for PhotoTours.
+    * Estimate satellite image sensor characteristics.
+    * Stitch panoramas or apply Lens Blur on Android.
+    * Solve bundle adjustment and SLAM problems in Project Tango.
+
+  Outside Google, Ceres is used for solving problems in computer
+  vision, computer graphics, astronomy and physics. e.g., Willow
+  Garage uses it to solve SLAM problems and Blender uses it for for
+  planar tracking and bundle adjustment.
+:group: Libraries
+:changelog: |
+  * Thu Jan 12 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v1.12.0 version
+  * Thu Jan 05 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Fixed error where Ceres Solver would not compile
+  * Fri Feb 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.10.0
+    - Build as a shared library
+  * Tue Aug 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ceres-solver-1.12.0.tar.gz
+:src_dir: ceres-solver-1.12.0
+:type: libs
+:version: '1.12.0'
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - libs/eigen
+    - libs/glog
+    - libs/gflags
+    - libs/suitesparse
+    - libs/atlas
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> \
+    -DEIGEN_INCLUDE_DIR:PATH=$EIGENINCLUDE \
+    -DGFLAGS_INCLUDE_DIR:PATH=$GFLAGSINCLUDE \
+    -DGFLAGS_LIBRARY:PATH=$GFLAGSLIB/libgflags.so \
+    -DGLOG_INCLUDE_DIR:PATH=$GLOGINCLUDE \
+    -DGLOG_LIBRARY:PATH=$GLOGLIB/libglog.so \
+    -DLAPACK_LIBRARIES:PATH=$ATLASLIB/liblapack.a \
+    -DBLAS_LIBRARIES="$ATLASLIB/libcblas.a;$ATLASLIB/libatlas.a" \
+    -DSUITESPARSE_INCLUDE_DIR_HINTS=$SUITESPARSEINCLUDE \
+    -DSUITESPARSE_LIBRARY_DIR_HINTS=$SUITESPARSELIB \
+    -DBUILD_SHARED_LIBS=1 \
+    .. <%= redirect(:cmake) %>
+
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}SHARE ${appdir}/share
