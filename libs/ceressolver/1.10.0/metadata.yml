@@ -23,6 +23,8 @@
   planar tracking and bundle adjustment.
 :group: Libraries
 :changelog: |
+  * Thu Jan 12 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Pinned to Eigen v3.2.x 
   * Thu Jan 05 2017 - Andrew Provis <andrew.provis@alces-software.com>
     - Fixed error where Ceres Solver would not compile
   * Fri Feb 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -40,7 +42,7 @@
   :tool:
     - apps/cmake
   :build:
-    - libs/eigen
+    - libs/eigen ~> 3.2.0
     - libs/glog
     - libs/gflags
     - libs/suitesparse
