@@ -14,6 +14,7 @@ env:
   - secure: gIqfH0+mTRc4h8HIwdSefCxpxOtKYZLslqohuzzF+aO70aH2by+mv+CSOi78+Sugv1YTi8e4gzRG9G9sD1LTNlZbTq0HdJqSqXMYLpXh4qmGzm0Kv0vvONo7ZHbzgZUYGK0kNBBpgJGa1cqFHsQmn/rxZ8oxa+6GgtebGi+Mz/+/UeeW2J0S+NFCZwo/AK8u8YfCpaQLujW9VPWvG+kyfsJTGelQM8Ep2CAaHO/15KKLFT33ZoKu0yhDAVejW+7z8r+gk2VqJQx79WQnNKvHkupUkNWzu6arRQWOiDXIW6N8UzxgUuEmTGJCvjehQpng6qqOUZGNMtJ1okm9sHOK+1iw3OS2UzRK5vAbW1KF1vjMifzYyQoYbmYjtCkm+AbCSPbZhDL4MZNIMWPpRvGMxXAiU+THHoa1Vw1EWth/bDlIHdruemEY9GJy5JDu+MK5BsZ4LgFnyv9fmaSWJYyiXhB02GG1gnWU/yHBJC9u3MQmWt2UFRG0xEgj9pIH18ePiosF4/K26ZetZ1qFNImhw5SJDUjiokdHvFMlEpjmnFA4GdPRY01IKqOoOR6LdIWw+TGTo5HCjWJCpfzN8+6Mok2DWjO7XRoBODsTTcTDg6713G8q7KwNQ9WJy3vHFVIaA4yNckeX/CxI83IXxcA8j5bSY3WMLjCr9p9osyFIwyE=
   matrix:
   - cw_DIST=el7 cw_VERSION=1.6
+  - cw_DIST=el7 cw_VERSION=1.7
 before_install:
 - git clone https://github.com/alces-software/gridware-ci.git .gridware-ci
 - curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install |
