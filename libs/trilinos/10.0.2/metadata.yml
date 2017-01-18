@@ -13,6 +13,8 @@
   full-featured set of concrete classes that implement all abstract interfaces.
 :group: Libraries
 :changelog: |
+  * Mon Oct 31 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue Mar 31 2015 - James Donohue <james.donohue@alces-software.com>
     - First created
 :src: trilinos-10.0.2-Source.tar.gz
@@ -26,13 +28,34 @@
     - libs/lapack
 :compilers:
   gcc:
+:patches:
+  - Teuchos_ArrayViewDecl.hpp.patch
+  - Teuchos_RCP.hpp.patch
+  - Sacado_TemplateManager.hpp.patch
 :compile: |
   mkdir build
   cd build
-  cmake -D CMAKE_INSTALL_PREFIX=<%= dest_dir %> \
-    -D Trilinos_ENABLE_ALL_PACKAGES=ON \
+
+  cmake \
+    -D CMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> \
+    -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+    -D Trilinos_ENABLE_Epetra:BOOL=ON \
+    -D Trilinos_ENABLE_Teuchos:BOOL=ON \
+    -D Trilinos_ENABLE_Ifpack:BOOL=ON \
+    -D Trilinos_ENABLE_EpetraExt:BOOL=ON \
+    -D Trilinos_ENABLE_NOX:BOOL=ON \
+    -D Trilinos_ENABLE_AztecOO:BOOL=ON \
+    -D Trilinos_ENABLE_ML:BOOL=ON \
+    -D Trilinos_ENABLE_Amesos:BOOL=ON \
+    -D Trilinos_ENABLE_Komplex:BOOL=ON \
+    -D Trilinos_ENABLE_Sacado:BOOL=ON \
+    -D Sacado_ENABLE_EXAMPLES:STRING=OFF \
+    -D Sacado_ENABLE_FEApp:BOOL=OFF \
+    -D Trilinos_ENABLE_Triutils:BOOL=ON \
     -D BLAS_LIBRARY_DIRS=${BLASDIR} \
-    -D LAPACK_LIBRARY_DIRS=${LAPACKDIR} .. <%= redirect(:cmake) %>
+    -D LAPACK_LIBRARY_DIRS=${LAPACKDIR} \
+    .. <%= redirect(:cmake) %>
+
   make <%= redirect(:make) %>
 :install: |
   mkdir -p <%= dest_dir %>/doc

@@ -1,0 +1,75 @@
+--- packages/teuchos/src/Teuchos_RCP.hpp.unmod	2017-01-18 16:22:33.912112427 +0000
++++ packages/teuchos/src/Teuchos_RCP.hpp	2017-01-18 14:07:32.518226885 +0000
+@@ -63,6 +63,34 @@
+   : ptr_(NULL)
+ {}
+ 
++template<class T>
++inline
++RCPNode* RCP_createNewRCPNodeRawPtrNonowned( T* p )
++{
++  return new RCPNodeTmpl<T,DeallocNull<T> >(
++    p, DeallocNull<T>(), false
++    );
++}
++
++
++template<class T>
++inline
++RCPNode* RCP_createNewRCPNodeRawPtr( T* p, bool has_ownership_in )
++{
++  return new RCPNodeTmpl<T,DeallocDelete<T> >(
++    p, DeallocDelete<T>(), has_ownership_in
++    );
++}
++
++
++template<class T, class Dealloc_T>
++inline
++RCPNode* RCP_createNewDeallocRCPNodeRawPtr(
++  T* p, Dealloc_T dealloc, bool has_ownership_in
++  )
++{
++  return new RCPNodeTmpl<T,Dealloc_T>(p, dealloc, has_ownership_in);
++}
+ 
+ template<class T>
+ inline
+@@ -368,36 +396,6 @@
+ 
+ 
+ template<class T>
+-inline
+-RCPNode* RCP_createNewRCPNodeRawPtrNonowned( T* p )
+-{
+-  return new RCPNodeTmpl<T,DeallocNull<T> >(
+-    p, DeallocNull<T>(), false
+-    );
+-}
+-
+-
+-template<class T>
+-inline
+-RCPNode* RCP_createNewRCPNodeRawPtr( T* p, bool has_ownership_in )
+-{
+-  return new RCPNodeTmpl<T,DeallocDelete<T> >(
+-    p, DeallocDelete<T>(), has_ownership_in
+-    );
+-}
+-
+-
+-template<class T, class Dealloc_T>
+-inline
+-RCPNode* RCP_createNewDeallocRCPNodeRawPtr(
+-  T* p, Dealloc_T dealloc, bool has_ownership_in
+-  )
+-{
+-  return new RCPNodeTmpl<T,Dealloc_T>(p, dealloc, has_ownership_in);
+-}
+-
+-
+-template<class T>
+ inline
+ RCP<T>::RCP( T* p, const RCPNodeHandle& node)
+   : ptr_(p), node_(node)
+
