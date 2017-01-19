@@ -16,6 +16,9 @@
   RaxML, etc.
 :group: Bioinformatics
 :changelog: |
+  * Thu Jan 19 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+    - Updated source download link
   * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
     - Added sample control files and example script
   * Thu Jan 23 2014 James Donohue <james.donohue@alces-software.com>
@@ -26,6 +29,9 @@
 :version: '4.7a'
 :compilers:
   gcc:
+:sources:
+  - paml.md
+  - paml.sh.tpl
 :compile: |
   rm -fv bin/*.exe <%= redirect(:compile) %>
   cd src
@@ -35,31 +41,18 @@
   cp -v src/baseml src/basemlg src/codeml src/pamp src/evolver src/mcmctree src/yn00 src/chi2 <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -vr *.ctl *.trees *.aa *.dat *.nuc dat examples paup* <%= dest_dir %>/data <%= redirect(:install) %>
   chmod -R a+rx <%= dest_dir %>/data
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('paml.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('paml.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DATA ${appdir}/data
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'codeml and baseml; generic usage'
-    description: 'Execute codeml and then baseml using the sample control files supplied with PAML'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For detailed PAML usage information see:
-      #   http://abacus.gene.ucl.ac.uk/software/pamlDOC.pdf
-      # This example script uses the sample control files supplied with PAML
 
-      # Output directory
-      OUTPUT_DIR="paml/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      mkdir -p $OUTPUT_DIR
-      cp -r $PAMLDATA/* $OUTPUT_DIR
-      cd $OUTPUT_DIR
-      codeml
-      baseml
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
