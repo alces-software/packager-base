@@ -21,6 +21,8 @@
   version can be downloaded at the SourceForge download page.
 :group: Bioinformatics
 :changelog: |
+  * Fri Jan 20 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Fri Sep  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added galaxy-compatible patched version of the ribopicker tool
       <http://sourceforge.net/p/ribopicker/bugs/6/>
@@ -29,10 +31,15 @@
 :sources:
   - bwa-0.5.9.tar.bz2
   - ribopicker-galaxy.patch
+  - ribopicker.md
+  - ribopicker.sh.tpl
 :src: ribopicker-standalone-0.4.3.tar.gz
 :src_dir: ribopicker-standalone-0.4.3
 :type: apps
 :version: '0.4.3'
+:dependencies:
+  el:
+    - zlib-devel
 :compilers:
   gcc:
 :compile: |
@@ -54,60 +61,18 @@
   cp -v ribopicker.pl ribopicker-galaxy.pl riboPickerConfig.pm bwa64 <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v COPYING ChangeLog README* test_input.fasta <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -r db <%= dest_dir %>/var
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('ribopicker.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('ribopicker.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}DOC ${appdir}/doc
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Example usage with test database'
-    description: 'Run riboPicker using test database according to examples in documentation'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For more riboPicker usage information see:
-      #   http://sourceforge.net/projects/ribopicker/files/?source=navbar
 
-      # Input directory
-      INPUT_DIR="ribopicker/input"
-
-      # Output directory
-      OUTPUT_DIR="ribopicker/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # FASTA file containing input sequences
-      INPUT_FILE="$INPUT_DIR/test_input.fasta"
-
-      # Alignment coverage threshold in percentage
-      COVERAGE_THRESHOLD="80"
-
-      # Alignment identity threshold in percentage
-      IDENTITY_THRESHOLD="90"
-
-      # Name of database to use
-      DATABASE_NAME="test"
-
-      # Output file prefix
-      OUTPUT_PREFIX="test_input"
-
-      # Set up input data
-      if [ ! -d "$INPUT_DIR" ]; then
-          mkdir -p "$INPUT_DIR"
-          cp -v "$RIBOPICKERDOC/test_input.fasta" "$INPUT_DIR"
-      fi
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Run riboPicker command line
-      ribopicker.pl \
-          -c "$COVERAGE_THRESHOLD" \
-          -i "$IDENTITY_THRESHOLD" \
-          -f "$INPUT_FILE" \
-          -dbs "$DATABASE_NAME" \
-          -out_dir "$OUTPUT_DIR" \
-          -id "$OUTPUT_PREFIX"
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
