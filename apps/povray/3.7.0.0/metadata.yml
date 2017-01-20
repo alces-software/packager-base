@@ -20,6 +20,8 @@
     - libs/boost >= 1.37.0
   # Also requires libpng-devel, libjpeg-devel and libtiff-devel on build host
 :changelog: |
+  * Thu Jan 19 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Tue Jun 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Mon Mar 30 2015 - James Donohue <james.donohue@alces-software.com>
@@ -38,12 +40,20 @@
     - libpng-devel
     - libjpeg-turbo-devel
     - libtiff-devel
+:sources:
+  - povray.md
+  - povray.sh.tpl
 :compile: |
   (cd unix; ./prebuild.sh <%= redirect(:prebuild) %>)
   LDFLAGS="-L$BOOSTLIB -lboost_system" ./configure --prefix=<%= dest_dir %> --with-boost=${BOOSTDIR} \
     COMPILED_BY="Alces Software <support@alces-software.com>" <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('povray.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('povray.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+
   make install <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
@@ -53,29 +63,7 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'biscuit test render'
-    description: 'Execute povray to render the bundled test biscuit scene'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Velvet usage information see:
-      #   http://www.povray.org/documentation/
 
-      # Output directory (trailing slash required)
-      OUTPUT_DIR="povray/output.${JOB_ID-${PORTAL_TASK_ID-$$}}/"
-
-      # Input file
-      INPUT_FILE="$POVRAYSHARE/scenes/advanced/biscuit.pov"
-
-      # Additional command-line options
-      POVRAY_OPTIONS="+d +p +v +w320 +h240 +a0.3 +L$POVRAYSHARE/include"
-
-      # Create the directory to contain the output files
-      mkdir -p "$OUTPUT_DIR"
-
-      povray $INPUT_FILE +O$OUTPUT_DIR $POVRAY_OPTIONS
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
