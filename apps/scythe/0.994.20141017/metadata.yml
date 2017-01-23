@@ -31,6 +31,8 @@
   with the maximum posterior probability is the class selected.
 :group: Bioinformatics
 :changelog: |
+  * Mon Jan 23 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Wed Apr 29 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to latest version 0.994 and made MAX_ADAPTERS configurable
   * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
@@ -43,11 +45,18 @@
 :version: '0.994.20141017'
 :params:
   :maxadapters: "Set the MAX_ADAPTERS compile time configuration variable to increase the adapter limit [integer 100 <= x <= 50000 or 'default' to use the default of 1000]"
+:dependencies:
+  el:
+    - zlib-devel
 :compilers:
   gcc:
+:sources:
+  - scythe.md
+  - scythe.sh.tpl
 :compile: |
   <%
   a = param(:maxadapters).to_i
+  if param(:maxadapters) == 'default' then a = 1000 end
   if param(:maxadapters) != 'default' && (a < 100 || a > 50000)
   %>
   echo "Error: invalid maxadapters (<%= a %>) was specified.  Must be an integer 100 <= x <= 50000 or the string 'default'." > /dev/stderr
@@ -61,6 +70,11 @@
   cp -av README.md LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
   cp -av scythe <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -av illumina_adapters.fa testing/reads.fastq <%= dest_dir %>/example <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('scythe.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('scythe.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -68,44 +82,7 @@
   setenv ${appcaps}EXAMPLE ${appdir}/example
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Example usage with test data'
-    description: 'Run scythe with minimal options using supplied test data'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Scythe usage information see:
-      #   https://github.com/vsbuffalo/scythe
 
-      # Input directory
-      INPUT_DIR="scythe/input"
-
-      # Output directory
-      OUTPUT_DIR="scythe/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Adapter file
-      ADAPTER_FILE="$INPUT_DIR/illumina_adapters.fa"
-
-      # Output file
-      OUTPUT_FILE="$OUTPUT_DIR/trimmed_sequences.fasta"
-
-      # Sequence file
-      SEQUENCE_FILE="$INPUT_DIR/reads.fastq"
-
-      # Additional command-line options
-      SCYTHE_OPTIONS=""
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Set up input data
-      if [ ! -d "$INPUT_DIR" ]; then
-          cp -Rv "$SCYTHEEXAMPLE" "$INPUT_DIR"
-      fi
-
-      # Run Scythe command line
-      scythe -a "$ADAPTER_FILE" -o "$OUTPUT_FILE" "$SEQUENCE_FILE"
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
