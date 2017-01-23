@@ -9,6 +9,8 @@
   aligns two fasta sequences in a battleship fashion syntenically. 
 :group: Bioinformatics
 :changelog: |
+  * Mon Jan 23 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
     - Added simple example script
   * Fri Jan 10 2014 James Donohue <james.donohue@alces-software.com>
@@ -17,8 +19,14 @@
 :src_dir: satsuma-code-0
 :type: apps
 :version: '3.0'
+:dependencies:
+  el:
+    - gcc-c++
 :compilers:
   gcc:
+:sources:
+  - satsuma.md
+  - satsuma.sh.tpl
 :compile: |
   make clean <%= redirect(:compile) %>
   make <%= redirect(:compile) %>
@@ -26,35 +34,18 @@
   mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -v BlockDisplaySatsuma ChainMatches FilterGridSeeds HomologyByXCorr HomologyByXCorrSlave MergeXCorrMatches MicroSyntenyPlot ReverseSatsumaOut Satsuma SatsumaPop SatsumaProt SatsumaStruct SatsumaSummary SatsumaSynteny SatsumaToFasta TestSComm <%= dest_dir %>/bin <%= redirect(:install) %>
   cp -Rv samples <%= dest_dir %> <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('satsuma.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('satsuma.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SAMPLES ${appdir}/samples
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Exhaustive alignment of FASTA sequences'
-    description: 'Execute Satsuma to perform exhaustive alignment using bundled sample query and target sequence'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Satsuma usage information see:
-      #   http://www.broadinstitute.org/ftp/distribution/software/spines/SpinesManual.pdf
 
-      # Output directory
-      OUTPUT_DIR="satsuma/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Query FASTA sequence
-      QUERY_SEQUENCE=$SATSUMASAMPLES/human.X.part.short.fasta 
-
-      # Target FASTA sequence
-      TARGET_SEQUENCE=$SATSUMASAMPLES/dog.X.part.short.fasta
-
-      # Additional command-line options (Satsuma -h for list)
-      #SATSUMA_OPTIONS=
-
-      $SATSUMABIN/Satsuma -q $QUERY_SEQUENCE -t $TARGET_SEQUENCE -o $OUTPUT_DIR $SATSUMA_OPTIONS
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
