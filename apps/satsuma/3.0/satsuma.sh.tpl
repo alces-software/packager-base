@@ -31,6 +31,9 @@
 # For full Satsuma usage information see:
 #   http://www.broadinstitute.org/ftp/distribution/software/spines/SpinesManual.pdf
 
+# Loading Satsuma module
+module load apps/satsuma
+
 # Output directory
 OUTPUT_DIR="${HOME}/satsuma/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
 mkdir -p $OUTPUT_DIR

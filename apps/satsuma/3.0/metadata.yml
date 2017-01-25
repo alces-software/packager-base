@@ -9,6 +9,8 @@
   aligns two fasta sequences in a battleship fashion syntenically. 
 :group: Bioinformatics
 :changelog: |
+  * Wed Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Corrected mistake with example template where module was not loaded when run
   * Mon Jan 23 2017 - Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
