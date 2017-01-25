@@ -21,6 +21,8 @@
   version can be downloaded at the SourceForge download page.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Corrected mistake with example template where module was not loaded when run
   * Fri Jan 20 2017 - Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Fri Sep  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>

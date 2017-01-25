@@ -32,6 +32,9 @@
 # For more riboPicker usage information see:
 #   http://sourceforge.net/projects/ribopicker/files/?source=navbar
 
+# Loading riboPicker module
+module load apps/ribopicker
+
 # Input directory
 INPUT_DIR="${HOME}/ribopicker/input"
 mkdir -p "${INPUT_DIR}"
