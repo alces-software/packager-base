@@ -31,6 +31,9 @@
 # For full Velvet usage information see:
 #   http://www.povray.org/documentation/
 
+# Loading POV-Ray module
+module load apps/povray
+
 # Output directory (trailing slash required)
 OUTPUT_DIR="${HOME}/povray/output.${JOB_ID-${PORTAL_TASK_ID-$$}}/"
 mkdir -p "$OUTPUT_DIR"

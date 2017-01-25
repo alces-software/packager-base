@@ -20,6 +20,8 @@
     - libs/boost >= 1.37.0
   # Also requires libpng-devel, libjpeg-devel and libtiff-devel on build host
 :changelog: |
+  * Thu Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Corrected mistake with example template where module was not loaded when run
   * Thu Jan 19 2017 - Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Tue Jun 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
