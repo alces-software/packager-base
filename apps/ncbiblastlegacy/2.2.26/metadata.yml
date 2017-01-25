@@ -17,12 +17,17 @@
   databases.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated fetch url for flast source.
   * Fri Apr 11 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: ncbi.tar.gz
 :src_dir: ncbi
 :type: apps
 :version: '2.2.26'
+:dependencies:
+  el:
+    - tcsh
 :compilers:
   gcc:
 :compile: |
