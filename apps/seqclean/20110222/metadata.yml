@@ -25,6 +25,8 @@
   included in this package.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Thu Apr 10 2014 - Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: seqclean-x86_64.tgz
@@ -38,6 +40,9 @@
     - apps/ncbiblastlegacy
 :patches:
   - env-perl.patch
+:sources:
+  - seqclean.md
+  - seqclean.sh.tpl
 :compile: |
   # no-op; this is a distribution of a Perl application with precompiled x86_64 binaries
 :install: |
@@ -56,6 +61,11 @@
 
   install -D -m 0644 LICENSE README <%= dest_dir %>/doc <%= redirect(:install) %>
   install -D -m 0644 <%= source('example/sample.fasta') %> <%= dest_dir %>/example <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('seqclean.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('seqclean.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -65,29 +75,7 @@
   prepend-path PERL5LIB ${appdir}/perl/
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'seqclean; general usage'
-    description: 'Execute SeqClean using a specified input sequence file'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      # For more SeqClean usage information see:
-      #   http://sourceforge.net/projects/seqclean/files/
 
-      # Output directory
-      OUTPUT_DIR="seqclean/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # The EST file to clean.
-      EST_FILE="$SEQCLEANEXAMPLE/sample.fasta"
-
-      # Additional command-line options (seqclean -h for a list).
-      SEQCLEAN_OPTIONS=""
-
-      # Create output directory if it doesn't already exist
-      mkdir -p "$OUTPUT_DIR"
-      cd "$OUTPUT_DIR"
-
-      seqclean "$EST_FILE" $SEQCLEAN_OPTIONS
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
