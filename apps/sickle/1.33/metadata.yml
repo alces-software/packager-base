@@ -30,6 +30,8 @@
   disabled.
 :group: Bioinformatics
 :changelog: |
+  * Wed Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Wed Sep  3 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to main fork and latest version v1.33
   * Mon Mar  4 2013 James Donohue <james.donohue@alces-software.com>
@@ -38,8 +40,17 @@
 :src_dir: sickle-1.33
 :type: apps
 :version: '1.33'
+:dependencies:
+  el:
+    - zlib-devel
 :compilers:
   gcc:
+:sources:
+  - sickle.md
+  - sickle-se.sh.tpl
+  - sickle-pe-1.sh.tpl
+  - sickle-pe-2.sh.tpl
+  - sickle-pe-3.sh.tpl
 :compile: |
   make <%= redirect(:compile) %>
 :install: |
@@ -47,6 +58,14 @@
   install -v -D -m 0644 README.md LICENSE sickle.xml <%= dest_dir %>/doc/ <%= redirect(:install) %>
   install -v -D -m 0755 sickle <%= dest_dir %>/bin/ <%= redirect(:install) %>
   cp -Rv test <%= dest_dir %>/share/example_data <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('sickle.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('sickle-se.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('sickle-pe-1.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('sickle-pe-2.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('sickle-pe-3.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -55,263 +74,7 @@
   setenv ${appcaps}EXAMPLE ${appdir}/share/example_data
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'Sickle Single End (sickle se)'
-    description: |
-      `sickle se` takes an input fastq file and outputs a trimmed
-      version of that file. It also has options to change the length
-      and quality thresholds for trimming, as well as disabling
-      5'-trimming and enabling truncation of sequences with Ns.
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Sickle usage information see:
-      #   https://github.com/najoshi/sickle
 
-      # Input directory
-      INPUT_DIR="sickle/input"
-
-      # Output directory
-      OUTPUT_DIR="sickle/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Additional command-line options:
-      #   -q, --qual-threshold, Threshold for trimming based on average quality in a window. Default 20.
-      #   -l, --length-threshold, Threshold to keep a read based on length after trimming. Default 20.
-      #   -x, --no-fiveprime, Don't do five prime trimming.
-      #   -n, --trunc-n, Truncate sequences at position of first N.
-      #   -g, --gzip-output, Output gzipped files.
-      SICKLE_OPTIONS=""
- 
-      # Variables governing input
-      IN_FQ="$INPUT_DIR/test.fastq"
-
-      # Variables governing output
-      OUT_TRIMMED_FQ="$OUTPUT_DIR/trimmed_output_file.fastq"
-
-      # Type of quality values:
-      #   solexa (CASAVA < 1.3)
-      #   illumina (CASAVA 1.3 to 1.7)
-      #   sanger (which is CASAVA >= 1.8))
-      QUAL_TYPE=illumina
-
-      # Set up input data
-      if [ ! -d "$INPUT_DIR" ]; then
-          mkdir -p "$INPUT_DIR"
-          cp -v "$SICKLEEXAMPLE"/* "$INPUT_DIR"
-      fi
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Execute sickle
-      sickle se -f "$IN_FQ" \
-        -t $QUAL_TYPE \
-        -o "$OUT_TRIMMED_FQ" \
-        $SICKLE_OPTIONS
-  - tags: ['script:type=batch']
-    name: 'Sickle Paired End (sickle pe) - Separated Reads'
-    description: |
-      `sickle pe` can operate with two types of input - separated
-      reads or interleaved reads.
-
-      This script handles separated reads, taking two paired-end files
-      as input and providing two trimmed paired-end files as well as a
-      "singles" file as output.
-
-      The "singles" file contains reads that passed filter in either
-      the forward or reverse direction, but not the other.
-
-      You can also change the length and quality thresholds for
-      trimming, as well as disable 5'-trimming and enable truncation
-      of sequences with Ns.
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Sickle usage information see:
-      #   https://github.com/najoshi/sickle
-
-      # Input directory
-      INPUT_DIR="sickle/input"
-
-      # Output directory
-      OUTPUT_DIR="sickle/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Additional command-line options:
-      #   -q, --qual-threshold, Threshold for trimming based on average quality in a window. Default 20.
-      #   -l, --length-threshold, Threshold to keep a read based on length after trimming. Default 20.
-      #   -x, --no-fiveprime, Don't do five prime trimming.
-      #   -n, --truncate-n, Truncate sequences at position of first N.
-      #   -g, --gzip-output, Output gzipped files.
-      SICKLE_OPTIONS=""
- 
-      # Variables governing input
-      IN_FQ1="$INPUT_DIR/test.f.fastq"
-      IN_FQ2="$INPUT_DIR/test.r.fastq"
-
-      # Variables governing output
-      OUT_TRIMMED_FQ1="$OUTPUT_DIR/trimmed_output_file1.fastq"
-      OUT_TRIMMED_FQ2="$OUTPUT_DIR/trimmed_output_file2.fastq"
-      OUT_SINGLES_FQ="$OUTPUT_DIR/trimmed_singles_file.fastq"
-
-      # Type of quality values:
-      #   solexa (CASAVA < 1.3)
-      #   illumina (CASAVA 1.3 to 1.7)
-      #   sanger (which is CASAVA >= 1.8))
-      QUAL_TYPE=illumina
-
-      # Set up input data
-      if [ ! -d "$INPUT_DIR" ]; then
-          mkdir -p "$INPUT_DIR"
-          cp -v "$SICKLEEXAMPLE"/* "$INPUT_DIR"
-      fi
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Execute sickle
-      sickle pe -f "$IN_FQ1" -r "$IN_FQ2" \
-        -t $QUAL_TYPE \
-        -o "$OUT_TRIMMED_FQ1" -p "$OUT_TRIMMED_FQ2" \
-        -s "$OUT_SINGLES_FQ" \
-        $SICKLE_OPTIONS
-  - tags: ['script:type=batch']
-    name: 'Sickle Paired End (sickle pe) - Interleaved Reads'
-    description: |
-      `sickle pe` can operate with two types of input - separated
-      reads or interleaved reads.
-
-      This script handles interleaved reads, taking a single combined
-      input file of reads where you have already interleaved the reads
-      from the sequencer. In this form, you also supply a single
-      output file name as well as a "singles" file.
-
-      The "singles" file contains reads that passed filter in either
-      the forward or reverse direction, but not the other.
-
-      You can also change the length and quality thresholds for
-      trimming, as well as disable 5'-trimming and enable truncation
-      of sequences with Ns.
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Sickle usage information see:
-      #   https://github.com/najoshi/sickle
-
-      # Input directory
-      INPUT_DIR="sickle/input"
-
-      # Output directory
-      OUTPUT_DIR="sickle/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Additional command-line options:
-      #   -q, --qual-threshold, Threshold for trimming based on average quality in a window. Default 20.
-      #   -l, --length-threshold, Threshold to keep a read based on length after trimming. Default 20.
-      #   -x, --no-fiveprime, Don't do five prime trimming.
-      #   -n, --truncate-n, Truncate sequences at position of first N.
-      #   -g, --gzip-output, Output gzipped files.
-      SICKLE_OPTIONS=""
- 
-      # Variables governing input
-      IN_COMBO_FQ="$INPUT_DIR/test.fastq"
-
-      # Variables governing output
-      OUT_TRIMMED_FQ="$OUTPUT_DIR/combo_trimmed.fastq"
-      OUT_SINGLES_FQ="$OUTPUT_DIR/trimmed_singles_file.fastq"
-
-      # Type of quality values:
-      #   solexa (CASAVA < 1.3)
-      #   illumina (CASAVA 1.3 to 1.7)
-      #   sanger (which is CASAVA >= 1.8))
-      QUAL_TYPE=illumina
-
-      # Set up input data
-      if [ ! -d "$INPUT_DIR" ]; then
-          mkdir -p "$INPUT_DIR"
-          cp -v "$SICKLEEXAMPLE"/* "$INPUT_DIR"
-      fi
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Execute sickle
-      sickle pe -c "$IN_COMBO_FQ" \
-        -t $QUAL_TYPE \
-        -m "$OUT_TRIMMED_FQ" \
-        -s "$OUT_SINGLES_FQ" \
-        $SICKLE_OPTIONS
-  - tags: ['script:type=batch']
-    name: 'Sickle Paired End (sickle pe) - Interleaved Reads (Single-N)'
-    description: |
-      `sickle pe` can operate with two types of input - separated
-      reads or interleaved reads.
-
-      This script handles interleaved reads, taking a single combined
-      input file of reads where you have already interleaved the reads
-      from the sequencer and uses an option (-M) to only produce one
-      interleaved output file where any reads that did not pass filter
-      will be output as a FastQ record with a single "N" (whose
-      quality value is the lowest possible based upon the quality
-      type), thus preserving the paired nature of the data.
-
-      You can also change the length and quality thresholds for
-      trimming, as well as disable 5'-trimming and enable truncation
-      of sequences with Ns.
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
-      #
-      # For full Sickle usage information see:
-      #   https://github.com/najoshi/sickle
-
-      # Input directory
-      INPUT_DIR="sickle/input"
-
-      # Output directory
-      OUTPUT_DIR="sickle/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      # Additional command-line options:
-      #   -q, --qual-threshold, Threshold for trimming based on average quality in a window. Default 20.
-      #   -l, --length-threshold, Threshold to keep a read based on length after trimming. Default 20.
-      #   -x, --no-fiveprime, Don't do five prime trimming.
-      #   -n, --truncate-n, Truncate sequences at position of first N.
-      #   -g, --gzip-output, Output gzipped files.
-      SICKLE_OPTIONS=""
- 
-      # Variables governing input
-      IN_COMBO_FQ="$INPUT_DIR/test.fastq"
-
-      # Variables governing output
-      OUT_COMBO_FQ="$OUTPUT_DIR/combo_trimmed_all.fastq"
-
-      # Type of quality values:
-      #   solexa (CASAVA < 1.3)
-      #   illumina (CASAVA 1.3 to 1.7)
-      #   sanger (which is CASAVA >= 1.8))
-      QUAL_TYPE=illumina
-
-      # Set up input data
-      if [ ! -d "$INPUT_DIR" ]; then
-          mkdir -p "$INPUT_DIR"
-          cp -v "$SICKLEEXAMPLE"/* "$INPUT_DIR"
-      fi
-
-      # Create output directory
-      mkdir -p "$OUTPUT_DIR"
-
-      # Execute sickle
-      sickle se -c "$IN_COMBO_FQ" \
-        -t $QUAL_TYPE \
-        -M "$OUT_COMBO_FQ" \
-        $SICKLE_OPTIONS
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
