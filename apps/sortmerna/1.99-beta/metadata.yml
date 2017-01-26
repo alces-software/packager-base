@@ -22,13 +22,21 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Jan 26 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
   * Mon Jul 7 2014 - Ben Armston <ben.armston@alces-software.com>
     - First created
 :src: sortmerna-1.99-beta.tar.gz
 :src_dir: 'sortmerna-1.99-beta'
 :version: '1.99-beta'
+:dependencies:
+  el:
+    - gcc-c++
 :compilers:
   gcc:
+:sources:
+  - sortmerna.md
+  - sortmerna.sh.tpl
 :compile: |
   # Prevent make install from failing due to header files being mentioned multiple times.
   # This sed command removes everything on the line after 'include_HEADERS = '
@@ -48,6 +56,11 @@
 
   mkdir -p <%= dest_dir %>/example <%= redirect(:install) %>
   install rRNA_databases/*.fasta <%= dest_dir %>/example <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('sortmerna.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('sortmerna.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -55,38 +68,7 @@
   setenv ${appcaps}EXAMPLE ${appdir}/example
 
   prepend-path PATH ${appdir}/bin
-:example_scripts:
-  - tags: ['script:type=batch']
-    name: 'SortMeRNA; index and sort one database'
-    description: 'Index one of the rRNA databases provided with SortMeRNA and filter rRNA reads against it.'
-    template: 'script:stub:simple'
-    content: |
-      #############################################
-      # APPLICATION COMMANDS - change as required
-      #############################################
 
-      # Output directory.
-      OUTPUT_DIR="sortmerna/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
-
-      mkdir -p "$OUTPUT_DIR"
-
-      # The database to index and the output file for the indexed database.
-      # Change these as desired.
-      SOURCE_DB="$SORTMERNAEXAMPLE/silva-bac-16s-database-id85.fasta"
-      INDEXED_DB="silva-bac-16s"
-
-      INDEX_REF="${SOURCE_DB},${OUTPUT_DIR}/${INDEXED_DB}" 
-
-      # Other options to pass to the indexdb_rna command. Change as desired.
-      INDEXDB_RNA_OPTIONS="-v"
-
-      indexdb_rna --ref "$INDEX_REF" $INDEXDB_RNA_OPTIONS
-
-      # The database which is to be filtered against the indexed database.
-      # Change this as desired.
-      READS_DB="$SORTMERNAEXAMPLE/rfam-5.8s-database-id98.fasta"
-
-      # Other options to pass to sortmerna. Change as desired.
-      SORTMERNA_OPTIONS="--feeling-lucky --sam  --fastx --aligned ${OUTPUT_DIR}/accept --other ${OUTPUT_DIR}/other --log -v"
-
-      sortmerna --ref "$INDEX_REF" --reads "$READS_DB" $SORTMERNA_OPTIONS
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
