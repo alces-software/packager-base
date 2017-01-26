@@ -89,9 +89,28 @@
   done
   cd -
 :module: |
+  <% java_home = ENV['JAVA_HOME'] || '/usr/lib/jvm/jre-1.8.0' %>
+
+  if { [info exists ::env(GRIDWARE_JAVA_LEVEL)] } {
+    set JAVA_LEVEL "$::env(GRIDWARE_JAVA_LEVEL)"
+  } elseif { [catch {exec /bin/bash -o pipefail -c {<%= java_home %>/bin/java -version 2>&1 | egrep "^(java|openjdk) version" | cut -d'"' -f2 | cut -d'.' -f1-2}} JAVA_LEVEL] > 0 } {
+    set JAVA_LEVEL 1.8
+  }
+
+  if { $JAVA_LEVEL == 1.8 } {
+    # This variable tunes the virtual memory system to work better with
+    # abstracted languages, such as Java.  If you need this setting to
+    # be skipped, ensure the variable GRIDWARE_SKIP_VMM_TWEAK is set and
+    # exported in your environment before loading the module.
+    if { [info exists ::env(GRIDWARE_SKIP_VMM_TWEAK)] == 0 } {
+      setenv MALLOC_ARENA_MAX 1
+    }
+    setenv ${appcaps}_JAVA_EXTRA_OPTS "-XX:-UseCompressedClassPointers"
+  }
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR \$${appcaps}_JAVA_EXTRA_OPTS"
+
   set JAVA_OPTS \$${appcaps}_JAVA_OPTS
 
-  <% java_home = ENV['JAVA_HOME'] || '/usr/lib/jvm/jre-1.8.0' %>
   setenv ${appcaps}_JAVA_HOME <%= java_home %>
   setenv ${appcaps}_JAVA_MEM_MX 2g
 
@@ -99,11 +118,9 @@
     setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
   } elseif { [info exists ::env(TMPDIR)] } {
     setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
-  } else { 
+  } else {
     setenv ${appcaps}_JAVA_TMPDIR "/tmp"
   }
-
-  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
 
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
