@@ -2,7 +2,7 @@
 :schema: 1
 :license: GPLv2
 :summary: Allows developers to use a wide range of encryption functions, without making drastic changes to their code 
-:url: https://github.com/php-memcached-dev/php-memcached 
+:url: https://sourceforge.net/projects/mcrypt/
 :description: |
   MCrypt is a replacement for the old crypt() package and 
   crypt(1) command, with extensions. It allows developers 
@@ -17,6 +17,8 @@
   standardized mechanism for accessing them.
 :group: Libraries
 :changelog: |
+  * Fri Jan 27 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added example templates as Clusterware literal scripts
   * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First Created
 :src: libmcrypt-2.5.8.tar.gz  
@@ -28,11 +30,19 @@
 :dependencies:
   el:
     - gcc-c++
+:sources:
+  - libmcrypt.md
+  - libmcrypt.sh.tpl
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('libmcrypt.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('libmcrypt.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
@@ -43,3 +53,7 @@
   prepend-path MANPATH ${appdir}/man
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
