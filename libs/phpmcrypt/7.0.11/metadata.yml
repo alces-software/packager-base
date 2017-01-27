@@ -13,6 +13,8 @@
   are 8bit by default.
 :group: Libraries
 :changelog: |
+  * Fri Jan 27 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added example templates as Clusterware literal scripts
   * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First Created
 :src: php-7.0.11.tar.gz 
@@ -33,6 +35,9 @@
     - autoconf
     - automake
     - libtool
+:sources:
+  - phpmcrypt.md
+  - phpmcrypt.sh.tpl
 :compile: |
   cd ext/mcrypt <%= redirect(:phpize) %>
   phpize <%= redirect(:phpize) %>
@@ -48,6 +53,11 @@
   cp -Rv ext/mcrypt/*.h <%= dest_dir %>/include/. <%= redirect(:install) %>
   mkdir -p <%= dest_dir %>/conf.d  <%= redirect(:install) %>
   echo "extension=$LIBSO_NAME" > <%= dest_dir %>/conf.d/$INI_NAME
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('phpmcrypt.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('phpmcrypt.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
@@ -55,6 +65,10 @@
 
   prepend-path PHP_INI_SCAN_DIR ${appdir}/conf.d
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
 
   set php_user_libs $::env(HOME)/gridware/share/php/lib/
   set php_source_lib <%= File.basename(Dir.glob(File.join(dest_dir,'lib','mcrypt-*.so'))[0]) %>
