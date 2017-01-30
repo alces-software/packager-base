@@ -11,22 +11,32 @@
   based on hash algorithms.
 :group: Libraries
 :changelog: |
+  * Mon Jan 30 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added example templates as Clusterware literal scripts
   * Thu Sep 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First Created
 :src: mhash-0.9.9.9.tar.gz  
 :src_dir: mhash-0.9.9.9
 :type: libs
 :version: '0.9.9.9'
-:compilers:
-  gcc:
 :dependencies:
   el:
     - gcc-c++
+:compilers:
+  gcc:
+:sources:
+  - libmhash.md
+  - libmhash.sh.tpl
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('libmhash.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('libmhash.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
@@ -35,3 +45,7 @@
   
   prepend-path PATH ${appdir}/bin
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
