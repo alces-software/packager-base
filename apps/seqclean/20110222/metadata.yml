@@ -43,6 +43,9 @@
 :sources:
   - seqclean.md
   - seqclean.sh.tpl
+:dependencies:
+  el:
+    - perl
 :compile: |
   # no-op; this is a distribution of a Perl application with precompiled x86_64 binaries
 :install: |
