@@ -15,6 +15,8 @@
   gapped, local, and paired-end alignment modes.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jan 31 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added Perl as dependency for EL
   * Wed Sep 21 2016 Andrew Provis <andrew.provis@alces-software.com>
     - Updated example templates to Clusterware literal scripts
   * Fri Apr 08 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -50,6 +52,7 @@
   gcc:
 :dependencies:
   el:
+    - perl
     - gcc-c++
 :compile: |
   make all <%= redirect(:make) %>
