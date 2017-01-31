@@ -28,6 +28,8 @@
   governmental bodies.
 :group: Libraries
 :changelog: |
+  * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
   * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Fix default variant
   * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -68,6 +70,9 @@
     - apps/ffmpeg
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - libjpeg-turbo
 :compile: |
   mkdir build
   cd build
