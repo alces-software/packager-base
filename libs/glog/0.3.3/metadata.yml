@@ -10,6 +10,8 @@
   macros.
 :group: Libraries
 :changelog: |
+  * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Dec 21 - 2016 Andrew Provis <andrew.provis@alces-software.com>
     - Updated source download url
   * Tue Sep 23 2014 James Donohue <james.donohue@alces-software.com>
@@ -22,6 +24,9 @@
 :version: '0.3.3'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - gcc-c++
 :variants:
   default:
     :description: "Compile with gflags support (requires libs/gflags)"
