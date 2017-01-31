@@ -11,6 +11,8 @@
   the [VCF specification]<http://samtools.github.io/hts-specs/VCFv4.3.pdf>.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jan 31 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added example templates as Clusterware literal scripts
   * Tue Oct 4  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to latest version 2.6.0
   * Tue Apr 5  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -47,6 +49,9 @@
 :dependencies:
   el:
     - java-1.8.0-openjdk
+:sources:
+  - picard.md
+  - picard.sh.tpl
 :compile: |
   JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/jre-1.8.0}"
   if [ ! -x ${JAVA_HOME}/bin/java ]; then
@@ -88,6 +93,11 @@
     ln -s picard $a
   done
   cd -
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('picard.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('picard.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   <% java_home = ENV['JAVA_HOME'] || '/usr/lib/jvm/jre-1.8.0' %>
 
@@ -130,3 +140,7 @@
   prepend-path PATH ${appdir}/bin
 
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
