@@ -64,6 +64,9 @@
   :runtime: apps/cutadapt >= 1.8
 :compilers:
   noarch:
+:dependencies:
+  el:
+    - perl
 :compile: |
   # no-op; this is a distribution of a Perl application
   # sed #! to use env
