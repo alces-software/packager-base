@@ -30,6 +30,8 @@
   analysis solutions.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependency for EL
   * Tue Jul 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to prerelease alpha of QIIME 2, v2.0.1.dev0
   * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -65,6 +67,9 @@
 :requirements:
   :tool:
     - apps/anaconda3
+:dependencies:
+  el:
+    - libXext
 :compile: |
   # no-op
 :install: |
