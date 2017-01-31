@@ -25,14 +25,53 @@
       functions and input and output facilities.
 :group: Languages
 :dependencies:
-  el:
-    - readline-devel
-    - libXt-devel
+  :build:
+    el:
+      - gcc-c++
+      - libpng-devel
+      - libjpeg-turbo-devel
+      - cairo-devel
+      - libtiff-devel
+      - libxml2-devel
+      - libicu-devel
+      - readline-devel
+      - libcurl-devel
+      - xz-devel
+      - zlib-devel
+      - bzip2-devel
+      - pcre-devel
+      - tk-devel
+      - xorg-x11-server-devel
+      - xorg-x11-server-Xorg
+      - libX11-devel
+      - libXi-devel
+      - libXt-devel
+      - mesa-libGL-devel
+      - mesa-libEGL-devel  
+  :runtime:
+    el:
+      - libpng
+      - libjpeg-turbo
+      - cairo
+      - libtiff
+      - libxml2
+      - libicu
+      - readline
+      - libcurl
+      - xz-libs
+      - zlib
+      - bzip2-libs
+      - pcre
+      - tk
+      - libX11
+      - libgfortran
 :requirements: 
   :build:
     - libs/lapack
     - libs/blas
 :changelog: |
+  * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Corrected dependencies for EL
   * Tue Nov 15 2016 - Andrew Provis <andrew.provis@alces-software.com>
     - Added dependencies to fix compilation on EL7.
   * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
