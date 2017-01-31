@@ -24,6 +24,8 @@
   taxa, respectively.
 :group: Bioinformatics
 :changelog: |
+  * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added further distro dependencies for EL
   * Thu Nov 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Feb 10 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -38,6 +40,9 @@
 :type: apps
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - perl
 :compile: |
   features=()
   if grep -q 'flags.*\bpni\b' /proc/cpuinfo; then
