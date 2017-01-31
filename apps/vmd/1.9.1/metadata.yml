@@ -31,9 +31,14 @@
 :compilers:
   bin:
 :dependencies:
+  :build:
+    el:
+      - perl
   :runtime:
     el:
       - mesa-libGLU
+      - libXinerama
+      - perl
 :compile: |
   # no-op, this is a binary installer.
 :install: |
