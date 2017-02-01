@@ -47,6 +47,7 @@
 :dependencies:
   el:
     - gmp-devel
+    - perl
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
 :install: |
@@ -60,3 +61,14 @@
 
   prepend-path PATH ${appdir}/bin
   prepend-path MANPATH ${appdir}/share/man
+
+  if { [module-info mode load] } {
+    # regenerate the package cache if it doesn't exist
+    if { ! [file exists "${appdir}/lib/ghc-7.8.2/package.conf.d/package.cache"] } {
+      if { [catch {exec ${appdir}/bin/ghc-pkg recache} RECACHE_OUTPUT] > 0 } {
+        if { ! [file exists "${appdir}/lib/ghc-7.8.2/package.conf.d/package.cache"] } {
+          puts stderr "WARNING: package.cache file not present and could not be generated: $RECACHE_OUTPUT"
+        }
+      }
+    }
+  }
