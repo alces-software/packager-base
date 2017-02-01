@@ -16,6 +16,9 @@
 :version: '20150223'
 :compilers:
   noarch:
+:dependencies:
+  el:
+    - perl
 :compile: |
   # no-op
 :install: |
