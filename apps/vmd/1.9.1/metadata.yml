@@ -18,6 +18,8 @@
   undergoing simulation on a remote computer.
 :group: Chemistry
 :changelog: |
+  * Thu Feb 2  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Thu Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -38,6 +40,7 @@
     el:
       - mesa-libGLU
       - libXinerama
+      - libXi
       - perl
 :compile: |
   # no-op, this is a binary installer.
