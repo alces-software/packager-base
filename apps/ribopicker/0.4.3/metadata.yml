@@ -21,6 +21,8 @@
   version can be downloaded at the SourceForge download page.
 :group: Bioinformatics
 :changelog: |
+  * Thu Feb 2  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added perl-Data-Dumper distro dependency for EL
   * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Jan 25 2017 - Andrew Provis <andrew.provis@alces-software.com>
@@ -45,6 +47,7 @@
   el:
     - zlib-devel
     - perl
+    - perl-Data-Dumper
 :compilers:
   gcc:
 :compile: |
