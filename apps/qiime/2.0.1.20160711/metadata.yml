@@ -30,6 +30,9 @@
   analysis solutions.
 :group: Bioinformatics
 :changelog: |
+  * Fri Feb 3  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included PyQt4 due to later Anaconda Python upgraded to PyQt5
+    - Added export tweak for binary version to fix FontConfig issue
   * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependency for EL
   * Tue Jul 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -76,7 +79,7 @@
   rmdir <%= dest_dir %>
   export CONDA_ENVS_PATH=<%= dest_dir %>
   export PYTHONDONTWRITEBYTECODE=true
-  conda create --copy -q -p <%= dest_dir %> python=3.5 jupyter scikit-bio -c biocore <%= redirect(:create) %>
+  conda create --copy -q -p <%= dest_dir %> python=3.5 jupyter pyqt=4.11.4 scikit-bio -c biocore <%= redirect(:create) %>
   rm -rf <%= dest_dir %>/.pkgs
   source activate <%= dest_dir %> <%= redirect(:activate) %>
   pip install <%= source('qiime2-b46636bacccc9d050103f05624438098a74f44df.zip') %> \
