@@ -68,7 +68,10 @@
     - apps/ffmpeg
 :compilers:
   gcc:
-:compile: |
+:dependencies:
+  el:
+    - libjpeg-turbo 
+ :compile: |
   mkdir build
   cd build
   PYTHONDEPSDIR=$(pwd)/python
