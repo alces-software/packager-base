@@ -71,7 +71,7 @@
 :dependencies:
   el:
     - libjpeg-turbo 
- :compile: |
+:compile: |
   mkdir build
   cd build
   PYTHONDEPSDIR=$(pwd)/python
