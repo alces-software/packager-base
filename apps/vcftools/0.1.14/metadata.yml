@@ -42,6 +42,9 @@
     - libtool
     - automake
     - autoconf
+:sources:
+  - vcftools.md
+  - vcftools.sh.tpl
 :compile: |
   touch .tarball-version
   echo <%= version %> > .tarball-version <%= redirect(:version) %>
@@ -56,6 +59,11 @@
   chmod 755 <%= dest_dir %>/examples/perl-api-1.pl
   cp -Rv README.md <%= dest_dir %>/doc
   chmod 644 <%= dest_dir %>/doc/*
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('vcftools.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('vcftools.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
@@ -64,3 +72,8 @@
   prepend-path PERL5LIB ${appdir}/share/perl
   prepend-path MANPATH ${appdir}/share/man
   prepend-path PATH ${appdir}/bin
+
+
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
