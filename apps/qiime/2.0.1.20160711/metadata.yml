@@ -30,6 +30,8 @@
   analysis solutions.
 :group: Bioinformatics
 :changelog: |
+  * Tue Feb 7  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included libSM as dependency 
   * Fri Feb 3  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Included PyQt4 due to later Anaconda Python upgraded to PyQt5
     - Added export tweak for binary version to fix FontConfig issue
@@ -73,6 +75,7 @@
 :dependencies:
   el:
     - libXext
+    - libSM
 :compile: |
   # no-op
 :install: |
