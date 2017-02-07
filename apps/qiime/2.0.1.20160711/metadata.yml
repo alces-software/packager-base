@@ -32,6 +32,7 @@
 :changelog: |
   * Tue Feb 7  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Included libSM as dependency 
+    - Included libXrender as dependency
   * Fri Feb 3  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Included PyQt4 due to later Anaconda Python upgraded to PyQt5
     - Added export tweak for binary version to fix FontConfig issue
@@ -76,6 +77,17 @@
   el:
     - libXext
     - libSM
+    - libX11
+    - libXrender
+    - libXi
+    - gstreamer-plugins-base
+    - libxcb
+    - libicu
+    - libxslt
+    - openssl
+    - fontconfig
+    - mesa-libGL
+    - mesa-libEGL
 :compile: |
   # no-op
 :install: |
