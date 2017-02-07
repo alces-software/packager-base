@@ -12,6 +12,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Tue Feb 7  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Corrected path error when setting PERL5LIB env variable
   * Wed Dec 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to v0.1.14
   * Wed Apr 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -69,7 +71,7 @@
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
 
-  prepend-path PERL5LIB ${appdir}/share/perl
+  prepend-path PERL5LIB ${appdir}/lib/site_perl/5.20.2
   prepend-path MANPATH ${appdir}/share/man
   prepend-path PATH ${appdir}/bin
 
