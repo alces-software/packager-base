@@ -1,0 +1,76 @@
+---
+:schema: 1
+:title: Bioconductor
+:license: Artistic License 2.0
+:summary: Tools for the analysis and comprehension of high-throughput genomic data
+:url: http://www.bioconductor.org/
+:description: |
+  Bioconductor is an open source, open development software project to
+  provide tools for the analysis and comprehension of high-throughput
+  genomic data. It is based primarily on the R programming language.
+
+  Most Bioconductor components are distributed as R packages. The
+  functional scope of Bioconductor packages includes the analysis of
+  DNA microarray, sequence, flow, SNP, and other data.
+
+  The broad goals of the Bioconductor project are:
+
+    * To provide widespread access to a broad range of powerful
+      statistical and graphical methods for the analysis of genomic
+      data.
+    * To facilitate the inclusion of biological metadata in the
+      analysis of genomic data, e.g. literature data from PubMed,
+      annotation data from Entrez genes.
+    * To provide a common software platform that enables the rapid
+      development and deployment of extensible, scalable, and
+      interoperable software.
+    * To further scientific understanding by producing high-quality
+      documentation and reproducible research.
+    * To train researchers on computational and statistical methods
+      for the analysis of genomic data.
+:group: Bioinformatics
+:requirements: 
+  :build:
+    - apps/R >= 3.3.0
+  :runtime:
+    - apps/R >= 3.3.0
+:changelog: |
+  * Wed Feb  8 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com<
+    - Updated to latest v3.4 version 
+  * Thu Jul 21 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v3.3 version
+  * Fri Jul 8  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+    - Updated to use R instead of Rscript
+  * Fri Jul 11 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Updated to v2.14
+  * Tue Jun 25 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v2.13
+  * Tue Apr 30 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - BiocInstaller v1.10.0 no longer available, bumped to v1.10.1
+  * Tue Apr 23 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v2.12; requires R >= 2.16.0, effectively R 3.0.0
+  * Mon Feb 25 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: BiocInstaller_1.24.0.tar.gz 
+:src_dir: .
+:type: libs
+:version: '3.4'
+:compilers:
+  gcc:
+:compile: |
+  # no-op
+:install: |
+  mkdir -p <%= dest_dir %>/R
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  R CMD INSTALL --library=<%= dest_dir %>/R BiocInstaller <%= redirect(:biocinstaller) %>
+  R --vanilla <%= redirect(:install) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}R ${appdir}/R
+
+  append-path R_LIBS_SITE ${appdir}/R
