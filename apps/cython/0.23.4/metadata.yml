@@ -26,6 +26,8 @@
       low-level or high-performance libraries and applications
 :group: Languages
 :changelog: |
+  * Wed Feb 22 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated download links for v0.23.4
   * Mon Apr 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
