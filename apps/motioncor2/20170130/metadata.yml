@@ -1,0 +1,54 @@
+---
+:schema: 1
+:license: GPLv3
+:title: Motioncor2
+:summary: Molecular Electron Microscopy 
+:url: http://www2.mrc-lmb.cam.ac.uk/relion/index.php/Main_Page
+:description: |
+  Correction of electron beam-induced sample motion is one of the major 
+  factors contributing to the recent resolution breakthroughs in 
+  cryo-electron microscopy. Based on observations that the electron beam 
+  induces doming of the thin vitreous ice layer, we developed an 
+  algorithm to correct anisotropic image motion at the single pixel 
+  level across the whole frame, suitable for both single particle and 
+  tomographic images. Iterative, patch-based motion detection is combined 
+  with spatial and temporal constraints and dose weighting. The multi-GPU 
+  accelerated program, MotionCor2, is sufficiently fast to keep up with 
+  automated data collection. The result is an exceptionally robust 
+  strategy that can work on a wide range of data sets, including those 
+  very close to focus or with very short integration times, obviating the 
+  need for particle polishing. Application significantly improves Thon 
+  ring quality and 3D reconstruction resolution.
+:group: Imaging
+:changelog: |
+  * Tue Feb 21 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: MotionCor2-01-30-2017.tar.gz
+:src_dir: .
+:type: apps
+:version: 20170130
+:dependencies:
+  el:
+    - compat-libtiff3
+    - gcc-c++
+:requirements:
+  :build: 
+    - libs/nvidia-cuda ~> 8.0.0
+  :runtime:
+    - libs/nvidia-cuda ~> 8.0.0
+:compilers:
+  gcc:
+:compile: |
+  # no-op - binary distribution
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/docs <%= redirect(:install) %>
+  pwd <%= redirect(:install) %>
+  install -D -m 0755 ./MotionCor2-01-30-2017 <%= dest_dir %>/bin/MotionCor2-01-30-2017 <%= redirect(:install) %>
+  cp -v MotionCor2-UserManual-01-30-2017.pdf <%= dest_dir %>/docs/. <%= redirect(:install) %> 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOCS ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
