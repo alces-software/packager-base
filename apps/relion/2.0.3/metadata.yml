@@ -1,0 +1,106 @@
+---
+:schema: 1
+:license: GPLv2+
+:title: RELION
+:summary: REgularised LIkelihood OptimisatioN
+:url: http://www2.mrc-lmb.cam.ac.uk/relion/index.php/Main_Page
+:description: |
+  RELION (for REgularised LIkelihood OptimisatioN, pronounce rely-on)
+  is a stand-alone computer program that employs an empirical Bayesian
+  approach to refinement of (multiple) 3D reconstructions or 2D class
+  averages in electron cryo-microscopy (cryo-EM). It is developed in
+  the group of Sjors Scheres at the MRC Laboratory of Molecular
+  Biology. Briefly, the ill-posed problem of 3D-reconstruction is
+  regularised by incorporating prior knowledge: the fact that
+  macromolecular structures are smooth, i.e. they have limited power
+  in the Fourier domain. In the corresponding Bayesian framework, many
+  parameters of a statistical model are learned from the data, which
+  leads to objective and high-quality results without the need for
+  user expertise. The underlying theory is given in Scheres (2012)
+  JMB. A more detailed description of its implementation is given in
+  Scheres (2012) JSB. If RELION is useful in your work, please cite at
+  least one of these papers.
+:group: Imaging
+:changelog: |
+  * Mon Feb 20 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v2.0.3 stable version
+    - Added variants for CUDA support
+  * Wed Oct  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v2.0.20161005 Beta Version
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: 2.0.3.tar.gz
+:src_dir: relion-2.0.3 
+:type: apps
+:version: 2.0.3
+:params:
+  :cudaarch: "Specify CUDA Compute Architecture version - '37' for version 3.7 - If using the standard CPU version, pass 'default'"
+:variants:
+  default:
+    :description: "Build for standard version"
+    :requirements:
+      :build:
+        - libs/fftw3_double
+        - libs/fltk
+        - mpi/openmpi
+        - apps/cmake
+      :runtime:
+        - libs/fftw3_double
+        - libs/fltk
+        - mpi/openmpi
+  cudafloat:
+    :description: "Build with Nvidia CUDA - Float"
+    :requirements:
+      :build:
+        - libs/fftw3_double
+        - libs/fltk
+        - mpi/openmpi
+        - apps/cmake
+        - libs/nvidia-cuda
+      :runtime:
+        - libs/fftw3_double
+        - libs/fltk
+        - mpi/openmpi
+        - libs/nvidia-cuda
+  cudadp:
+    :description: "Build with Nvidia CUDA - Double"
+    :requirements:
+      :build:
+        - libs/fftw3_double
+        - libs/fltk
+        - mpi/openmpi
+        - apps/cmake
+        - libs/nvidia-cuda
+      :runtime:
+        - libs/fftw3_double
+        - libs/fltk
+        - mpi/openmpi
+        - libs/nvidia-cuda
+:compilers:
+  gcc:
+:compile: |
+  export FFTW_HOME=${FFTW3_DOUBLEDIR}
+  export FFTW_LIB=${FFTW3_DOUBLELIB}
+  export FFTW_INCLUDE=${FFTW3_DOUBLEINCLUDE}
+  mkdir build && cd build
+  <% if variant_name == 'default' %>
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> .. <%= redirect(:configure) %>
+  <% elsif variant_name == 'cudafloat' %>
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> -DCUDA_ARCH=<%= param(:cudaarch) %> .. <%= redirect(:configure) %>
+  <% else %>
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> -DCUDA_ARCH=<%= param(:cudaarch) %> -DDoublePrec_GPU=ON .. <%= redirect(:configure) %>
+  <% end %>
+  make <%= redirect(:compile) %>
+:install: |
+  cp -R build/bin build/lib <%= dest_dir %>/. <%= redirect(:compile) %>
+  mkdir -p <%= dest_dir %>/include <%= redirect(:compile) %>
+  cp relion.h <%= dest_dir %>/include/. <%= redirect(:compile) %>
+  cp -R src <%= dest_dir %>/include/. <%= redirect(:compile) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
