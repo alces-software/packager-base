@@ -20,6 +20,8 @@
   samples.
 :group: Bioinformatics
 :changelog: |
+  * Thu Feb 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v1.9.1
     - Readded dependency on pycogent
@@ -79,6 +81,7 @@
 :compile: |
   python setup.py build <%= redirect(:build) %>
   PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONDONTWRITEBYTECODE=true
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   mkdir $PYTHONDEPSDIR
   # Derived from install_requires in setup.py
@@ -91,6 +94,7 @@
   make <%= redirect(:make_ghc) %>
 :install: |
   PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHON_DEST="<%= dest_dir %>/python/lib/python2.7/site-packages"
   mkdir -p "$PYTHON_DEST"
   cp -av $PYTHONDEPSDIR/* $PYTHON_DEST <%= redirect(:install) %>
