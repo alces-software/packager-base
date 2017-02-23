@@ -27,6 +27,8 @@
   you get started quickly accelerating your application with GPUs.
 :group: Libraries
 :changelog: |
+  * Thu Feb 23 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Mon Oct 26 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Removed obsolete install script
     - Set installer environment variable for use with Alces Clusterware handler
