@@ -1,0 +1,144 @@
+---
+:schema: 1
+:license: BSD
+:summary: Automatically Tuned Linear Algebra Software - portably optimal linear algebra software
+:url: http://math-atlas.sourceforge.net/
+:description: |
+  ATLAS stands for Automatically Tuned Linear Algebra Software. ATLAS
+  is both a research project and a software package. ATLAS's purpose
+  is to provide portably optimal linear algebra software. The current
+  version provides a complete BLAS API (for both C and Fortran77), and
+  a very small subset of the LAPACK API. For all supported operations,
+  ATLAS achieves performance on par with machine-specific tuned
+  libraries.
+:group: Libraries
+:changelog: |
+  * Fri Feb 17 2017 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Update to ATLAS 3.10.3 with LAPACK 3.6.1
+  * Wed Jan 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added option to allow compilation of a generic (less optimized) build
+  * Tue Aug 25 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Update to ATLAS 3.10.2
+    - Added check for AVX2 compatible GCC
+  * Wed Mar  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Update to LAPACK 3.5.0 with ATLAS 3.11.26
+  * Mon Apr  8 2013 - James Donohue <james.donohue@alces-software.com>
+    - Update to LAPACK 3.4.2 with ATLAS 3.10.1
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bundle lapack-3.4.1.tgz with ATLAS 3.10.0
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated Licenses, Group, Summary and URL fields and added description.
+  * Thu Jul 7 2011 Steve Norledge
+    - First Created
+:sources:
+  - lapack-3.6.1.tgz
+:src: atlas3.10.3.tar.bz2
+:src_dir: ATLAS
+:type: libs
+:version: 3.10.3
+:params:
+  :cpuspeed: "CPU speed in Hz, eg. '2666' [integer or 'generic' to create a generic (less optimized) build]"
+  :lapackfile: "Alternative lapack tarball location [path or 'default' to use bundled lapack-3.6.1.tgz]"
+  :threadmodel: "Choose 'openmp' thread model or supply thread count for pthreads ['openmp', integer or 'default' for  ATLAS standard pthreads built for the number of cores in build system]"
+:default_params:
+  :cpuspeed: generic
+  :lapackfile: default
+  :threadmodel: default
+:compilers:
+  gcc:
+    :configure_flags: ''
+  open64:
+    :configure_flags: "-C xc opencc -C ic opencc -C if openf90 -C sk opencc -C dk opencc -C sm opencc -C dm opencc -F xc '-O3 -g -lfortran -lffio -lm' -F ic '-O3 -g -lfortran -lffio -lm' -F if '-O3 -g -lfortran -lffio -lm' -F sk '-O3 -g -lfortran -lffio -lm' -F dk '-O3 -g -lfortran -lffio -lm'  -F sm '-O3 -g -lfortran -lffio -lm' -F dm '-O3 -g -lfortran -lffio -lm'"
+:dependencies:
+  el: gcc-gfortran
+:compile: |
+  <%
+     lapackfile = param(:lapackfile) == 'default' ? source('lapack-3.6.1.tgz') : param(:lapackfile)
+     if param(:threadmodel) == 'openmp'
+       configure_params = "-Si omp 1 -Fa alg '-fopenmp -fPIC'"
+     else
+       configure_params = '-Fa alg -fPIC'
+       if param(:threadmodel) != 'default'
+         begin
+           configure_params += " -t #{Integer(param(:threadmodel))}"
+         rescue ArgumentError
+  %>
+  echo "Error: invalid threadmodel (<%= param(:threadmodel) %>) was specified.  Must be 'openmp', and integer, or 'default'." > /dev/stderr
+  exit 1
+  <%        
+         end
+       end
+     end
+  %>
+  if [ "<%= compiler_name %>" == "gcc" ]; then
+    if cat /proc/cpuinfo | grep -q '^flags.* avx2'; then
+      # we have AVX2, which means we need >= gcc 4.7
+      gcc_major=$(gcc -dumpversion | cut -f1 -d'.')
+      gcc_minor=$(gcc -dumpversion | cut -f2 -d'.')
+      if [[ "$gcc_major" -lt "4" || ("$gcc_major" -eq "4" && "$gcc_minor" -lt "7") ]]; then
+        echo "GCC version is $gcc_major.$gcc_minor but ATLAS requires at least v4.7.0 to compile on this processor (as it requires AVX2 support). If a compatible version is available, please specify it with --compiler gcc/x.y.z" >/dev/stderr
+        exit 1
+      fi
+    fi
+  fi
+  # export F77FLAGS="$F77FLAGS -msse2"
+  mkdir build
+  cd build
+  <% if param(:cpuspeed) == 'generic' %>
+  ../configure <%= compiler[:configure_flags] %> --prefix=<%= dest_dir %> \
+    --incdir=<%= File.join(dest_dir,'include') %> \
+    --libdir=<%= File.join(dest_dir,'lib') %> \
+    --shared -b 64 \
+    -V 192 -A 13 <%= configure_params %> \
+    --with-netlib-lapack-tarfile=<%= lapackfile %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  <% else %>
+  ../configure <%= compiler[:configure_flags] %> --prefix=<%= dest_dir %> \
+    --incdir=<%= File.join(dest_dir,'include') %> \
+    --libdir=<%= File.join(dest_dir,'lib') %> \
+    --shared -b 64 \
+    -D c -DPentiumCPS=<%= param(:cpuspeed) %> \
+    <%= configure_params %> \
+    --with-netlib-lapack-tarfile=<%= lapackfile %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  make check <%= redirect(:check) %>
+  make ptcheck <%= redirect(:ptcheck) %>
+  make time <%= redirect(:time) %>
+  <% end %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  <%
+     config_data = []
+     if param(:cpuspeed) == 'generic'
+       config_data.push("cpuspeed=generic")
+     else
+       config_data.push("cpuspeed=#{param(:cpuspeed)}")
+     end
+     if param(:threadmodel) == 'openmp'
+       config_data.push("openmp")
+     elsif param(:threadmodel) == 'default'
+       thread_count=`grep -c 'core id' /proc/cpuinfo`.chomp
+       config_data.push("pthreads=#{thread_count}")
+     else
+       config_data.push("pthreads=#{Integer(param(:threadmodel))}")
+     end
+  %>
+  setenv           ATLASDIR         ${appdir}
+  setenv           ATLAS_DIR        ${appdir}
+  setenv           ATLAS_HOME       ${appdir}
+
+  setenv           ATLASINCLUDE     ${appdir}/include
+  setenv           ATLASLIB         ${appdir}/lib
+  setenv           ATLAS_LIB        ${appdir}/lib
+  setenv           ATLAS            ${appdir}/lib/libatlas.a
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/
+  prepend-path LD_INCLUDE_PATH ${appdir}/include/
+  prepend-path CPLUS_INCLUDE_PATH ${appdir}/include/
+  prepend-path C_INCLUDE_PATH ${appdir}/include/
+
+  setenv GRIDWARE_ATLAS_CONFIG "<%= config_data.join(" ") %>"
