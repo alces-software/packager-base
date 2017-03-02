@@ -82,24 +82,6 @@ echo "   Extracting context-dependent (CpG/CHG/CHH) methylation data "
 echo "--------------------------------------------------------------------------------"
 bismark_methylation_extractor -s --comprehensive "${OUTPUT_DIR}/test_data_bismark_bt2.sam.gz" -o "${OUTPUT_DIR}"
 
-# Running bismark2report on output data
-echo ""
-echo ""
-echo "--------------------------------------------------------------------------------"
-echo "   Generating Bismark report "
-echo "--------------------------------------------------------------------------------"
-cd "${OUTPUT_DIR}"
-bismark2report
-
-# Running bismark2summary on output data
-echo ""
-echo ""
-echo "--------------------------------------------------------------------------------"
-echo "   Generating Bismark summary "
-echo "--------------------------------------------------------------------------------"
-bismark2summary
-
-
 echo ""
 echo "--------------------------------------------------------------------------------"
 echo "   Bismark completed "
