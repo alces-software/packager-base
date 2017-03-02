@@ -27,14 +27,18 @@
 :type: apps
 :version: '0.16.3'
 :requirements:
+  :build:
+    - apps/perl
+    - apps/cpanminus
   :runtime:
     - apps/bowtie2
-    - apps/samtools
+    - apps/perl
+    - apps/cpanminus
 :compilers:
   noarch:
 :dependencies:
   el:
-    - perl
+    - gd-devel
 :sources:
   - bismark.md
   - bismark.sh.tpl
@@ -49,7 +53,7 @@
   done
   mv -v * <%= dest_dir %>/bin <%= redirect(:install) %>
 
-
+  cpanm GD::Graph::lines <%= redirect(:perldeps) %>
   mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
   mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
   cp -v <%= source('bismark.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
