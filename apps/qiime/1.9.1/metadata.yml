@@ -20,7 +20,7 @@
   samples.
 :group: Bioinformatics
 :changelog: |
-  * Thu Feb 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+  * Thu Feb 23 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v1.9.1
