@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: unixODBC 
+:license: GPL/LGPL
+:summary: An open source project that implements the ODBC API
+:url: http://www.unixodbc.org/ 
+:description: |
+  unixODBC is an open source project that implements the ODBC API. The 
+  code is provided under the GNU GPL/LGPL and can be built and used on 
+  many different operating systems, including most versions of Unix, 
+  Linux, Mac OS X, IBM OS/2 and Microsoft's Interix.
+
+  The goals of the project include:
+
+  * Provide developers with the tools to port Microsoft Windows ODBC 
+    applications to other platforms with the minimum of code changes.
+  * Maintain the project as a vendor neutral interface database SDK
+  * Provide people who write ODBC drivers the tools to port their 
+    drivers to non Windows platforms
+  * Provide the user with a set of GUI and command line tools for 
+    managing their database access
+  * Maintain links with both the free software community and commercial 
+    database vendors, to ensure interoperability
+:type: libs
+:group: Tools
+:changelog: |
+  * Fri Mar 03 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com> 
+    - First created
+:src: unixODBC-2.3.4.tar.gz
+:src_dir: unixODBC-2.3.4
+:version: '2.3.4'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
