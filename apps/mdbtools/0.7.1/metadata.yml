@@ -1,0 +1,79 @@
+---
+:schema: 1
+:title: mdbtools
+:license: GPL/LGPL
+:summary: Read Access databases on *nix
+:url: https://github.com/brianb/mdbtools 
+:description: |
+  Welcome to the exciting world of MDB Tools! In short, MDB Tools is a set of 
+  programs to help you use Microsoft Access file in various settings.  The major
+  pieces are:
+
+  . libmdb    - the core library that allows access to MDB files programatically.
+  . libmdbsql - builds on libmdb to provide a SQL engine (aka Jet)
+  . utils     - provides command line utilities:
+                mdb-ver    -- prints the version (JET 3 or 4) of an mdb file.
+                mdb-schema -- prints DDL for the specified table.
+                mdb-export -- export table to CSV format.
+                mdb-tables -- a simple dump of table names to be used with shell
+                              scripts
+                mdb-header -- generates a C header to be used in exporting mdb
+                              data to a C prog.
+                mdb-parsecsv -- generates a C program given a CSV file made with
+                              mdb-export
+                mdb-sql    -- if --enable-sql is specified, a simple SQL engine
+                              (also used by ODBC and gmdb).
+                - And some utilities useful for debugging:
+                prcat      -- prints the catalog table from an mdb file.
+                prkkd      -- dump of information about design view data given 
+                              the offset to it.
+                prtable    -- dump of a table definition.
+                prdata     -- dump of the data given a table name.
+                prole      -- dump of ole columns given a table name and sargs.
+  . mdb-sql   - a command line SQL tool that allows one to type sql queries and
+                get results.
+  . odbc      - An ODBC driver for use with unixODBC or iODBC driver manager.
+                Allows one to use MDB files with PHP for example.
+  . gmdb2     - The Gnome MDB File Viewer and debugger.  Still alpha, but making
+                great progress.
+  . extras    - extra command line utilities
+                mdb-dump   -- simple hex dump utility that I've been using to look
+                              at mdb files.
+  
+  The initial goal of these tools is to be able to extract data structures and 
+  data from mdb files.  This goal will of course expand over time as the file 
+  format becomes more well understood.
+ 
+  Files in libmdb, libmdbsql, and libmdbodbc are licensed under LGPL and the
+  utilities and gui program are under the GPL, see COPYING.LIB and COPYING files
+  respectively.
+:type: apps
+:group: Tools
+:changelog: |
+  * Fri Mar 03 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com> 
+    - First created
+:src: 0.7.1.tar.gz
+:src_dir: mdbtools-0.7.1
+:version: '0.7.1'
+:dependencies:
+  el:
+    - libtool
+    - glib2-devel
+    - automake
+    - autoconf
+:compilers:
+  gcc:
+:compile: |
+  autoreconf -i -f <%= redirect(:autoreconf) %>
+  ./configure --prefix=<%= dest_dir %> --disable-man <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
