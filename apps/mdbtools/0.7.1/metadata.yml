@@ -52,11 +52,19 @@
 :changelog: |
   * Fri Mar 03 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com> 
     - First created
+    - Updated to build with support for UnixODBC
 :src: 0.7.1.tar.gz
 :src_dir: mdbtools-0.7.1
 :version: '0.7.1'
+:requirements:
+  :build:
+    - libs/unixodbc
+  :runtime:
+    - libs/unixodbc
 :dependencies:
   el:
+    - flex
+    - bison
     - libtool
     - glib2-devel
     - automake
@@ -65,7 +73,7 @@
   gcc:
 :compile: |
   autoreconf -i -f <%= redirect(:autoreconf) %>
-  ./configure --prefix=<%= dest_dir %> --disable-man <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> --disable-man --with-unixodbc=${UNIXODBCDIR} <%= redirect(:configure) %> 
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>
