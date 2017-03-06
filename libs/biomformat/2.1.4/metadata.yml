@@ -33,6 +33,8 @@
   independent of the version of the biom-format software.
 :group: Bioinformatics
 :changelog: |
+  * Mon Feb 27 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
   * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated to v2.1.4
   * Tue Mar 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -60,9 +62,11 @@
 :sources:
   - pyqi-0.3.2.tar.gz
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:compile) %>
 :install: |
   INSTALL_DIR="<%= dest_dir %>/python/lib/python2.7/site-packages"
+  export PYTHONDONTWRITEBYTECODE=true
   export PYTHONPATH="${INSTALL_DIR}:$PYTHONPATH"
   mkdir -p "${INSTALL_DIR}"
 
