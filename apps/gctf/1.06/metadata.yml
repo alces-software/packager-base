@@ -1,0 +1,50 @@
+---
+:schema: 1
+:license: GPLv2+
+:title: GCTF
+:summary: Gctf - real-time CTF determination and correction 
+:url: http://www2.mrc-lmb.cam.ac.uk/relion/index.php/Main_Page
+:description: |
+  Accurate estimation of the contrast transfer function (CTF) is critical 
+  for a near-atomic resolution cryo electron microscopy (cryoEM) 
+  reconstruction. Here, a GPU-accelerated computer program, Gctf, for 
+  accurate and robust, real-time CTF determination is presented. The main 
+  target of Gctf is to maximize the cross-correlation of a simulated CTF 
+  with the logarithmic amplitude spectra (LAS) of observed micrographs 
+  after background subtraction. Novel approaches in Gctf improve both 
+  speed and accuracy. In addition to GPU acceleration (e.g. 10–50×), a 
+  fast 1-dimensional search plus 2-dimensional refinement (1S2R) procedure 
+  further speeds up Gctf. Based on the global CTF determination, the local 
+  defocus for each particle and for single frames of movies is accurately 
+  refined, which improves CTF parameters of all particles for subsequent 
+  image processing. Novel diagnosis method using equiphase averaging (EPA) 
+  and self-consistency verification procedures have also been implemented 
+  in the program for practical use, especially for aims of near-atomic 
+  reconstruction. Gctf is an independent program and the outputs can be 
+  easily imported into other cryoEM software such as Relion (Scheres, 2012) 
+  and Frealign (Grigorieff, 2007)
+:group: Imaging
+:changelog: |
+  * Mon Feb 20 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: Gctf_v1.06_and_examples.tar.gz
+:src_dir: Gctf_v1.06 
+:type: apps
+:version: 1.06
+:requirements:
+  :runtime:
+    - libs/nvidia-cuda
+:compilers:
+  gcc:
+:compile: |
+  #noop - binary distribution
+:install: |
+  cp -R bin <%= dest_dir %>/.
+  mkdir -p <%= dest_dir %>/examples
+  cp -R examples_local_ctf examples_phase_plate <%= dest_dir %>/examples/.
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin
