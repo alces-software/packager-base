@@ -1,0 +1,40 @@
+---
+:schema: 1
+:license: GPLv3
+:title: Motioncorr
+:summary: Molecular Electron Microscopy 
+:url: http://cryoem.ucsf.edu/software/software.html 
+:description: |
+  Version 2.1 can imput rectangular images recorded with the K2 Summit camera.
+:group: Imaging
+:changelog: |
+  * Tue Feb 21 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: motioncorr_v2.1.tar
+:src_dir: motioncorr_v2.1
+:type: apps
+:version: 2.1
+:requirements:
+  :build: 
+    - libs/nvidia-cuda < 7.1.0
+  :runtime:
+    - libs/nvidia-cuda < 7.1.0
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  cd src
+  make <%= redirect(:configure) %>
+:install: |
+  cp -R bin <%= dest_dir %>/.
+  cp -R src/lib <%= dest_dir %>/.
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
