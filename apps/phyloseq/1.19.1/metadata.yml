@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: phyloseq
+:license: AGPLv3
+:summary: A set of classes and tools to facilitate the import, storage, analysis, and graphical display of microbiome census data. 
+:url: https://github.com/joey711/phyloseq/ 
+:description: |
+  Phyloseq provides:
+  * Import abundance and related data from popular Denoising / OTU-clustering pipelines: 
+    (DADA2, UPARSE, QIIME, mothur, BIOM, PyroTagger, RDP, etc.)
+  * Convenience analysis wrappers for common analysis tasks
+  * 44 supported distance methods (UniFrac, Jensen-Shannon, etc)
+  * Ordination -> many supported methods, including constrained methods
+  * Microbiome plot functions using ggplot2 for powerful, flexible exploratory analysi
+  * Modular, customizable preprocessing functions supporting fully reproducible work.
+  * Functions for merging data based on OTU/sample variables, and for supporting 
+    manually-imported data.
+  * Native R/C, parallelized implementation of UniFrac distance calculations.
+  * Multiple testing methods specific to high-throughput amplicon sequencing data.
+  * Examples for analysis and graphics using real published data.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed Feb  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: phyloseq_1.19.1.tar.gz
+:src_dir: phyloseq
+:version: '1.19.1'
+:requirements:
+  :build:
+    - libs/bioconductor >= 3.3
+    - apps/R >= 3.3.1
+  :runtime:
+    - libs/bioconductor >= 3.3
+    - apps/R >= 3.3.1
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - gcc-gfortran
+    - gcc-c++
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # Install R library dependencies
+  cat <<RSCRIPT > rscript.do
+  require("BiocInstaller")
+  biocLite(c("ggplot2","ade4","ape","biomformat","Biostrings","data.table","foreach","igraph","multtest","vegan"),suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+  R CMD BATCH rscript.do
+  cat rscript.do.Rout <%= redirect(:compile) %>
+:install: |
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD INSTALL -l "<%= dest_dir %>/R" .
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PATH ${appdir}/bin
