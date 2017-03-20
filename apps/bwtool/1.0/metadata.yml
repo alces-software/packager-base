@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: bwtool
+:license: GPLv3 
+:summary: A tool for bigWig files.
+:url: https://github.com/CRG-Barcelona/bwtool 
+:description: |
+  bwtool is a command-line utility for bigWig files. bigWigs are an 
+  indexed and compressed form of wig file, a somewhat standard format 
+  for storing genome-wide real-valued signal data. Much of the ENCODE 
+  processed data is in this form, and it is appearing more often in 
+  GEO as well. The purpose of bwtool is to make these files more 
+  useful by providing some convenient functions.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon Mar 20 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: 1.0.tar.gz 
+:version: '1.0'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - libs/libbeato
+  :runtime:
+    - libs/libbeato
+:dependencies:
+  el:
+    - zlib-devel
+:compile: |
+  ./configure CFLAGS="-g -O0 -I${LIBBEATODIR}/include" LDFLAGS="-L${LIBBEATODIR}/lib" --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PATH ${appdir}/bin
