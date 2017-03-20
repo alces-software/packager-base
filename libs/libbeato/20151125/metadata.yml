@@ -1,0 +1,33 @@
+---
+:schema: 1
+:title: libbeato  
+:license: GPLv3 
+:summary: Library combining some HTS stuff, core wiggle stuff, Jim Kent's libary 
+:url: https://github.com/CRG-Barcelona/libbeato 
+:description: |
+  Library combining some HTS stuff, core wiggle stuff, Jim Kent's libary
+:type: libs
+:group: Bioinformatics
+:changelog: |
+  * Mon Mar 20 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: d62f4f546856d8ccb463d4215d41d88d6d797380.zip 
+:src_dir: libbeato-d62f4f546856d8ccb463d4215d41d88d6d797380
+:version: '20151125'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - libpng-devel 
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
