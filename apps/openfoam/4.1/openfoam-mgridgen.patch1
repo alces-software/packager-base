@@ -1,0 +1,14 @@
+--- OpenFOAM-4.1.orig/src/fvAgglomerationMethods/MGridGenGamgAgglomeration/Make/options	2012-11-21 19:52:31.370832312 +0000
++++ OpenFOAM-4.1/src/fvAgglomerationMethods/MGridGenGamgAgglomeration/Make/options		2012-11-21 19:54:02.436884123 +0000
+@@ -7,9 +7,8 @@
+ 
+ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(ParMGridGen)/MGridGen/Lib/lnInclude \
+-    -I$(ParMGridGen)/MGridGen/IMlib/lnInclude \
++    -I$(MGRIDGENINCLUDE)/mgridgen \
+     $(TYPE_REAL)
+ 
+ LIB_LIBS = \
+-    -L$(FOAM_EXT_LIBBIN) -lMGridGen
++    -L$(MGRIDGENLIB) -lMGridGen
