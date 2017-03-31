@@ -1,0 +1,11 @@
+--- nextflow.old	2017-03-30 11:28:01.974602950 +0000
++++ nextflow	2017-03-30 11:28:26.335322383 +0000
+@@ -139,7 +139,7 @@
+     exit 0
+ fi
+
+-NXF_HOME=${NXF_HOME:-$HOME/.nextflow}
++NXF_HOME=${NXF_HOME:-$NEXTFLOWDIR/nextflow}
+ NXF_VER=${NXF_VER:-'0.24.0'}
+ NXF_ORG=${NXF_ORG:-'nextflow-io'}
+ NXF_ASSETS=${NXF_ASSETS:-$NXF_HOME/assets}

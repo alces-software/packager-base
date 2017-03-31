@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: nextflow 
+:license: GNU GPLv3
+:summary: A DSL for parallel and scaleable computational pipelines
+:url: http://www.nextflow.io
+:description: |
+  Nextflow is a fluent DSL modelled around the UNIX pipe concept, that 
+  simplifies writing parallel and scalable pipelines in a portable manner.
+:group: Bioinformatics
+:changelog: |
+  * Wed Mar 29 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v0.24.0.tar.gz 
+:src_dir: nextflow-0.24.0 
+:type: apps
+:version: '0.24.0'
+:compilers:
+  gcc:
+:patches:
+  - nextflow.patch
+:dependencies:
+  el:
+    - java-1.8.0-openjdk-devel
+:compile: |
+  ./gradlew -q compile exportClasspath --debug <%= redirect(:compile) %>
+  ./gradlew pack
+:install: |
+  mkdir -p <%= dest_dir %>/nextflow/capsule/deps/
+  ./gradlew installLauncher install -Dmaven.repo.local=<%= dest_dir %>/nextflow/capsule/deps/ -x signArchives <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/bin
+  install -D -m 0755 -v nextflow <%= dest_dir %>/bin
+  <%= dest_dir %>/bin/nextflow <%= redirect(:firstrun_deps) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
