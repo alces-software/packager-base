@@ -1,0 +1,32 @@
+---
+:schema: 1
+:title: MPI Tutorial: Hello World
+:license: GPLv2
+:summary: MPI programming lessons in C and executable code examples
+:url: http://mpitutorial.com/tutorials/mpi-hello-world/
+:description: |
+  Example MPI program.
+:type: apps
+:group: Examples
+:changelog: |
+  * Mon Apr 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mpitutorial.zip
+:src_dir: mpitutorial-d69d0ad56edd6b154095c44ca23bd537f721ae78/tutorials/mpi-hello-world/code
+:version: '20150217'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:compile: |
+  make
+:install: |
+  install -D -m755 mpi_hello_world <%= dest_dir %>/bin/mpi_hello_world
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
