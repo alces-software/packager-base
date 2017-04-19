@@ -1,0 +1,73 @@
+---
+:schema: 1
+:title: pythonlevenshtein
+:license: GPL 
+:summary: Python extension for computing string edit distances and similarities. 
+:url: https://pypi.python.org/pypi/python-Levenshtein 
+:description: |
+  The Levenshtein Python C extension module contains functions for 
+  fast computation of
+    * Levenshtein (edit) distance, and edit operations 
+    * string similarity
+    * approximate median strings, and generally string averaging
+    * string sequence and set similarity
+
+  It supports both normal and Unicode strings. Python 2.2 or newer is required; 
+  Python 3 is supported.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Mon Jul 25 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: python-Levenshtein-0.12.0.tar.gz
+:src_dir: python-Levenshtein-0.12.0 
+:version: '0.12.0'
+:compilers:
+  gcc:
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools > 15.0
+      :build:
+        - apps/python ~> 2.7.0
+      :runtime:
+        - apps/python ~> 2.7.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3 > 15.0
+      :build:
+        - apps/python3 ~> 3.3.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34 > 15.0
+      :build:
+        - apps/python3 ~> 3.4.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  PYTHONPATH=$PYTHONDEPSDIR:$PYTHONPATH
+  mkdir -p $PYTHONDEPSDIR
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
