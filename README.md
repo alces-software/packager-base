@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/alces-software/packager-base.png?label=ready&title=Ready)](https://waffle.io/alces-software/packager-base)
 # Alces Gridware
 
 Package dependency, build and installation instructions for use with the [Alces Clusterware](https://github.com/alces-software/clusterware) `gridware` tool.
