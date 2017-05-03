@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: BCFtools
+:license: MIT License
+:summary: Utilities for variant calling and manipulating VCF and BCF files
+:url: http://www.htslib.org/
+:description: |
+  BCFtools is a set of utilities that manipulate variant calls in the
+  Variant Call Format (VCF) and its binary counterpart BCF. All
+  commands work transparently with both VCFs and BCFs, both
+  uncompressed and BGZF−compressed.
+
+  Most commands accept VCF, bgzipped VCF and BCF with filetype
+  detected automatically even when streaming from a pipe. Indexed VCF
+  and BCF will work in all situations. Un−indexed VCF and BCF and
+  streams will work in most, but not all situations.
+
+  BCFtools is designed to work on a stream. It regards an input file
+  "−" as the standard input (stdin) and outputs to the standard output
+  (stdout). Several commands can thus be combined with Unix pipes.
+:group: Bioinformatics
+:changelog: |
+  * Wed May  3 2017 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to latest v1.4 version
+    - Prepend BCFTOOLS_PLUGINS environment variable to modulefile 
+      with path to plugins directory.
+  * Tue Apr  5 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to latest 1.3 version - added OS dependencies
+  * Mon Jun  1 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to latest 1.2 version
+  * Thu Jan  8 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest 1.1 version
+  * Fri Sep  5 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: bcftools-1.4.tar.bz2
+:type: apps
+:version: '1.4'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - bzip2-devel
+    - xz-devel
+:compile: |
+  make
+:install: |
+  make prefix=<%= dest_dir %> install
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
+  prepend-path BCFTOOLS_PLUGINS ${appdir}/libexec/bcftools
