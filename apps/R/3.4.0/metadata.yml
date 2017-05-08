@@ -1,0 +1,219 @@
+---
+:schema: 1
+:license: GPL
+:summary: Language and environment for statistical computing and graphics
+:url: http://www.r-project.org/
+:description: |
+  R is a language and environment for statistical computing and
+  graphics, providing a wide variety of statistical (linear and
+  nonlinear modelling, classical statistical tests, time-series
+  analysis, classification, clustering, ...) and graphical techniques,
+  and is highly extensible.
+
+  The integrated suite of software facilities for data manipulation,
+  calculation and graphical display includes:
+
+    * an effective data handling and storage facility
+    * a suite of operators for calculations on arrays, in particular
+      matrices
+    * a large, coherent, integrated collection of intermediate tools
+      for data analysis
+    * graphical facilities for data analysis and display either
+      on-screen or on hardcopy
+    * a well-developed, simple and effective programming language
+      which includes conditionals, loops, user-defined recursive
+      functions and input and output facilities.
+:group: Languages
+:requirements:
+  :build:
+    - libs/lapack
+    - libs/blas
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libpng-devel
+      - libjpeg-turbo-devel
+      - cairo-devel
+      - libtiff-devel
+      - libxml2-devel
+      - libicu-devel
+      - readline-devel
+      - libcurl-devel
+      - xz-devel
+      - zlib-devel
+      - bzip2-devel
+      - pcre-devel
+      - tk-devel
+  :runtime:
+    el:
+      - libpng
+      - libjpeg-turbo
+      - cairo
+      - libtiff
+      - libxml2
+      - libicu
+      - readline
+      - libcurl
+      - xz-libs
+      - zlib
+      - bzip2-libs
+      - pcre
+      - tk
+      - libgfortran
+:changelog: |
+  * Mon May  8 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v3.4.0 version
+  * Fri Nov 25 2016 - Neil Prockter <mrgum@iamafreeman.com>
+    - Updated to latest v3.3.2 version
+  * Wed Oct  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added libgfortran to runtime dependencies for some build environments
+  * Wed Jul 13 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v3.3.1 version
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reworked site libs directory
+    - Split runtime and development dependencies
+  * Fri May 13 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to 3.3.0 version
+  * Fri May 13 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to 3.2.5 version
+  * Fri Apr  8 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated fetch URL
+  * Thu Apr  7 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
+  * Thu Feb 11 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.2.3
+    - Added distro dependencies for EL
+  * Wed Oct 21 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.2.2
+  * Wed Jul 1 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v3.2.1
+  * Mon Jun 1 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v3.2.0
+  * Wed May 13 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Moved Rprofile out of subdirectory and added to sources list
+  * Wed Feb 11 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.1.2
+  * Fri Jul 11 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Upgraded to v3.1.1
+  * Mon May 19 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Corrected environment variable name
+  * Mon May 12 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Added example scripts
+    - Added an example Rprofile to add brief instructions for example scripts
+  * Thu Mar  6 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Reinstate compilation of BLAS shared library
+  * Wed Jul 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v3.0.1
+  * Tue Apr 30 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected handling of R_LIBS_USER and R_LIBS_SITE for root user
+  * Mon Apr  8 2013 - James Donohue <james.donohue@alces-software.com>
+    - Upgraded to v3.0.0
+  * Mon Apr  8 2013 - James Donohue <james.donohue@alces-software.com>
+    - Upgraded to v2.15.3
+  * Wed Aug 22 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v2.15.1
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Apr 11 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.15.0
+    - Ported to alces-installer style package
+  * Tue May 24 2011 Steve Norledge
+    - Build standalone math libs
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: R-3.4.0.tar.gz
+:sources:
+  - Rprofile
+:type: apps
+:version: '3.4.0'
+:compilers:
+  gcc:
+  open64:
+:compile: |
+  ./configure --with-blas=$BLASDIR/libblas.a \
+              --with-lapack=$LAPACKDIR/liblapack.a \
+              --prefix=<%= dest_dir %> \
+              --with-x=no \
+              --enable-R-shlib \
+              --enable-BLAS-shlib <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+  # make math lib
+  cd src/nmath/standalone
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  make install-libR <%= redirect(:install) %>
+  # install math lib
+  cd src/nmath/standalone
+  make install <%= redirect(:install) %>
+
+  # Install example files.
+  mkdir -v <%= dest_dir %>/example/ <%= redirect(:install) %>
+  install -D -m 0644 <%= source('Rprofile') %> <%= dest_dir %>/example <%= redirect(:install) %>
+:module: |
+  set r_user_libs $::env(HOME)/gridware/share/R/${version}
+  set r_site_libs <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/R/${version}
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64/R/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib64/pkgconfig
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+
+  if { $::env(USER) != "root" } {
+    if { [module-info mode load] } {
+      # make the user libs directory if it doesn't exist
+      if { ! [file exists "${r_user_libs}"] } {
+        file mkdir "${r_user_libs}"
+      }
+    }
+    append-path R_LIBS_USER ${r_user_libs}
+  } {
+    if { [module-info mode load] } {
+      # make the site libs directory if it doesn't exist
+      if { ! [file exists "${r_site_libs}"] } {
+        file mkdir "${r_site_libs}"
+      }
+    }
+  }
+  append-path R_LIBS_SITE ${r_site_libs}
+:example_scripts:
+  - tags: ['script:type=interactive', 'session:type=command-line']
+    name: 'CLI session running R'
+    description: 'Start an interactive CLI session running R. This session will not be able to plot any graphics but uses fewer resources than the graphical session so may become available sooner.'
+    template: 'script:stub:interactive:cli'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Set the startup file to use. The example startup file contains some
+      # instructions on how to demonstrate some of R's functionality.
+      export R_PROFILE_USER=$REXAMPLE/Rprofile
+
+      # Additional command-line options (R -h for a list).
+      R_OPTIONS=""
+
+      R $R_OPTIONS
+  - tags: ['script:type=interactive', 'session:type=desktop']
+    name: 'Desktop session running R'
+    description: 'Start an interactive desktop session running R. This session will be able to plot graphics but uses more resources than the CLI session so may take longer to become available.'
+    template: 'script:stub:interactive:desktop'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+
+      # Set the startup file to use. The example startup file contains some
+      # instructions on how to demonstrate some of R's functionality.
+      export R_PROFILE_USER=$REXAMPLE/Rprofile
+
+      # Additional command-line options (R -h for a list).
+      R_OPTIONS=""
+
+      {{ fact.interactiveTerminalEmulator }} -e "R $R_OPTIONS"
