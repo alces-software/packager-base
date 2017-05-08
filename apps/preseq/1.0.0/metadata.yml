@@ -16,10 +16,24 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated upstream archive location
+    - Added distro dependencies
   * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: preseq-1.0.0.tar.gz
+:src: preseq-1.0.0.zip
+:src_dir: preseq-2c7e566a283d994145f2eb3109ef4cd5b3f2ee44
 :version: '1.0.0'
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - gsl-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - gsl
+      - zlib
 :compilers:
   gcc:
 :compile: |
@@ -31,6 +45,6 @@
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
-  setenv ${appcaps}DOC ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
 
   prepend-path PATH ${appdir}/bin
