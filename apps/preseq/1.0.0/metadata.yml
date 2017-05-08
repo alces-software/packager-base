@@ -27,6 +27,7 @@
 :dependencies:
   :build:
     el:
+      - gcc-c++
       - gsl-devel
       - zlib-devel
   :runtime:
