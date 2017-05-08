@@ -30,6 +30,8 @@
   http://www.threadingbuildingblocks.org/faq#sthash.5ryWwww1.dpuf
 :group: Libraries
 :changelog: |
+  * Mon May  8 2017 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add library directory to LD_LIBRARY_PATH
   * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Upgrade to latest v4.4 release
   * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -56,3 +58,5 @@
   setenv ${appcaps}INCLUDE ${appdir}/include
   setenv ${appcaps}LIB ${appdir}/lib
   setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
