@@ -1,0 +1,48 @@
+---
+:schema: 1
+:title: Preseq
+:license: GPLv3+
+:summary: Predict and estimate the complexity of a genomic sequencing library
+:url: http://smithlabresearch.org/software/preseq/
+:description: |
+  The preseq package is aimed at predicting and estimating the
+  complexity of a genomic sequencing library, equivalent to predicting
+  and estimating the number of redundant reads from a given sequencing
+  depth and how many will be expected from additional sequencing using
+  an initial sequencing experiment. The estimates can then be used to
+  examine the utility of further sequencing, optimize the sequencing
+  depth, or to screen multiple libraries to avoid low complexity
+  samples.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest release v2.0.1
+  * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: preseq_v2.0.1.tar.bz2
+:src_dir: preseq
+:version: '2.0.1'
+:dependencies:
+  :build:
+    el:
+      - gsl-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - gsl
+      - zlib
+:compilers:
+  gcc:
+:compile: |
+  make all SAMTOOLS_DIR=$(pwd)/samtools <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v bam2mr preseq <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README.md gpl-3.0.txt docs/* <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
