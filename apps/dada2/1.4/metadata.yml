@@ -1,0 +1,57 @@
+
+---
+:schema: 1
+:title: dada2
+:license: LGPLv3
+:summary: Fast, accurate, single-nucleotide resolution for amplicon data
+:url: http://benjjneb.github.io/dada2/index.html
+:description: |
+  * DADA2 infers exact sequence variants from Illumina amplicon data. Even
+    if sequence variants differ by 1 or 2 nucleotides, DADA2 resolves them.
+  * DADA2 reports fewer false sequence variants than other methods report
+    false OTUs.
+  * The computational costs of DADA2 scale linearly with the number of
+    samples, and DADA2s memory requirements can remain essentially flat.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Mon May  8 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to latest v1.4 version
+  * Tue Feb  7 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v1.4.0.tar.gz
+:src_dir: dada2-1.4.0
+:version: '1.4'
+:requirements:
+  :build:
+    - apps/R >= 3.4.0
+    - libs/bioconductor >= 3.4
+  :runtime:
+    - apps/R >= 3.4.0
+    - libs/bioconductor >= 3.4
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+    - libcurl-devel
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # requires ShortRead R library
+  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(c("ShortRead","ggplot2","data.table","reshape2","RcppParallel"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD INSTALL -l "<%= dest_dir %>/R" .
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PATH ${appdir}/bin
