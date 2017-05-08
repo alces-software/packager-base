@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: HiCUP
+:license: GPLv3+
+:summary: A tool for mapping and performing quality control on Hi-C data
+:url: https://deeptools.github.io/
+:description: |
+  HiCUP is a bioinformatics pipeline for processing Hi-C data. The
+  pipeline takes and maps FASTQ data against a reference genome and
+  filters out frequently encountered experimental artefacts. The
+  pipeline produces paired-read files in SAM/BAM format, each read
+  pair corresponding to a putative Hi-C di-tag. HiCUP also produces
+  summary statistics at each stage of the pipeline providing quality
+  control, helping pinpoint potential problems and refine the
+  experimental protocol.
+:group: Bioinformatics
+:changelog: |
+  * Mon May  8 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: hicup_v0.5.9.tar.gz
+:src_dir: hicup_v0.5.9
+:type: apps
+:version: '0.5.9'
+:requirements:
+  :build:
+    - apps/bowtie2
+    - apps/R >= 3.1.2
+    - apps/samtools >= 0.1.18
+  :runtime:
+    - apps/bowtie2
+    - apps/R >= 3.1.2
+    - apps/samtools >= 0.1.18
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of a perl application
+:install: |
+  mkdir -p <%= dest_dir %>/{dist,bin,doc}
+  cp -Rv * <%= dest_dir %>/dist
+  for a in hicup hicup_deduplicator hicup_digester hicup_filter hicup_mapper hicup_truncater; do
+    ln -s ../dist/$a <%= dest_dir %>/bin/$a
+  done
+  mv <%= dest_dir %>/dist/Documentation <%= dest_dir %>/doc
+  mv <%= dest_dir %>/dist/{README.txt,LICENSE.txt,RELEASE_NOTES.txt} <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DIST ${appdir}/dist
+
+  prepend-path PATH ${appdir}/bin
