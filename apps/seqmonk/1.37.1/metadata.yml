@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: SeqMonk
+:license: GPLv3+
+:summary: Tool to visualise and analyse high throughput mapped sequence data
+:url: http://www.bioinformatics.babraham.ac.uk/projects/seqmonk/
+:description: |
+  SeqMonk is a program to enable the visualisation and analysis of
+  mapped sequence data. It was written for use with mapped next
+  generation sequence data but can in theory be used for any dataset
+  which can be expressed as a series of genomic positions. It's main
+  features are:
+
+    * Import of mapped data from mapped data (BAM/SAM/bowtie etc)
+    * Creation of data groups for visualisation and analysis
+    * Visualisation of mapped regions against an annotated genome.
+    * Flexible quantitation of the mapped data to allow comparisons
+      between data sets
+    * Statistical analysis of data to find regions of interest
+    * Creation of reports containing data and genome annotation
+:group: Bioinformatics
+:changelog: |
+  * Fri Mar 17 2017 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: seqmonk_v1.37.1.zip
+:src_dir: SeqMonk
+:type: apps
+:version: '1.37.1'
+:dependencies:
+  :runtime:
+    el:
+      - java-1.8.0-openjdk
+      - libxml2
+      - libcurl
+  :build:
+    el:
+      - libxml2-devel
+      - libcurl-devel
+:requirements:
+  :build:
+    - libs/bioconductor >= 3.4
+    - apps/R
+  :runtime:
+    - libs/bioconductor >= 3.4
+    - apps/R
+:compilers:
+  gcc:
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # requires DESeq2 and edgeR R libraries
+  R --vanilla <%= redirect(:bioconductor) %> <<RSCRIPT
+    require("BiocInstaller")
+    biocLite(c("DESeq2","edgeR"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,dist}
+  cp -Rv com *.jar edu Genomes Help Scripts seqmonk seqmonk_import uk <%= dest_dir %>/dist <%= redirect(:install) %>
+  cp -v LICENSE *.txt *.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cat <<'EOF' > <%= dest_dir %>/bin/seqmonk
+  #!/bin/bash
+  exec $SEQMONKDIR/dist/seqmonk "$@"
+  EOF
+  cat <<'EOF' > <%= dest_dir %>/bin/seqmonk_import
+  #!/bin/bash
+  exec $SEQMONKDIR/dist/seqmonk_import "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/* <%= dest_dir %>/dist/seqmonk <%= dest_dir %>/dist/seqmonk_import 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DIST ${appdir}/dist
+
+  prepend-path PATH ${appdir}/bin
+  append-path R_LIBS_SITE ${appdir}/R
