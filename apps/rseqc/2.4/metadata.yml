@@ -19,38 +19,54 @@
   modules will not work.
 
   RSeQC package provides a number of useful modules that can comprehensively
-  evaluate high throughput sequence data especially RNA-seq data. “Basic
-  modules” quickly inspect sequence quality, nucleotide composition bias, PCR
-  bias and GC bias, while “RNA-seq specific modules” investigate sequencing
+  evaluate high throughput sequence data especially RNA-seq data. "Basic
+  modules" quickly inspect sequence quality, nucleotide composition bias, PCR
+  bias and GC bias, while "RNA-seq specific modules" investigate sequencing
   saturation status of both splicing junction detection and expression
   estimation, mapped reads clipping profile, mapped reads distribution,
   coverage uniformity over gene body, reproducibility, strand specificity and
   splice junction annotation
 :group: Bioinformatics
 :changelog: |
+  * Thu Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies
+    - Updated tarball checksum due to upstream change
+    - Added cython to runtime dependencies
   * Tue Sep  2 2014 James Donohue <james.donohue@alces-software.com>
     - First created
 :src: RSeQC-2.4.tar.gz
 :src_dir: RSeQC-2.4
 :type: apps
 :version: '2.4'
+:dependencies:
+  :build:
+    el:
+      - zlib-devel
+  :runtime:
+    el:
+      - zlib
 :requirements:
   :build:
     - apps/python ~> 2.7.3
     - apps/cython >= 0.12
   :runtime:
     - apps/python ~> 2.7.3
+    - apps/cython >= 0.12
     - libs/numpy
     - apps/R
 :compilers:
   gcc:
 :compile: |
+  sed -i -e 's/zip_safe = False/zip_safe = True/g' setup.py
   python setup.py build <%= redirect(:build) %>
 :install: |
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
   mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  # We have to do this dance, becuase PYTHONDONTWRITEBYTCODE causes an
+  # error on build/installation.
+  find <%= dest_dir %>/python/lib/python2.7 -name '*.pyc' -exec rm -f {} ';'
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
