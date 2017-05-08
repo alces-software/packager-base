@@ -1,0 +1,82 @@
+---
+:schema: 1
+:title: RSeQC
+:license: MIT
+:summary: An RNA-seq Quality Control Package
+:url: http://rseqc.sourceforge.net/
+:description: |
+  Deep transcriptome sequencing (RNA-seq) provides massive and valuable
+  information about functional elements in the genome. Ideally, transcriptome
+  sequencing should be able to directly identify and quantify all RNA species,
+  small or large, low or high abundance. However, RNA-seq is a complicated,
+  multistep process involving sample preparation, amplification,
+  fragmentation, purification and sequencing. A single improper operation
+  would result in biased or even unusable data. Therefore, it is always a good
+  practice to check the quality of your RNA-seq data before analyses. Here we
+  developed RSeQC package to comprehensively evaluate RNA-seq datasets
+  generated from clinical tissues or other well annotated organisms such as
+  mouse, fly and yeast. For organisms lacking reference gene models, many
+  modules will not work.
+
+  RSeQC package provides a number of useful modules that can comprehensively
+  evaluate high throughput sequence data especially RNA-seq data. "Basic
+  modules" quickly inspect sequence quality, nucleotide composition bias, PCR
+  bias and GC bias, while "RNA-seq specific modules" investigate sequencing
+  saturation status of both splicing junction detection and expression
+  estimation, mapped reads clipping profile, mapped reads distribution,
+  coverage uniformity over gene body, reproducibility, strand specificity and
+  splice junction annotation
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest release, v2.6.4
+  * Tue Sep  2 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: RSeQC-2.6.4.tar.gz
+:src_dir: RSeQC-2.6.4
+:type: apps
+:version: '2.6.4'
+:dependencies:
+  :build:
+    el:
+      - zlib-devel
+      - bzip2-devel
+      - xz-devel
+  :runtime:
+    el:
+      - zlib
+      - bzip2-libs
+      - xz-libs
+:requirements:
+  :build:
+    - apps/python ~> 2.7.3
+    - apps/setuptools
+    - apps/cython >= 0.12
+    - libs/numpy
+    - libs/pysam
+  :runtime:
+    - apps/python ~> 2.7.3
+    - apps/setuptools
+    - apps/cython >= 0.12
+    - libs/numpy
+    - apps/R
+    - libs/pysam
+:compilers:
+  gcc:
+:compile: |
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+  # We have to do this dance, becuase PYTHONDONTWRITEBYTCODE causes an
+  # error on build/installation.
+  find <%= dest_dir %>/python/lib/python2.7 -name '*.pyc' -exec rm -f {} ';'
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
