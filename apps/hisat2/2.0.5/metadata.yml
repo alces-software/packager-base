@@ -35,6 +35,8 @@
     el:
       - zlib-devel
       - gcc-c++
+      - zip
+      - unzip
   :runtime:
     el:
       - zlib
