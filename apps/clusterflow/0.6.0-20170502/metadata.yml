@@ -1,0 +1,106 @@
+---
+:schema: 1
+:title: Cluster Flow
+:license: GPLv3+
+:summary: A pipelining tool to automate and standardise bioinformatics analyses on cluster environments
+:url: http://clusterflow.io/
+:description: |
+  Cluster Flow is a pipelining tool to automate and standardise
+  bioinformatics analyses on high-performance cluster environments. It
+  is designed to be easy to use, quick to set up and flexible to
+  configure.
+
+  Cluster Flow is written in Perl and works by launching jobs to a
+  cluster (can also be run locally). Each job is a stand-alone Perl
+  executable wrapper around a bioinformatics tool of interest.
+
+  Modules collect extensive logging information and Cluster Flow
+  e-mails the user with a summary of the pipeline commands and exit
+  codes upon completion.
+:group: Bioinformatics
+:changelog: |
+  * Tue May  9 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: clusterflow-0.6.0-20170502.zip
+:src_dir: clusterflow-f5f1fe34bc08915430e50b7eb0ad09d5d9201467
+:type: apps
+:version: '0.6.0-20170502'
+:sources:
+  - cf-gridware-configurator
+:dependencies:
+  :build:
+    el:
+      - expat-devel
+  :runtime:
+    el:
+      - expat
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl >= 5.20.2
+  :runtime:
+    - apps/perl >= 5.20.2
+    - apps/bedtools
+    - apps/star
+    - apps/bismark
+    - apps/bowtie
+    - apps/bowtie2
+    - apps/bwa
+    - apps/cutadapt
+    - apps/fastqscreen
+    - apps/fastqc
+    - apps/htseq
+    - apps/kallisto
+    - apps/phantompeakqualtools
+    - apps/picard
+    - apps/samtools
+    - apps/sra
+    - apps/subread
+    - apps/tophat
+    - apps/trimgalore
+    - apps/multiqc
+    - apps/preseq
+    - apps/rseqc
+    - apps/deeptools
+    - apps/hicup
+    - apps/hisat2
+    - apps/salmon
+:compilers:
+  gcc:
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5:$PERL5LIB"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  cpanm XML::Simple <%= redirect(:cpanm) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{dist,bin,doc}
+  cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
+  cp -Rv cf source pipelines modules genomes.d *.example <%= dest_dir %>/dist <%= redirect(:install) %>
+  cp -Rv license.txt *.md docs alces-flight <%= dest_dir %>/doc <%= redirect(:install) %>
+  install -D -m 0755 <%= source('cf-gridware-configurator') %> <%= dest_dir %>/bin <%= redirect(:install) %>
+  ln -s ../dist/cf <%= dest_dir %>/bin/cf
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}DIST ${appdir}/dist
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  if { [info exists ::env(cw_ROOT)] } {
+    prepend-path PATH $::env(cw_ROOT)/opt/modules/bin
+    if { [module-info mode load] } {
+      if { ! [file exists ${appdir}/dist/clusterflow.config ] } {
+        catch {exec bash -c "${appdir}/bin/cf-gridware-configurator ${appdir}"} result
+        puts stderr "$result"
+      }
+    }
+  }
+
+  set-alias qs "cf --qstat"
+  set-alias qsa "cf --qstatall"
