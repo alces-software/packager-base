@@ -1,0 +1,71 @@
+---
+:schema: 1
+:title: deepTools
+:license: GPLv3
+:summary: Tools to process and analyze deep sequencing data
+:url: https://deeptools.github.io/
+:description: |
+  deepTools is a suite of user-friendly tools for the visualization,
+  quality control and normalization of data from deep-sequencing DNA
+  sequencing experiments.
+
+  deepTools offers multiple methods for highly-customizable data
+  visualization that immensely aid hypothesis generation and data
+  interpretation. It also offers all the tools needed to create
+  coverage files in standard bedGraph and bigWig file formats allowing
+  various normalization procedures and comparisons between two files
+  (for example, treatment and control).
+:group: Bioinformatics
+:changelog: |
+  * Mon May  8 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 2.5.0.1.tar.gz
+:src_dir: deepTools-2.5.0.1
+:type: apps
+:version: '2.5.0-1'
+:dependencies:
+  :build:
+    el:
+      - libcurl-devel
+  :runtime:
+    el:
+      - libcurl
+:requirements:
+  :build:
+    - apps/python ~> 2.7.3
+    - apps/pip
+    - libs/numpy >= 1.9.0
+    - libs/scipy >= 0.17.0
+    - libs/pysam >= 0.8.2
+    - libs/matplotlib >= 1.4.0
+  :runtime:
+    - apps/python ~> 2.7.3
+    - apps/pip
+    - libs/numpy >= 1.9.0
+    - libs/scipy >= 0.17.0
+    - libs/pysam >= 0.8.2
+    - libs/matplotlib >= 1.4.0
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONUSERBASE="$(pwd)/python"
+  mkdir $PYTHONUSERBASE
+  for a in 'py2bit>=0.1.0' 'pyBigWig>=0.2.1'; do
+    pip install $a --user --install-option="--prefix=" $a <%= redirect(:python) %>
+  done
+  python -B setup.py build <%= redirect(:build) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONDONTWRITEBYTECODE=true
+  python -B setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -Rv $(pwd)/python/* <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
