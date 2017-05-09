@@ -1,0 +1,65 @@
+---
+:schema: 1
+:title: HISAT2
+:license: GPLv3
+:summary: Graph-based alignment of next generation sequencing reads to a population of genomes
+:url: https://ccb.jhu.edu/software/hisat2/manual.shtml
+:description: |
+  HISAT2 is a fast and sensitive alignment program for mapping
+  next-generation sequencing reads (whole-genome, transcriptome, and
+  exome sequencing data) against the general human population (as well
+  as against a single reference genome). Based on GCSA (an extension
+  of BWT for a graph), we designed and implemented a graph FM index
+  (GFM), an original approach and its first implementation to the best
+  of our knowledge. In addition to using one global GFM index that
+  represents general population, HISAT2 uses a large set of small GFM
+  indexes that collectively cover the whole genome (each index
+  representing a genomic region of 56 Kbp, with 55,000 indexes needed
+  to cover human population). These small indexes (called local
+  indexes) combined with several alignment strategies enable effective
+  alignment of sequencing reads. This new indexing scheme is called
+  Hierarchical Graph FM index (HGFM). We have developed HISAT 2 based
+  on the HISAT and Bowtie2 implementations. HISAT2 outputs alignments
+  in SAM format, enabling interoperation with a large number of other
+  tools (e.g. SAMtools, GATK) that use SAM.
+:group: Bioinformatics
+:changelog: |
+  * Mon May  8 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: hisat2-2.0.5-source.zip
+:src_dir: hisat2-2.0.5
+:type: apps
+:version: '2.0.5'
+:dependencies:
+  :build:
+    el:
+      - zlib-devel
+      - gcc-c++
+      - zip
+      - unzip
+  :runtime:
+    el:
+      - zlib
+:compilers:
+  gcc:
+:compile: |
+  make hisat2-bin <%= redirect(:compile) %>
+  mkdir staging
+  cd staging
+  unzip ../hisat2-<%= version %>-64.zip <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  cd staging/hisat2-<%= version %>
+  cp -Rv doc/* AUTHORS TUTORIAL MANUAL MANUAL.markdown LICENSE NEWS \
+    <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv example <%= dest_dir %>/example
+  cp -Rv scripts <%= dest_dir %>/share
+  cp -Rv *.py hisat* <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLE ${appdir}/example
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
