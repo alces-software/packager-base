@@ -16,7 +16,7 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
-  * Thu Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+  * Thu Apr 20 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Updated upstream archive location
     - Added distro dependencies
   * Fri Apr  4 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
