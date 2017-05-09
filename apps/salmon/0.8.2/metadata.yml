@@ -1,0 +1,73 @@
+---
+:schema: 1
+:title: Salmon
+:license: GPLV3
+:summary: Highly-accurate & wicked fast transcript-level quantification from RNA-seq reads using lightweight alignments
+:url: https://combine-lab.github.io/salmon
+:description: |
+  Salmon is a tool for quantifying the expression of transcripts using
+  RNA-seq data. Salmon uses new algorithms (specifically, coupling the
+  concept of quasi-mapping with a two-phase inference procedure) to
+  provide accurate expression estimates very quickly
+  (i.e. wicked-fast) and while using little memory. Salmon performs
+  its inference using an expressive and realistic model of RNA-seq
+  data that takes into account experimental attributes and biases
+  commonly observed in real RNA-seq data.
+:group: Bioinformatics
+:changelog: |
+  * Mon May  8 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.8.2.tar.gz
+:src_dir: salmon-0.8.2
+:type: apps
+:version: '0.8.2'
+:dependencies:
+  :build:
+    el:
+      - zlib-devel
+      - bzip2-devel
+      - xz-devel
+      - gcc-c++
+      - autoconf
+    el6:
+      - libstdc++-devel
+    el7:
+      - libstdc++-static
+  :runtime:
+    el:
+      - zlib
+      - bzip2-libs
+      - xz-libs
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - libs/boost >= 1.55.0
+    - libs/tbb >= 4.4
+  :runtime:
+    - libs/tbb >= 4.4
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DTBB_INCLUDE_DIR:PATH=$TBBINCLUDE -DTBB_LIBRARY:PATH=$TBBLIB \
+    -DBOOST_ROOT:PATH=$BOOSTDIR \
+    .. <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd ..
+  mkdir <%= dest_dir %>/{doc,share}
+  cp -v LICENSE README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv sample_data.tgz scripts <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
