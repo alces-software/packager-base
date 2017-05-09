@@ -23,6 +23,13 @@
 :src_dir: deepTools-2.5.0.1
 :type: apps
 :version: '2.5.0-1'
+:dependencies:
+  :build:
+    el:
+      - libcurl-devel
+  :runtime:
+    el:
+      - libcurl
 :requirements:
   :build:
     - apps/python ~> 2.7.3
