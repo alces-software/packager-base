@@ -28,6 +28,7 @@
       - bzip2-devel
       - xz-devel
       - gcc-c++
+      - autoconf
     el6:
       - libstdc++-devel
     el7:
