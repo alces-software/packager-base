@@ -22,12 +22,14 @@
   least one of these papers.
 :group: Imaging
 :changelog: |
+  * Fri May 19 2017 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Changed source location from BitBucket to GitHub
   * Wed Oct  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to v2.0.20161005 Beta Version
   * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First Created
 :src: relion-2.0-20161005.zip
-:src_dir: tcblab-relion2-beta-a6225608e270
+:src_dir: relion-a6225608e270ac68af463ec3ba7567dbbbc4a4a0
 :type: apps
 :version: 2.0.20161005
 :requirements:
