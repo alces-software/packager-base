@@ -1,0 +1,79 @@
+---
+:schema: 1
+:title: TensorFlow
+:license: Apache License 2.0
+:summary: Computation using data flow graphs for scalable machine learning
+:url: http://tensorflow.org
+:description: |
+  TensorFlow is an open source software library for numerical
+  computation using data flow graphs. Nodes in the graph represent
+  mathematical operations, while the graph edges represent the
+  multidimensional data arrays (tensors) that flow between them. This
+  flexible architecture lets you deploy computation to one or more
+  CPUs or GPUs in a desktop, server, or mobile device without
+  rewriting code. TensorFlow also includes TensorBoard, a data
+  visualization toolkit.
+
+  TensorFlow was originally developed by researchers and engineers
+  working on the Google Brain team within Google's Machine
+  Intelligence research organization for the purposes of conducting
+  machine learning and deep neural networks research. The system is
+  general enough to be applicable in a wide variety of other domains,
+  as well.
+:type: apps
+:group: Machine Learning
+:changelog: |
+  * Mon Nov 21 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+  * Wed May 24 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to release v1.1.0 version
+:src: 1ec6ed51182adf8f1b03a3188c16cd8a45ca6c85.zip
+:version: '1.1.0'
+:src_dir: tensorflow-1ec6ed51182adf8f1b03a3188c16cd8a45ca6c85
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/bazel >= 0.4.5
+  :build:
+    - apps/python
+    - libs/numpy/1.9.2
+    - apps/setuptools
+    - apps/pip
+  :runtime:
+    - apps/python
+    - apps/setuptools
+    - libs/numpy/1.9.2
+:compile: |
+  export GCC_HOST_COMPILER_PATH=`which gcc`
+  export TF_NEED_HDFS=0
+  export TF_NEED_OPENCL=0
+  export TF_NEED_JEMALLOC=0
+  export TF_NEED_CUDA=0
+  export CC_OPT_FLAGS=-march=native
+  export TF_NEED_GCP=0
+  export TF_ENABLE_XLA=0
+  export PYTHON_BIN_PATH=${PYTHONBIN}/python
+  export PYTHON_LIB_PATH=<%= dest_dir %>/python
+  mkdir -p $PYTHON_LIB_PATH/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+
+  echo "startup --batch" >> .bazelrc
+  ./configure <%= redirect(:configure) %>
+  easy_install --prefix=${PYTHON_LIB_PATH} nose wheel <%= redirect(:python) %>
+  bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package <%= redirect(:bazel_build) %>
+  bazel build //tensorflow/tensorboard:tensorboard <%= redirect(:bazel_tensorboard_build) %>
+  ./tensorflow/tools/pip_package/build_pip_package.sh <%= dest_dir %>/wheel/. <%= redirect(:pip_build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir -p <%= dest_dir %>/doc
+  cp -Rv bazel-tensorflow-1ec6ed51182adf8f1b03a3188c16cd8a45ca6c85/tensorflow/docs_src/* <%= dest_dir %>/doc/. <%= redirect(:install_tensorboard) %>
+  pip install <%= dest_dir %>/wheel/tensorflow-1.1.0-cp27-cp27m-linux_x86_64.whl --prefix=<%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
