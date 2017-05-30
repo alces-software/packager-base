@@ -1,0 +1,160 @@
+#!/bin/bash
+################################################################################
+##
+## Alces Gridware - ClusterFlow configuration generator
+## Copyright (C) 2017 Stephen F. Norledge and Alces Software Ltd.
+##
+################################################################################
+setup() {
+    local a xdg_config
+    IFS=: read -a xdg_config <<< "${XDG_CONFIG_HOME:-$HOME/.config}:${XDG_CONFIG_DIRS:-/etc/xdg}"
+    for a in "${xdg_config[@]}"; do
+        if [ -e "${a}"/clusterware/config.vars.sh ]; then
+            source "${a}"/clusterware/config.vars.sh
+            break
+        fi
+    done
+    if [ -z "${cw_ROOT}" ]; then
+        echo "$(basename $0): unable to locate clusterware configuration" 1>&2
+        exit 1
+    fi
+    kernel_load
+}
+
+_render_configuration() {
+    local scheduler cores mem_mib
+    scheduler="$1"
+    cores="$2"
+    mem="$3"
+
+    cat <<EOF
+/*
+Clusterflow Config
+-------------------
+Configuration for AWS Alces-Flight
+-------------------
+*/
+
+/****************/
+/* Core Options */
+/****************/
+@email  0
+@colourful      0
+@notification   suspend
+@notification   abort
+@notification   complete
+@split_files    1
+@max_runs       12
+@time_multiplier    1
+@max_time           10-00
+
+@total_cores  $cores
+@total_mem    ${mem}
+
+/***********************/
+/* Cluster Environment */
+/***********************/
+/* Options: local, GRIDEngine, SLURM or LSF */
+
+/* Custom Job Submit Command - uncomment to customise parameters for job submission */
+/* Accepted variable placeholders: {{command}} {{job_id}} {{outfn}} {{cores}} {{mem}} {{time}} {{priority}} {{email}} {{notifications}} {{project}} {{qname}} */
+EOF
+    if [ "$scheduler" == "SGE" ]; then
+        cat <<EOF
+/* SGE */
+@cluster_environment       GRIDEngine
+@cluster_queue_environment smp
+@cluster_mem_per_cpu       true
+@custom_job_submit_command echo "{{command}}" | qsub -clear -b n -cwd -V -S /bin/bash -pe smp {{cores}} {{qname}} -l h_vmem={{mem}} -o {{outfn}} -j y -N {{job_id}} {{notifications}}
+EOF
+    elif [ "$scheduler" == "SLURM" ]; then
+        cat <<EOF
+/* SLURM */
+@cluster_environment       SLURM
+@custom_job_submit_command sbatch -p all -n {{cores}} --mem {{mem}} --open-mode=append -o {{outfn}} -J {{job_id}} {{notifications}} --wrap="{{command}}"
+EOF
+    else
+        cat <<EOF
+@cluster_environment       SLURM
+EOF
+    fi
+    cat <<EOF
+/***********************/
+/* Environment Modules */
+/***********************/
+@environment_module_alias BEDTools  apps/bedtools
+@environment_module_alias STAR  apps/star
+@environment_module_alias bismark apps/bismark
+@environment_module_alias bowtie  apps/bowtie
+@environment_module_alias bowtie2 apps/bowtie2
+@environment_module_alias bwa apps/bwa
+@environment_module_alias cutadapt  apps/cutadapt
+@environment_module_alias fastq_screen  apps/fastqscreen
+@environment_module_alias fastqc  apps/fastqc
+@environment_module_alias htseq apps/htseq
+@environment_module_alias kallisto  apps/kallisto
+@environment_module_alias phantompeakqualtools  apps/phantompeakqualtools
+@environment_module_alias picard  apps/picard
+@environment_module_alias samtools  apps/samtools
+@environment_module_alias sratoolkit  apps/sra
+@environment_module_alias subread apps/subread
+@environment_module_alias tophat  apps/tophat
+@environment_module_alias trim_galore apps/trimgalore
+@environment_module_alias multiqc apps/multiqc
+@environment_module_alias preseq apps/preseq
+@environment_module_alias rseqc apps/rseqc
+@environment_module_alias deeptools apps/deeptools
+@environment_module_alias hicup apps/hicup
+@environment_module_alias hisat apps/hisat2
+@environment_module_alias salmon apps/salmon
+
+/**********************/
+/* Pipeline Reporting */
+/**********************/
+/* If specific flags are found in the pipeline output log, you can flag them as */
+/* warnings or highlights in the report e-mail. Case insensitve. */
+@log_highlight_string at least one reported alignment
+@log_warning_string   Error occured
+@log_warning_string job failed
+EOF
+}
+
+main() {
+    cfdir="$1"
+    if [ -f "${cfdir}"/dist/clusterflow.config ]; then
+        echo "$(basename $0): Cluster Flow is already configured" 1>&2
+        exit 1
+    elif [ ! -w "${cfdir}"/dist ]; then
+        # Unable to write an initial configuration file.
+        echo "$(basename $0): WARNING: Cluster Flow is not yet configured" 1>&2
+    else
+        if [ -d "${cw_ROOT}"/opt/slurm ]; then
+            cores=$("${cw_ROOT}"/opt/slurm/bin/sinfo -o "%c" | tail -n+2 | sort -n | head -n1)
+            mem=$("${cw_ROOT}"/opt/slurm/bin/sinfo -o "%m" | tail -n+2 | sort -n | head -n1)M
+            scheduler=SLURM
+        elif [ -d "${cw_ROOT}"/opt/gridscheduler ]; then
+            export SGE_ROOT="${cw_ROOT}"/opt/gridscheduler SGE_CELL=etc
+            cores=$("${cw_ROOT}"/opt/gridscheduler/bin/linux-x64/qhost | tail -n+4 | cut -c39-41 | sort -n | head -n1)
+            cores=${cores//[[:blank:]]/}
+            mem=$("${cw_ROOT}"/opt/gridscheduler/bin/linux-x64/qhost | tail -n+4 | cut -c49-55 | sort -n | head -n1 | sed 's/\.[0-9]//g')
+            mem=${mem//[[:blank:]]/}
+            scheduler=SGE
+        fi
+        if [ "${scheduler}" ]; then
+            _render_configuration "$scheduler" "$cores" "$mem" > "${cfdir}"/dist/clusterflow.config
+            cat <<EOF 1>&2
+Cluster Flow has been configured:
+
+  Job scheduler: ${scheduler}
+          Cores: ${cores:-2}
+         Memory: ${mem:-3G}
+EOF
+        else
+            echo "$(basename $0): Cluster Flow configuration could not be generated."
+            exit 1
+        fi
+    fi
+}
+
+setup
+main "$@"
