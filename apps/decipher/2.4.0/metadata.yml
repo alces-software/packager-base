@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: decipher
+:license: GPLv3
+:summary: A toolset for deciphering and managing biological sequences.
+:url: https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
+:description: |
+  DECIPHER is a software toolset that can be used for deciphering and managing
+  biological sequences efficiently using the R statistical programming language.
+  The program is designed to be used with non-destructive workflows for
+  importing, maintaining, analyzing, manipulating, and exporting a massive
+  amount of sequences.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed May 31 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: DECIPHER_2.4.0.tar.gz
+:src_dir: DECIPHER
+:version: '2.4.0'
+:requirements:
+  :build:
+    - libs/bioconductor
+    - apps/R >= 3.3.0
+  :runtime:
+    - libs/bioconductor
+    - apps/R >= 3.3.0
+:compilers:
+  gcc:
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # requires Biostrings and XVector R library
+  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+   require("BiocInstaller")
+   biocLite(c("Biostrings","XVector"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD INSTALL -l "<%= dest_dir %>/R" .
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PATH ${appdir}/bin
