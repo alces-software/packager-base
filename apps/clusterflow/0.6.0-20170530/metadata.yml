@@ -26,7 +26,7 @@
     - Updated configurator to deal with lack of node at startup and to
       remove blanks
 :src: clusterflow-0.6.0-20170530.zip
-:src_dir: clusterflow-c643e04cfa89b7cfb1f6f314f4ab22b92ade7b7b
+:src_dir: ClusterFlow-c643e04cfa89b7cfb1f6f314f4ab22b92ade7b7b 
 :type: apps
 :version: '0.6.0-20170530'
 :sources:
@@ -74,6 +74,7 @@
   gcc:
 :compile: |
   export TOPDIR=$(pwd)
+  mkdir -p perl
   export PERL5LIB="${TOPDIR}/perl/lib/perl5:$PERL5LIB"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   cpanm XML::Simple <%= redirect(:cpanm) %>
