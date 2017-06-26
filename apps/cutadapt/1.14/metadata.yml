@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: cutadapt
+:license: MIT License
+:summary: A tool that removes adapter sequences from DNA sequencing reads
+:url: http://code.google.com/p/cutadapt/
+:description: |
+  cutadapt removes adapter sequences from high-throughput sequencing
+  data. This is usually necessary when the read length of the
+  sequencing machine is longer than the molecule that is sequenced,
+  for example when sequencing microRNAs.
+:group: Bioinformatics
+:changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Apr  9 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 1.8
+  * Mon Feb  2 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 1.7.1
+  * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Updated to latest version 1.5
+  * Tue Oct 30 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: cutadapt-1.14.tar.gz
+:src_dir: cutadapt-1.14
+:type: apps
+:version: '1.14'
+:requirements:
+  :build: 
+    - apps/python ~> 2.7.0
+    - apps/setuptools
+  :runtime: 
+    - apps/python ~> 2.7.0
+    - apps/setuptools
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONINSTDIR=<%= dest_dir %>/python/lib/python2.7/site-packages
+  mkdir -p $PYTHONINSTDIR
+  export PYTHONPATH=${PYTHONINSTDIR}:${PYTHONPATH}
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
