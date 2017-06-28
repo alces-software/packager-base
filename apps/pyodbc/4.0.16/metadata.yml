@@ -1,0 +1,49 @@
+---
+:schema: 1
+:title: pyodbc 
+:license: MIT
+:summary: pyodbc is an open source Python module that makes accessing ODBC databases simple
+:url: https://github.com/mkleehammer/pyodbc 
+:description: |
+  pyodbc is an open source Python module that makes accessing ODBC 
+  databases simple. It implements the DB API 2.0 specification but 
+  is packed with even more Pythonic convenience.
+:group: Tool
+:changelog: |
+  * Wed Jun 28 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: 4.0.16.tar.gz
+:type: apps
+:version: '4.0.16'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+    - apps/setuptools
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - unixODBC-devel
+    - gcc-c++
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir $PYTHONDEPSDIR
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+
