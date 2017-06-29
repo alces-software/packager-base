@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: jinja 
+:license: BSD
+:summary: A full featured template engine for Python 
+:url: http://jinja.pocoo.org/ 
+:description: |
+  Jinja2 is one of the most used template engines for Python. 
+  It is inspired by Django's templating system but extends it 
+  with an expressive language that gives template authors a more 
+  powerful set of tools. On top of that it adds sandboxed 
+  execution and optional automatic escaping for applications 
+  where security is important.
+:group: Tool
+:changelog: |
+  * Tue Jun 27 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: 2.9.6.tar.gz 
+:type: apps
+:version: '2.9.6'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir $PYTHONDEPSDIR
+  for a in Babel Markupsafe i18n ; do
+    easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
+  done
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
