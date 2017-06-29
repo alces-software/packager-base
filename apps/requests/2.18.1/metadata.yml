@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: requests
+:license: Apache License
+:summary: Requests is the only Non-GMO HTTP library for Python 
+:url: http://docs.python-requests.org 
+:description: |
+  Requests allows you to send organic, grass-fed HTTP/1.1 requests, 
+  without the need for manual labor. There's no need to manually 
+  add query strings to your URLs, or to form-encode your POST data. 
+  Keep-alive and HTTP connection pooling are 100% automatic, thanks 
+  to urllib3.
+:group: Tool
+:changelog: |
+  * Wed Jun 28 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v2.18.1.tar.gz
+:type: apps
+:version: '2.18.1'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir $PYTHONDEPSDIR
+  for a in chardet idna urllib3 certifi; do
+    easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
+  done
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+
