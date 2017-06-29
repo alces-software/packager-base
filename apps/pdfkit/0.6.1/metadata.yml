@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: pdfkit 
+:license: MIT 
+:summary: Python 2 and 3 wrapper for wkhtmltopdf utility to convert HTML to PDF using Webkit 
+:url: https://github.com/JazzCore/python-pdfkit 
+:description: |
+  Python 2 and 3 wrapper for wkhtmltopdf utility to convert 
+  HTML to PDF using Webkit.
+
+  This is adapted version of ruby PDFKit library, so big 
+  thanks to them!
+:group: Tool
+:changelog: |
+  * Wed Jun 28 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pdfkit-0.6.1.tar.gz
+:type: apps
+:version: '0.6.1'
+:requirements:
+  :tool:
+    - apps/setuptools
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir $PYTHONDEPSDIR
+  for a in chardet idna urllib3 certifi; do
+    easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
+  done
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+
