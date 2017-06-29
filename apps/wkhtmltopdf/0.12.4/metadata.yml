@@ -1,0 +1,34 @@
+---
+:schema: 1
+:title: wkhtmltopdf 
+:license: GPLv3 
+:summary: Command line tools to render HTML into PDF and various image formats using the QT Webkit rendering engine 
+:url: https://wkhtmltopdf.org/index.html
+:description: |
+  wkhtmltopdf and wkhtmltoimage are open source (LGPLv3) command 
+  line tools to render HTML into PDF and various image formats 
+  using the Qt WebKit rendering engine. These run entirely 
+  "headless" and do not require a display or display service.
+:group: Tool
+:changelog: |
+  * Wed Jun 28 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+:src_dir: wkhtmltox  
+:type: apps
+:version: '0.12.4'
+:compilers:
+  noarch:
+:compile: |
+  #noop - Binary Distribution
+:install: |
+  cp -Rv ./* <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
