@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: forks
+:license: perl
+:summary: drop-in replacement for Perl threads
+:url: http://search.cpan.org/~rybskej/forks/lib/forks.pm
+:description: |
+  The standard Perl 5.8.0 threads implementation is very memory
+  consuming, which makes it basically impossible to use in a
+  production environment, particularly with mod_perl and Apache.
+  Because of the use of the standard Unix fork() capabilities,
+  most operating systems will be able to use the Copy-On-Write
+  (COW) memory sharing capabilities (whereas with the standard
+  Perl 5.8.0 threads implementation, this is thwarted by the
+  Perl interpreter cloning process that is used to create
+  threads). The memory savings have been confirmed.
+:group: Tool
+:changelog: |
+  * Thu Jun 29 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: forks-0.36.tar.gz
+:type: apps
+:version: '0.36 '
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - perl-ExtUtils-MakeMaker
+:compile: |
+  cpanm strict Acme::Damn Attribute::Handlers Devel::Symdump File::Spec if IO::Socket List::MoreUtils Scalar::Util Storable Sys::SigAction Test::More Time::HiRes<%= redirect(:cpanm) %>
+  export FORKS_SIMULATE_USEITHREADS=true
+  perl Makefile.PL INSTALL_BASE=<%= dest_dir %>/perl
+  make <%= redirect(:compile) %>
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PERL ${appdir}/perl
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
