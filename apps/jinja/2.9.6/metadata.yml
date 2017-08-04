@@ -32,14 +32,14 @@
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
   export PYTHONDONTWRITEBYTECODE=true
   mkdir $PYTHONDEPSDIR
-  for a in Babel Markupsafe i18n ; do
+  for a in Markupsafe Babel i18n ; do
     easy_install --install-dir $PYTHONDEPSDIR $a <%= redirect(:python) %>
   done
   python setup.py build <%= redirect(:build) %>
 :install: |
   PYTHONDEPSDIR=$(pwd)/python
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
-  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   export PYTHONDONTWRITEBYTECODE=true
   cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
