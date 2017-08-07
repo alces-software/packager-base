@@ -38,7 +38,7 @@
 :install: |
   PYTHONDEPSDIR=$(pwd)/python
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
-  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   export PYTHONDONTWRITEBYTECODE=true
   cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
