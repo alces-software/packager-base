@@ -19,6 +19,9 @@
 :version: '0.12.4'
 :compilers:
   noarch:
+:dependencies:
+  el:
+    - libXrender
 :compile: |
   #noop - Binary Distribution
 :install: |
