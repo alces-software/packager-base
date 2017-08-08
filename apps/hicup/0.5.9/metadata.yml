@@ -49,3 +49,4 @@
   setenv ${appcaps}DIST ${appdir}/dist
 
   prepend-path PATH ${appdir}/bin
+  prepend-path PERL5LIB ${appdir}/dist
