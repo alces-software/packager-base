@@ -39,6 +39,7 @@
       - unzip
   :runtime:
     el:
+      - perl
       - zlib
 :compilers:
   gcc:
