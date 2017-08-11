@@ -32,6 +32,7 @@
       - java-1.8.0-openjdk
       - libxml2
       - libcurl
+      - perl
   :build:
     el:
       - libxml2-devel
