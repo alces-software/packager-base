@@ -1,0 +1,10 @@
+--- source/uchime_src/mk.orig	2017-02-17 00:32:45.000000000 +0000
++++ source/uchime_src/mk	2017-08-11 10:47:23.367991191 +0000
+@@ -6,7 +6,6 @@
+ 
+ for CPPName in $CPPNames
+ do
+-  echo $CPPName >&2
+   g++ $ENV_GCC_OPTS -c -D_FILE_OFFSET_BITS=64 -DNDEBUG=1 -DUCHIMES=1 $CPPName.cpp -o $CPPName.o  >> mk.stdout 2>> tmp.stderr
+   cat tmp.stderr
+ 	cat tmp.stderr >> mk.stderr
