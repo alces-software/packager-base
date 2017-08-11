@@ -1,0 +1,60 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Provides microbial ecologists with the functionality of dotur, sons, treeclimber, s-libshuff, unifrac and more.
+:url: http://www.mothur.org/
+:description: |
+  This project seeks to develop a single piece of open-source,
+  expandable software to fill the bioinformatics needs of the
+  microbial ecology community. We have incorporated the functionality
+  of dotur, sons, treeclimber, s-libshuff, unifrac, and much more. In
+  addition to improving the flexibility of these algorithms, we have
+  added a number of other features including calculators and
+  visualization tools. 
+:group: Bioinformatics
+:type: apps
+:version: '1.39.2'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - libs/boost >= 1.58.0
+  :runtime:
+    - libs/boost >= 1.58.0
+:patches:
+  - no-tty-output.patch
+  - gridware-boost.patch
+:changelog: |
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu 15 Jan 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v1.34.4
+  * Tue  9 Apr 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v1.30.1
+    - Made default variant non-MPI, and moved existing MPI requirements to MPI variant
+  * Thu 14 Mar 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: Mothur.1.39.2.zip
+:dependencies:
+  :build:
+    el:
+      - gcc-gfortran
+      - gcc-c++
+      - readline-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - readline
+      - zlib
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v mothur uchime <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v LICENSE.md README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
