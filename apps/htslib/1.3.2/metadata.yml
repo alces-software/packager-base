@@ -19,6 +19,8 @@
   both .tbi and .csi formats, and the bgzip compression utility.
 :group: Bioinformatics
 :changelog: |
+  * Mon Sep 18 2017 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added missing LD_LIBRARY_PATH environment variable
   * Fri Dec  2 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to latest v1.3.2 release
   * Tue Apr 5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -51,3 +53,4 @@
 
   prepend-path MANPATH ${appdir}/share/man
   prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
