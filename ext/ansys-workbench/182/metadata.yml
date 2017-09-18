@@ -129,4 +129,4 @@
       mkdir -p "$TMPDIR"
 
       # Launch ANSYS Fluent.
-      $ANSYS_WORKBENCHDIR/fluent/bin/fluent
+      $ANSYS_WORKBENCHDIR/fluent/bin/fluent -sgeup
