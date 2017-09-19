@@ -101,6 +101,11 @@
       export TMP="$TMPDIR"
       mkdir -p "$TMPDIR"
 
+      # Disable Fluent LoadManager check when launching under
+      # WorkBench to workaround MPI detection hang present in ANSYS
+      # 18.2.
+      export FLUENT_LM_CHECK_DISABLE=true
+
       # Launch ANSYS Workbench.
       ./runwb2
   - tags: ['script:type=interactive', 'session:type=desktop']
