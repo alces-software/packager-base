@@ -1,0 +1,63 @@
+---
+:schema: 1
+:title: minimap2 
+:license: MIT
+:summary: Fast sequence mapping and alignment program 
+:url: https://github.com/lh3/minimap2 
+:description: |
+  Minimap2 is a fast sequence mapping and alignment program that can 
+  find overlaps between long noisy reads, or map long reads or their 
+  assemblies to a reference genome optionally with detailed alignment 
+  (i.e. CIGAR). At present, it works efficiently with query sequences 
+  from a few kilobases to ~100 megabases in length at an error rate 
+  ~15%. Minimap2 outputs in the PAF or the SAM format. On limited 
+  test data sets, minimap2 is over 20 times faster than most other 
+  long-read aligners. It will replace BWA-MEM for long reads and 
+  contig alignment.
+
+  Minimap2 is the successor of minimap. It uses a similar 
+  minimizer-based indexing and seeding algorithm, and improves the 
+  original minimap with homopolyer-compressed k-mers (see also 
+  SMARTdenovo and longISLND), better chaining and the ability to 
+  produce CIGAR with fast extension alignment (see also libgaba 
+  and ksw2) and piece-wise affine gap cost.
+:group: Bioinformatics
+:changelog: |
+  * Tue Sep 26 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v2.2.tar.gz 
+:src_dir: minimap2-2.2  
+:type: apps
+:version: '2.2'
+:sources:
+  - mappy-2.2.tar.gz  
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/python
+    - apps/cython
+  :runtime:
+    - apps/python
+    - apps/cython
+:dependencies:
+  el:
+    - zlib-devel
+:compile: |
+  cd .. 
+  tar -zxvf <%= source('mappy-2.2.tar.gz') %> <%= redirect(:unpack_mappy) %>
+  cd -
+  cp -v ../mappy-2.2/python/mappy.c python/. <%= redirect(:unpack_mappy) %>
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib64/python2.7/site-packages/
+  export PYTHONPATH=<%= dest_dir %>/python/lib64/python2.7/site-packages/
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib64/python2.7/site-packages
+  prepend-path PATH ${appdir}/bin
