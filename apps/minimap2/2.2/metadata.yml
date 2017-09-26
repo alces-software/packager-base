@@ -53,6 +53,7 @@
   mkdir -p <%= dest_dir %>/python/lib64/python2.7/site-packages/
   export PYTHONPATH=<%= dest_dir %>/python/lib64/python2.7/site-packages/
   mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v minimap2 minimap2.1 <%= dest_dir %>/bin/. <%= redirect(:install) %>  
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
@@ -60,4 +61,6 @@
   setenv ${appcaps}PYTHON ${appdir}/python
 
   prepend-path PYTHONPATH ${appdir}/python/lib64/python2.7/site-packages
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
   prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${appdir}/python/bin
