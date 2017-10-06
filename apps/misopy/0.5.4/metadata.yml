@@ -49,6 +49,7 @@
     - freetype-devel
     - libpng-devel
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   echo "import setuptools" > setup.py.new
   cat setup.py >> setup.py.new
   mv setup.py.new setup.py
@@ -65,6 +66,7 @@
   easy_install --install-dir $PYTHONDEPSDIR simplejson <%= redirect(:python) %>
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   PYTHONDEPSDIR=$(pwd)/python
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
   cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
