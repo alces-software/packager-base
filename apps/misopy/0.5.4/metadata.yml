@@ -1,0 +1,82 @@
+---
+:schema: 1
+:title: MISO
+:license: UNKNOWN - see http://genes.mit.edu/burgelab/miso
+:summary: Probabilistic analysis and design of RNA-Seq experiments for identifying isoform regulation
+:url: http://genes.mit.edu/burgelab/miso
+:description: |
+  MISO (Mixture of Isoforms) is a probabilistic framework that
+  quantitates the expression level of alternatively spliced genes from
+  RNA-Seq data, and identifies differentially regulated isoforms or
+  exons across samples. By modeling the generative process by which
+  reads are produced from isoforms in RNA-Seq, the MISO model uses
+  Bayesian inference to compute the probability that a read originated
+  from a particular isoform.
+
+  MISO uses the inferred assignment of reads to isoforms to quantitate
+  the abundances of the underlying set of alternative mRNA
+  isoforms. Confidence intervals over estimates can be obtained, which
+  quantify the reliability of the estimates.
+:group: Bioinformatics
+:changelog: |
+  * Thu Oct  5 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to latest v0.5.4
+  * Web Mar 19 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest v0.5.2
+  * Tue Oct 15 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest v0.4.9
+  * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: misopy-0.5.4.tar.gz
+:type: apps
+:version: '0.5.4'
+:requirements:
+  :runtime:
+    - apps/python ~> 2.7.3
+    - libs/numpy
+    - libs/scipy
+    - apps/samtools
+    - apps/setuptools
+  :tool: apps/setuptools
+  :build:
+    - apps/python ~> 2.7.3
+    - libs/numpy
+    - libs/scipy
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - freetype-devel
+    - libpng-devel
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  echo "import setuptools" > setup.py.new
+  cat setup.py >> setup.py.new
+  mv setup.py.new setup.py
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  # We insist that the following command works by ||-ing with true -
+  # it may fail the first time round due to dependency installation
+  # failures.
+  easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %> || true
+  # And again, otherwise dependencies (specifically, tornado) won't install
+  easy_install --install-dir $PYTHONDEPSDIR matplotlib <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR pysam <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR simplejson <%= redirect(:python) %>
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
