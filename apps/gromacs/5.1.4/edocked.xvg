@@ -1,0 +1,12 @@
+# This file was created Thu Jan 23 09:13:45 2014
+# by the following command:
+# g_anadock 
+#
+# g_anadock is part of G R O M A C S:
+#
+# Gnomes, ROck Monsters And Chili Sauce
+#
+@    title "E-docked"
+@    xaxis  label "()"
+@    yaxis  label "E (kJ/mol)"
+@TYPE xy

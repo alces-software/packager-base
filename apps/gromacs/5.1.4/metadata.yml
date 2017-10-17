@@ -1,0 +1,196 @@
+---
+:schema: 1
+:license: GPL
+:summary: Perform molecular dynamics; simulate the Newtonian equations of motion for systems with hundreds to millions of particles
+:url: http://www.gromacs.org/
+:description: |
+  GROMACS is a versatile package to perform molecular dynamics,
+  i.e. simulate the Newtonian equations of motion for systems with
+  hundreds to millions of particles.
+
+  It is primarily designed for biochemical molecules like proteins,
+  lipids and nucleic acids that have a lot of complicated bonded
+  interactions, but since GROMACS is extremely fast at calculating the
+  nonbonded interactions (that usually dominate simulations) many groups
+  are also using it for research on non-biological systems,
+  e.g. polymers.
+:type: apps
+:group: Chemistry
+:requirements:
+  :tool: apps/cmake
+  :runtime: mpi/openmpi
+  :build:
+    - mpi/openmpi
+:variants:
+  default:
+    :description: "Builds both double and single precision GROMACS into the same application location."
+    :default_precision: float
+    :requirements:
+      :build:
+        - libs/fftw3_float
+        - libs/fftw3_double
+      :runtime:
+        - libs/fftw3_float
+        - libs/fftw3_double
+  float:
+    :description: "Builds only a single precision GROMACS."
+    :default_precision: float
+    :requirements:
+      :build:
+        - libs/fftw3_float
+      :runtime:
+        - libs/fftw3_float
+  double:
+    :description: "Builds only a double precision GROMACS."
+    :default_precision: double
+    :default_precision_cmake_flags: -DGMX_DOUBLE=ON
+    :requirements:
+      :build:
+        - libs/fftw3_double
+      :runtime:
+        - libs/fftw3_double
+  cuda:
+    :description: "Builds a single precision CUDA accelerated GROMACS."
+    :default_precision: float
+    :default_precision_cmake_flags: -DGMX_GPU=ON -DCUDA_TOOLKIT_ROOT_DIR="$CUDA_DIR"
+    :requirements:
+      :build:
+        - libs/fftw3_float
+        - libs/nvidia-cuda
+      :runtime:
+        - libs/fftw3_float
+        - libs/nvidia-cuda
+:changelog: |
+  * Tue Oct 17 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v5.1.4 version
+    - Added CUDA variant
+  * Tue Sep 20 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add FFTW3 runtime dependencies
+  * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Mar  5 2014 James Donohue <james.donohue@alces-software.com>
+    - Added example script
+  * Thu Jan 23 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version, v4.6.5
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version, v4.6.1
+  * Tue Feb  4 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version, v4.6
+  * Thu Dec  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add variant logic to provide builds for double precision, single
+      precision or both (default).
+  * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gromacs-5.1.4.tar.gz
+:src_dir: gromacs-5.1.4
+:version: '5.1.4'
+:compilers:
+  gcc:
+    :float_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_FLOATDIR"
+    :double_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_DOUBLEDIR"
+    :fft: fftw3
+  intel:
+    :float_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_FLOATDIR"
+    :double_configure_prefix: CMAKE_PREFIX_PATH="$FFTW3_DOUBLEDIR"
+    :fft: fftw3
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+:compile: |
+  cp -r <%= src_dir %> <%= src_dir %>.mpi
+  <% if variant_name == 'default' %>
+  cp -r <%= src_dir %> <%= src_dir %>.double
+  cp -r <%= src_dir %> <%= src_dir %>.double_mpi
+  <% end %>
+
+  mkdir build
+  cd build
+  <%= compiler[:"#{variant[:default_precision]}_configure_prefix"] %> cmake .. \
+           -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+           <%= variant[:default_precision_cmake_flags] %> \
+           <%= redirect(:cmake) %>
+  make -j 4 <%= redirect(:make) %>
+
+  cd "<%= src_dir %>.mpi"
+  mkdir build
+  cd build
+  <%= compiler[:"#{variant[:default_precision]}_configure_prefix"] %> cmake .. \
+           -DGMX_MPI=ON \
+           <%= variant[:default_precision_cmake_flags] %> \
+           -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+           <%= redirect(:cmake) %>
+  make -j 4 <%= redirect(:make) %>
+
+  <% if variant_name == 'default' %>
+  cd "<%= src_dir %>.double"
+  mkdir build
+  cd build
+  <%= compiler[:double_configure_prefix] %> cmake .. \
+           -DGMX_DOUBLE=ON \
+           -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+           <%= redirect(:cmake) %>
+  make -j 4 <%= redirect(:make) %>
+
+  cd "<%= src_dir %>.double_mpi"
+  mkdir build
+  cd build
+  <%= compiler[:double_configure_prefix] %> cmake .. \
+           -DGMX_DOUBLE=ON \
+           -DGMX_MPI=ON \
+           -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+           <%= redirect(:cmake) %>
+
+  make -j 4 <%= redirect(:make) %>
+  <% end %>
+:sources:
+  - gromacs.sh.md
+  - gromacs.sh.tpl
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd <%= src_dir %>.mpi/build
+  make install <%= redirect(:install) %>
+  <% if variant_name == 'default' %>
+  cd <%= src_dir %>.double/build
+  make install <%= redirect(:install) %>
+  cd <%= src_dir %>.double_mpi/build
+  make install <%= redirect(:install) %>
+  <% end %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('gromacs.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('gromacs.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  setenv GMXBIN ${appdir}/bin
+  setenv GMXLDLIB ${appdir}/lib
+  setenv GMXMAN ${appdir}/share/man
+  setenv GMXDATA ${appdir}/share
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
+
+  set completion_data ""
+  if { [module-info shell] == "bash" } {
+    set completion_data [exec bash -c "complete >/dev/null 2>&1 && echo source ${appdir}/bin/completion.bash"]
+  } elseif { [module-info shell] == "tcsh" } {
+    set completion_data [exec tcsh -c "complete >& /dev/null && echo source ${appdir}/bin/completion.csh"]
+  } elseif { [module-info shell] == "zsh" } {
+    set completion_data [exec zsh -c "compctl >& /dev/null && echo source ${appdir}/bin/completion.zsh"]
+  }
+
+  puts -nonewline "$completion_data;"
