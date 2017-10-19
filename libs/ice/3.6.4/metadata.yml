@@ -1,0 +1,98 @@
+---
+:license: GPLv2
+:summary: A modern distributed computing platform.
+:url: http://www.zeroc.com
+:description: |
+  The Internet Communications Engine (Ice) is a modern distributed computing
+  platform with support for C++, .NET, Java, Python, Objective-C, Ruby, PHP,
+  and JavaScript. Ice is used in mission-critical projects by companies all
+  over the world.
+
+  Ice is easy to learn, yet provides a powerful network infrastructure and vast
+  array of features for demanding technical applications.
+
+  Ice is free software, available with full source, and released under the
+  terms of GNU General Public License (GPL). Commercial licenses are available
+  for customers who wish to use Ice for closed-source software.
+:group: Libraries
+:changelog: |
+  * Wed Oct 18 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v3.6.4 version
+    - Added distro dependencies for EL
+  * Tue Sep  2 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: v3.6.4.tar.gz
+:src_dir: ice-3.6.4
+:sources:
+  - ThirdParty-Sources-3.5.1.tar.gz
+:type: libs
+:version: '3.6.4'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+      - gcc-c++
+      - zlib-devel
+      - bzip2-devel
+      - xz-devel
+      - openssl-devel
+      - pcre-devel
+      - expat-devel
+      - libdb-cxx
+:compile: |
+  tar -xzf <%= source('ThirdParty-Sources-3.5.1.tar.gz') %>  <%= redirect(:configure_third_party) %>
+  pushd ThirdParty-Sources-3.5.1  <%= redirect(:configure_third_party) %>
+
+  # Build the version of Berkeley DB required by ice.
+  tar -xzf db-5.3.21.NC.tar.gz <%= redirect(:configure_db) %>
+  pushd db-5.3.21.NC/src <%= redirect(:configure_db) %>
+  ../dist/configure --enable-cxx --prefix=<%= dest_dir %>/db <%= redirect(:configure_db) %>
+  make <%= redirect(:compile_db) %>
+  mkdir -p <%= dest_dir %>/db
+  make install <%= redirect(:install_db) %>
+  # Create a lib64 symlink to make the ice makefiles happy.
+  cd <%= dest_dir %>/db
+  ln -s lib lib64
+  popd
+
+  # Build the version of MCPP required by ice.
+  tar -xzf mcpp-2.7.2.tar.gz <%= redirect(:configure_mcpp) %>
+  pushd mcpp-2.7.2 <%= redirect(:configure_mcpp) %>
+  patch -p0 < ../mcpp/patch.mcpp.2.7.2
+  ./configure CFLAGS=-fPIC --enable-mcpplib --disable-shared --prefix=<%= dest_dir %>/mcpp <%= redirect(:configure_mcpp) %>
+  make <%= redirect(:compile_mcpp) %>
+  mkdir -p <%= dest_dir %>/mcpp
+  make install <%= redirect(:install_mcpp) %>
+  # Create a lib64 symlink to make the ice makefiles happy.
+  cd <%= dest_dir %>/mcpp
+  ln -s lib lib64
+  popd
+
+  # Finally build ice itself.
+  popd   <%= redirect(:compile_ice) %>
+  cd cpp <%= redirect(:compile_ice) %>
+  pwd <%= redirect(:compile_ice) %>
+  ls  <%= redirect(:compile_ice) %>
+  # XXX Edit config/Make.rules to set prefix etc..
+  echo $CXX <%= redirect(:compile_ice) %>
+
+  export CC=gcc
+  export CXX=g++
+  export prefix=<%= dest_dir %>
+  #export embedded_runpath_prefix=<%= dest_dir %>
+  export DB_HOME=<%= dest_dir %>/db
+  export MCPP_HOME=<%= dest_dir %>/mcpp
+  make <%= redirect(:compile_ice) %>
+  make install <%= redirect(:install_ice) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PATH ${appdir}/db/bin
+  prepend-path PATH ${appdir}/mcpp/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path LD_LIBRARY_PATH ${appdir}/db/lib64
+  prepend-path LD_LIBRARY_PATH ${appdir}/mcpp/lib64
