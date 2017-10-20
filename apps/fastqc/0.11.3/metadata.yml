@@ -22,6 +22,8 @@
       without running the interactive application
 :group: Bioinformatics
 :changelog: |
+  * Fri Oct 20 2017 - Stu Franks <stu.franks@alces-software.com>
+    - Added Java 1.6.0 as dependency for EL
   * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added Perl as dependency for EL
   * Thu Nov 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -52,6 +54,7 @@
 :dependencies:
   el:
     - perl
+    - java-1.6.0-openjdk
 :compile: |
   sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i fastqc
   chmod 755 fastqc
