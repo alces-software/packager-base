@@ -1,0 +1,85 @@
+---
+:schema: 1
+:title: NAMD
+:license: NONFREE - see http://www.ks.uiuc.edu/Research/namd/license.html
+:summary: A parallel molecular dynamics code designed for high-performance simulation of large biomolecular systems
+:url: http://www.ks.uiuc.edu/Research/namd/
+:description: |
+  NAMD, recipient of a 2002 Gordon Bell Award, is a parallel molecular
+  dynamics code designed for high-performance simulation of large
+  biomolecular systems. Based on Charm++ parallel objects, NAMD scales
+  to hundreds of processors on high-end parallel platforms and tens of
+  processors on commodity clusters using gigabit ethernet. NAMD uses
+  the popular molecular graphics program VMD for simulation setup and
+  trajectory analysis, but is also file-compatible with AMBER, CHARMM,
+  and X-PLOR.
+:group: Chemistry
+:changelog: |
+  * Mon Oct 30 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v2.10 version
+  * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Feb 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Made compatible with modern compilers (use -fpermissive)
+    - Added missing fields to metadata
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: NAMD_2.10_Source.tar
+:src_dir: NAMD_2.10_Source
+:type: apps
+:version: '2.10'
+:variants:
+  mpi:
+    :requirements:
+      :runtime:
+        - mpi/openmpi
+        - libs/fftw2_float-mpi
+      :build:
+        - mpi/openmpi
+        - libs/fftw2_float-mpi
+  net:
+    :requirements:
+      :runtime:
+        - libs/fftw2_float
+      :build:
+        - libs/fftw2_float
+:dependencies:
+  el:
+    - tcsh
+    - tcl-devel
+:compilers:
+  gcc:
+:compile: |
+  CHARMTAR=charm-*.tar
+  tar xf $CHARMTAR
+  cd `basename $CHARMTAR .tar`
+  ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared \
+    --with-production \
+    -c++-option -fpermissive \
+    <%= redirect(:charm_build) %>
+  cd ..
+  <% fftw_dir_var = ( variant_name == 'mpi' ? 'FFTW2_FLOAT_MPIDIR' : 'FFTW2_FLOATDIR' ) %>
+  sed -i -e 's|FFTDIR=.*|FFTDIR=$(<%= fftw_dir_var %>)|g;s|-ls|-l|g;s|\(FFTFLAGS=.*\)|\1 -DNAMD_FFTW_NO_TYPE_PREFIX|g' arch/Linux-x86_64.fftw
+  sed -i -e 's|TCLDIR=.*|TCLDIR=/usr|g;s|lib -ltcl8.3|lib64 -ltcl8.5|g' arch/Linux-x86_64.tcl
+  ./config Linux-x86_64-g++ \
+    --charm-arch <%= variant_name %>-linux-x86_64 \
+    --cxx-opts -fpermissive \
+    <%= redirect(:config) %>
+  cd Linux-x86_64-g++
+  make <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cd Linux-x86_64-g++
+  for a in charmrun flipbinpdb flipdcd namd2 psfgen; do
+    install -D -m 755 $a <%= dest_dir %>/bin/$a
+  done
+  cd ..
+  cp -r plugins <%= dest_dir %>/plugins
+  cp -r psfgen <%= dest_dir %>/sb
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
