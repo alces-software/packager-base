@@ -9,4 +9,4 @@ else
   echo "$0: unable to determine GATK task to execute."
   exit 1
 fi
-exec java `eval echo $GATK_JAVA_OPTS` -jar "$GATKDIR/gatk-package-4.beta.6-local.jar" $t $n "$@"
+exec java `eval echo $GATK_JAVA_OPTS` -jar "$GATKDIR/gatk-4.beta.6/gatk-package-4.beta.6-local.jar" $t $n "$@"
