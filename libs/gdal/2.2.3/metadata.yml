@@ -1,0 +1,45 @@
+---
+:schema: 1
+:title: Geospatial Data Abstraction Library
+:license: MIT License
+:summary: Translator library for raster geospatial data formats
+:url: http://www.unidata.ucar.edu/software/netcdf/
+:description: |
+  GDAL (Geospatial Data Abstaction Library) is a translator library
+  for raster geospatial data formats that is released under an X/MIT
+  style Open Source license by the Open Source Geospatial
+  Foundation. As a library, it presents a single abstract data model
+  to the calling application for all supported formats. It also comes
+  with a variety of useful commandline utilities for data translation
+  and processing.
+:group: Libraries
+:changelog: |
+  * Mon Mar  5 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v2.2.3
+  * Sun May 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v2.1.0
+  * Fri Apr  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gdal223.zip
+:src_dir: gdal-2.2.3
+:type: libs
+:version: '2.2.3'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    gcc-c++
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
