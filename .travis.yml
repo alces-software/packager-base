@@ -15,7 +15,8 @@ env:
   matrix:
   - cw_DIST=el7 cw_VERSION=1.6 ci_UPLOAD=false
   - cw_DIST=el7 cw_VERSION=1.7 ci_UPLOAD=false
-  - cw_DIST=el7 cw_VERSION=1.8 ci_UPLOAD=true
+  - cw_DIST=el7 cw_VERSION=1.8 ci_UPLOAD=false
+  - cw_DIST=el7 cw_VERSION=1.9 ci_UPLOAD=true
 before_install:
 - git clone https://github.com/alces-software/gridware-ci.git .gridware-ci
 - curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install |
