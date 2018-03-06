@@ -1,0 +1,66 @@
+---
+:schema: 1
+:license: FOSS
+:summary: BBMap short read aligner, and other bioinformatic tools. 
+:url: https://sourceforge.net/projects/bbmap/
+:description: |
+  This package includes BBMap, a short read aligner, as well as various other 
+  bioinformatic tools. It is written in pure Java, can run on any platform, and 
+  has no dependencies other than Java being installed (compiled for Java 6 and 
+  higher). All tools are efficient and multithreaded.
+
+  BBMap: Short read aligner for DNA and RNA-seq data. Capable of handling 
+  arbitrarily large genomes with millions of scaffolds. Handles Illumina, PacBio, 
+  454, and other reads; very high sensitivity and tolerant of errors and numerous 
+  large indels. Very fast.
+
+  BBNorm: Kmer-based error-correction and normalization tool.
+
+  Dedupe: Simplifies assemblies by removing duplicate or contained subsequences 
+  that share a target percent identity.
+
+  Reformat: Reformats reads between fasta/fastq/scarf/fasta+qual/sam, 
+  interleaved/paired, and ASCII-33/64, at over 500 MB/s.
+
+  BBDuk: Filters, trims, or masks reads with kmer matches to an artifact/contaminant 
+  file. 
+
+  ...and more!
+:type: apps
+:group: Bioinformatics 
+:changelog: |
+  * Tue 20 Sept 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: BBMap_36.32.tar.gz 
+:src_dir: bbmap 
+:version: '36.32'
+:compilers:
+  gcc:
+:params:
+  :javahome: "Path to JAVA_HOME for Java 1.8 [specify path excluding bin/ directory, or 'default' for wherever `java` is symlinked to]"
+:dependencies:
+  el:
+    - zlib-devel
+    - java-1.8.0-openjdk-devel
+:compile: |
+  <% java_home = ( param(:javahome) == 'default' ? `readlink -f /usr/bin/java | sed "s:jre/bin/java::"`.chomp : param(:javahome) ) %>
+  echo "java_home found at..." <%= redirect(:compile) %>
+  echo <%= java_home %> <%= redirect(:compile) %>
+  if [ ! -x <%= java_home %>/jre/bin/java ]; then
+    echo Java could not be found in <%= java_home %>/jre/bin/java. >/dev/stderr
+  fi <%= redirect(:compile) %>
+  export JAVA_HOME=<%= java_home %>
+  cd jni
+  make -f makefile.linux <%= redirect(:compile) %> 
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  shopt -s extglob
+  cp -rv !(docs) <%= dest_dir %>/bin/. <%= redirect(:install) %>
+  shopt -u extglob
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -rv docs/* <%= dest_dir %>/doc/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  prepend-path PATH ${appdir}/bin
