@@ -15,6 +15,8 @@
    development since 1986.
 :group: Graphics
 :changelog: |
+  * Thu Mar 22 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added X11 variant
   * Sun Apr 17 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Jan 13 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -25,6 +27,13 @@
 :version: '5.0.2'
 :compilers:
   gcc:
+:variants:
+  default:
+  x11:
+    :dependencies:
+      el:
+        - libX11-devel
+        - libX11
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
