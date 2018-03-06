@@ -29,7 +29,7 @@
   export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
   mkdir -p <%= dest_dir %>/R
   # requires Biostrings and ape R library
-  Rscript --vanilla - <%= redirect(:bioconductor) %> <<RSCRIPT
+  R --vanilla <%= redirect(:bioconductor) %> <<RSCRIPT
    require("BiocInstaller")
    biocLite(c("Biostrings","ape","quadprog","igraph","fastmatch","magrittr"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
   RSCRIPT
