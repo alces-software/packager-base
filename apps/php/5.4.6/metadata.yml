@@ -9,6 +9,9 @@
   especially suited for web development and can be embedded into HTML.
 :group: Languages
 :changelog: |
+  * Thu Jun 30 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated fetch URL
+    - Added distro dependencies for EL
   * Tue Aug 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: php-5.4.6.tar.bz2
@@ -16,6 +19,11 @@
 :version: '5.4.6'
 :compilers:
   gcc:
+:dependencies:
+  el:
+    - libxml2-devel
+    - bison
+    - gcc-c++
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
