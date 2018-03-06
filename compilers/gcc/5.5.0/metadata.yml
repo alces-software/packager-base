@@ -33,18 +33,30 @@
 :src: gcc-5.5.0.tar.gz
 :version: '5.5.0'
 :dependencies:
-  el:
-    - gmp-devel
-    - mpfr-devel
-    - libmpc-devel
-    - glibc-devel
-    - glibc-devel.i686
-    - gcc-c++
-    - zlib-devel
+  :build:
+    el:
+      - gcc-c++
+      - gmp-devel
+      - mpfr-devel
+      - libmpc-devel
+      - glibc-devel
+      - libgcc
+      - glibc-devel.i686
+      - libgcc.i686
+      - zlib-devel
+  :runtime:
+    el:
+      - gmp
+      - mpfr
+      - libmpc
+      - glibc
+      - libgcc
+      - glibc.i686
+      - libgcc.i686
+      - zlib
 :compilers:
   gcc:
 :compile: |
-  yum -y -e0 install libgcc libgcc.i686 <%= redirect(:depends) %>
   mkdir build
   cd build
   ../configure --prefix="<%= dest_dir %>" --enable-shared --with-system-zlib --enable-threads=posix --enable-checking=release --enable-plugin --enable-multilib --enable-languages=c,c++,objc,obj-c++,fortran,go <%= redirect(:configure) %>
