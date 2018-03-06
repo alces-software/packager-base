@@ -40,6 +40,7 @@
     - glibc-devel
     - glibc-devel.i686
     - gcc-c++
+    - zlib-devel
 :compilers:
   gcc:
 :compile: |
