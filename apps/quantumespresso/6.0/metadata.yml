@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: quantumespresso
+:license: GNU GPL 
+:summary: A suite of for electronic-structure calculations and materials modeling at the nanoscale 
+:url: http://www.quantum-espresso.org/
+:description: |
+  Quantum ESPRESSO is an integrated suite of Open-Source computer codes for 
+  electronic-structure calculations and materials modeling at the nanoscale.
+  It is based on density-functional theory, plane waves, and pseudopotentials.
+
+  Quantum ESPRESSO has evolved into a distribution of independent and 
+  inter-operable codes in the spirit of an open-source project. The Quantum 
+  ESPRESSO distribution consists of a “historical” core set of components, 
+  and a set of plug-ins that perform more advanced tasks, plus a number of 
+  third-party packages designed to be inter-operable with the core 
+  components. Researchers active in the field of electronic-structure 
+  calculations are encouraged to participate in the project by contributing 
+  their own codes or by implementing their own ideas into existing codes.
+:group: Chemistry
+:changelog: |
+  * Wed Jan  4 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: qe-6.0.tar.gz  
+:type: apps
+:src_dir: 'qe-6.0'
+:version: '6.0'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - mpi/openmpi
+    - libs/fftw3_double
+    - libs/lapack
+    - libs/blas
+  :runtime:
+    - mpi/openmpi
+    - libs/fftw3_double
+    - libs/lapack
+    - libs/blas
+:compile: |
+  ./configure --prefix=<%= dest_dir %> --enable-parallel <%= redirect(:configure) %>
+  sed -e 's|IFLAGS         = -I$(TOPDIR)/include -I../include/|IFLAGS         = -I$(TOPDIR)/include -I../include/ -I${FFTW3_DOUBLEINCLUDE}|g' -i make.inc
+  make all <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc
+  cp -Rv Doc/user_guide.pdf Doc/quantum_espresso.pdf Doc/release-notes Doc/developer_man.pdf  <%= dest_dir %>/doc/.
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
