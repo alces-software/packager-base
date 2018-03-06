@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: phangorn
+:license: GPLv3
+:summary: Phylogenetic analysis in R
+:url: https://cran.r-project.org/web/packages/phangorn/index.html
+:description: |
+  Estimation of phylogenetic trees and networks using Maximum Likelihood,
+  Maximum Parsimony, distance methods and Hadamard conjugation.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Wed May 31 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: phangorn_2.2.0.tar.gz
+:src_dir: phangorn
+:version: '2.2.0'
+:requirements:
+  :build:
+    - libs/bioconductor 
+    - apps/R >= 3.2.0
+  :runtime:
+    - libs/bioconductor
+    - apps/R >= 3.2.0
+:compilers:
+  gcc:
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  # requires Biostrings and ape R library
+  R --vanilla <%= redirect(:bioconductor) %> <<RSCRIPT
+   require("BiocInstaller")
+   biocLite(c("Biostrings","ape","quadprog","igraph","fastmatch","magrittr"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  RSCRIPT
+:install: |
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD INSTALL -l "<%= dest_dir %>/R" .
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PATH ${appdir}/bin
