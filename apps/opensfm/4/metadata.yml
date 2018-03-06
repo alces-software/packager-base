@@ -1,0 +1,87 @@
+---
+:schema: 1
+:title: OpenSfM
+:license: BSD-2-Clause
+:summary: Open Source Structure from Motion pipeline
+:url: https://github.com/mapillary/OpenSfM
+:description: |
+  OpenSfM is a Structure from Motion library written in Python on top
+  of OpenCV. The library serves as a processing pipeline for
+  reconstructing camera poses and 3D scenes from multiple images. It
+  consists of basic modules for Structure from Motion (feature
+  detection/matching, minimal solvers) with a focus on building a robust
+  and scalable reconstruction pipeline. It also integrates external
+  sensor (e.g. GPS, accelerometer) measurements for geographical
+  alignment and robustness. A JavaScript viewer is provided to preview
+  the models and debug the pipeline.
+:group: Geography
+:changelog: |
+  * Mon Dec 19 - 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - First created
+:src: odm-4.tar.gz
+:src_dir: OpenSfM-odm-4
+:type: apps
+:version: '4'
+:dependencies:
+  el:
+    - libyaml-devel
+:requirements:
+  :tool:
+    - apps/cmake
+    - apps/setuptools
+  :build:
+    - libs/atlas
+    - libs/opencv
+    - libs/opengv
+    - libs/ceressolver
+    - libs/boost
+    - libs/numpy
+    - libs/scipy
+    - libs/blas
+    - libs/lapack
+    - libs/suitesparse
+    - libs/gflags
+    - libs/glog
+    - apps/python ~> 2.7.0
+  :runtime:
+    - libs/atlas
+    - libs/opencv
+    - libs/opengv
+    - libs/ceressolver
+    - libs/boost
+    - libs/numpy
+    - libs/scipy
+    - libs/blas
+    - libs/lapack
+    - libs/suitesparse
+    - libs/gflags
+    - libs/glog
+    - apps/python ~> 2.7.0
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir -p $PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  easy_install --install-dir $PYTHONDEPSDIR exifread <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR gpxpy <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR networkx <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR pytest <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR python-dateutil <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR PyYAML <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR xmltodict <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR pyproj <%= redirect(:python) %>
+
+  python setup.py build <%= redirect(:python_build) %>
+
+:install: |
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:python_install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
