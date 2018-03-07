@@ -1,0 +1,92 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: GNU Compiler Collection including front ends for C, C++, Objective-C and Fortran
+:url: http://gcc.gnu.org/
+:description: |
+  The GNU Compiler Collection includes front ends for C, C++,
+  Objective-C, Fortran, Java, Ada, and Go, as well as libraries for
+  these languages (libstdc++, libgcj,...). GCC was originally written
+  as the compiler for the GNU operating system.
+:type: compilers
+:group: Languages
+:changelog: |
+  * Sat Dec 30 2017 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to version 5.5.0 - happy holidays!
+  * Thu May 28 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to version 5.1.0
+  * Tue Jan 22 2014 James Donohue <james.donohue@alces-software.com>
+    - Updated to version 4.8.2
+  * Fri May 10 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 4.8.0
+  * Thu Mar 7 2013 Steve Norledge <steve.norledge@alces-software.com>
+    - Updated to version 4.7.2
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 4.7.1
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 4.6.3
+    - Refactored to packager style
+  * Thu Dec 8 2011 Steve Norledge
+    - Updated to latest stable upstream release
+  * Tue Feb 15 2011 Steve Norledge
+    - First created
+:src: gcc-5.5.0.tar.gz
+:version: '5.5.0'
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - gmp-devel
+      - mpfr-devel
+      - libmpc-devel
+      - glibc-devel
+      - libgcc
+      - glibc-devel.i686
+      - libgcc.i686
+      - zlib-devel
+  :runtime:
+    el:
+      - gmp
+      - mpfr
+      - libmpc
+      - glibc
+      - libgcc
+      - glibc.i686
+      - libgcc.i686
+      - zlib
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  ../configure --prefix="<%= dest_dir %>" --enable-shared --with-system-zlib --enable-threads=posix --enable-checking=release --enable-plugin --enable-multilib --enable-languages=c,c++,objc,obj-c++,fortran,go <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module:
+  :compiler: |
+    setenv  CC       ${basepath}gcc
+    setenv  CXX      ${basepath}g++
+    setenv  F77      ${basepath}gfortran
+    setenv  F90      ${basepath}gfortran
+    setenv  F95      ${basepath}gfortran
+    setenv  FC       ${basepath}gfortran
+
+    setenv ${appcaps}DIR ${appdir}
+    setenv ${appcaps}BIN ${appdir}/bin
+
+    prepend-path PATH ${appdir}/bin
+    prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+    prepend-path LD_LIBRARY_PATH ${appdir}/lib
+    prepend-path DYLD_LIBRARY_PATH ${appdir}/lib64
+    prepend-path DYLD_LIBRARY_PATH ${appdir}/lib
+    prepend-path MANPATH ${appdir}/man/
+
+    prepend-path --delim " " CPPFLAGS " -I${appdir}/include"
+    prepend-path --delim " " LDFLAGS " -L${appdir}/lib -L${appdir}/lib64"
+  :runtime: |
+    prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+    prepend-path LD_LIBRARY_PATH ${appdir}/lib
+    prepend-path DYLD_LIBRARY_PATH ${appdir}/lib64
+    prepend-path DYLD_LIBRARY_PATH ${appdir}/lib
