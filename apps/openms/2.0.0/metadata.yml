@@ -26,6 +26,8 @@
 :type: apps
 :group: Bioinformatics
 :changelog: |
+  * Thu Jul 14 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added OPENMS_DATA_PATH environment variable
   * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added patch to fix python variant
   * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -159,5 +161,7 @@
   <% if variant_name == 'python' %>
   prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
   <% end %>
+
+  setenv OPENMS_DATA_PATH ${appdir}/share/OpenMS
 
   prepend-path PATH ${appdir}/bin
