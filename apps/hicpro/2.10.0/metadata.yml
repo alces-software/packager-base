@@ -1,0 +1,96 @@
+---
+:license: BSD License
+:summary: An optimized and flexible pipeline for Hi-C data processing
+:url: https://github.com/nservant/HiC-Pro
+:description: |
+  HiC-Pro was designed to process Hi-C data, from raw fastq files
+  (paired-end Illumina data) to the normalized contact maps. Since
+  version 2.7.0, HiC-Pro supports the main Hi-C protocols, including
+  digestion protocols as well as protocols that do not require
+  restriction enzyme such as DNase Hi-C. In practice, HiC-Pro can be
+  used to process dilution Hi-C, in situ Hi-C, DNase Hi-C, Micro-C,
+  capture-C, capture Hi-C or HiChip data.
+
+
+  The pipeline is flexible, scalable and optimized. It can operate
+  either on a single laptop or on a computational cluster. HiC-Pro is
+  sequential and each step of the workflow can be run independantly.
+
+  HiC-Pro includes a fast implementatation of the iterative correction
+  method (see the iced python library for more information).
+
+  In addition, HiC-Pro can use phasing data to build allele specific
+  contact maps.
+:group: Bioinformatics
+:changelog: |
+  * Wed Mar 14 2018 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v2.10.0.tar.gz
+:src_dir: HiC-Pro-2.10.0
+:patches:
+  - makefile.patch
+:type: apps
+:version: '2.10.0'
+:requirements:
+  :build:
+    - apps/python
+    - apps/pip
+    - libs/numpy
+    - libs/scipy
+    - libs/pysam
+    - apps/R
+    - apps/bowtie2 > 2.2.2
+    - apps/samtools > 1.1
+  :runtime:
+    - apps/python
+    - apps/pip
+    - libs/numpy
+    - libs/scipy
+    - libs/pysam
+    - apps/R
+    - apps/bowtie2 > 2.2.2
+    - apps/samtools > 1.1
+:dependencies:
+  el:
+    - lzo-devel
+:compilers:
+  gcc:
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  pip install --prefix=<%= dest_dir %>/python bx-python <%= redirect(:pylibs) %>
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS  
+  cat <<EOF | R --no-save <%= redirect(:rlibs) %>
+  local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+  install.packages(c('ggplot2', 'RColorBrewer'), "<%= dest_dir %>/R")
+  EOF
+  make configure <%= redirect(:configure) %>
+  make install <%= redirect(:compile) %>
+  sed -i config-system.txt -e 's,/usr/local/bin/HiC-Pro_2.10.0/scripts/make_torque_script.sh,$(HOME)/HiC-Pro/make_job_script.sh,g'
+  sed -i config-system.txt -e 's,/usr/local/bin/HiC-Pro_2.10.0,<%= dest_dir %>,g'
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share,scripts,doc/manual}
+  cp -Rv bin annotation <%= dest_dir %>
+  cp -Rv doc/* <%= dest_dir %>/doc/manual
+  cp -v INSTALL LICENSE LOGBOOK NEWS README.rst <%= dest_dir %>/doc
+  cp -v config-*.txt <%= dest_dir %>
+  cp -Rv scripts/* <%= dest_dir %>/scripts
+  rm -rf <%= dest_dir %>/{install,src}
+  cp -Rv test-op Singularity <%= dest_dir %>/share
+  cd scripts/src/ice_mod
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py install --prefix <%= dest_dir %>/python
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}R ${appdir}/R
+
+  prepend-path PATH ${appdir}/bin
+
+  append-path R_LIBS_SITE ${appdir}/R
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
