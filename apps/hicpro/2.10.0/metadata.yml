@@ -56,6 +56,7 @@
 :compilers:
   gcc:
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   pip install --prefix=<%= dest_dir %>/python bx-python <%= redirect(:pylibs) %>
   export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   export R_LIBS="<%= dest_dir %>/R"
@@ -66,8 +67,8 @@
   EOF
   make configure <%= redirect(:configure) %>
   make install <%= redirect(:compile) %>
+  sed -i config-system.txt -e 's,/usr/local/bin/HiC-Pro_2.10.0/scripts/make_torque_script.sh,$(HOME)/HiC-Pro/make_job_script.sh,g'
   sed -i config-system.txt -e 's,/usr/local/bin/HiC-Pro_2.10.0,<%= dest_dir %>,g'
-  sed -i config-system.txt -e 's,/usr/local/bin/HiC-Pro_2.10.0/scripts/make_torque_script.sh,$HOME/HiC-Pro/make_job_script.sh,g'
 :install: |
   mkdir -p <%= dest_dir %>/{bin,share,scripts,doc/manual}
   cp -Rv bin annotation <%= dest_dir %>
