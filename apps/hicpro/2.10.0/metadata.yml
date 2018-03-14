@@ -79,6 +79,7 @@
   rm -rf <%= dest_dir %>/{install,src}
   cp -Rv test-op Singularity <%= dest_dir %>/share
   cd scripts/src/ice_mod
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py install --prefix <%= dest_dir %>/python
 :module: |
   setenv ${appcaps}DIR ${appdir}
