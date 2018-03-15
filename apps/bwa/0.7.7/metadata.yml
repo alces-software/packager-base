@@ -1,0 +1,65 @@
+---
+:schema: 1
+:license: GPLv3
+:summary: Aligns relatively short nucleotide sequences against a long reference sequence such as the human genome
+:url: http://bio-bwa.sourceforge.net/
+:description: |
+  Burrows-Wheeler Aligner (BWA) is an efficient program that aligns
+  relatively short nucleotide sequences against a long reference
+  sequence such as the human genome. It implements two algorithms,
+  bwa-short and BWA-SW. The former works for query sequences shorter
+  than 200bp and the latter for longer sequences up to around
+  100kbp. Both algorithms do gapped alignment. They are usually more
+  accurate and faster on queries with low error rates.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Aug 10 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added v0.7.7
+  * Thu Apr 14 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL
+  * Tue Aug  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Created pacakge for v0.7.8
+  * Tue Apr 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v0.7.12
+  * Tue Apr 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v0.7.11
+  * Wed Sep  3 2014 Ben Armston <ben.armston@alces-software.com>
+    - Bumped to v0.7.10
+  * Fri Jan 17 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.7.5a
+  * Thu May  2 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v0.7.4
+  * Thu Oct 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - correct sed hashbang lines for perl scripts to remove trailing options
+  * Thu Aug 16 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v0.6.2
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: bwa-0.7.7.tar.bz2
+:version: '0.7.7'
+:requirements:
+  :build: apps/perl
+  :runtime: apps/perl
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - zlib-devel
+:compile: |
+  make <%= redirect(:make) %>
+  # sed #!s to use env
+  for a in *.pl; do
+    sed -e 's|#!.*/usr/bin/perl.*|#!/usr/bin/env perl|g' -i $a
+  done
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v COPYING ChangeLog README.md <%= dest_dir %>/doc
+  cp -v *.pl bwa <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
