@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: AUGUSTUS
+:license: Artistic License 2.0
+:summary: Predicts genes in eukaryotic genomic sequences
+:url: http://bioinf.uni-greifswald.de/augustus/
+:description: |
+  AUGUSTUS is a gene prediction program for eukaryotes written by
+  Mario Stanke and Oliver Keller.  It can be used as an ab initio
+  program, which means it bases its prediction purely on the
+  sequence. AUGUSTUS may also incorporate hints on the gene structure
+  coming from extrinsic sources such as EST, MS/MS, protein alignments
+  and synthenic genomic alignments.
+:group: Bioinformatics
+:changelog: |
+  * Wed Jan 24 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v3.3
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: augustus-3.3.tar.gz
+:src_dir: augustus
+:type: apps
+:version: '3.3'
+:requirements:
+  :build:
+    - apps/bamtools
+    - libs/boost
+  :runtime:
+    - apps/bamtools
+    - libs/boost
+:compilers:
+  gcc:
+:compile: |
+  LDFLAGS="-L$BOOSTLIB -L$BAMTOOLSLIB" \
+    CXXFLAGS="-I$BOOSTINCLUDE -I$BAMTOOLSINCLUDE" \
+    make <%= redirect(:compile) %>
+:install: |
+  for a in bin docs auxprogs config examples scripts; do
+    cp -av $a <%= dest_dir %> <%= redirect(:install) %>
+  done
+  mv <%= dest_dir %>/docs <%= dest_dir %>/doc
+  cp -av HISTORY.TXT README.TXT retraining.html <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SCRIPT ${appdir}/scripts
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  setenv AUGUSTUS_CONFIG_PATH ${appdir}/config
+
+  prepend-path PATH ${appdir}/scripts
+  prepend-path PATH ${appdir}/bin
+
