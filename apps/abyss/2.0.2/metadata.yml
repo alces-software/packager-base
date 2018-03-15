@@ -1,0 +1,68 @@
+---
+:schema: 1
+:title: 'ABySS'
+:license: GPLv3+
+:summary: A de novo, parallel, paired-end sequence assembler that is designed for short reads
+:url: http://www.bcgsc.ca/platform/bioinfo/software/abyss
+:description: |
+  ABySS (Assembly By Short Sequences) is a de novo, parallel,
+  paired-end sequence assembler that is designed for short reads. The
+  single-processor version is useful for assembling genomes up to 100
+  Mbases in size. The parallel version is implemented using MPI and is
+  capable of assembling larger genomes.
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 08 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v2.0.2
+  * Thu Sep 22 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Tue Nov 18 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.5.2
+    - Modified example script heading to reflect modern convention
+  * Fri Jun 13 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.5.1; added example data and script
+  * Thu Sep 20 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Mon Feb 21 2011 Steve Norledge
+    - First created
+:src: abyss-2.0.2.tar.gz
+:sources:
+  - abyss.sh.md
+  - abyss.sh.tpl
+:type: apps
+:version: '2.0.2'
+:requirements:
+  :build:
+    - mpi/openmpi
+    - libs/sparsehash
+    - libs/boost >= 1.53.0
+  :runtime:
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+    --with-mpi="$OPENMPIDIR" \
+    --with-boost="$BOOSTINCLUDE" \
+    CPPFLAGS="-I$SPARSEHASHINCLUDE" \
+    <%= redirect(:configure) %>
+
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('abyss.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('abyss.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/share/doc/abyss
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
