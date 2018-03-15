@@ -68,8 +68,10 @@
   noarch:
 :compile: |
   # no-op; this is a distribution of a Python application
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   mkdir -p "<%= dest_dir %>/python/lib/python2.7/site-packages"
   export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages:$PYTHONPATH
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
