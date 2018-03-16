@@ -50,7 +50,7 @@
   mkdir -p "${TOPDIR}/perl/lib/perl5"
   export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
   cpanm LWP::Simple DBI File::Copy::Recursive Archive::Zip Archive::Extract <%= redirect(:cpanm) %>
-  echo "y" | perl INSTALL.pl -d "${TOPDIR}/perl/lib/perl5" <%= redirect(:fetcher) %>
+  echo "y" | perl INSTALL.pl -d "${TOPDIR}/perl/lib/perl5" --NO_TEST <%= redirect(:fetcher) %>
 :install: |
   mkdir -p <%= dest_dir %>/{bin,doc}
   cp -Rv perl <%= dest_dir %> <%= redirect(:install) %>
