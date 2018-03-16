@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: fiji 
+:license: GNU GPLv2
+:summary: An open source image processing package based on ImageJ 
+:url: https://fiji.sc/ 
+:description: |
+  Fiji's main purpose is to provide a distribution of ImageJ with 
+  many bundled plugins. Fiji features an integrated updating system  
+  and aims to provide users with a coherent menu structure, extensive 
+  documentation in the form of detailed algorithm descriptions and 
+  tutorials, and the ability to avoid the need to install multiple 
+  components from different sources.
+:group: Imaging
+:changelog: |
+  * Wed 26 Jul 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: fiji-linux64-20170530.zip 
+:src_dir: Fiji.app
+:type: apps
+:version: '20170530'
+:compilers:
+  noarch:
+:compile: |
+  #no-op - Binary Distribution
+:install: |
+  ls <%= redirect(:install) %>  
+  mv * <%= dest_dir %>/. <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/docs <%= redirect(:install) %>
+  mv <%= dest_dir %>/README.md <%= dest_dir %>/WELCOME.md <%= dest_dir %>/docs/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOCS ${appdir}/docs
+  setenv ${appcaps}JARS ${appdir}/jars
+
+  prepend-path PATH ${appdir}
