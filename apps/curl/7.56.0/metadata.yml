@@ -1,7 +1,7 @@
 ---
 :schema: 1
 :title: curl
-:license: 
+:license: MIT License
 :summary: Command line tool and library for transferring data with URLs
 :url: https://curl.haxx.se/
 :description: |
