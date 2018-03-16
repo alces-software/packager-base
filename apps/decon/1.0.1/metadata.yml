@@ -21,6 +21,13 @@
 :src: v1.0.1.zip
 :src_dir: DECoN-1.0.1
 :version: '1.0.1'
+:dependencies:
+  :build:
+    el:
+      - zlib-devel
+  :runtime:
+    el:
+      - zlib  
 :requirements:
   :build:
     - apps/R >= 3.1.2
