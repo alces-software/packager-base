@@ -25,6 +25,7 @@
 :dependencies:
   el:
     - gcc-c++
+    - xorg-x11-proto-devel
 :requirements:
   :build:
     - apps/python
