@@ -1,0 +1,95 @@
+---
+:schema: 1
+:title: Cython
+:license: Apache License
+:summary: C-Extensions for Python
+:url: http://cython.org/
+:description: |
+  Cython is a language that makes writing C extensions for the Python
+  language as easy as Python itself. It is based on the well-known
+  Pyrex, but supports more cutting edge functionality and
+  optimizations.
+
+  Cython gives you the combined power of Python and C to let you:
+
+    * write Python code that calls back and forth from and to C or C++
+      code natively at any point
+    * easily tune readable Python code into plain C performance by
+      adding static type declarations
+    * use combined source code level debugging to find bugs in your
+      Python, Cython and C code
+    * interact efficiently with large data sets, e.g. using
+      multi-dimensional NumPy arrays
+    * quickly build your applications within the large, mature and
+      widely used CPython ecosystem
+    * integrate natively with existing code and data from legacy,
+      low-level or high-performance libraries and applications
+:group: Languages
+:changelog: |
+  * Wed Feb 28 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v0.27.3
+  * Wed Feb 22 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated download links for v0.23.4
+  * Mon Apr 11 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v0.23.4
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added python3 and python34 variants (for Python 3.3.x and 3.4.x support)
+  * Wed Jun  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.20
+  * Wed Feb  6 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Cython-0.27.3.tar.gz
+:src_dir: Cython-0.27.3
+:type: apps
+:version: '0.27.3'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build:
+        - apps/python ~> 2.7.0
+      :runtime:
+        - apps/python ~> 2.7.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.3.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.4.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
