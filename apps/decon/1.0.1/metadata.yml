@@ -24,10 +24,8 @@
 :requirements:
   :build:
     - apps/R >= 3.1.2
-    - libs/bioconductor
   :runtime:
     - apps/R >= 3.1.2
-    - libs/bioconductor
 :compilers:
   noarch:
 :compile: |
