@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: curl
+:license: MIT License
+:summary: Command line tool and library for transferring data with URLs
+:url: https://curl.haxx.se/
+:description: |
+  curl is used in command lines or scripts to transfer data. It is
+  also used in cars, television sets, routers, printers, audio
+  equipment, mobile phones, tablets, settop boxes, media players and
+  is the internet transfer backbone for thousands of software
+  applications affecting billions of humans daily.
+:group: Tools
+:changelog: |
+  * Fri Oct  6 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:dependencies:
+  el:
+    - gcc-c++
+:src: curl-7.56.0.tar.bz2
+:type: apps
+:version: '7.56.0'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}MAN ${appdir}/share/man
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
