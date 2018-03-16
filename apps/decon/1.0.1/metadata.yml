@@ -1,0 +1,53 @@
+---
+:schema: 1
+:title: DECoN - Detection of Exon Copy Number
+:license: MIT License
+:summary: Detection of exon copy number variants (exon CNVs) in targeted sequencing data
+:url: http://www.icr.ac.uk/our-research/research-divisions/division-of-genetics-and-epidemiology/genetic-susceptibility/genetic-data-and-software-resources/decon
+:description: |
+  DECoN (Detection of Exon Copy Number) is a sensitive and specific
+  tool for detection of exon copy number variants (exon CNVs) in
+  targeted sequencing data. DECoN provides quality checks and
+  visualization to enhance utility for the clinical setting. DECoN is
+  based on ExomeDepth1, optimised for use on targeted panels run on
+  batches of samples. This tool has been developed through a
+  collaboration between the Institute of Cancer Research, London and
+  the Wellcome Trust Centre for Human Genetics, University of Oxford.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Dec 23 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created - Happy Christmas!
+:src: v1.0.1.zip
+:src_dir: DECoN-1.0.1
+:version: '1.0.1'
+:dependencies:
+  :build:
+    el:
+      - zlib-devel
+  :runtime:
+    el:
+      - zlib  
+:requirements:
+  :build:
+    - apps/R >= 3.1.2
+  :runtime:
+    - apps/R >= 3.1.2
+:compilers:
+  noarch:
+:compile: |
+  # no-op; this is a distribution of an R app
+:install: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  cd Linux
+  cp -Rv *.R packrat shinyGUI <%= dest_dir %> <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -v LICENCE ../DECoN-v1.0.1-doc.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+  cd <%= dest_dir %>
+  Rscript sessionInfo.R --bootstrap-packrat <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}R ${appdir}/R
+
+  append-path R_LIBS_SITE ${appdir}/R
