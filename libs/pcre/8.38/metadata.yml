@@ -1,0 +1,31 @@
+---
+:schema: 1
+:title: pcre
+:license: BSD
+:summary: Perl Compatible Regular Expressions 
+:url: http://www.pcre.org/ 
+:description: |
+
+:group: Libraries
+:changelog: |
+  * Tue Nov 1  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pcre-8.38.tar.gz 
+:src_dir: pcre-8.38
+:type: libs
+:version: '8.38'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --enable-utf --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
