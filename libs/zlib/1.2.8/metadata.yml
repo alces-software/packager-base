@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: zlib
+:license: zlib License
+:summary: A Massively Spiffy Yet Delicately Unobtrusive Compression Library
+:url: http://zlib.net/
+:description: |
+  zlib is designed to be a free, general-purpose, legally unencumbered
+  -- that is, not covered by any patents -- lossless data-compression
+  library for use on virtually any computer hardware and operating
+  system. The zlib data format is itself portable across
+  platforms. Unlike the LZW compression method used in Unix
+  compress and in the GIF image format, the compression method
+  currently used in zlib essentially never expands the data. (LZW can
+  double or triple the file size in extreme cases.) zlib's memory
+  footprint is also independent of the input data and can be reduced,
+  if necessary, at some cost in compression.
+:group: Libraries
+:changelog: |
+  * Fri Oct 28 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest available version v1.2.8
+  * Fri Jun 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: zlib-1.2.8.tar.gz
+:type: libs
+:version: '1.2.8'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --shared --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  prepend-path MANPATH ${appdir}/share/man
