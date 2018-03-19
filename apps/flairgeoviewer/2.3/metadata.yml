@@ -27,6 +27,7 @@
     - gcc-c++
     - xorg-x11-proto-devel
     - libX11-devel
+    - tk-devel
 :requirements:
   :build:
     - apps/python
