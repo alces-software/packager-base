@@ -1,0 +1,127 @@
+---
+:schema: 1
+:license: BSD
+:title: Open MPI
+:summary: A High Performance Message Passing Library
+:url: http://www.open-mpi.org/
+:description: |
+  The Open MPI Project is an open source MPI-2 implementation that is
+  developed and maintained by a consortium of academic, research, and
+  industry partners. Open MPI is therefore able to combine the
+  expertise, technologies, and resources from all across the High
+  Performance Computing community in order to build the best MPI
+  library available. Open MPI offers advantages for system and
+  software vendors, application developers and computer science
+  researchers.
+:type: mpi
+:group: MPI
+:src: openmpi-2.0.2.tar.bz2
+:version: '2.0.2'
+:compilers:
+  gcc:
+    :configure_flags: ''
+  intel:
+    :configure_flags: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+  open64:
+    :configure_flags: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
+:params:
+  :qlogic: "Specify whether to use Qlogic Infinipath PSM libs [true|false]"
+  :torque: "Specify whether to enable Torque Support [false|/path/to/torque]"
+  :sge: "Specify whether to enable SGE Support [true|false]"
+  :pmi: "Specify path containing pmi.h/pmi2.h for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
+  :pmilib: "Specify path containing libpmi.so/libpmi2.so for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
+:sources:
+  - examples.sge.openmpi.template
+:dependencies:
+  el:
+    - perl
+    - gcc-c++
+    - gcc-gfortran
+:compile: |
+  <% if param(:torque) != 'false' %>
+    if [ ! -d "<%= param(:torque) %>" ]; then
+      echo "Unable to find Torque directory: <%= param(:torque) %>" >/dev/stderr
+      exit 1
+    else
+      TORQUEPARAMS="--with-tm=<%= param(:torque) %>"
+    fi
+  <% else %>
+    TORQUEPARAMS=""
+  <% end %>
+  <% if param(:pmi) != 'false' %>
+    if [ ! -d "<%= param(:pmi) %>" ]; then
+      echo "Unable to find PMI include directory: <%= param(:pmi) %>" >/dev/stderr
+      exit 1
+    else
+      PMIPARAMS="--with-pmi=<%= param(:pmi) %> --with-pmi-libdir=<%= param(:pmilib) %>"
+      export CPPFLAGS="-I<%= param(:pmi) %>"
+    fi
+  <% else %>
+    PMIPARAMS=""
+  <% end %> 
+  ./configure <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> ${TORQUEPARAMS} ${PMIPARAMS} <%= '--with-psm' if param(:qlogic).to_s.downcase == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  install -D -m 644 <%= source("examples.sge.openmpi.template") %> <%= dest_dir %>/examples/sge/openmpi.template
+:module: |
+  # Enable the following two options to force openmpi to operate over
+  # ethernet even if an InfiniBand card is detected.  This can be
+  # useful if you are trying to diagnose a potential problem with your
+  # IB fabric.
+  # setenv OMPI_MCA_btl_tcp_if_include eth0
+  # setenv OMPI_MCA_btl tcp,self
+
+  # Enable the following if you are running jobs that span more than
+  # 128 nodes.  Adjust '512' to match the maximum number of nodes your
+  # jobs will span (which would usually be the number of nodes in your
+  # cluster).
+  # setenv OMPI_MCA_plm_rsh_num_concurrent 512
+
+  setenv MPI_HOME ${appdir}
+  setenv OPAL_PREFIX ${appdir}
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+:changelog: |
+  * Wed Jan 24 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v2.0.2
+  * Thu Nov 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Tue Apr  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.10.2
+  * Mon Mar 21 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Set OPAL_PREFIX environment variable to allow relocation of
+      OpenMPI installation.
+  * Thu Jun 11 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.8.5
+    - Add optional support for PMI to allow for SLURM support
+  * Wed Apr 22 2015 - Ruan Ellis <ruan.ellis@alces-software.com>
+    - Bumped to version 1.8.4
+  * Thu Jun 5 2014  - Ruan Ellis <ruan.ellis@alces-software.com>
+    - Bumped to version 1.8.1
+  * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 1.6.5
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Changed torque parameter to require path to Torque directory or false
+  * Fri Apr  5 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 1.6.4
+  * Sat Nov 17 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.6.3
+  * Fri Sep 28 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.6.2
+  * Thu Sep 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.6.1
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 support; incorporated qlogic parameter
+  * Wed Jun  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.6
+  * Mon Apr  2 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.4.5
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ported to alces-installer style package
+  * Wed Mar  7 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated Group, Summary and URL fields and added description.
+  * Sat Jan 21 2012 Steve Norledge
+    - First created

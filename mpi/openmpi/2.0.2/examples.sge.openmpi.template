@@ -1,0 +1,61 @@
+#!/bin/bash
+################################################################################
+# (c) Copyright 2007-2012 Alces Software Ltd & Stephen F Norledge.             #
+#                                                                              #
+# Alces HPC Software Toolkit                                                   #
+#                                                                              #
+# This file/package is part of Symphony                                        #
+#                                                                              #
+# Symphony is free software: you can redistribute it and/or modify it under    #
+# the terms of the GNU Affero General Public License as published by the Free  #
+# Software Foundation, either version 3 of the License, or (at your option)    #
+# any later version.                                                           #
+#                                                                              #
+# Symphony is distributed in the hope that it will be useful, but WITHOUT      #
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or        #
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License #
+# for more details.                                                            #
+#                                                                              #
+# You should have received a copy of the GNU Affero General Public License     #
+# along with Symphony.  If not, see <http://www.gnu.org/licenses/>.            #
+#                                                                              #
+# For more information on the Symphony Toolkit, please visit:                  #
+# http://www.alces-software.org/symphony                                       #
+#                                                                              #
+################################################################################
+# SGE SUBMISSION SCRIPT #
+#########################
+# Specify the parallel environment and number of nodes to use
+# Submit to the mpi-verbose parallel environment by default so we can see
+# output messages
+#$ -pe mpi-verbose 2
+
+#Execute in current working directory
+#$ -cwd
+
+#Export all variables in current environment
+#$ -V
+
+#Merge STDOUT with STDERR
+#$ -j y
+
+#Specify the SGE job name
+#$ -N mpi_test
+
+#Specify the output file name
+#$ -o OUTPUT.$JOB_ID
+
+# A Machine file for the job is available here if you need to modify
+# from the SGE default and pass to mpirun. The machine hostnames in use are
+# listed in the file separated by new lines (\n) eg:
+# node00
+# node01
+MACHINEFILE="/tmp/sge.machines.$JOB_ID"
+
+#Number of processes
+NUM_PROCS=16
+#The name of the binary to execute
+BINARY=./mpi-example
+
+#The mpirun command - specify the number of processes per node and the binary
+mpirun -np $NUM_PROCS $BINARY
