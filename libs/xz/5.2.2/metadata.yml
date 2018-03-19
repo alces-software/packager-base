@@ -1,0 +1,30 @@
+---
+:schema: 1
+:title: xz
+:license: zlib License
+:summary: Free general-purpose data compression 
+:url: http://tukaani.org/xz/ 
+:description: |
+
+:group: Libraries
+:changelog: |
+  * Tue Nov 1  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: xz-5.2.2.tar.gz
+:type: libs
+:version: '5.2.2'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
