@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: flair-geoviewer
+:license: PSF or ZPL
+:summary: Plugin to flair for interactive geometry editing, debugging and 3D visualization 
+:url: http://www.fluka.org/flair/index.html 
+:description: |
+  flair is an advanced user friendly interface for FLUKA to facilitate 
+  the editing of FLUKA input files, execution of the code and 
+  visualization of the output files. It is based entirely on python and 
+  Tkinter.
+
+  flair-geoviewer a plugin to flair for interactive geometry editing,
+  debugging and 3D visualization.
+:type: apps
+:group: Tools
+:changelog: |
+  * Tue Jun 07 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: flair-geoviewer-2.3-0.tgz 
+:src_dir: flair-geoviewer-2.3
+:version: '2.3'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - xorg-x11-proto-devel
+    - libX11-devel
+    - tk-devel
+:requirements:
+  :build:
+    - apps/python
+  :runtime:
+    - apps/python
+:compile: |
+  unset PYTHONLIB
+  export DESTDIR=<%= dest_dir %>
+  export TARGET=x86_64
+  which python <%= redirect(:python) %>
+  make <%= redirect(:make) %>
+:install: |
+  export DESTDIR=<%= dest_dir %>
+  make install <%= redirect(:install) %>
+  rm -f $(find "<%= dest_dir %>" -name '*.py[co]')
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PATH ${appdir}
+
+  prepend-path LD_LIBRARY_PATH ${appdir}
