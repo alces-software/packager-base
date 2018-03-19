@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: CLN - Class Library for Numbers
+:license: GPL
+:summary: A library for efficient computations with all kinds of numbers in arbitrary precision
+:url: https://www.ginac.de/CLN/
+:description: |
+  CLN is a C++ library providing the following features:
+
+   * Rich set of number classes: Integer (unlimited precision),
+     rational, short float, single float, double float, long float
+     (unlimited precision), complex, modular integer, univariate
+     polynomial.
+   * Elementary, logical, transcendental functions.
+   * C++ as implementation language brings efficiency, type safety,
+     algebraic syntax.
+   * Memory efficiency:
+     * Small integers and short floats are immediate, not heap
+       allocated.
+     * Automatic, non-interruptive garbage collection.
+   * Speed efficiency:
+     * Assembly language kernel for some CPUs,
+     * Karatsuba and Schönhage-Strassen multiplication,
+     * binary splitting.
+   * Interoperability:
+     * Garbage collection with no burden on the main application,
+     * hooks for memory allocation and exceptions.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: cln-1.3.4.tar.bz2
+:version: 1.3.4
+:compilers:
+  gcc:
+:dependencies:
+  el: 
+    - gcc-c++
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
