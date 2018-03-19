@@ -34,6 +34,7 @@
   - examples.sge.openmpi.template
 :dependencies:
   el:
+    - perl
     - gcc-c++
     - gcc-gfortran
 :compile: |
