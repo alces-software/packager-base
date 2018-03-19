@@ -33,6 +33,14 @@
     - apps/python
   :runtime:
     - apps/python
+:dependencies:
+  el:
+    - automake
+    - autoconf
+    - pkgconfig
+    - libtool
+    - gcc-c++
+    - java-1.8.0-openjdk-devel
 :compilers:
   gcc:
 :compile: |
