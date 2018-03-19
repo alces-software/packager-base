@@ -25,6 +25,9 @@
     - First created
 :src: pcre-8.41.tar.bz2
 :version: '8.41'
+:dependencies:
+  el:
+    - gcc-c++
 :compilers:
   gcc:
 :compile: |
