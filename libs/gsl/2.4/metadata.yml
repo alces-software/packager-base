@@ -17,7 +17,7 @@
 :type: libs
 :changelog: |
   * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
-    - Upgraded to v2.4
+    - Upgraded to v2.4; updated download link
   * Thu May 12 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Sep  3 2014 - Ben Armston <ben.armston@alces-software.com>
