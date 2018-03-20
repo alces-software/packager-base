@@ -1,0 +1,46 @@
+---
+:schema: 1
+:title: PCRE
+:license: BSD License
+:summary: Perl Compatible Regular Expressions 
+:url: http://www.pcre.org/ 
+:description: |
+  The PCRE library is a set of functions that implement regular
+  expression pattern matching using the same syntax and semantics as
+  Perl 5. PCRE has its own native API, as well as a set of wrapper
+  functions that correspond to the POSIX regular expression API. The
+  PCRE library is free, even for building proprietary software.
+
+  There are two major versions of the PCRE library. The newest
+  version, PCRE2, was released in 2015.
+
+  The original, very widely deployed PCRE library was originally
+  released in 1997.  The API and feature set are stable—future
+  releases will be for bugfixes only. All new future features will be
+  to PCRE2, not the original PCRE 8.x series.
+:group: Libraries
+:changelog: |
+  * Tue Nov 1  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pcre-8.38.tar.gz 
+:src_dir: pcre-8.38
+:type: libs
+:version: '8.38'
+:dependencies:
+  el:
+    - gcc-c++
+:compilers:
+  gcc:
+:compile: |
+  ./configure --enable-utf --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
