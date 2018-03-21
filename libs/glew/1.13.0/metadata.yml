@@ -1,0 +1,51 @@
+---
+:schema: 1
+:license: Modified BSD License, Mesa 3-D License and Khronis License
+:summary:  
+:url: http://glew.sourceforge.net/ 
+:description: |
+  The OpenGL Extension Wrangler Library (GLEW) is a cross-platform 
+  open-source C/C++ extension loading library. GLEW provides efficient 
+  run-time mechanisms for determining which OpenGL extensions are 
+  supported on the target platform. OpenGL core and extension 
+  functionality is exposed in a single header file. GLEW has been 
+  tested on a variety of operating systems, including Windows, Linux,
+  Mac OS X, FreeBSD, Irix, and Solaris.
+:group: Libraries
+:changelog: |
+  * Wed Mar 30 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: glew-1.13.0.tgz  
+:src_dir: glew-1.13.0
+:type: libs
+:version: '1.13.0'
+:dependencies:
+  :build:
+    el:
+      - mesa-libGL-devel
+      - libX11-devel
+  :runtime:
+    el:
+      - mesa-libGL
+      - libX11
+:compilers:
+  gcc:
+:compile: |
+  export GLEW_DEST=<%= dest_dir %>
+  make <%= redirect(:configure) %>
+:install: |
+  export GLEW_DEST=<%= dest_dir %>
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -Rv doc/* <%= dest_dir %>/doc/. <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/bin
+  cp -Rv bin/* <%= dest_dir %>/bin/. <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
