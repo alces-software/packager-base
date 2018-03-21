@@ -32,6 +32,7 @@
 :src_dir: OpenBLAS-0.2.20
 :dependencies:
   el:
+    - perl
     - gcc-gfortran
 :version: '0.2.20'
 :compilers:
