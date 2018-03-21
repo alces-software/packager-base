@@ -34,8 +34,10 @@
     - apps/python
     - mpi/openmpi
 :compile: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py build <%= redirect(:build) %>
 :install: |
+  export PYTHONDONTWRITEBYTECODE=true
   python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
