@@ -31,6 +31,8 @@
       supported by current and future versions of the software
 :group: Libraries
 :changelog: |
+  * Tue Mar 20 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected INCLUDE environment variable
   * Tue Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: netcdf-fortran-4.2.tar.gz
@@ -50,7 +52,7 @@
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
-  setenv ${appcaps}INCLUDE ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
 
