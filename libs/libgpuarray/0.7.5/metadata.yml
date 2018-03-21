@@ -40,10 +40,10 @@
     - libs/mpi4py
 :compile: |
   <% if param(:cudnn) != 'skip' %>
-  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0/lib64/:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=<%= param(:cudnn) %>/lib64/:$LD_LIBRARY_PATH
   <% end %>
   <% if param(:nccl) != 'skip' %>
-  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/nccl/2.1.4_cuda8.0/lib/:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=<%= param(:nccl) %>/lib/:$LD_LIBRARY_PATH
   <% end %>
   mkdir build && cd build
   export PYTHONDONTWRITEBYTECODE=true
@@ -51,10 +51,10 @@
   make <%= redirect(:compile) %>
 :install: |
   <% if param(:cudnn) != 'skip' %>
-  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0/lib64/:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=<%= param(:cudnn) %>/lib64/:$LD_LIBRARY_PATH
   <% end %>
   <% if param(:nccl) != 'skip' %>
-  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/nccl/2.1.4_cuda8.0/lib/:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=<%= param(:nccl) %>/lib/:$LD_LIBRARY_PATH
   <% end %>
   cd build
   export PYTHONDONTWRITEBYTECODE=true
@@ -75,3 +75,7 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
   prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages 
+
+  <% if param(:cudnn) != 'skip' %>
+  setenv ${appcaps}_CUDNN_ROOT <%= param(:cudnn) %>
+  <% end %>
