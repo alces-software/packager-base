@@ -1,0 +1,130 @@
+---
+:schema: 1
+:title: STAR
+:license: GPLv3+
+:summary: Aligns RNA-seq reads to a reference genome using uncompressed suffix arrays
+:url: https://code.google.com/p/rna-star/
+:description: |
+  <http://bioinformatics.oxfordjournals.org/content/29/1/15>
+
+  Accurate alignment of high-throughput RNA-seq data is a challenging
+  and yet unsolved problem because of the non-contiguous transcript
+  structure, relatively short read lengths and constantly increasing
+  throughput of the sequencing technologies. Currently available
+  RNA-seq aligners suffer from high mapping error rates, low mapping
+  speed, read length limitation and mapping biases.
+
+  To align our large (>80 billon reads) ENCODE Transcriptome RNA-seq
+  dataset, we developed the Spliced Transcripts Alignment to a
+  Reference (STAR) software based on a previously undescribed RNA-seq
+  alignment algorithm that uses sequential maximum mappable seed
+  search in uncompressed suffix arrays followed by seed clustering and
+  stitching procedure. STAR outperforms other aligners by a factor of
+  >50 in mapping speed, aligning to the human genome 550 million 2 ×
+  76 bp paired-end reads per hour on a modest 12-core server, while at
+  the same time improving alignment sensitivity and precision. In
+  addition to unbiased de novo detection of canonical junctions, STAR
+  can discover non-canonical splices and chimeric (fusion)
+  transcripts, and is also capable of mapping full-length RNA
+  sequences. Using Roche 454 sequencing of reverse transcription
+  polymerase chain reaction amplicons, we experimentally validated
+  1960 novel intergenic splice junctions with an 80–90% success rate,
+  corroborating the high precision of the STAR mapping strategy.
+:group: Bioinformatics
+:changelog: |
+  * Mon Dec 11 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v2.5.3a version
+  * Mon May 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v2.5.2a version
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Aug 13 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest version, 2.4.2a
+  * Thu Feb 26 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, 2.4.0j
+  * Wed Dec  3 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, 2.4.0g1
+  * Mon Sep  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 2.5.3a.tar.gz
+:src_dir: STAR-2.5.3a
+:type: apps
+:version: '2.5.3a'
+:compilers:
+  gcc:
+:variants:
+  default:
+  long:
+:dependencies:
+  el:
+    - gcc-c++
+    - vim-common
+    - zlib-devel
+:compile: |
+  <% if variant_name == 'default' %>
+  cd source
+  make clean
+  make <%= redirect(:compile) %>
+  <% elsif variant_name == 'long' %>
+  cd source
+  make clean
+  make STARlong <%= redirect(:compile) %>
+  <% end %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  <% if variant_name == 'default' %>
+  install -v -D -m 0755 source/STAR <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  <% elsif variant_name == 'long' %>
+  install -v -D -m 0755 source/STARlong <%= dest_dir %>/bin/ <%= redirect(:install) %>
+  <% end %>
+  install -v -D -m 0644 CHANGES.md RELEASEnotes.md LICENSE README.md doc/STARmanual.pdf <%= dest_dir %>/doc/ <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+:example_scripts:
+  - tags: ['script:type=batch']
+    name: 'STAR example script'
+    description: 'Example script for STAR containing set up for crucial input parameters.'
+    template: 'script:stub:smp-multislot'
+    content: |
+      #############################################
+      # APPLICATION COMMANDS - change as required
+      #############################################
+      #
+      # For full STAR usage information see:
+      #   https://github.com/alexdobin/STAR/blob/STAR_2.4.0j/doc/STARmanual.pdf?raw=true
+
+      # Change the following to match the number of cores you want to
+      # run on.
+      #   (For GridScheduler tasks, this should match the number of
+      #   slots you request for use in the -pe scheduler directive
+      #   above.)
+      CORES={{ fact.smpNumSlots }}
+
+      # Input directory
+      INPUT_DIR="star/input"
+
+      # Output directory
+      OUTPUT_DIR="star/output.${JOB_ID-${PORTAL_TASK_ID-$$}}"
+
+      # Genome directory
+      GENOME_DIR="$INPUT_DIR/Genome"
+
+      # FASTQ/FASTA file for Read1
+      READ_1="$INPUT_DIR/read_1.fq"
+
+      # Optional: FASTQ/FASTA file for Read2
+      #READ_2="$INPUT_DIR/read_2.fq"
+
+      READS=("$READ_1" "$READ_2")
+
+      # Additional command-line options
+      STAR_OPTIONS=""
+
+      STAR --genomeDir "$GENOME_DIR" \
+        --readFilesIn "${READS[@]}" \
+        --runThreadN $CORES \
+        $STAR_OPTIONS
