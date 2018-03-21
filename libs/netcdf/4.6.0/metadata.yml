@@ -73,6 +73,7 @@
     - gcc-gfortran
     - zlib-devel
     - libcurl-devel
+    - m4
 :compile: |
   export CFLAGS="${CFLAGS} <%= variant[:cflags] %>"
   export LDFLAGS="${LDFLAGS} <%= variant[:ldflags] %>"
