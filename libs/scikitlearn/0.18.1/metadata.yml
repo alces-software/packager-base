@@ -1,0 +1,98 @@
+---
+:schema: 1
+:title: scikit-learn
+:license: BSD License
+:summary: A Python module for machine learning
+:url: http://scikit-learn.org/ 
+:description: |
+  Machine Learning in Python
+
+  - Simple and efficient tools for data mining and data analysis
+  - Accessible to everybody, and reusable in various contexts
+  - Built on NumPy, SciPy, and matplotlib
+  - Open source, commercially usable - BSD license
+:type: libs
+:group: Libraries
+:changelog: |
+  * Fri Dec  9 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release, v0.18.1
+  * Wed Apr 13 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: scikit-learn-0.18.1.tar.gz
+:src_dir: scikit-learn-0.18.1
+:version: '0.18.1'
+:compilers:
+  gcc:
+:variants:
+  default:
+    :desription: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool:
+        - apps/setuptools
+        - apps/cython
+      :build: 
+        - apps/python ~> 2.7.0
+        - libs/matplotlib >= 1.1.1
+        - libs/numpy >= 1.6.1
+        #Intentionally broken for older versions of Gridware
+        - libs/scipy == 0.17.0
+      :runtime: 
+        - apps/python ~> 2.7.0
+        - libs/matplotlib >= 1.1.1
+        - libs/numpy >= 1.6.1
+        - libs/scipy == 0.17.0
+  python3:
+    :desription: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool:
+        - apps/setuptools_python3
+        - apps/cython_python3
+      :build:
+        - apps/python3 ~> 3.3.0
+        - libs/matplotlib_python3 >= 1.1.1
+        - libs/numpy_python3 >= 1.6.1
+        - libs/scipy_python3 == 0.17.0
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - libs/matplotlib_python3 >= 1.1.1
+        - libs/numpy_python3 >= 1.6.1
+        - libs/scipy_python3 == 0.17.0
+  python34:
+    :desription: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool:
+        - apps/setuptools_python34
+        - apps/cython_python34
+      :build:
+        - apps/python3 ~> 3.4.0
+        - libs/matplotlib_python34 >= 1.1.1
+        - libs/numpy_python34 >= 1.6.1
+        - libs/scipy_python34 == 0.17.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/matplotlib_python34 >= 1.1.1
+        - libs/numpy_python34 >= 1.6.1
+        - libs/scipy_python34 == 0.17.0
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+  setenv ${appcaps}LIB ${appdir}/python/lib
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
