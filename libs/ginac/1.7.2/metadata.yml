@@ -42,7 +42,8 @@
 :compilers:
   gcc:
 :dependencies:
-  el: 
+  el:
+    - perl
     - gcc-c++
 :requirements:
   :build:
