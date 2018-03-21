@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: libgpuarray
+:license: OpenBSD
+:summary: Make a common GPU ndarray(n dimensions array) 
+:url: http://deeplearning.net/software/libgpuarray/
+:description: |
+  Make a common GPU ndarray(n dimensions array) that can 
+  be reused by all projects that is as future proof as 
+  possible, while keeping it easy to use for simple 
+  need/quick test.
+:group: Deep Learning
+:changelog: |
+  * Tue Feb 27 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: libgpuarray-0.7.5.tar.gz  
+:type: libs
+:src_dir: libgpuarray-0.7.5
+:version: '0.7.5'
+:compilers:
+  gcc:
+:params:
+  :cudnn: "Path to cuDNN [specify path excluding lib64/ directory, or 'skip' to build without cuDNN]"
+  :nccl: "Path to nccl [specify path excluding lib/ directory, or 'skip' to build without nccl]"
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - apps/python
+    - libs/numpy
+    - apps/cython >= 0.25.0
+    - apps/setuptools
+    - libs/nvidia-cuda
+  :runtime:
+    - apps/python
+    - libs/numpy
+    - apps/cython >= 0.25.0
+    - apps/setuptools
+    - libs/nvidia-cuda
+    - libs/mpi4py
+:compile: |
+  <% if param(:cudnn) != 'skip' %>
+  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0/lib64/:$LD_LIBRARY_PATH
+  <% end %>
+  <% if param(:nccl) != 'skip' %>
+  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/nccl/2.1.4_cuda8.0/lib/:$LD_LIBRARY_PATH
+  <% end %>
+  mkdir build && cd build
+  export PYTHONDONTWRITEBYTECODE=true
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  <% if param(:cudnn) != 'skip' %>
+  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0/lib64/:$LD_LIBRARY_PATH
+  <% end %>
+  <% if param(:nccl) != 'skip' %>
+  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/nccl/2.1.4_cuda8.0/lib/:$LD_LIBRARY_PATH
+  <% end %>
+  cd build
+  export PYTHONDONTWRITEBYTECODE=true
+  make install <%= redirect(:install_lib) %>
+  cp -av src <%= dest_dir %>/include <%= redirect(:install_lib) %>
+  cd ..
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages/:$PYTHONPATH
+  easy_install --install-dir <%= dest_dir %>/python/lib/python2.7/site-packages/ nose <%= redirect(:python) %>
+  python setup.py build_ext -L <%= dest_dir %>/lib -I <%= dest_dir %>/include <%= redirect(:compile_python) %>
+  python setup.py install --prefix=<%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages 
