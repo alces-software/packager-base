@@ -31,6 +31,10 @@
       supported by current and future versions of the software
 :group: Libraries
 :changelog: |
+  * Tue Mar 20 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Corrected INCLUDE environment variable
+  * Tue Mar  6 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Introduced MPI variant
   * Wed Aug 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Updated to v4.4.4
   * Tue Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -39,9 +43,27 @@
 :src_dir: netcdf-fortran-4.4.4
 :type: libs
 :version: '4.4.4'
-:requirements:
-  :build:
-    - libs/netcdf
+:variants:
+  default:
+    :description: "Standard build"
+    :cppflags: "-I${NETCDFINCLUDE}"
+    :requirements:
+      :build:
+        - libs/netcdf
+  mpi:
+    :description: "MPI build"
+    :cppflags: "-I${NETCDF_MPIINCLUDE} -I${HDF5_MPIINCLUDE} -I${MPI_HOME}/include"
+    :ldflags: "-L${HDF5_MPILIB} -L${MPI_HOME}/lib"
+    :buildvars: "CC=mpicc FC=mpif77"
+    :buildargs: "--enable-parallel-tests"
+    :requirements:
+      :build:
+        - mpi/openmpi
+        - apps/hdf5_mpi
+        - libs/netcdf_mpi
+      :runtime:
+        - mpi/openmpi
+        - apps/hdf5_mpi
 :compilers:
   gcc:
 :dependencies:
@@ -49,15 +71,17 @@
     - gcc-gfortran
     - zlib-devel
 :compile: |
-  export CPPFLAGS=-I${NETCDFINCLUDE}
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  export CPPFLAGS="${CPPFLAGS} <%= variant[:cppflags] %>"
+  export LDFLAGS="${LDFLAGS} <%= variant[:ldflags] %>"
+  <%= variant[:buildvars] %> ./configure <%= variant[:buildargs] %> \
+    --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:build) %>
 :install: |
   make install <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}LIB ${appdir}/lib
-  setenv ${appcaps}INCLUDE ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
 
