@@ -22,9 +22,11 @@
 :dependencies:
   :build:
     el:
+      - mesa-libGL-devel
       - libX11-devel
   :runtime:
     el:
+      - mesa-libGL
       - libX11
 :compilers:
   gcc:
