@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: MIT/X-style
+:summary: Portable profiling and tracing toolkit for performance analysis of parallel programs written in Fortran, C, C++, Java, Python
+:url: http://www.cs.uoregon.edu/Research/tau/home.php
+:description: |
+  TAU Performance System® is a portable profiling and tracing toolkit
+  for performance analysis of parallel programs written in Fortran, C,
+  C++, Java, Python.
+
+  TAU (Tuning and Analysis Utilities) is capable of gathering
+  performance information through instrumentation of functions,
+  methods, basic blocks, and statements. All C++ language features are
+  supported including templates and namespaces. The API also provides
+  selection of profiling groups for organizing and controlling
+  instrumentation. The instrumentation can be inserted in the source
+  code using an automatic instrumentor tool based on the Program
+  Database Toolkit (PDT), dynamically using DyninstAPI, at runtime in
+  the Java Virtual Machine, or manually using the instrumentation API.
+:group: Tools
+:requirements:
+  :build: mpi/openmpi
+  :runtime: mpi/openmpi
+:changelog: |
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v2.27.0
+  * Thu May 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated checksum for download link
+  * Mon Mar 21 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v2.25.1 
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Apr 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: tau-2.27.0.tar.gz
+:src_dir: tau-2.27
+:type: apps
+:version: '2.27.0'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
+:compile: |
+  # bail out if dest_dir already exists to prevent trampling over an
+  # existing installation or packaging up the wrong codebase
+  if [ -d <%= dest_dir %> ]; then
+    cat <<EOF
+  A TAU installation is already installed.  Please remove this
+  installation before continuing. TAU installation was found in:
+  
+    <%= dest_dir %>
+  EOF
+    exit 1
+  fi
+  ./configure -mpi -openmp -prefix=<%= dest_dir %> <%= redirect(:configure) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/x86_64/bin
+
+  prepend-path PATH ${appdir}/x86_64/bin
+  prepend-path MANPATH ${appdir}/man
+
+
