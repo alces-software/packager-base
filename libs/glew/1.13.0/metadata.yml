@@ -19,6 +19,13 @@
 :src_dir: glew-1.13.0
 :type: libs
 :version: '1.13.0'
+:dependencies:
+  :build:
+    el:
+      - libX11-devel
+  :runtime:
+    el:
+      - libX11
 :compilers:
   gcc:
 :compile: |
