@@ -1,0 +1,51 @@
+---
+:schema: 1
+:title: OpenBLAS
+:license: BSD License
+:summary: An optimized BLAS library
+:url: http://www.openblas.net/
+:description: |
+  OpenBLAS is an open source BLAS library forked from the
+  GotoBLAS2-1.13 BSD version. Since Mr. Kazushige Goto left TACC,
+  GotoBLAS is no longer being maintained. This project was created to
+  continue developing OpenBLAS/GotoBLAS.
+
+  In OpenBLAS 0.2.0, level 3 BLAS is optimized on the Intel Sandy
+  Bridge 64-bit OS and obtains a performance comparable with that
+  Intel MKL.
+
+  Level 3 BLAS performance was optimized on the ICT Loongson-3A CPU
+  and outperforms GotoBLAS by 135% in a single thread and 120% in 4
+  threads.
+
+  Some GotoBLAS bugs have been fixed including a SEGFAULT bug on the
+  new Linux kernel, MingW32/64 bugs, and a ztrmm computing error bug
+  on Intel Nehalem.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v0.2.20
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v0.2.20.tar.gz
+:src_dir: OpenBLAS-0.2.20
+:dependencies:
+  el:
+    - perl
+    - gcc-gfortran
+:version: '0.2.20'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  make PREFIX=<%= dest_dir %> install <%= redirect(:install) %>
+  rmdir <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  
