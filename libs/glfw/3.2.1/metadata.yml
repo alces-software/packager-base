@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: GLFW
+:license: zlib/libpng License
+:summary: Multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop
+:url: http://www.glfw.org
+:description: |
+  GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES
+  and Vulkan development on the desktop. It provides a simple API for
+  creating windows, contexts and surfaces, receiving input and events.
+:group: Library
+:changelog: |
+  * Mon Nov  7 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: glfw-3.2.1.zip
+:type: libs
+:version: '3.2.1'
+:dependencies:
+  :build:
+    el:
+      - mesa-libGL-devel
+      - libXrandr-devel
+      - libXinerama-devel
+      - libXcursor-devel
+  :runtime:
+    el:
+      - mesa-libGL
+      - libXrandr
+      - libXinerama
+      - libXcursor
+:requirements:
+  :tool:
+    - apps/cmake
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> \
+    ..
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
