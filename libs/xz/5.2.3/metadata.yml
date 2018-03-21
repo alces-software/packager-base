@@ -1,0 +1,33 @@
+---
+:schema: 1
+:title: XZ Utils
+:license: Public Domain/LGPLv2.1+/GPLv2+
+:summary: General-purpose data compression software with a high compression ratio
+:url: https://tukaani.org/xz/
+:description: |
+  XZ Utils is free general-purpose data compression software with a
+  high compression ratio. XZ Utils were written for POSIX-like
+  systems, but also work on some not-so-POSIX systems. XZ Utils are
+  the successor to LZMA Utils.
+:group: Libraries
+:changelog: |
+  * Fri Oct  6 2017 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: xz-5.2.3.tar.bz2
+:type: libs
+:version: '5.2.3'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
