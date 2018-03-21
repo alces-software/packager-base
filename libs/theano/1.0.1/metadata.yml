@@ -1,0 +1,118 @@
+---
+:schema: 1
+:title: Theano
+:license: BSD License
+:summary: Define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently
+:url: http://deeplearning.net/software/theano/
+:description: |
+  Theano is a Python library that allows you to define, optimize, and
+  evaluate mathematical expressions involving multi-dimensional arrays
+  efficiently. Theano features:
+
+    * tight integration with NumPy – Use numpy.ndarray in
+      Theano-compiled functions.
+    * transparent use of a GPU – Perform data-intensive calculations
+      up to 140x faster than with CPU.(float32 only)
+    * efficient symbolic differentiation – Theano does your
+      derivatives for function with one or many inputs.
+    * speed and stability optimizations – Get the right answer for
+      log(1+x) even when x is really tiny.
+    * dynamic C code generation – Evaluate expressions faster.
+    * extensive unit-testing and self-verification – Detect and
+      diagnose many types of errors.
+:group: Libraries
+:changelog: |
+  * Thu Mar  1 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v1.0.1 version
+  * Fri Apr  1 2016 -  Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:dependencies:
+  el:
+    - gcc-c++
+:requirements:
+  :build:
+    - libs/atlas
+  :runtime:
+    - libs/atlas
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :tool: apps/setuptools
+      :build: 
+        - apps/python ~> 2.7.0
+        - libs/numpy >= 1.7.1
+        - libs/scipy >= 0.11.0
+      :runtime: 
+        - apps/python ~> 2.7.0
+        - libs/numpy >= 1.7.1
+        - libs/scipy >= 0.11.0
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :tool: apps/setuptools_python3
+      :build: 
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3 >= 1.7.1
+        - libs/scipy_python3 >= 0.11.0
+      :runtime: 
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3 >= 1.7.1
+        - libs/scipy_python3 >= 0.11.0
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :tool: apps/setuptools_python34
+      :build:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34 >= 1.7.1
+        - libs/scipy_python34 >= 0.11.0
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34 >= 1.7.1
+        - libs/scipy_python34 >= 0.11.0
+:src: rel-1.0.1.tar.gz
+:src_dir: Theano-rel-1.0.1
+:type: libs
+:version: '1.0.1'
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR six nose <%= redirect(:python) %>
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:compile) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages <%= redirect(:install) %>
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages/:$PYTHONPATH
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  chmod 755 $(find <%= dest_dir %>/python ! -perm o+x -type d)
+  chmod 644 $(find <%= dest_dir %>/python ! -perm o+r -type f)
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
+
+  if { [info exists ::env(LIBGPUARRAY_CUDNN_ROOT)] } {
+    append-path --delim=, THEANO_FLAGS "dnn.library_path=$::env(LIBGPUARRAY_CUDNN_ROOT)/lib64"
+    append-path --delim=, THEANO_FLAGS "dnn.include_path=$::env(LIBGPUARRAY_CUDNN_ROOT)/include/"
+    append-path --delim=, THEANO_FLAGS "dnn.base_path=$::env(LIBGPUARRAY_CUDNN_ROOT)/"
+  }
+
+  if { [info exists ::env(LIBGPUARRAYINCLUDE)] } {
+      append-path --delim=, THEANO_FLAGS "gcc.cxxflags=-I$::env(LIBGPUARRAYINCLUDE) -L$::env(LIBGPUARRAYLIB)"
+  }
