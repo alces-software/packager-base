@@ -1,0 +1,63 @@
+---
+:schema: 1
+:license: BSD-style, see http://www.hdfgroup.org/products/licenses.html
+:summary: Data model, library, and file format for storing and managing data
+:url: http://www.hdfgroup.org/HDF5/
+:description: |
+  HDF5 is a data model, library, and file format for storing and
+  managing data. It supports an unlimited variety of datatypes, and is
+  designed for flexible and efficient I/O and for high volume and
+  complex data. HDF5 is portable and is extensible, allowing
+  applications to evolve in their use of HDF5. The HDF5 Technology
+  suite includes tools and applications for managing, manipulating,
+  viewing, and analyzing data in the HDF5 format.
+:group: Databases
+:changelog: |
+  * Fri Dec 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Provided v1.8.6 for earlier .so.6 library API (for XSQ)
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tweak MPI build in order to generate a shared library
+    - Add support for intel and open64 compilers
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated version to 1.8.9
+    - Migrated to gridware installer structure
+  * Sat Jun 18 2011 Steve Norledge
+    - First created
+:src: hdf5-1.8.6.tar.bz2
+:type: apps
+:version: '1.8.6'
+:compilers:
+  gcc:
+    :mpi_configure_env: 'CC=mpicc CXX=mpic++ F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: ''
+  intel:
+    :mpi_configure_env: 'CC=mpicc CXX=mpiCC F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+  open64:
+    :mpi_configure_env: 'CC=mpicc CXX=mpiCC F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
+:variants:
+  mpi:
+    :configure_flags: '--enable-shared --enable-static --enable-parallel --with-pic'
+    :requirements:
+      :runtime: mpi/openmpi
+      :build: mpi/openmpi
+  serial:
+    :configure_flags: ''
+:compile: |
+  export CFLAGS="${CFLAGS} -std=gnu89"
+  ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
+              --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
