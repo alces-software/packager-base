@@ -42,9 +42,10 @@
 :compilers:
   gcc:
 :dependencies:
-  el: 
+  el:
     - automake
     - autoconf
+    - libtool
     - texinfo
     - gcc-c++
 :requirements:
