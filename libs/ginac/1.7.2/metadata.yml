@@ -43,7 +43,9 @@
   gcc:
 :dependencies:
   el: 
+    - automake
     - autoconf
+    - texinfo
     - gcc-c++
 :requirements:
   :build:
@@ -51,7 +53,7 @@
   :runtime:
     - libs/cln
 :compile: |
-  autoreconf -i -f <%= redirect(:autoreconf) %>
+  autoreconf -i <%= redirect(:autoreconf) %>
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
