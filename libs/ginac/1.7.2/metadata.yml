@@ -47,6 +47,9 @@
     - autoconf
     - libtool
     - texinfo
+    - bison
+    - flex
+    - byacc
     - gcc-c++
 :requirements:
   :build:
