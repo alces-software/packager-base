@@ -1,11 +1,14 @@
 ---
 :schema: 1
-:title: xz
-:license: zlib License
-:summary: Free general-purpose data compression 
+:title: XZ Utils
+:license: Public Domain/LGPLv2.1+/GPLv2+
+:summary: General-purpose data compression software with a high compression ratio
 :url: http://tukaani.org/xz/ 
 :description: |
-
+  XZ Utils is free general-purpose data compression software with a
+  high compression ratio. XZ Utils were written for POSIX-like
+  systems, but also work on some not-so-POSIX systems. XZ Utils are
+  the successor to LZMA Utils.
 :group: Libraries
 :changelog: |
   * Tue Nov 1  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
