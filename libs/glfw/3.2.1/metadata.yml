@@ -18,11 +18,13 @@
 :dependencies:
   :build:
     el:
+      - mesa-libGL-devel
       - libXrandr-devel
       - libXinerama-devel
       - libXcursor-devel
   :runtime:
     el:
+      - mesa-libGL
       - libXrandr
       - libXinerama
       - libXcursor
