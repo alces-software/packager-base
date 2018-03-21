@@ -1,0 +1,81 @@
+---
+:schema: 1
+:title: HDF5
+:license: BSD-style, see http://www.hdfgroup.org/products/licenses.html
+:summary: Data model, library, and file format for storing and managing data
+:url: http://www.hdfgroup.org/HDF5/
+:description: |
+  HDF5 is a data model, library, and file format for storing and
+  managing data. It supports an unlimited variety of datatypes, and is
+  designed for flexible and efficient I/O and for high volume and
+  complex data. HDF5 is portable and is extensible, allowing
+  applications to evolve in their use of HDF5. The HDF5 Technology
+  suite includes tools and applications for managing, manipulating,
+  viewing, and analyzing data in the HDF5 format.
+:group: Libraries
+:changelog: |
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.10.1
+  * Tue Sep 20 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added flag to enable fortran support for static build
+    - Added zlib-devel library to enable building with zlib support
+  * Fri Apr 29 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Tue Oct 14 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.8.13
+    - Added --enable-cxx flag for serial builds ("the C++ interface
+      does not support parallel HDF5")
+  * Mon Sep 23 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 1.8.11
+  * Wed Feb  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated fetch URL for non-current release
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tweak MPI build in order to generate a shared library
+    - Add support for intel and open64 compilers
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated version to 1.8.9
+    - Migrated to gridware installer structure
+  * Sat Jun 18 2011 Steve Norledge
+    - First created
+:src: hdf5-1.10.1.tar.bz2
+:type: apps
+:version: '1.10.1'
+:compilers:
+  gcc:
+    :mpi_configure_env: 'CC=mpicc CXX=mpic++ F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: ''
+  intel:
+    :mpi_configure_env: 'CC=mpicc CXX=mpiCC F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+  open64:
+    :mpi_configure_env: 'CC=mpicc CXX=mpiCC F77=mpif77 FC=mpif90 F90=mpif90'
+    :serial_configure_env: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
+:variants:
+  mpi:
+    :configure_flags: '--enable-shared --enable-static --enable-parallel --with-pic'
+    :requirements:
+      :runtime: mpi/openmpi
+      :build: mpi/openmpi
+  serial:
+    :configure_flags: '--enable-cxx --enable-fortran'
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
+    - zlib-devel
+:compile: |
+  ./configure <%= variant[:configure_flags] %> <%= compiler[:"#{variant_name}_configure_env"] %> \
+              --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
