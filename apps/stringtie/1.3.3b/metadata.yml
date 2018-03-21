@@ -20,7 +20,7 @@
 :dependencies:
   el:
     - zlib-devel
-    - gcc-g++
+    - gcc-c++
 :changelog: |
   * Fri Dec 22 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com
     - First created
