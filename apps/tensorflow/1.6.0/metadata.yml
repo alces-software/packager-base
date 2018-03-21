@@ -1,0 +1,133 @@
+---
+:schema: 1
+:title: TensorFlow
+:license: Apache License 2.0
+:summary: Computation using data flow graphs for scalable machine learning
+:url: http://tensorflow.org
+:description: |
+  TensorFlow is an open source software library for numerical
+  computation using data flow graphs. Nodes in the graph represent
+  mathematical operations, while the graph edges represent the
+  multidimensional data arrays (tensors) that flow between them. This
+  flexible architecture lets you deploy computation to one or more
+  CPUs or GPUs in a desktop, server, or mobile device without
+  rewriting code. TensorFlow also includes TensorBoard, a data
+  visualization toolkit.
+
+  TensorFlow was originally developed by researchers and engineers
+  working on the Google Brain team within Google's Machine
+  Intelligence research organization for the purposes of conducting
+  machine learning and deep neural networks research. The system is
+  general enough to be applicable in a wide variety of other domains,
+  as well.
+:type: apps
+:group: Machine Learning
+:changelog: |
+  * Wed Mar 21 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refined GPU support into params and variant
+  * Fri Mar 02 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v1.6.0 version; added GPU support
+  * Wed May 24 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to release v1.1.0 version
+  * Mon Nov 21 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v1.6.0.tar.gz 
+:version: '1.6.0'
+:src_dir: tensorflow-1.6.0 
+:compilers:
+  gcc:
+:params:
+  :cuda_vars: "Path to a config file for CUDA GPU build [if building with CUDA, specify path to vars file or 'info' for details]"
+:variants:
+  default:
+  cuda:
+    :requirements:
+      - libs/nvidia-cuda
+:requirements:
+  :tool:
+    - apps/bazel >= 0.5.4
+    - apps/pip
+  :build:
+    - apps/python
+    - libs/numpy
+    - apps/setuptools
+  :runtime:
+    - apps/python
+    - apps/setuptools
+    - libs/numpy
+:compile: |
+  <% if variant_name == 'cuda' %>
+  <% if param(:cuda_vars) == 'info' %>
+  cat <<EOF &> /dev/stderr
+  Please provide a configuration file for CUDA builds:
+  CUDNN_ROOT=<path to cudnn excluding lib64/ dir>
+  CUDNN_VERSION=<cuDNN version, e.g. 7.0.5>
+  CUDA_VERSION=<CUDA version, e.g. 8.0.61>
+  CUDA_COMPUTE_CAPABILITIES=<CUDA capabilities of your GPU, e.g. 3.0>
+  EOF
+  exit 1
+  <% end %>
+  if [ ! -f "<%= param(:cuda_vars) %>" ]; then
+    echo "Unable to locate CUDA vars file. Aborting." &>/dev/stderr
+    exit 1
+  fi
+  . "<%= param(:cuda_vars) %>"
+  if [ -z "$CUDNN_ROOT" ]; then
+    echo "CUDA vars file does not define CUDNN_ROOT variable. Aborting." &>/dev/stderr
+    exit 1
+  fi
+  if [ -z "$CUDA_VERSION" ]; then
+    echo "CUDA vars file does not define CUDA_VERSION variable. Aborting." &>/dev/stderr
+    exit 1
+  fi
+  if [ -z "$CUDNN_VERSION" ]; then
+    echo "CUDA vars file does not define CUDNN_VERSION variable. Aborting." &>/dev/stderr
+    exit 1
+  fi
+  if [ -z "$CUDA_COMPUTE_CAPABILITIES" ]; then
+    echo "CUDA vars file does not define CUDA_COMPUTE_CAPBILITIES variable. Aborting." &>/dev/stderr
+    exit 1
+  fi
+  export TF_NEED_CUDA=1
+  export LD_LIBRARY_PATH=${CUDNN_ROOT}/lib64:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=${CUDA_HOME}/extras/CUPTI/lib64/:${LD_LIBRARY_PATH}
+  export CUDA_TOOLKIT_PATH=${CUDA_HOME}
+  export TF_CUDA_VERSION=${CUDA_VERSION}
+  export TF_CUDA_COMPUTE_CAPABILITIES=${CUDA_COMPUTE_CAPABILITIES}
+  export CUDNN_INSTALL_PATH=${CUDNN_ROOT}
+  export TF_CUDNN_VERSION=${CUDNN_VERSION}
+  <% else %>
+  export TF_NEED_CUDA=0
+  <% end %>
+  export GCC_HOST_COMPILER_PATH=`which gcc`
+  export TF_NEED_HDFS=0
+  export TF_NEED_OPENCL=0
+  export TF_NEED_JEMALLOC=0
+  export CC_OPT_FLAGS=-march=native
+  export TF_NEED_GCP=0
+  export TF_ENABLE_XLA=0
+  export PYTHON_BIN_PATH=${PYTHONBIN}/python
+  export PYTHON_LIB_PATH=<%= dest_dir %>/python
+  mkdir -p $PYTHON_LIB_PATH/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+
+  export PYTHONDONTWRITEBYTECODE=true
+  echo "startup --batch" >> .bazelrc
+  ./configure <%= redirect(:configure) %>
+  easy_install --prefix=${PYTHON_LIB_PATH} nose wheel <%= redirect(:python) %>
+  bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package --verbose_failures <%= redirect(:bazel_build) %>
+  ./tensorflow/tools/pip_package/build_pip_package.sh <%= dest_dir %>/wheel/. <%= redirect(:pip_build) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/doc
+  cp -Rv tensorflow/docs_src/* <%= dest_dir %>/doc/. <%= redirect(:install_tensorboard) %>
+  pip install <%= dest_dir %>/wheel/tensorflow-1.6.0-cp27-cp27m-linux_x86_64.whl --prefix=<%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
