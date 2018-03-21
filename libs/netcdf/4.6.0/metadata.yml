@@ -1,0 +1,94 @@
+---
+:schema: 1
+:license: Set of interfaces and libraries for array-oriented data access
+:summary: NetCDF
+:url: http://www.unidata.ucar.edu/software/netcdf/
+:description: |
+  NetCDF (network Common Data Form) is a set of interfaces for
+  array-oriented data access and a freely-distributed collection of
+  data access libraries for C, Fortran, C++, Java, and other
+  languages. The netCDF libraries support a machine-independent format
+  for representing scientific data. Together, the interfaces,
+  libraries, and format support the creation, access, and sharing of
+  scientific data.
+
+  NetCDF data is:
+
+    * Self-Describing - a netCDF file includes information about the
+      data it contains
+    * Portable - a netCDF file can be accessed by computers with
+      different ways of storing integers, characters, and
+      floating-point numbers
+    * Scalable - a small subset of a large dataset may be accessed
+      efficiently
+    * Appendable - data may be appended to a properly structured
+      netCDF file without copying the dataset or redefining its
+      structure
+    * Sharable - one writer and multiple readers may simultaneously
+      access the same netCDF file
+    * Archivable - access to all earlier forms of netCDF data will be
+      supported by current and future versions of the software
+:group: Libraries
+:changelog: |
+  * Tue Mar  6 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to latest v4.6.0
+    - Introduced MPI variant
+  * Wed Aug 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Mon Sep 23 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 4.3.0
+  * Tue Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: netcdf-4.6.0.tar.gz
+:src_dir: netcdf-c-4.6.0
+:type: libs
+:version: '4.6.0'
+:variants:
+  default:
+    :description: "Standard build"
+    :cflags: "-I${HDF5_SERIALINCLUDE}"
+    :ldflags: "-L${HDF5_SERIALLIB}"
+    :requirements:
+      :build: apps/hdf5_serial
+      :runtime: apps/hdf5_serial
+  mpi:
+    :description: "MPI build"
+    :cflags: "-I${HDF5_MPIINCLUDE} -I${MPI_HOME}/include"
+    :ldflags: "-L${HDF5_MPILIB} -L${MPI_HOME}/lib"
+    :buildvars: "CC=mpicc FC=mpif77"
+    :buildargs: "--enable-parallel-tests"
+    :requirements:
+      :build:
+        - mpi/openmpi
+        - apps/hdf5_mpi
+      :runtime:
+        - mpi/openmpi
+        - apps/hdf5_mpi
+
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
+    - zlib-devel
+    - libcurl-devel
+    - m4
+:compile: |
+  export CFLAGS="${CFLAGS} <%= variant[:cflags] %>"
+  export LDFLAGS="${LDFLAGS} <%= variant[:ldflags] %>"
+  <%= variant[:buildvars] %> ./configure <%= variant[:buildargs] %> \
+    --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
