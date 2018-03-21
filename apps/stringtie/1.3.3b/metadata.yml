@@ -17,6 +17,9 @@
   programs (DESeq2, edgeR, etc.).
 :type: apps
 :group: Bioinformatics
+:dependencies:
+  - zlib-devel
+  - gcc-g++
 :changelog: |
   * Fri Dec 22 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com
     - First created
