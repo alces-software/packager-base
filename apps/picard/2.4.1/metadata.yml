@@ -1,0 +1,117 @@
+---
+:license: MIT License
+:summary: Command line tools for manipulating high-throughput sequencing (HTS) data and formats
+:url: https://github.com/broadinstitute/picard
+:description: |
+  Picard is a set of command line tools for manipulating
+  high-throughput sequencing (HTS) data and formats such as
+  SAM/BAM/CRAM and VCF. These file formats are defined in the
+  [Hts-specs repository]<http://samtools.github.io/hts-specs/>. See
+  especially the [SAM specification]<http://samtools.github.io/hts-specs/SAMv1.pdf> and
+  the [VCF specification]<http://samtools.github.io/hts-specs/VCFv4.3.pdf>.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jul 26 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v2.4.1 release
+  * Tue Apr 5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to include OS dependencies
+  * Thu Feb 25 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version 2.1.0
+    - Updated license, summary, url, description
+  * Mon Apr 27 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version 1.130
+  * Mon Apr 27 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.128
+  * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version 1.119
+  * Fri Dec 13 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version 1.104
+    - Detect available tools by glob rather than hard-coded list
+  * Wed Jul 05 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version 1.94
+    - Refactored to use wrapper script instead of aliases
+  * Wed Feb 20 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version 1.85
+  * Mon Feb 11 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add configuration for java.io.tmpdir
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.75
+    - Refactored to packager style
+  * Wed Oct 12 2011 Mark J. Titorenko
+    - First created
+:src: picard-tools-2.4.1.zip
+:src_dir: picard-tools-2.4.1
+:type: apps
+:version: '2.4.1'
+:compilers:
+  bin:
+:dependencies:
+  el:
+    - java-1.8.0-openjdk
+:compile: |
+  JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/jre-1.8.0}"
+  if [ ! -x ${JAVA_HOME}/bin/java ]; then
+     echo Java could not be found in ${JAVA_HOME}/bin/java. >/dev/stderr
+     echo Please set JAVA_HOME to point to JRE v1.8.0 or higher. >/dev/stderr
+     exit 1
+  fi
+  java_version=$(${JAVA_HOME}/bin/java -version 2>&1 | egrep "(openjdk|java) version" | cut -d'"' -f2)
+  java_major=$(echo "$java_version" | cut -d'.' -f1)
+  java_minor=$(echo "$java_version" | cut -d'.' -f2)
+  if [[ "$java_major" -eq "1" && "$java_minor" -lt "8" ]]; then
+    echo Java version is $java_version but Picard requires v1.8.0 to run. Please ensure a compatible version is installed. >/dev/stderr
+    exit 1
+  fi
+:install: |
+  JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/jre-1.8.0}"
+  mkdir -p <%= dest_dir %>/{java,bin,lib} <%= redirect(:install) %>
+  cp -rv *.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  # No .so files
+  #  install -D -m 0755 -v *.so <%= dest_dir %>/lib <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/picard
+  #!/bin/bash
+  n=$(basename $0)
+  if [ "$n" == 'picard' ]; then
+    n=$1
+    shift
+  fi
+  if [ -z "$n" ]; then
+    echo "Usage: $0 <application> [<parameters>]"
+  else
+    exec $PICARD_JAVA_HOME/bin/java `eval echo $PICARD_JAVA_OPTS` -jar "<%= dest_dir %>/java/picard.jar" "$n" "$@"
+  fi
+  exit 1
+  EOF
+  chmod 755 <%= dest_dir %>/bin/picard
+  cd <%= dest_dir %>/java
+  progs=$($JAVA_HOME/bin/java -jar "<%= dest_dir %>/java/picard.jar" 2>&1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | grep '^    [A-Z]' | cut -f5 -d' ' | xargs) || true
+  cd <%= dest_dir %>/bin
+  for a in $progs; do
+    ln -s picard $a
+  done
+  cd -
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  <% java_home = ENV['JAVA_HOME'] || '/usr/lib/jvm/jre-1.8.0' %>
+  setenv ${appcaps}_JAVA_HOME <%= java_home %>
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else { 
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}JAVA ${appdir}/java
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
