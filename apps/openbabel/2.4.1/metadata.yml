@@ -25,6 +25,7 @@
 :dependencies:
   :build:
     el:
+      - gcc-gfortran
       - wxGTK-devel
       - libxml2-devel
       - zlib-devel
