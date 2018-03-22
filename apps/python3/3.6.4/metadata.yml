@@ -106,6 +106,7 @@
   [install]
   prefix=~/gridware/share/python/<%= version %>
   EOF
+  find "<%= dest_dir %>" -name __pycache__ -exec rm -rfv {} ';' -prune <%= redirect(:prune_pyc) %>
 :module: |
   set python_user_libs $::env(HOME)/gridware/share/python/${version}/lib/python3.6/site-packages
   set python_user_bin $::env(HOME)/gridware/share/python/${version}/bin
