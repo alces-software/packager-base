@@ -1,0 +1,120 @@
+---
+:schema: 1
+:license: ECL 2.0
+:summary: Methods for computing the properties of molecular and periodic systems
+:url: http://www.nwchem-sw.org
+:description: |
+  NWChem provides many methods for computing the properties of
+  molecular and periodic systems using standard quantum mechanical
+  descriptions of the electronic wavefunction or density. Its
+  classical molecular dynamics capabilities provide for the simulation
+  of macromolecules and solutions, including the computation of free
+  energies using a variety of force fields. These approaches may be
+  combined to perform mixed quantum-mechanics and molecular-mechanics
+  simulations.
+:group: Chemistry
+:requirements:
+  :build:
+    - mpi/openmpi
+    - libs/atlas
+  :runtime:
+    - mpi/openmpi
+:changelog: |
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release v6.8
+  * Tue Jun 14 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Feb 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added compatibility with OpenMPI 1.8.x
+  * Mon Jun  3 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest release v6.3
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add workaround for NWCHEM_TOP exceeding nwchem's limit of 65 characters
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Mar 23 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: nwchem-6.8-release.revision-v6.8-47-gdf6c956-src.2017-12-14.tar.bz2
+:src_dir: nwchem-6.8
+:type: apps
+:version: '6.8'
+:dependencies:
+  el:
+    - gcc-gfortran
+    - openssh-clients
+    - openssh
+    - subversion
+:compilers:
+  gcc:
+    :compiler_env: 'FC=gfortran CC=gcc'
+:compile: |
+  export LARGE_FILES=TRUE
+  export USE_NOFSCHECK=TRUE
+  export NWCHEM_BUILDDIR=/tmp/nwchem.$$
+  mkdir $NWCHEM_BUILDDIR
+  export NWCHEM_TOP=$NWCHEM_BUILDDIR/nwchem-<%= version %>
+  (cd .. && ln -s <%= src_dir %> $NWCHEM_BUILDDIR/nwchem-<%= version %>)
+  export NWCHEM_MODULES=all
+  export NWCHEM_TARGET=LINUX64
+
+  export BLASOPT="-L$ATLASLIB -lf77blas -latlas"
+
+  export USE_MPI=y
+  export USE_MPIF=y
+  export USE_MPIF4=y
+
+  cd src
+  make nwchem_config <%= redirect(:configure) %>
+  make <%= compiler[:compiler_env] %> <%= redirect(:make) %>
+  cd ..
+  rm $NWCHEM_BUILDDIR/nwchem-<%= version %>
+  rmdir $NWCHEM_BUILDDIR
+  cat > default.nwchemrc <<\EOT
+  nwchem_basis_library <%= dest_dir %>/data/libraries/
+  nwchem_nwpw_library <%= dest_dir %>/data/libraryps/
+  ffield amber
+  amber_1 <%= dest_dir %>/data/amber_s/
+  amber_2 <%= dest_dir %>/data/amber_q/
+  amber_3 <%= dest_dir %>/data/amber_x/
+  amber_4 <%= dest_dir %>/data/amber_u/
+  spce    <%= dest_dir %>/data/solvents/spce.rst
+  charmm_s <%= dest_dir %>/data/charmm_s/
+  charmm_x <%= dest_dir %>/data/charmm_x/
+  EOT
+  cat > README.alces.txt <<\EOT
+  ----------------------------------------------------
+  NWChem: notes for Alces Software HPC Stack for Linux
+  ----------------------------------------------------
+
+  As explained at http://www.nwchem-sw.org/index.php/Compiling_NWChem,
+  each user will need a .nwchemrc file to point to default data
+  files. A global rc file is provided in the data/ subdirectory and
+  users should either create a symbolic link within their $HOME
+  directory, or copy this file to allow them to change the defaults at
+  their discretion.
+
+  Therefore, users should issue one of the following commands prior to
+  using NWChem:
+
+    1. ln -s <%= dest_dir %>/data/default.nwchemrc $HOME/.nwchemrc
+    2. cp <%= dest_dir %>/data/default.nwchemrc $HOME/.nwchemrc
+
+  EOT
+:install: |
+  cp -r bin/LINUX64 <%= dest_dir %>/bin
+  mkdir <%= dest_dir %>/doc
+  cp LICENSE.TXT release* <%= dest_dir %>/doc
+  cp -r lib/LINUX64 <%= dest_dir %>/lib
+  cp -r QA contrib examples <%= dest_dir %>
+  mkdir <%= dest_dir %>/data
+  cp -r src/basis/libraries src/data/* src/nwpw/libraryps default.nwchemrc <%= dest_dir %>/data
+  cp README.alces.txt <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
