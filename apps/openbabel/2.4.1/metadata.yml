@@ -30,7 +30,7 @@
       - zlib-devel
       - cairo-devel
       - perl-devel
-      - gsl-deve
+      - gsl-devel
   :runtime:
     el:
       - wxGTK
