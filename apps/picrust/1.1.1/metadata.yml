@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: picrust
+:license: GPLv3+
+:summary: Phylogenetic Investigation of Communities by Reconstruction of Unobserved States 
+:url: http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html
+:description: |
+  The PICRUSt project aims to support prediction of the unobserved character states 
+  in a community of organisms from phylogenetic information about the organisms in 
+  that community. The primary application is to predict gene family abundance (e.g. 
+  the metagenome) in environmental DNA samples for which only marker gene (e.g. 16S 
+  rRNA gene) data are available. This is an open source, international, 
+  collaborative bioinformatics project developed in the Huttenhower, Beiko, Langille, 
+  Vega Thurber, Knight and Caporaso labs.
+:group: Bioinformatics
+:changelog: |
+  * Mon Apr 18 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Mon Jul 25 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v0.6.1p1
+  * Mon Jun 24 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest v0.5.4p2
+  * Tue Nov 27 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: picrust-1.1.1.tar.gz 
+:src_dir: picrust-1.1.1
+:sources:
+  - ko_13_5_precalculated.tab.gz
+  - 16S_13_5_precalculated.tab.gz
+:type: apps
+:version: '1.1.1'
+:requirements:
+  :build:
+    - libs/numpy
+    - apps/setuptools
+    - libs/biomformat
+    - apps/pycogent
+  :runtime:
+    - libs/numpy
+    - apps/setuptools
+    - libs/biomformat
+    - apps/pycogent
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  mkdir -p picrust/data
+  cp <%= source('ko_13_5_precalculated.tab.gz') %> picrust/data
+  cp <%= source('16S_13_5_precalculated.tab.gz') %> picrust/data
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH="$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages"
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
