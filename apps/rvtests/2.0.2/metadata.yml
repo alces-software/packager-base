@@ -27,6 +27,7 @@
   :build:
     el:
       - gcc-c++
+      - gcc-gfortran
       - zlib-devel
       - libstdc++-static
       - glibc-static
