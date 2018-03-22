@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: rvtests
+:license: GPLv3
+:summary: Use multiple regression methods to test rare variants association with disease traits.
+:url: https://github.com/zhanxw/rvtests
+:description: |
+  Rvtests, which stands for Rare Variant tests, is a flexible software package for
+  genetic association studies. It is designed to support unrelated individual or
+  related (family-based) individuals. Both quantitative trait and binary trait are
+  supported. It includes a variety of association tests (e.g. single variant score
+  test, burden test, variable threshold test, SKAT test, fast linear mixed model
+  score test). It takes VCF format as genotype input file and takes PLINK format
+  phenotype file and covariate file. From our practice, it is capable to analyze
+  8,000 related individuals using less than 400 Mb memory.
+:group: Bioinformatics
+:changelog: |
+  * Fri 28 Apr 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v2.0.2.tar.gz
+:src_dir: rvtests-2.0.2
+:type: apps
+:version: '2.0.2'
+:compilers:
+  gcc:
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - gcc-gfortran
+      - zlib-devel
+      - libstdc++-static
+      - glibc-static
+  :runtime:
+    el:
+      - zlib
+:compile: |
+  export LDFLAGS="$LDFLAGS -L/usr/lib64"
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  mv executable/* <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
