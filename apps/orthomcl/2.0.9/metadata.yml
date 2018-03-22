@@ -1,0 +1,27 @@
+---
+:schema: 1
+:title: orthomcl
+:license: GPL
+:summary: Ortholog Groups of Protein Sequences 
+:url: http://orthomcl.org/orthomcl/ 
+:description: |
+  Ortholog Groups of Protein Sequences
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb  9 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: orthomclSoftware-v2.0.9.tar.gz
+:src_dir: orthomclSoftware-v2.0.9
+:version: '2.0.9'
+:compilers:
+  noarch:
+:compile: |
+  #noop - script distribution
+:install: |
+  cp -Rv * <%= dest_dir %>/.
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
