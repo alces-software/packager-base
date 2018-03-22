@@ -26,6 +26,7 @@
 :dependencies:
   :build:
     el:
+      - gcc-c++
       - zlib-devel
       - libstdc++-static
       - glibc-static
