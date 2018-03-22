@@ -30,6 +30,7 @@
       - zlib-devel
       - cairo-devel
       - perl-devel
+      - gsl-deve
   :runtime:
     el:
       - wxGTK
@@ -37,6 +38,7 @@
       - cairo
       - libxml2
       - perl
+      - gsl
 :src: openbabel-2.4.1.tar.gz
 :type: apps
 :version: '2.4.1'
