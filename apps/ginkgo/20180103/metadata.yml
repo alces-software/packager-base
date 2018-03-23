@@ -1,0 +1,72 @@
+---
+:schema: 1
+:license: BSD License
+:title: Ginkgo
+:summary: Standalone single-cell copy-number variation analysis tool
+:url: https://github.com/robertaboukhalil/ginkgo
+:description: |
+  Ginkgo is a cloud-based single-cell copy-number variation analysis
+  tool.  This package is a standalone version.
+:group: Bioinformatics
+:changelog: |
+  * Tue Jan 30 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: 9ad3be49b0bd6247b659d021951a4d8526260048.zip
+:src_dir: ginkgo-9ad3be49b0bd6247b659d021951a4d8526260048
+:sources:
+  - hg19.original.tar.gz
+:type: apps
+:version: '20180103'
+:dependencies:
+  :build:
+    el:
+      - openssl-devel
+      - zlib-devel
+      - libcurl-devel
+  :runtime:
+    el:
+      - openssl
+      - zlib
+      - libcurl
+:requirements:
+  :runtime:
+    - apps/R >= 3.0.0
+    - libs/bioconductor
+  :build:
+    - apps/R >= 3.0.0
+    - libs/bioconductor
+:compilers:
+  gcc:
+:compile: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  cat <<EOF | R --no-save <%= redirect(:rlibs) %>
+  require("BiocInstaller")
+  biocLite(c("ctc","DNAcopy"), suppressUpdates=TRUE, suppressAutoUpdate=TRUE, lib="<%= dest_dir %>/R")
+  local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+  install.packages(c('devtools','inline', 'gplots', 'scales', 'plyr', 'ggplot2', 'gridExtra', 'fastcluster', 'heatmap3'), "<%= dest_dir %>/R")
+  remove.packages('gplots');
+  library('devtools');
+  install_github("ChristophH/gplots")
+  EOF
+  make <%= redirect(:compile) %>
+  sed -i -e 's,/local1/work/ginkgo,<%= dest_dir %>,g' scripts/analyze.sh
+  sed -i -e 's,^dir=.*,dir=$HOME/ginkgo/${1},g' scripts/analyze.sh
+  sed -i -e 's,^main_dir=.*,main_dir="<%= dest_dir %>/scripts",g' scripts/process.R scripts/reclust.R
+:install: |
+  cp -Rv cli genomes scripts <%= dest_dir %>
+  mkdir -p <%= dest_dir %>/{doc,bin,etc,genomes/hg19/original}
+  cp -Rv config.example <%= dest_dir %>/etc
+  cp -Rv README.* LICENSE <%= dest_dir %>/doc
+  ln -s <%= dest_dir %>/scripts/analyze.sh <%= dest_dir %>/bin/analyze.sh
+  tar -C <%= dest_dir %>/genomes/hg19/original -xzf <%= source('hg19.original.tar.gz') %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}R ${appdir}/R
+
+  prepend-path R_LIBS_SITE ${appdir}/R
+
+  prepend-path PATH ${appdir}/bin
