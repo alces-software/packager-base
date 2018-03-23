@@ -1,0 +1,14 @@
+--- setup.py.orig	2017-07-27 01:46:41.000000000 +0000
++++ setup.py	2018-03-23 12:37:55.226892510 +0000
+@@ -30,11 +30,9 @@
+     kwargs = dict(
+         setup_requires=[
+               'Cython',
+-              'numpy',
+               'pysam>=0.9.0',
+         ],
+         install_requires=[
+-            'numpy',
+             'pysam>=0.9.0',
+         ],
+         extras_require={
