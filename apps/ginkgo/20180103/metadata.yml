@@ -20,7 +20,7 @@
 :dependencies:
   :build:
     el:
-      - curl-devel
+      - libcurl-devel
 :requirements:
   :runtime:
     - apps/R >= 3.0.0
