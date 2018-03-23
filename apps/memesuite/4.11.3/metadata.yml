@@ -1,0 +1,106 @@
+---
+:schema: 1
+:title: MEME Suite
+:license: NONFREE - Non-commercial use only; see http://meme.nbcr.net/meme/COPYRIGHT.html
+:summary: Motif-based sequence analysis tools
+:url: http://meme-suite.org/
+:description: |
+  The MEME Suite allows the biologist to discover novel motifs in
+  collections of unaligned nucleotide or protein sequences, and to
+  perform a wide variety of other motif-based analyses.
+
+  The MEME Suite supports motif-based analysis of DNA, RNA and protein
+  sequences. It provides motif discovery algorithms using both
+  probabilistic (MEME) and discrete models (MEME), which have
+  complementary strengths. It also allows discovery of motifs with
+  arbitrary insertions and deletions (GLAM2). In addition to motif
+  discovery, the MEME Suite provides tools for scanning sequences for
+  matches to motifs (FIMO, MAST and GLAM2Scan), scanning for clusters
+  of motifs (MCAST), comparing motifs to known motifs (Tomtom),
+  finding preferred spacings between motifs (SpaMo), predicting the
+  biological roles of motifs (GOMo), measuring the positional
+  enrichment of sequences for known motifs (CentriMo), and analyzing
+  ChIP-seq and other large datasets (MEME-ChIP).
+:group: Bioinformatics
+:changelog: |
+  * Mon Mar 20 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v4.11.3_1 version
+  * Tue Jul 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v4.11.2_1 version
+  * Tue Jun 21 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Remove hard-coded path to mpirun from mpi variant
+  * Thu May 19 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Prepend to PERL5LIB during compile, don't override entirely
+  * Wed Apr 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest v4.11.1
+  * Tue Sep  2 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: meme_4.11.3_1.tar.gz
+:sources:
+  - motif_databases.12.12.tgz
+  - gomo_databases.3.2.tgz
+:src_dir: meme_4.11.3
+:type: apps
+:version: '4.11.3'
+:variants:
+  default:
+  mpi:
+    :requirements:
+      - mpi/openmpi
+:requirements:
+  :tool:
+    - apps/cpanminus
+  :build:
+    - apps/perl ~> 5.10
+    - apps/python ~> 2.6
+  :runtime:
+    - apps/perl ~> 5.10
+    - apps/python ~> 2.6
+:dependencies:
+  el:
+    - expat-devel
+    - zlib-devel
+    - ImageMagick
+    - autoconf
+    - automake
+    - libtool
+    - libxml2-devel
+    - libxslt-devel
+:compilers:
+  gcc:
+:perl_reqs:
+  - HTML::PullParser
+  - HTML::Template
+  - XML::Simple
+  - XML::Parser::Expat
+:compile: |
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5:$PERL5LIB"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in <%= package.perl_reqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  tar xzf <%= source('motif_databases.12.12.tgz') %>
+  tar xzf <%= source('gomo_databases.3.2.tgz') %>
+  cp motif_databases/motif_db.csv etc
+  cp gomo_databases/gomo_db.csv etc
+  ./configure --with-url="http://meme-suite.org" \
+    --prefix="<%= dest_dir %>" <%= redirect(:configure) %>
+  <% if variant_name == 'mpi' %>
+  sed -i -e 's/^MPI\(.*\) = .*mpirun/MPI\1 = mpirun/g' $(find . | grep Makefile$)
+  <% end %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cp -Rv motif_databases <%= dest_dir %>/db <%= redirect(:install) %>
+  cp -Rv gomo_databases <%= dest_dir %>/db <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv MEME_ETC_DIR ${appdir}/etc
+  setenv MEME_BIN_DIR ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+
+  prepend-path PATH ${appdir}/bin
