@@ -1,0 +1,57 @@
+---
+:schema: 1
+:title: wxGTK
+:license: OTHER - wxWindows Library Licence
+:summary: Cross-Platform GUI Library
+:url: https://www.wxwidgets.org/
+:description: |
+  wxWidgets gives you a single, easy-to-use API for writing GUI
+  applications on multiple platforms that still utilize the native
+  platform’s controls and utilities. Link with the appropriate library
+  for your platform and compiler, and your application will adopt the
+  look and feel appropriate to that platform. On top of great GUI
+  functionality, wxWidgets gives you: online help, network
+  programming, streams, clipboard and drag and drop, multithreading,
+  image loading and saving in a variety of popular formats, HTML
+  viewing and printing, and much more.
+:group: Libraries
+:changelog: |
+  * Fri Mar 23 2018 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: wxGTK-2.8.12.tar.gz
+:src_dir: wxGTK-2.8.12
+:type: libs
+:version: '2.8.12'
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - zlib-devel
+      - libpng-devel
+      - libtiff-devel
+      - libjpeg-turbo-devel
+      - pcre-devel
+      - gtk2-devel
+  :runtime:
+    el:
+      - zlib
+      - libtiff
+      - libpng
+      - libjpeg-turbo
+      - pcre
+      - gtk2
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
