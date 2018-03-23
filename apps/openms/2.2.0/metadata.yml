@@ -1,0 +1,165 @@
+---
+:schema: 1
+:title: OpenMS
+:license: BSD License
+:summary: LC/MS data management and analyses
+:url: http://open-ms.sourceforge.net/
+:description: |
+  OpenMS is an open-source software C++ library for LC/MS data
+  management and analyses. It offers an infrastructure for the rapid
+  development of mass spectrometry related software.
+
+  It comes with a vast variety of pre-built and ready-to-use tools for
+  proteomics and metabolomics data analysis (TOPPTools) and powerful
+  2D and 3D visualization(TOPPView).
+
+  OpenMS offers analyses for various quantitation protocols, including
+  label-free quantitation, SILAC, iTRAQ, SRM, SWATH, ...
+
+  It provides built-in algorithms for de-novo identification and
+  database search, as well as adapters to other state-of-the art tools
+  like XTandem, Mascot, OMSSA, etc.
+
+  It supports easy integration of OpenMS built tools into workflow
+  engines like Knime, Galaxy, WS-Pgrade, and TOPPAS via the TOPPtools
+  concept and a unified parameter handling (CTD).
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep  7 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v2.2.0 version
+  * Tue Jul  5 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added patch to fix python variant
+  * Fri Jun 17 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated distro dependencies for EL, download links and compatibility with EL7
+    - Added libsvm and qt as build dependencies
+  * Thu Apr 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, v2.0.0
+  * Wed Mar 25 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: OpenMS-2.2.0-src.tar.gz
+:src_dir: OpenMS-2.2.0
+:sources:
+  - glpk-4.46.tar.gz
+  - WildMagic5.tar.gz
+:variants:
+  default:
+  python:
+    :requirements:
+      :build:
+        - apps/python >= 2.6.0
+        - libs/numpy
+        - apps/cython >= 0.19
+:requirements:
+  :tool:
+    - apps/cmake
+    - apps/setuptools
+  :build:
+    - libs/boost >= 1.46.0
+    - libs/eigen ~> 3.2.0
+    - libs/seqan >= 1.4.0
+    - libs/libsvm
+    - libs/qt ~> 4.8.4
+  :runtime:
+    - libs/boost >= 1.46.0
+    - libs/libsvm
+    - libs/qt ~> 4.8.4
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libtool
+      - gsl-devel
+      - zlib-devel
+      - bzip2-devel
+      - xerces-c-devel
+  :runtime:
+    el:
+      - gsl
+      - zlib
+      - bzip2-libs
+      - xerces-c
+:version: '2.0.1'
+:compilers:
+  gcc:
+:compile: |
+  <% if variant_name == 'python' %>
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR nose autowrap distribute wheel <%= redirect(:python) %>
+  <% end %>
+
+  cd contrib
+  mkdir archives
+  cp <%= source('glpk-4.46.tar.gz') %> archives
+  cmake -DBUILD_TYPE=GLPK . <%= redirect(:cmake_contrib) %>
+  cp <%= source('WildMagic5.tar.gz') %> archives
+  cmake -DBUILD_TYPE=WILDMAGIC . <%= redirect(:cmake_contrib) %>
+  cmake -DBUILD_TYPE=COINOR . <%= redirect(:cmake_contrib) %>
+  if [ "$cw_DIST" == "el6" ]; then
+    # Requires 3.1.1 and EL6 only provides 3.0.1
+    cmake -DBUILD_TYPE=XERCESC . <%= redirect(:cmake_contrib) %>
+  fi
+  cd ..
+
+  mkdir build
+  cd build
+
+  # Put eigen3 in a place the OpenMS build system likes more
+  cp -R $EIGENINCLUDE eigen3
+  cp -R $EIGENINCLUDE eigen3/eigen3
+
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DBOOST_ROOT:PATH=$BOOSTDIR \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DQT_QMAKE_EXECUTABLE=$QTBIN/qmake \
+    -DQT_MOC_EXECUTABLE=$QTBIN/moc \
+    -DQT_RCC_EXECUTABLE=$QTBIN/rcc \
+    -DSEQAN_INCLUDE_DIR=$SEQANINCLUDE \
+    -DEIGEN3_INCLUDE_DIR=$(pwd)/eigen3 \
+    -DQT_INCLUDE_DIR=$QTINCLUDE \
+    -DBOOST_USE_STATIC=OFF \
+    -DHAS_XSERVER=OFF \
+    -DWITH_GUI=OFF \
+    -DPYOPENMS=<%= variant_name == 'python' ? 'ON' : 'OFF' %> \
+    -DOPENMS_CONTRIB_LIBS=$(pwd)/../contrib \
+    .. <%= redirect(:configure) %>
+
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:compile) %>
+
+  <% if variant_name == 'python' %>
+  rm -f ../src/pyOpenMS/pxds/ConsensusID.pxd
+  make -j ${GRIDWARE_MAKE_THREADS:-1} pyopenms <%= redirect(:compile) %>
+  <% end %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+
+  <% if variant_name == 'python' %>
+  export PYTHONDONTWRITEBYTECODE=true
+  cd ..
+  PYTHONDEPSDIR=$(pwd)/python
+  cd build/pyOpenMS
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages
+
+  cp -Rv $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages <%= redirect(:install) %>
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  <% end %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+  <% if variant_name == 'python' %>
+  setenv ${appcaps}PYTHON ${appdir}/python
+  <% end %>
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  <% if variant_name == 'python' %>
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  <% end %>
+
+  prepend-path PATH ${appdir}/bin
