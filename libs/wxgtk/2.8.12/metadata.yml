@@ -30,6 +30,7 @@
       - libtiff-devel
       - libjpeg-turbo-devel
       - pcre-devel
+      - gtk2-devel
   :runtime:
     el:
       - zlib
@@ -37,6 +38,7 @@
       - libpng
       - libjpeg-turbo
       - pcre
+      - gtk2
 :compilers:
   gcc:
 :compile: |
