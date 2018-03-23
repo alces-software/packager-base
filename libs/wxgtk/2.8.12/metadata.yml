@@ -25,6 +25,7 @@
 :dependencies:
   :build:
     el:
+      - gcc-c++
       - zlib-devel
       - libpng-devel
       - libtiff-devel
