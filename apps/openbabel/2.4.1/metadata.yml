@@ -11,7 +11,7 @@
   or related areas.
 :requirements:
   :tool: apps/cmake
-  :build: libs/eigen ~> 3.0.0
+  :build: libs/eigen >= 2.0.0
 :group: Chemistry
 :changelog: |
   * Thu Feb 20 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -25,13 +25,11 @@
 :dependencies:
   :build:
     el:
-      - gcc-gfortran
       - wxGTK-devel
       - libxml2-devel
       - zlib-devel
       - cairo-devel
       - perl-devel
-      - gsl-devel
   :runtime:
     el:
       - wxGTK
@@ -39,7 +37,6 @@
       - cairo
       - libxml2
       - perl
-      - gsl
 :src: openbabel-2.4.1.tar.gz
 :type: apps
 :version: '2.4.1'
