@@ -17,6 +17,10 @@
   - hg19.original.tar.gz
 :type: apps
 :version: '20180103'
+:dependencies:
+  :build:
+    el:
+      - curl-devel
 :requirements:
   :runtime:
     - apps/R >= 3.0.0
