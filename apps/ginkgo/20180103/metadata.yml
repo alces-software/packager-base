@@ -22,10 +22,12 @@
     el:
       - openssl-devel
       - zlib-devel
+      - libcurl-devel
   :runtime:
     el:
       - openssl
       - zlib
+      - libcurl
 :requirements:
   :runtime:
     - apps/R >= 3.0.0
