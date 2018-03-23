@@ -1,0 +1,72 @@
+---
+:schema: 1
+:title: Genome Analysis Toolkit
+:license: BSD License
+:summary: Software package developed at the Broad Institute to analyse next-generation resequencing data
+:url: http://www.broadinstitute.org/gatk/index.php
+:description: |
+  The Genome Analysis Toolkit or GATK is a software package developed
+  at the Broad Institute to analyse next-generation resequencing
+  data. The toolkit offers a wide variety of tools, with a primary
+  focus on variant discovery and genotyping as well as strong emphasis
+  on data quality assurance. Its robust architecture, powerful
+  processing engine and high-performance computing features make it
+  capable of taking on projects of any size.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Mar 23 2018 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated wrapper script and tool symlink generation for 4.x
+  * Thu Feb  8 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to 4.0.1.1 stable release
+  * Fri Dec 15 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com
+    - Updated to 4.beta.6 and moved to apps since software is now FOSS - hooray!
+  * Fri Apr 11 2014 James Donohue <james.donohue@alces-software.com>
+    - Updated for 3.x series
+  * Mon Nov 18 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Converted to generic package installer for 2.x series GATK
+  * Tue Oct  1 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.7.2
+  * Fri Jun 28 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.6.4
+  * Tue May 21 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.5.2
+  * Tue Mar  6 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.4.7
+  * Mon Mar  4 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 2.4.3
+    - Modified to use script wrappers rather than aliases
+  * Thu Feb 22 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.3.9
+  * Fri Nov 22 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: gatk-4.0.1.1.zip
+:src_dir: .
+:version: 4.0.1.1
+:type: apps
+:compilers:
+  noarch:
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/bin
+  cp -v <%= source('gatk-wrapper.sh') %> <%= dest_dir %>/bin/gatk <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/gatk
+  ln -s gatk <%= dest_dir %>/bin/GenomeAnalysisTK
+
+  # Create symlinks to wrapper script for all available commands
+  export GATKDIR=<%= dest_dir %>
+  for a in $(<%= dest_dir %>/bin/gatk --list 2>/dev/null | \
+    sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | \
+    grep '^    [A-Z]' | cut -f5 -d' ' | xargs); do
+    ln -s gatk <%= dest_dir %>/bin/gatk_$a
+  done
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR"
+
+  prepend-path PATH ${appdir}/bin
