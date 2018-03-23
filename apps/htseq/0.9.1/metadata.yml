@@ -51,6 +51,7 @@
   el:
     - gcc-c++
     - bzip2-devel
+    - xz-devel
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
   mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
