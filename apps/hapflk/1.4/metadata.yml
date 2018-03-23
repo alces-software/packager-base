@@ -1,0 +1,73 @@
+---
+:schema: 1
+:title: hapflk
+:license: GPLv3
+:summary: Haplotype-based test for differentiation in multiple populations
+:url: https://forge-dga.jouy.inra.fr/projects/hapflk
+:description: |
+  hapflk is a software implementing the hapFLK and FLK tests for the
+  detection of selection signatures based on multiple population
+  genotyping data.
+:group: Bioinformatics
+:changelog: |
+  * Wed Nov 08 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v1.4 version
+  * Tue Dec 06 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Thu Jun 05 2014 Ben Armston <ben.armston@alces-software.com>
+    - Install R libraries ape and phangorn
+  * Fri May 30 2014 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: hapflk-1.4.tar.gz
+:src_dir: hapflk-1.4
+:type: apps
+:version: '1.4'
+:requirements:
+  :runtime:
+    - apps/python ~> 2.7.3
+    - apps/setuptools
+    - libs/numpy
+    - libs/scipy
+    - apps/R
+  :build:
+    - apps/python ~> 2.7.3
+    - apps/setuptools
+    - libs/numpy
+    - libs/scipy
+    - apps/R
+:compilers:
+  gcc:
+:sources:
+  - hapflk.sh.md
+  - hapflk.sh.tpl
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages/:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
+  python setup.py build <%= redirect(:build) %>
+
+  # Install R packages
+  export R_LIBS="<%= dest_dir %>/R"
+  mkdir -p $R_LIBS
+  R CMD BATCH <(cat <<EOF
+    local({r <- getOption("repos"); r["CRAN"] <- "http://cran.ma.imperial.ac.uk"; options(repos=r)})
+    install.packages("ape",     "<%= dest_dir %>/R")
+    install.packages("phangorn","<%= dest_dir %>/R")
+  EOF) <%= redirect(:rlibs) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=<%= dest_dir %>/python/lib/python2.7/site-packages/:$PYTHONPATH
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  append-path  R_LIBS_SITE ${appdir}/R
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
