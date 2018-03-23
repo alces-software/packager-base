@@ -20,7 +20,7 @@
 :dependencies:
   :build:
     el:
-      - operssl-devel
+      - openssl-devel
       - zlib-devel
   :runtime:
     el:
