@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: GPL
+:summary: A chemical toolbox designed to speak the many languages of chemical data
+:url: http://openbabel.org/
+:description: |
+  Open Babel is a chemical toolbox designed to speak the many
+  languages of chemical data. It’s an open, collaborative project
+  allowing anyone to search, convert, analyze, or store data from
+  molecular modeling, chemistry, solid-state materials, biochemistry,
+  or related areas.
+:requirements:
+  :tool: apps/cmake
+  :build: 
+    - libs/eigen >= 2.0.0
+    - libs/wxgtk
+  :runtime:
+    - libs/wxgtk
+:group: Chemistry
+:changelog: |
+  * Thu Feb 20 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Update to latest v2.4.1
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use EIGENINCLUDE rather than EIGEN2INCLUDE
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Jun 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:dependencies:
+  :build:
+    el:
+      - libxml2-devel
+      - zlib-devel
+      - cairo-devel
+      - perl-devel
+      - python-devel
+  :runtime:
+    el:
+      - zlib
+      - cairo
+      - libxml2
+      - perl
+      - python
+:src: openbabel-2.4.1.tar.gz
+:type: apps
+:version: '2.4.1'
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DBUILD_GUI=ON \
+        -DPYTHON_BINDINGS=ON \
+        -DPERL_BINDINGS=ON \
+        -DEIGEN3_INCLUDE_DIR=$EIGENINCLUDE \
+        -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+        .. <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
