@@ -20,7 +20,12 @@
 :dependencies:
   :build:
     el:
-      - libcurl-devel
+      - operssl-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - openssl
+      - zlib
 :requirements:
   :runtime:
     - apps/R >= 3.0.0
