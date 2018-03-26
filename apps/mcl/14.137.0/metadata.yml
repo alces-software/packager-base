@@ -1,0 +1,37 @@
+---
+:schema: 1
+:title: MCL
+:license: GPLv3
+:summary: A fast and scalable unsupervised cluster algorithm for graphs
+:url: https://www.micans.org/mcl
+:description: |
+  The MCL algorithm is short for the Markov Cluster Algorithm, a fast
+  and scalable unsupervised cluster algorithm for graphs (also known
+  as networks) based on simulation of (stochastic) flow in graphs. The
+  algorithm was invented/discovered by Stijn van Dongen at the Centre
+  for Mathematics and Computer Science (also known as CWI) in the
+  Netherlands.
+:group: Mathematics
+:changelog: |
+  * Mon Mar 26 2018 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mcl-14-137.tar.gz
+:src_dir: mcl-14-137
+:type: apps
+:version: '14.137.0'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}MAN ${appdir}/share/man
+  setenv ${appcaps}DOC ${appdir}/share/doc/mcl
+
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
