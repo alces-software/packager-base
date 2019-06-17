@@ -20,7 +20,7 @@
     * dynamic C code generation – Evaluate expressions faster.
     * extensive unit-testing and self-verification – Detect and
       diagnose many types of errors.
-:group: Libraries
+:group: Machine Learning
 :changelog: |
   * Fri Apr  1 2016 -  Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
