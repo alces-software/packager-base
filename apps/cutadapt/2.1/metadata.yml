@@ -1,0 +1,61 @@
+---
+:schema: 1
+:title: cutadapt
+:license: MIT License
+:summary: A tool that removes adapter sequences from DNA sequencing reads
+:url: http://code.google.com/p/cutadapt/
+:description: |
+  cutadapt removes adapter sequences from high-throughput sequencing
+  data. This is usually necessary when the read length of the
+  sequencing machine is longer than the molecule that is sequenced,
+  for example when sequencing microRNAs.
+:group: Bioinformatics
+:changelog: |
+  * Mon 17 Jun 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Update to v2.1
+  * Thu 16 Jun 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Apr  9 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 1.8
+  * Mon Feb  2 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version 1.7.1
+  * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Updated to latest version 1.5
+  * Tue Oct 30 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: cutadapt-2.1.tar.gz
+:src_dir: cutadapt-2.1
+:type: apps
+:version: '2.1'
+:requirements:
+  :tool:
+    - apps/setuptools_python34 >= 39.0
+  :build:
+    - apps/python3 ~> 3.4.0
+  :runtime: 
+    - apps/python3 ~> 3.4.0
+:compilers:
+  gcc:
+:compile: |
+  python3 setup.py build <%= redirect(:build) %>
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR xopen dnaio <%= redirect(:python) %>
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  PYTHONPATH=<%= dest_dir %>/python/lib/python3.4/site-packages
+  mkdir -p <%= dest_dir %>/python/lib/python3.4/site-packages
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python3.4/site-packages <%= redirect(:install) %>
+  python3 setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  # XXX - Should probably 'env' the hashbang in the scripts, but we
+  # don't in other places at the moment, so we don't here, for
+  # consistency.
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python3.4/site-packages
