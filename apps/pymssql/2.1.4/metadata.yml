@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: pymssql
+:license: GNU GPL 
+:summary: A simple database interface for Python that builds on top of FreeTDS
+:url: https://github.com/pymssql/pymssql 
+:description: |
+  A simple database interface for Python that builds on top of FreeTDS
+:group: Tool
+:changelog: |
+  * Wed Dec 19 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: pymssql-2.1.4.tar.gz 
+:type: apps
+:version: '2.1.4'
+:requirements:
+  :build:
+    - apps/python/2.7.8
+    - apps/cython/0.27.3
+    - apps/setuptools
+    - libs/freetds/0.95
+  :runtime:
+    - apps/python/2.7.8
+    - apps/cython/0.27.3
+    - apps/setuptools
+    - libs/freetds/0.95
+:compilers:
+  gcc:
+:patches:
+  - setup.py.patch 
+:compile: |
+  export PYMSSQL_BUILD_WITH_BUNDLED_FREETDS=1
+  python setup.py build <%= redirect(:build) %>
+:install: |
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages
+  mkdir -p <%= dest_dir %>/lib
+  export PYTHONPATH=<%= dest_dir %>/python:$PYTHONPATH:$PYTHONDEPSDIR
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py install --install-lib <%= dest_dir %>/python <%= redirect(:install) %>
+  python setup.py install_lib --install-dir <%= dest_dir %>/lib <%= redirect(:install_lib) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+

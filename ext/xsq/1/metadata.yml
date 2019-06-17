@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: SOLiD System XSQ Tools
+:license: NONFREE - Proprietary Commercial
+:summary: A set of utilities for XSQ file format conversions
+:url: http://www.lifetechnologies.com/uk/en/home/technical-resources/software-downloads/xsq-software.html
+:description: |
+  The XSQ Tools project contains a set of utilities for XSQ file
+  format conversions. Currently, this includes conversion from
+  CSFASTA+QUAL to XSQ, conversion from XSQ to CSFASTA+QUAL, conversion
+  to FASTQ, and splitting an XSQ file by its constituent libraries.
+:group: Bioinformatics
+:changelog: |
+  * Fri Dec 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: XSQ_Tools.tar.gz
+:src_dir: XSQ_Tools
+:type: ext
+:pkg_type: apps
+:compilers:
+  bin:
+:params:
+  :tarball: "Path or URL to XSQ Tools tarball in tar.gz format (pass 'skip' to use an existing download)"
+:prepare: |
+  <% if param('tarball') == 'skip' %>
+    exit 0
+  <% elsif URI.parse(param('tarball')).scheme.nil? %>
+    cp <%= param('tarball') %> <%= source('XSQ_Tools.tar.gz') %>
+  <% else %>
+    wget -O <%= source('XSQ_Tools.tar.gz') %> <%= param('tarball') %>
+  <% end %>
+:analyse: |
+  version=$(bin/xsqconvert -v | awk '{print $4}')
+  cat <<-EOF
+    :version: '$version'
+  EOF
+:install: |
+  mkdir -p <%= dest_dir %>/lib
+  cp -av lib/libCentOS5/* <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -av bin *.sh data jar scripts xsqreindexer XSQ* <%= dest_dir %>
+  chown -R $(id -u -n):$(id -g -n) <%= dest_dir %>
+  find <%= dest_dir %> -type f -exec 'chmod 644 {};'
+  find <%= dest_dir %> -type d -exec 'chmod 755 {};'
+:modules:
+   - :type: apps
+     :content: |
+       setenv ${appcaps}DIR ${appdir}
+       setenv ${appcaps}BIN ${appdir}/bin
+       setenv ${appcaps}LIB ${appdir}/lib
+
+       prepend-path LD_LIBRARY_PATH ${appdir}/lib
+       prepend-path PATH ${appdir}/scripts
+       prepend-path PATH ${appdir}/bin
+       prepend-path PATH ${appdir}

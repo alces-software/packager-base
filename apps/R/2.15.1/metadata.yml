@@ -51,6 +51,7 @@
   ./configure --with-blas=$BLASDIR/libblas.a \
               --with-lapack=$LAPACKDIR/liblapack.a \
               --prefix=<%= dest_dir %> \
+              --with-x=no \
               --enable-R-shlib \
               --enable-BLAS-shlib <%= redirect(:configure) %>
   make <%= redirect(:make) %>

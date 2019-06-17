@@ -36,9 +36,14 @@
   :build: 
     - mpi/openmpi
     - apps/python
+:patches:
+  - libstdcpp3.hpp.patch
 :compilers:
   gcc:
 :compile: |
+  for a in $(grep -ilr TIME_UTC .); do
+    sed -i 's/TIME_UTC/TIME_UTC_/g' $a
+  done
   ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   echo "using mpi ;" >> project-config.jam
   ./bjam stage <%= redirect(:stage) %>

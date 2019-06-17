@@ -33,7 +33,7 @@
     - Updated to latest v2.3.6
   * Fri Nov 22 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: Queue-2.2-9.tar.bz2
+:src: Queue-2.3-6.tar.bz2
 :src_dir: Queue-2.3-6-gebbba25
 :version: '2.3.6'
 :type: ext
