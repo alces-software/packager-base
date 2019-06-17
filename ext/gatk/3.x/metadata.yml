@@ -41,6 +41,9 @@
 :src_dir: .
 :type: ext
 :pkg_type: apps
+:requirements:
+  :runtime:
+    - apps/java ~> 8.0.0
 :compilers:
   noarch:
 :params:

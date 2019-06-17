@@ -1,0 +1,91 @@
+---
+:schema: 1
+:title: LAMMPS Molecular Dynamics Simulator
+:license: GPL
+:url: http://lammps.sandia.gov/
+:summary: LAMMPS ('Large-scale Atomic/Molecular Massively Parallel Simulator') is a molecular dynamics program from Sandia National Laboratories
+:description: |
+  LAMMPS is a classical molecular dynamics (MD) code with these
+  general classes of functionality:
+
+    * General features
+    * Particle and model types
+    * Force fields
+    * Atom creation
+    * Ensembles, constraints, and boundary conditions
+    * Integrators
+    * Diagnostics
+    * Output
+    * Multi-replica models
+    * Pre- and post-processing
+    * Specialized features (beyond MD itself)
+:group: Chemistry
+:type: apps
+:changelog: |
+  * Mon May 20 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Enable all standard packages
+  * Fri Dec 21 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest stable 12Dec18
+  * Wed Feb 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest stable 16Feb16
+  * Wed Aug 14 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: lammps-12Dec18.tar.gz
+:src_dir: lammps-12Dec18
+:version: '20181212'
+:patches:
+  - Makefile.alces.patch
+  - Makefile.ffmpeg.patch
+:requirements:
+  :build:
+    - libs/fftw3_double
+    - mpi/openmpi
+    - libs/atlas
+    - apps/python
+    - apps/ffmpeg
+  :runtime:
+    - libs/fftw3_double
+    - mpi/openmpi
+    - libs/atlas
+    - apps/python
+    - apps/ffmpeg
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  # (Patched) Makefile for OpenMPI is closest fit; make linux also possible
+
+  #cat << EOF > ../lib/latte/Makefile.lammps
+  #latte_SYSINC =
+  #latte_SYSLIB = ../../lib/latte/filelink.o -lgfortran -llatte -ltatlas
+  #latte_SYSPATH = -L/opt/gridware/pkg/el6/compilers/gcc/4.7.3/lib64/ -L${ATLASLIB} -fopenmp
+  #EOF
+
+  make yes-std <%= redirect(:configure_packages) %>
+  make no-kim <%= redirect(:configure_packages) %>
+  make no-latte <%= redirect(:configure_packages) %>
+  make no-mscg <%= redirect(:configure_packages) %>
+  make no-voronoi <%= redirect(:configure_packages) %>
+  make no-gpu <%= redirect(:configure_packages) %>
+  make no-kokkos <%= redirect(:configure_packages) %>
+  make yes-user-reaxc <%= redirect(:configure_packages) %>
+
+  make lib-meam args='-m mpi' <%= redirect(:make_libs) %>
+  make lib-poems args='-m mpi' <%= redirect(:make_libs) %>
+  make lib-reax args='-m mpi' <%= redirect(:make_libs) %>
+  make lib-message args='-m' <%= redirect(:make_libs) %>
+
+  export OMPI_LDFLAGS="$(mpicxx --showme:link) -lgfortran"
+  #make serial <%= redirect(:make_serial) %>
+  make mpi <%= redirect(:make_mpi) %>
+:install: |
+  mkdir <%= dest_dir %>/{bin,share}
+  #cp -v src/lmp_serial src/lmp_mpi <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v src/lmp_mpi <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -rv bench doc examples <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin

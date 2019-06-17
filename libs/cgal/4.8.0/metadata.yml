@@ -25,6 +25,8 @@
   el:
     - gmp-devel
     - mpfr-devel
+:patches:
+  - fix-missing-include-g1025.patch2
 :compile: |
   cmake . -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> <%= redirect(:cmake) %>
   make <%= redirect(:compile) %>

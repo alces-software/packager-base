@@ -1,0 +1,75 @@
+---
+:schema: 1
+:title: Vienna RNA
+:license: NONFREE - citation required; see http://bit.ly/133dWI9
+:summary: RNA Secondary Structure Prediction and Comparison
+:url: http://www.tbi.univie.ac.at/~ronny/RNA/vrna2.html
+:description: |
+  The ViennaRNA Package consists of a C code library and several 
+  stand-alone programs for the prediction and comparison of RNA 
+  secondary structures:
+
+    * RNAfold -- predict minimum energy secondary structures and pair 
+      probabilities
+    * RNAeval -- evaluate energy of RNA secondary structures
+    * RNAheat -- calculate the specific heat (melting curve) of an 
+      RNA sequence
+    * RNAinverse -- inverse fold (design) sequences with predefined 
+      structure
+    * RNAdistance -- compare secondary structures
+    * RNApdist -- compare base pair probabilities
+    * RNAsubopt -- complete suboptimal folding
+    * RNAplot -- RNA structure drawings in PostScript, SVG, or GML
+    * RNAcofold -- predict hybrid structure of two sequences
+    * RNAduplex -- predict possible hybridization sites between two 
+      sequences
+    * RNAup -- predict RNA-RNA interaction sites using accessibilities
+    * RNAalifold -- predict the consensus structure of several aligned 
+      sequences
+    * RNAaliduplex -- comparative (multiple alignment) version of 
+      RNAduplex
+    * RNALfold -- predict locally stable structure of long sequences
+    * RNAplfold -- compute average pair probabilities for local base 
+      pairs in long sequences
+    * RNApaln -- fast structural alignment of RNA sequences using 
+      string alignments
+    * Several small but helpful Perl Utilities
+:group: Bioinformatics
+:changelog: |
+  * Fri  8 Feb 2019 - Mark J. Titorenko <mark.titorenko@alces-flight.com>
+    - Bumped to v1.8.4
+  * Thu 14 Apr 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated patchfile to support alternate versions of Perl in Gridware
+  * Mon 18 Feb 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: ViennaRNA-1.8.4.tar.gz
+:src_dir: ViennaRNA-1.8.4
+:type: apps
+:sources:
+  - perl-makefile.patch
+:version: '1.8.4'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:requirements:
+  :build:
+    - apps/perl
+  :runtime:
+    - apps/perl
+:compile: |
+  ./configure --without-perl --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  # remove bug due to bad/old swig. ref:
+  # https://github.com/WGLab/PennCNV/issues/18#issuecomment-355322600
+  sed -i -e '/#undef bool/d' Perl/RNA_wrap.c
+  # add stdio.h include required for sprintf:
+  sed -i -e '1i #include <stdio.h>' RNAforester/src/rnafuncs.cpp
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin

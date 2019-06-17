@@ -15,6 +15,8 @@
    development since 1986.
 :group: Graphics
 :changelog: |
+  * Thu Jun  6 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Added libX11 dependency to ensure X11 support is built
   * Sun Apr 17 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Added distro dependencies for EL
   * Wed Jan 13 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -25,6 +27,13 @@
 :version: '5.0.2'
 :compilers:
   gcc:
+:dependencies:
+  :build:
+    el:
+      - libX11-devel
+  :runtime:
+    el:
+      - libX11
 :compile: |
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>

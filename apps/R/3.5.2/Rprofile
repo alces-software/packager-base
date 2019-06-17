@@ -1,0 +1,2 @@
+# Display an Alces welcome message when R is run from the example script.
+.First <- function() cat("\nWelcome to the Alces Software R example script!\nIf you are running R in a desktop session you can see a good \ndemonstration of R's graphing capabilities by running \n'demo(smooth)'. If you are running in CLI session you may \nprefer to see 'demo(scoping)'.\n\n")

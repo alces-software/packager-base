@@ -43,6 +43,7 @@
 :compile: |
   cd src
   # (Patched) Makefile for OpenMPI is closest fit; make linux also possible
+  make yes-std <%= redirect(:configure_packages) %>
   make mpi <%= redirect(:make) %>
 :install: |
   mkdir <%= dest_dir %>/{bin,share}

@@ -1,0 +1,11 @@
+--- src/MAKE/Makefile.mpi.orig	2018-12-12 00:25:55.000000000 +0000
++++ src/MAKE/Makefile.mpi	2019-06-03 17:19:47.037599472 +0100
+@@ -28,7 +28,7 @@
+ # LAMMPS ifdef settings
+ # see possible settings in Section 2.2 (step 4) of manual
+
+-LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64
++LMP_INC =	-DLAMMPS_GZIP -DLAMMPS_MEMALIGN=64 -DLAMMPS_FFMPEG
+
+ # MPI library
+ # see discussion in Section 2.2 (step 5) of manual
