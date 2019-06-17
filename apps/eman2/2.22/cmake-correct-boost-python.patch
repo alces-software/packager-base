@@ -1,0 +1,27 @@
+--- libpyEM/CMakeLists.txt.orig	2018-08-21 02:30:21.000000000 +0100
++++ libpyEM/CMakeLists.txt	2019-03-15 17:02:26.801281792 +0000
+@@ -1,13 +1,13 @@
+ # Find Boost
+ set(Boost_USE_MULTITHREADED ON)
+ set(Boost_NO_BOOST_CMAKE ON)
+-find_package(Boost COMPONENTS python REQUIRED)
++find_package(Boost COMPONENTS python27 REQUIRED)
+ 
+ message("Boost_LIBRARIES:   ${Boost_LIBRARIES}")
+ message("Boost_INCLUDE_DIR: ${Boost_INCLUDE_DIR}")
+ 
+ #this definition is for boost.python > 1.35.0 
+-set_target_properties(Boost::python
++set_target_properties(Boost::python27
+ 					  PROPERTIES
+ 					  INTERFACE_COMPILE_DEFINITIONS BOOST_PYTHON_NO_PY_SIGNATURES
+ 					  INTERFACE_LINK_LIBRARIES Python::Python
+@@ -35,7 +35,7 @@
+ 			SUFFIX ${suffix}
+ 			)
+ 	
+-	target_link_libraries(${libname} EM2 Boost::python)
++	target_link_libraries(${libname} EM2 Boost::python27)
+ 	install(TARGETS ${libname} DESTINATION ${SP_DIR})
+ endfunction()
+ 

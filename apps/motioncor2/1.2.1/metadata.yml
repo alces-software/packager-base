@@ -1,0 +1,77 @@
+---
+:schema: 1
+:license: GPLv3
+:title: Motioncor2
+:summary: Molecular Electron Microscopy 
+:url: http://www2.mrc-lmb.cam.ac.uk/relion/index.php/Main_Page
+:description: |
+  Correction of electron beam-induced sample motion is one of the major 
+  factors contributing to the recent resolution breakthroughs in 
+  cryo-electron microscopy. Based on observations that the electron beam 
+  induces doming of the thin vitreous ice layer, we developed an 
+  algorithm to correct anisotropic image motion at the single pixel 
+  level across the whole frame, suitable for both single particle and 
+  tomographic images. Iterative, patch-based motion detection is combined 
+  with spatial and temporal constraints and dose weighting. The multi-GPU 
+  accelerated program, MotionCor2, is sufficiently fast to keep up with 
+  automated data collection. The result is an exceptionally robust 
+  strategy that can work on a wide range of data sets, including those 
+  very close to focus or with very short integration times, obviating the 
+  need for particle polishing. Application significantly improves Thon 
+  ring quality and 3D reconstruction resolution.
+:group: Imaging
+:changelog: |
+  * Wed Jan 30 2019 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version v1.2.1
+  * Tue Feb 21 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First Created
+:src: MotionCor2_1.2.1.zip
+:src_dir: .
+:type: apps
+:version: 1.2.1
+:dependencies:
+  :runtime:
+    el:
+      - libtiff
+      - libjpeg-turbo
+      - jbigkit-libs
+      - zlib
+:variants:
+  cuda80:
+    :description: "Build for CUDA 8.0"
+    :bin_tail: Cuda80
+    :requirements:
+      :runtime:
+        - libs/nvidia-cuda ~> 8.0.0
+  cuda91:
+    :description: "Build for CUDA 9.1"
+    :bin_tail: Cuda91
+    :requirements:
+      :runtime:
+        - libs/nvidia-cuda ~> 9.1.0
+  cuda92:
+    :description: "Build for CUDA 9.2"
+    :bin_tail: Cuda92
+    :requirements:
+      :runtime:
+        - libs/nvidia-cuda ~> 9.2.0
+:compilers:
+  bin:
+:compile: |
+  # no-op - binary distribution
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/docs <%= redirect(:install) %>
+  install -D -m 0755 ./MotionCor2_1.2.1-<%= variant[:bin_tail] %> <%= dest_dir %>/bin/MotionCor2_1.2.1 <%= redirect(:install) %>
+  cat <<'EOF' > <%= dest_dir %>/bin/MotionCor2
+  #!/bin/bash
+  exec <%= dest_dir %>/bin/MotionCor2_1.2.1 "$@"
+  EOF
+  chmod 755 <%= dest_dir %>/bin/MotionCor2
+  cp -v MotionCor2-UserManual-*.pdf <%= dest_dir %>/doc <%= redirect(:install) %> 
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

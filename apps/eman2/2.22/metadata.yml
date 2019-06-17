@@ -1,0 +1,124 @@
+---
+:schema: 1
+:license: BSD License or GPLv2+
+:title: EMAN2
+:summary: Broadly based greyscale scientific image processing suite
+:url: http://blake.bcm.edu/emanwiki/EMAN2
+:description: |
+  EMAN2 is the successor to EMAN1. It is a broadly based greyscale
+  scientific image processing suite with a primary focus on processing
+  data from transmission electron microscopes. EMAN's original purpose
+  was performing single particle reconstructions (3-D volumetric
+  models from 2-D cryo-EM images) at the highest possible resolution,
+  but the suite now also offers support for single particle cryo-ET,
+  and tools useful in many other subdisciplines such as helical
+  reconstruction, 2-D crystallography and whole-cell tomography. EMAN2
+  is capable of processing very large data sets (>100,000 particle)
+  very efficiently (up to 20x faster than EMAN1).
+:group: Imaging
+:changelog: |
+  * Thu Mar 14 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v2.22
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: v2.22.tar.gz
+:patches:
+  - remove-git-hash.patch
+  - cmake-add-boost-include.patch
+:type: apps
+:version: 2.22
+:requirements:
+  :tool:
+    - apps/cmake >= 3.7.0
+    - apps/setuptools
+  :build:
+    - libs/boost <= 1.64.0
+    - apps/python ~> 2.7.0
+    - libs/numpy
+    - libs/gsl
+    - libs/fftw3_float
+    - libs/fftw3_double
+    - apps/hdf5_serial
+  :runtime:
+    - libs/boost <= 1.64.0
+    - apps/python ~> 2.7.0
+    - libs/numpy
+    - libs/gsl
+    - libs/fftw3_float
+    - libs/fftw3_double
+    - apps/hdf5_serial
+    - apps/ipython
+    - libs/pyqt
+    - apps/sip
+    - libs/matplotlib
+:dependencies:
+  :build:
+    el:
+      - ftgl-devel
+      - mesa-libGL-devel
+      - mesa-libGLU-devel
+      - freetype-devel
+      - libjpeg-turbo-devel
+      - libpng-devel
+      - libtiff-devel
+      - libdb-devel
+  :runtime:
+    el:
+      - ftgl
+      - mesa-libGL
+      - mesa-libGLU
+      - freetype
+      - libjpeg-turbo
+      - libpng
+      - libtiff
+      - libdb
+:compilers:
+  gcc:
+:compile: |
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR pyopengl <%= redirect(:python) %>
+  easy_install --install-dir $PYTHONDEPSDIR future <%= redirect(:python) %>
+
+  mkdir build
+  cd build
+  export CONDA_BUILD_STATE=BUILD
+  export PREFIX="<%= dest_dir %>"
+  export SP_DIR="$PYTHONDEPSDIR"
+  cmake -DENABLE_OPTIMIZE_MACHINE=ON\
+    -DFFTW3F_LIBRARY=$FFTW3_FLOATLIB/libfftw3f.so \
+    -DFFTW3F_INCLUDE_PATH=$FFTW3_FLOATINCLUDE \
+    -DFFTW3D_LIBRARY=$FFTW3_DOUBLELIB/libfftw3.so \
+    -DFFTW3D_INCLUDE_PATH=$FFTW3_DOUBLEINCLUDE \
+    -DBOOST_INCLUDEDIR=$BOOSTINCLUDE \
+    -DBOOST_LIBRARYDIR=$BOOSTLIB \
+    -DBOOST_ROOT=$BOOSTDIR \
+    -DBoost_NO_SYSTEM_PATHS=ON \
+    -DPYTHON_INCLUDE_PATH=$PYTHONINCLUDE/python2.7 \
+    -DPYTHON_LIBRARY=$PYTHONLIB/libpython2.7.so \
+    -DHDF5_INCLUDE_PATH=$HDF5_SERIALINCLUDE \
+    -DHDF5_LIBRARY=$HDF5_SERIALLIB/libhdf5.so \
+    -DFTGL_INCLUDE_PATH=/usr/include \
+    -DFTGL_LIBRARY=/usr/lib64/libftgl.so \
+    .. <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  echo '../' > python/eman2dir_relative_path_to_sp_dir
+  cp -Rv python <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/python
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PYTHONPATH ${appdir}/python
+  prepend-path PYTHONPATH ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
