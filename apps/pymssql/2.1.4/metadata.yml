@@ -1,16 +1,16 @@
 ---
 :schema: 1
 :title: pymssql
-:license: GNU GPL 
+:license: GNU GPL
 :summary: A simple database interface for Python that builds on top of FreeTDS
-:url: https://github.com/pymssql/pymssql 
+:url: https://github.com/pymssql/pymssql
 :description: |
   A simple database interface for Python that builds on top of FreeTDS
 :group: Tool
 :changelog: |
   * Wed Dec 19 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created
-:src: pymssql-2.1.4.tar.gz 
+:src: pymssql-2.1.4.tar.gz
 :type: apps
 :version: '2.1.4'
 :requirements:
@@ -27,7 +27,7 @@
 :compilers:
   gcc:
 :patches:
-  - setup.py.patch 
+  - setup.py.patch
 :compile: |
   export PYMSSQL_BUILD_WITH_BUNDLED_FREETDS=1
   python setup.py build <%= redirect(:build) %>
