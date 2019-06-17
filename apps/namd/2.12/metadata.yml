@@ -28,10 +28,8 @@
     - Refactored to packager style
   * Mon Mar 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: NAMD_Git-release-2-12.tar.gz
-:sources:
-  - charm-6.7.1.tar.gz
-:src_dir: namd-a1e8357
+:src: NAMD_Git-2018-01-30_Source.tar.gz
+:src_dir: NAMD_Git-2018-01-30_Source
 :type: apps
 :version: '2.12'
 :variants:
@@ -56,9 +54,9 @@
 :compilers:
   gcc:
 :compile: |
-  tar xzf <%= source('charm-6.7.1.tar.gz') %>
-  mv charm-* charm-6.7.1
-  cd charm-6.7.1
+  CHARMTAR=charm-*.tar
+  tar xf $CHARMTAR
+  cd `basename $CHARMTAR .tar`
   ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared \
     --with-production \
     -c++-option -fpermissive \

@@ -34,7 +34,7 @@
 :install: |
   make install <%= redirect(:install) %>
   mkdir <%= dest_dir %>/doc
-  cp -av manual/manual.pdf LICENSE.txt ChangeLog <%= dest_dir %>/doc <%= redirect(:install) %> 
+  cp -av manual/manual.pdf LICENSE.txt Changelog <%= dest_dir %>/doc <%= redirect(:install) %> 
   cp -av graphs <%= dest_dir %> <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}

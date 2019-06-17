@@ -63,12 +63,13 @@
   export MPI_LIB=$MPI_HOME/lib
   export MPI_INCLUDE=$MPI_HOME/include
   MPI_VERSION=$(mpirun --version | head -n1 | cut -f4 -d' ')
-  if [[ "$MPI_VERSION" == 1.8.* ]]; then
+  if [[ "$MPI_VERSION" == 1.8.* ]] || [[ "$MPI_VERSION" == 1.10.* ]]; then
     export LIBMPI="-L$MPI_LIB -lmpi_mpifh -lmpi_usempi -lmpi -ldl -Wl,--export-dynamic -lnsl -lutil"
   else
     export LIBMPI="-L$MPI_LIB -lmpi_f90 -lmpi_f77 -lmpi -ldl -Wl,--export-dynamic -lnsl -lutil"
   fi
-
+  
+  echo $LIBMPI <%= redirect(:libmpi) %>
   cd src
   make nwchem_config <%= redirect(:configure) %>
   make <%= compiler[:compiler_env] %> <%= redirect(:make) %>

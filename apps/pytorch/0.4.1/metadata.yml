@@ -1,0 +1,59 @@
+---
+:schema: 1
+:license: MIT/X-style
+:summary: End-To-End Deep Learning Platform
+:url: https://pytorch.org 
+:description: |
+  An open source deep learning platform that provides a 
+  seamless path from research prototyping to production 
+  deployment.
+:group: Tools
+:requirements:
+  :build:
+    - apps/setuptools
+    - apps/python 
+    - libs/numpy
+    - apps/cmake
+    - apps/pyyaml
+  :runtime: 
+    - apps/setuptools
+    - apps/python
+    - libs/numpy
+    - apps/pyyaml
+:changelog: |
+  * Mon Oct 29 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: v0.4.1.tar.gz
+:src_dir: pytorch-0.4.1
+:type: apps
+:version: '0.4.1'
+:compilers:
+  gcc:
+:compile: |
+  export NO_CUDA=1
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/../python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir -p $PYTHONDEPSDIR
+  #python setup.py build <%= redirect(:build) %>  
+  mkdir ../git && cd ../git <%= redirect(:git_clone) %>
+  git clone https://github.com/pytorch/pytorch.git <%= redirect(:git_clone) %>
+  cd pytorch && git checkout v0.4.1 <%= redirect(:git_checkout) %>
+  git submodule update --init <%= redirect(:git_submodule) %> 
+  easy_install --install-dir $PYTHONDEPSDIR typing <%= redirect(:python) %>
+  
+:install: |
+  export NO_CUDA=1
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/../python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  cd ../git/pytorch
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python2.7/site-packages
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
+
+

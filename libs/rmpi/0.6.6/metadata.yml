@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: Rmpi
+:license: GPLv2+
+:summary: Provides an interface (wrapper) to MPI APIs
+:url: http://www.stats.uwo.ca/faculty/yu/Rmpi/
+:description: |
+  Rmpi is a package for R, a free software environment for statistical
+  computing and graphics. It is an interface (wrapper) to MPI
+  (Message-Passing Interface).  MPI is a standardized and portable
+  message-passing system designed by a group of researchers from
+  academia and industry to function on a wide variety of parallel
+  computers such as Beowulf clusters.
+
+  The main goal of Rmpi is to port low level MPI functions into R so
+  that users do not have to know C or Fortran.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v0.6.6
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: Rmpi_0.6-6.tar.gz
+:src_dir: Rmpi
+:version: '0.6.6'
+:compilers:
+  gcc:
+:requirements:
+  :build: 
+    - apps/R
+    - mpi/openmpi
+  :runtime: 
+    - apps/R
+    - mpi/openmpi
+:compile: |
+  # no-op  
+:install: |
+  unset R_LIBS_USER
+  export R_LIBS_SITE=<%= dest_dir %>/R:${R_LIBS_SITE}
+  mkdir -p <%= dest_dir %>/R
+  R CMD INSTALL --configure-args="--with-mpi=$MPI_HOME" . <%= redirect(:r) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}R ${appdir}/R
+
+  append-path R_LIBS_SITE ${appdir}/R

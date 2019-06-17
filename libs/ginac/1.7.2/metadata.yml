@@ -36,20 +36,12 @@
 :changelog: |
   * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
-:src: ginac-1.7.2.tar.gz
-:src_dir: ginac-release_1-7-2
+:src: ginac-1.7.2.tar.bz2
 :version: 1.7.2
 :compilers:
   gcc:
 :dependencies:
-  el:
-    - automake
-    - autoconf
-    - libtool
-    - texinfo
-    - bison
-    - flex
-    - byacc
+  el: 
     - gcc-c++
 :requirements:
   :build:
@@ -57,7 +49,6 @@
   :runtime:
     - libs/cln
 :compile: |
-  autoreconf -i <%= redirect(:autoreconf) %>
   ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |

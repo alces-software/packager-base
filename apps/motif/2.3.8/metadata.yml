@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: LGPL 
+:summary: Motif user interface component toolkit 
+:url: https://motif.ics.com/ 
+:description: |
+  Motif remains the standard toolkit for mission-critical applications 
+  running on UNIX and Linux systems.
+:group: Tools
+:changelog: |
+  * Tue Nov 27 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: motif-2.3.8.tar.gz
+:src_dir: motif-2.3.8 
+:type: apps
+:version: '2.38.0'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - xorg-x11-xbitmaps 
+    - flex-devel
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/man
+
+

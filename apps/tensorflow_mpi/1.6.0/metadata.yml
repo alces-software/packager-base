@@ -43,11 +43,13 @@
     - apps/setuptools
     - apps/pip
     - libs/nvidia-cuda
+    - mpi/openmpi
   :runtime:
     - apps/python
     - apps/setuptools
     - libs/numpy
     - libs/nvidia-cuda
+    - mpi/openmpi
 :compile: |
   export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0/lib64:$LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=${CUDA_HOME}/extras/CUPTI/lib64/:${LD_LIBRARY_PATH}
@@ -64,6 +66,7 @@
   export CC_OPT_FLAGS=-march=native
   export TF_NEED_GCP=0
   export TF_ENABLE_XLA=0
+  export TF_NEED_MPI=1
   export PYTHON_BIN_PATH=${PYTHONBIN}/python
   export PYTHON_LIB_PATH=<%= dest_dir %>/python
   mkdir -p $PYTHON_LIB_PATH/lib/python2.7/site-packages

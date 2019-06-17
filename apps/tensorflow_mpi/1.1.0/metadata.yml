@@ -27,40 +27,29 @@
     - First created
   * Wed May 24 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - Bumped to release v1.1.0 version
-  * Fri Mar 02 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
-    - Bumped to v1.6.0 version
-:src: v1.6.0.tar.gz 
-:version: '1.6.0'
-:src_dir: tensorflow-1.6.0 
+:src: 1ec6ed51182adf8f1b03a3188c16cd8a45ca6c85.zip
+:version: '1.1.0'
+:src_dir: tensorflow-1ec6ed51182adf8f1b03a3188c16cd8a45ca6c85
 :compilers:
   gcc:
 :requirements:
   :tool:
-    - apps/bazel >= 0.5.4
+    - apps/bazel >= 0.4.5
   :build:
     - apps/python
-    - libs/numpy
+    - libs/numpy/1.9.2
     - apps/setuptools
     - apps/pip
-    - libs/nvidia-cuda
   :runtime:
     - apps/python
     - apps/setuptools
-    - libs/numpy
-    - libs/nvidia-cuda
+    - libs/numpy/1.9.2
 :compile: |
-  export LD_LIBRARY_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0/lib64:$LD_LIBRARY_PATH
-  export LD_LIBRARY_PATH=${CUDA_HOME}/extras/CUPTI/lib64/:${LD_LIBRARY_PATH}
   export GCC_HOST_COMPILER_PATH=`which gcc`
   export TF_NEED_HDFS=0
   export TF_NEED_OPENCL=0
   export TF_NEED_JEMALLOC=0
-  export TF_NEED_CUDA=1
-  export CUDA_TOOLKIT_PATH=${CUDA_HOME}
-  export TF_CUDA_VERSION=8.0.61
-  export TF_CUDA_COMPUTE_CAPABILITIES="6.0"
-  export CUDNN_INSTALL_PATH=/opt/apps/alces/nvidia/cudnn/7.0.5_cuda8.0
-  export TF_CUDNN_VERSION=7.0.5
+  export TF_NEED_CUDA=0
   export CC_OPT_FLAGS=-march=native
   export TF_NEED_GCP=0
   export TF_ENABLE_XLA=0
@@ -72,18 +61,15 @@
   echo "startup --batch" >> .bazelrc
   ./configure <%= redirect(:configure) %>
   easy_install --prefix=${PYTHON_LIB_PATH} nose wheel <%= redirect(:python) %>
-  bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package --verbose_failures <%= redirect(:bazel_build) %>
-  git clone https://github.com/tensorflow/tensorboard.git && cd tensorboard && git checkout 1.6.0 <%= redirect(:bazel_tensorboard_build) %>
-  #bazel build tensorboard:tensorboard <%= redirect(:bazel_tensorboard_build) %>
-  cd ..
+  bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package <%= redirect(:bazel_build) %>
+  bazel build //tensorflow/tensorboard:tensorboard <%= redirect(:bazel_tensorboard_build) %>
   ./tensorflow/tools/pip_package/build_pip_package.sh <%= dest_dir %>/wheel/. <%= redirect(:pip_build) %>
 :install: |
   PYTHONDEPSDIR=$(pwd)/python/lib/python2.7/site-packages
   export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
-  pwd <%= redirect(:installdir) %>
   mkdir -p <%= dest_dir %>/doc
-  cp -Rv tensorflow/docs_src/* <%= dest_dir %>/doc/. <%= redirect(:install_tensorboard) %>
-  pip install <%= dest_dir %>/wheel/tensorflow-1.6.0-cp27-cp27m-linux_x86_64.whl --prefix=<%= dest_dir %>/python <%= redirect(:install) %>
+  cp -Rv bazel-tensorflow-1ec6ed51182adf8f1b03a3188c16cd8a45ca6c85/tensorflow/docs_src/* <%= dest_dir %>/doc/. <%= redirect(:install_tensorboard) %>
+  pip install <%= dest_dir %>/wheel/tensorflow-1.1.0-cp27-cp27m-linux_x86_64.whl --prefix=<%= dest_dir %>/python <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}PYTHON ${appdir}/python

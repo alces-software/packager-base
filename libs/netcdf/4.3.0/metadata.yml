@@ -40,8 +40,8 @@
 :type: libs
 :version: '4.3.0'
 :requirements:
-  :build: apps/hdf5_serial
-  :runtime: apps/hdf5_serial
+  :build: apps/hdf5_mpi
+  :runtime: apps/hdf5_mpi
 :compilers:
   gcc:
 :dependencies:
@@ -50,9 +50,11 @@
     - gcc-gfortran
     - zlib-devel
 :compile: |
-  export CFLAGS=-I$HDF5_SERIALINCLUDE
-  export LDFLAGS=-L$HDF5_SERIALLIB
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  export CFLAGS="$CFLAGS -I${HDF5_MPIINCLUDE} -I${MPI_HOME}/include"
+  export LDFLAGS="$LDFLAGS -L${HDF5_MPILIB} -L${MPI_HOME}/lib"
+  echo $CFLAGS <%= redirect(:configure) %>
+  echo $LDFLAGS <%= redirect(:configure) %>
+  ./configure --enable-parallel-tests --prefix=<%= dest_dir %> <%= redirect(:configure) %>
   make <%= redirect(:build) %>
 :install: |
   make install <%= redirect(:install) %>
