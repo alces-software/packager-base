@@ -6,7 +6,7 @@
 :url: https://github.com/pymssql/pymssql
 :description: |
   A simple database interface for Python that builds on top of FreeTDS
-:group: Tool
+:group: Tools
 :changelog: |
   * Wed Dec 19 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

@@ -10,7 +10,7 @@
 
   This is adapted version of ruby PDFKit library, so big 
   thanks to them!
-:group: Tool
+:group: Tools
 :changelog: |
   * Wed Jun 28 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

@@ -10,7 +10,7 @@
   add query strings to your URLs, or to form-encode your POST data. 
   Keep-alive and HTTP connection pooling are 100% automatic, thanks 
   to urllib3.
-:group: Tool
+:group: Tools
 :changelog: |
   * Wed Jun 28 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

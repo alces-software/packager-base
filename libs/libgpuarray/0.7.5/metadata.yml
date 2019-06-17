@@ -9,7 +9,7 @@
   be reused by all projects that is as future proof as 
   possible, while keeping it easy to use for simple 
   need/quick test.
-:group: Deep Learning
+:group: Machine Learning
 :changelog: |
   * Tue Feb 27 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

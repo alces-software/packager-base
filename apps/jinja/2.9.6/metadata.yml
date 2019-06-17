@@ -11,7 +11,7 @@
   powerful set of tools. On top of that it adds sandboxed 
   execution and optional automatic escaping for applications 
   where security is important.
-:group: Tool
+:group: Tools
 :changelog: |
   * Tue Jun 27 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

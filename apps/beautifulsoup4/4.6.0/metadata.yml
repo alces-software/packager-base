@@ -8,7 +8,7 @@
   Beautiful Soup sits atop an HTML or XML parser, providing
   Pythonic idioms for iterating, searching, and modifying the
   parse tree.
-:group: Tool
+:group: Tools
 :changelog: |
   * Tue Jun 27 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
     - First created

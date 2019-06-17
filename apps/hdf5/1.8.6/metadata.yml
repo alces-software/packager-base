@@ -11,7 +11,7 @@
   applications to evolve in their use of HDF5. The HDF5 Technology
   suite includes tools and applications for managing, manipulating,
   viewing, and analyzing data in the HDF5 format.
-:group: Databases
+:group: Libraries
 :changelog: |
   * Fri Dec 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Provided v1.8.6 for earlier .so.6 library API (for XSQ)
