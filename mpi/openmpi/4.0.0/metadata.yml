@@ -25,7 +25,8 @@
   open64:
     :configure_flags: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
 :params:
-  :qlogic: "Specify whether to use Qlogic Infinipath PSM libs [true|false]"
+  :psm: "Specify whether to use Intel True Scale PSM (Qlogic Infinipath) libs [true|false]"
+  :psm2: "Specify whether to use Intel Omni-Path PSM2 libs [true|false]"
   :torque: "Specify whether to enable Torque Support [false|/path/to/torque]"
   :sge: "Specify whether to enable SGE Support [true|false]"
   :pmi: "Specify path containing pmi.h/pmi2.h for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
@@ -59,7 +60,16 @@
   <% else %>
     PMIPARAMS=""
   <% end %>
-  ./configure <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> ${TORQUEPARAMS} ${PMIPARAMS} <%= '--with-psm' if param(:qlogic).to_s.downcase == 'true' %> --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  ./configure \
+    <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> \
+    ${TORQUEPARAMS} \
+    ${PMIPARAMS} \
+    <%= '--with-psm' if param(:psm).to_s.downcase == 'true' %> \
+    <%= '--with-psm2' if param(:psm2).to_s.downcase == 'true' %> \
+    --enable-mpi1-compatibility \
+    --enable-static --enable-shared --prefix=<%= dest_dir %> \
+    <%= compiler[:configure_flags] %> \
+    <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
   make install <%= redirect(:install) %>

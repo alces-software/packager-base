@@ -34,6 +34,10 @@
 :requirements:
   :build: apps/python
   :runtime: apps/python
+:dependencies:
+  el:
+    - pygobject2
+    - pygobject2-devel
 :compilers:
   gcc:
 :compile: |

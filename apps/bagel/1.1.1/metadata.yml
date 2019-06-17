@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: BAGEL
+:license: GPLv3+
+:summary: Brilliantly Advanced General Electronic-structure Library
+:url: https://nubakery.org/
+:description: |
+  BAGEL is a parallel electronic-structure program licensed under the
+  GNU General Public License.
+
+  The source code can be found at <https://github.com/nubakery/bagel>.
+  The SMITH3 program that has generated some of the code in BAGEL is
+  hosted at https://github.com/nubakery/smith3.
+:group: Chemistry
+:changelog: |
+  * Thu Apr 18 2019 Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v1.1.1.tar.gz
+:src_dir: bagel-v1.1.1
+:type: apps
+:version: '1.1.1'
+:requirements:
+  :build:
+    - libs/boost
+  :runtime:
+    - libs/boost
+:compilers:
+  intel:
+:compile: |
+  exit 1
+:install: |
+  exit 1
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages

@@ -1,0 +1,43 @@
+---
+:schema: 1
+:license: GPL 
+:summary: Monte Carlo Xray Tracing 
+:url: http://ggplot2.org/ 
+:description: |
+   McXtrace - An X-ray ray-trace simulation package
+:type: apps
+:group: Physics
+:changelog: |
+  * Thu 19 July 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: mcxtrace-1.4-src.tar.gz 
+:src_dir: mcxtrace-1.4-src
+:version: '1.4'
+:requirements:
+  :runtime: apps/cmake
+  :build: apps/cmake
+:compilers:
+  gcc:
+:sources:
+  - mcxtrace-tools-python-mxrun-1.4-src.tar.gz
+  - mcxtrace-tools-python-mxgui-1.4-src.tar.gz
+  - mcxtrace-tools-python-mccodelib-1.4-src.tar.gz
+:dependencies: 
+  el:
+    - gcc-c++
+:compile: |
+  mkdir build <%= redirect(:build) %>
+  cd build <%= redirect(:build) %>
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> .. <%= redirect(:build) %>
+  make <%= redirect(:build) %>
+:install: |
+  cd build <%= redirect(:build) %>
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}/mcxtrace/1.4
+  setenv ${appcaps}BIN ${appdir}/mcxtrace/1.4/bin
+  setenv ${appcaps}SHARE ${appdir}/mcxtrace/1.4/share
+
+  prepend-path PATH ${appdir}/mcxtrace/1.4/bin
+  prepend-path MANPATH ${appdir}/mcxtrace/1.4/doc/man
+

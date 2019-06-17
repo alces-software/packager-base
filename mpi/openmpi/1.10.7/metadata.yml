@@ -35,7 +35,6 @@
   - examples.sge.openmpi.template
 :dependencies:
   el:
-    - perl
     - gcc-c++
     - gcc-gfortran
 :compile: |
@@ -60,13 +59,14 @@
   <% else %>
     PMIPARAMS=""
   <% end %>
+  LDFLAGS="-L$GCCDIR/lib64"
   ./configure \
     <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> \
     ${TORQUEPARAMS} \
     ${PMIPARAMS} \
     <%= '--with-psm' if param(:psm).to_s.downcase == 'true' %> \
     <%= '--with-psm2' if param(:psm2).to_s.downcase == 'true' %> \
-    --prefix=<%= dest_dir %> \
+    --enable-static --enable-shared --prefix=<%= dest_dir %> \
     <%= compiler[:configure_flags] %> \
     <%= redirect(:configure) %>
   make <%= redirect(:make) %>

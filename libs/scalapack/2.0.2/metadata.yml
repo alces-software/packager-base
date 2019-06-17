@@ -39,11 +39,11 @@
     :configure_env: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
     :cmake_parameters: '-DCMAKE_Fortran_FLAGS="-fno-second-underscore" -DCDEFS="Add_"'
 :variants:
-  atlas_static:
+  atlasstatic:
     :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.a;$ATLASLIB/libf77blas.a" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.a;$ATLASLIB/libatlas.a"'
     :requirements:
       :build: libs/atlas
-  atlas_shared:
+  atlasshared:
     # these params are for atlas < 3.10
     :cmake_parameters_legacy: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.so;$ATLASLIB/libf77blas.so" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.so;$ATLASLIB/libatlas.so"'
     # these params are for atlas >= 3.10
@@ -51,11 +51,11 @@
     :requirements:
       :build: libs/atlas
       :runtime: libs/atlas
-  acml_static:
+  acmlstatic:
     :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ACMLDIR/lib/libacml.a" -DBLAS_LIBRARIES="$ACMLDIR/lib/libacml.a"'
     :requirements:
       :build: libs/acml
-  acml_shared:
+  acmlshared:
     :cmake_parameters: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ACMLDIR/lib/libacml.so" -DBLAS_LIBRARIES="$ACMLDIR/lib/libacml.so"'
     :requirements:
       :build: libs/acml
