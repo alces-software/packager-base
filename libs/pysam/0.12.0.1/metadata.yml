@@ -38,6 +38,11 @@
   :build:
     el:
       - xz-devel
+      - bzip2-devel
+  :runtime:
+    el:
+      - xz-libs
+      - bzip2-libs
 :variants:
   default:
     :requirements:
