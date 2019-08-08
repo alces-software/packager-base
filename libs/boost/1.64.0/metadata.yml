@@ -13,8 +13,8 @@
   Report.)
 :group: Libraries
 :changelog: |
-  * Fri Mar 15 2019 Rob Brown <rob.brown@alces-flight.com>
-    - Updated to 1.64.0
+  * Tue Aug  6 2019 Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v1.64.0
   * Thu Jun  9 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Added zlib dependencies for EL
   * Fri Apr 1 2015 Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -59,12 +59,18 @@
       - bzip2-libs
       - zlib
 :requirements:
+  :runtime: mpi/openmpi
   :build: 
+    - mpi/openmpi
     - apps/python
+:patches:
+  - fix_serialization_get_data.patch1
+  - serialization_array.patch1
 :compilers:
   gcc:
 :compile: |
   ./bootstrap.sh --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  echo "using mpi ;" >> project-config.jam
   ./b2 stage <%= redirect(:stage) %>
   ./b2 install --prefix=<%= dest_dir %> <%= redirect(:install) %>
   mkdir -p <%= dest_dir%>/{bin,share}
