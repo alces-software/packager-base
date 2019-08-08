@@ -1,0 +1,102 @@
+---
+:schema: 1
+:title: QIIME 2
+:license: BSD License
+:summary: Quantitative Insights Into Microbial Ecology
+:url: https://qiime2.org/
+:description: |
+  QIIME 2 is a powerful, extensible, and decentralized microbiome
+  analysis package with a focus on data and analysis
+  transparency. QIIME 2 enables researchers to start an analysis with
+  raw DNA sequence data and finish with publication-quality figures
+  and statistical results.
+
+  Key features:
+
+    * Integrated and automatic tracking of data provenance
+    * Semantic type system
+    * Plugin system for extending microbiome analysis functionality
+    * Support for multiple types of user interfaces (e.g. API, command line, graphical)
+
+  QIIME 2 is a complete redesign and rewrite of the QIIME 1 microbiome
+  analysis pipeline. QIIME 2 will address many of the limitations of
+  QIIME 1, while retaining the features that makes QIIME 1 a powerful
+  and widely-used analysis pipeline.
+
+  QIIME 2 currently supports an initial end-to-end microbiome analysis
+  pipeline. New functionality will regularly become available through
+  QIIME 2 plugins.
+:group: Bioinformatics
+:changelog: |
+  * Mon Jan 28 2019 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest QIIME 2, 2018.11
+  * Tue Feb 7  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included libSM as dependency
+    - Included libXrender as dependency
+  * Fri Feb 3  2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Included PyQt4 due to later Anaconda Python upgraded to PyQt5
+    - Added export tweak for binary version to fix FontConfig issue
+  * Tue Jan 31 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependency for EL
+  * Tue Jul 12 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to prerelease alpha of QIIME 2, v2.0.1.dev0
+  * Wed Jun 24 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.9.1
+    - Readded dependency on pycogent
+    - Removed lanemask_in_1s_and_0s (not required in 1.9.0+)
+    - Removed obsolete configuration variables (template_alignment_lanemask_fp, qiime_scripts_dir)
+  * Tue Mar 26 2015 James Donohue <james.donohue@alces-software.com>
+    - Updated to v1.9.0
+  * Tue May 27 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v1.8.0
+    - Remove obsolete patches for denoiser
+    - Pin numpy to <= 1.7.1 to fulfil QIIME requirement for >= 1.5.1, <= 1.7.1
+  * Wed Apr 23 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Depends on setuptools during installation
+    - Build FlowAlignment utility as part of installation to enable use of denoiser
+    - Now depends on ghc to build FlowAlignment utility
+    - Added patch and source file to correct upstream bugs with denoiser
+  * Wed Jul 24 2013 James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: qiime2-2018.11-py35-linux-conda.yml.sic
+:type: apps
+:version: '2018.11.0'
+:compilers:
+  bin:
+:requirements:
+  :tool:
+    - apps/anaconda3
+:dependencies:
+  el:
+    - libXext
+    - libSM
+    - libX11
+    - libXrender
+    - libXi
+    - gstreamer-plugins-base
+    - libxcb
+    - libicu
+    - libxslt
+    - openssl
+    - fontconfig
+    - mesa-libGL
+    - mesa-libEGL
+:compile: |
+  # no-op
+:install: |
+  export CONDA_ENVS_PATH=<%= dest_dir %>
+  export PYTHONDONTWRITEBYTECODE=true
+  # conda-forge dependency needs massaging
+  sed -i -e 's/- bioconductor-delayedarray=.*//g' qiime2-2018.11-py35-linux-conda.yml.sic
+  conda env create --file qiime2-2018.11-py35-linux-conda.yml.sic --prefix <%= dest_dir %> <%= redirect(:create) %>
+  rm -rf <%= dest_dir %>/.pkgs
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  conflict apps/python3
+  conflict apps/python
+  conflict apps/anaconda
+  conflict apps/anaconda3
