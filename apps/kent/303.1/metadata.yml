@@ -41,7 +41,7 @@
 :compile: |
   OUTDIR="$(pwd)"
   mkdir -p out/bin out/htdocs out/cgi-bin-root out/${OUTDIR}/out/cgi-bin-root/ out/${OUTDIR}/out/cgi-bin-root/loader
-  cd kent/src
+  cd src
   make USE_SSL=1 \
        DESTDIR=${OUTDIR}/out \
        DOCUMENTROOT=${OUTDIR}/out/htdocs \
@@ -60,9 +60,9 @@
   cp -rv out/htdocs <%= dest_dir %>/www <%= redirect(:install) %>
 
   mkdir <%= dest_dir %>/share
-  cp -v kent/src/hg/lib/trackDb.sql <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v src/hg/lib/trackDb.sql <%= dest_dir %>/share <%= redirect(:install) %>
   mkdir <%= dest_dir %>/share/src
-  cp -Rv kent/src/inc kent/src/lib <%= dest_dir %>/share/src
+  cp -Rv src/inc src/lib <%= dest_dir %>/share/src
   cat <<EOF > <%= dest_dir %>/share/ucsc_browser-<%= version %>.conf
   Listen 8030
   <VirtualHost *:8030>
@@ -89,7 +89,7 @@
   </VirtualHost>
   EOF
 
-  cp -rv kent/src/hg/htdocs/* <%= dest_dir %>/www/htdocs <%= redirect(:install) %>
+  cp -rv src/hg/htdocs/* <%= dest_dir %>/www/htdocs <%= redirect(:install) %>
   cd <%= dest_dir %>/www
   TRASH_DIR=/var/cache/kent/trash
   # The trash directory must exist and be world-writable 777
