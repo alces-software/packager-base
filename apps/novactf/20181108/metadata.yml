@@ -1,0 +1,48 @@
+---
+:schema: 1
+:license: GPLv3
+:title: novaCTF
+:summary: 3D-CTF correction for electron microscopy
+:url: https://www.embl.de/research/units/scb/briggs/NovaCTF/
+:description: |
+  NovaCTF is a freeware for 3D-CTF correction for electron microscopy,
+  as described in this publication:
+
+  Turoňová, B., Schur, F.K.M, Wan, W. and Briggs, J.A.G. Efficient
+  3D-CTF correction for cryo-electron tomography using NovaCTF
+  improves subtomogram averaging resolution to 3.4 Å.
+  (doi.org/10.1016/j.jsb.2017.07.007)
+  <https://doi.org/10.1016/j.jsb.2017.07.007>
+:group: Imaging
+:changelog: |
+  * Mon Aug 12 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - First Created
+:src: novactf-20181108.zip
+:src_dir: novaCTF-4f134c78f17bc5c818539bb078504090a9f43194
+:patches:
+  - gridware-fftw3.patch
+:type: apps
+:version: 20181108
+:requirements:
+  :build:
+    - libs/fftw3_double
+    - libs/fftw3_float
+  :runtime:
+    - libs/fftw3_double
+    - libs/fftw3_float
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc,share}
+  cp -v novaCTF <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -Rv setup_examples <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin

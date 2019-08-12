@@ -1,0 +1,13 @@
+--- makefile.orig	2019-08-12 10:10:11.722521519 +0100
++++ makefile	2019-08-12 13:04:31.255897170 +0100
+@@ -6,8 +6,8 @@
+ SOURCES := $(shell find $(IDIR) -name '*.cpp')
+ 
+ CXX = g++ -O3 -s -DNDEBUG
+-CXXFLAGS = -std=c++14
+-LDFLAGS =  
++CXXFLAGS = -I$(FFTW3_FLOATINCLUDE) -I$(FFTW3_DOUBLEINCLUDE) -std=c++14
++LDFLAGS = -L$(FFTW3_FLOATLIB) -L$(FFTW3_DOUBLELIB)
+ 
+ OBJECTS = $(SOURCES:.cpp=.o)
+ 
