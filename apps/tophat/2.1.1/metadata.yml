@@ -1,0 +1,79 @@
+---
+:schema: 1
+:title: TopHat
+:license: Artistic License
+:summary: A spliced read mapper for RNA-Seq
+:url: http://tophat.cbcb.umd.edu/
+:description: 
+  TopHat is a fast splice junction mapper for RNA-Seq reads. It aligns
+  RNA-Seq reads to mammalian-sized genomes using the ultra
+  high-throughput short read aligner Bowtie, and then analyzes the
+  mapping results to identify splice junctions between exons.
+:group: Bioinformatics
+:changelog: |
+  * Tue Oct  1 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v2.1.1
+  * Thu Sep  8 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Tue May 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Jul 30 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to 2.1.0
+  * Fri Jan 23 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 2.0.13
+  * Tue Aug 12 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 2.0.12
+  * Thu Mar 13 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to version 2.0.11
+  * Fri Feb 28 2014 - James Donohue <james.donohue@alces-software.com>
+    - Added simple example script and runtime dependency on Bowtie2
+  * Mon Dec 16 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added missing runtime dependencies on samtools and boost
+  * Thu Nov 21 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 2.0.10 and updated samtools patches
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Jul 14 2011 Steve Norledge
+    - Updated to version 1.3.1
+    - Better samtools dependency
+  * Wed Feb 23 2011 Steve Norledge
+    - First created
+:src: tophat-2.1.1.tar.gz
+:type: apps
+:version: '2.1.1'
+:requirements:
+  :build:
+    - libs/boost
+  :runtime:
+    - libs/boost
+    - apps/bowtie2
+:compilers:
+  gcc:
+:dependencies: 
+  el:
+    - automake
+    - gcc-c++
+    - zlib-devel
+:compile: |
+  ./bootstrap <%= redirect(:bootstrap) %>
+  ./configure --prefix=<%= dest_dir %> --with-boost=${BOOSTDIR} <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:sources:
+  - tophat.sh.tpl
+  - tophat.sh.md
+:install: |
+  make install <%= redirect(:install) %>
+
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('tophat.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('tophat.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
+
+  prepend-path PATH ${appdir}/bin
