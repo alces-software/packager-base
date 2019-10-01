@@ -1,0 +1,35 @@
+diff -urw cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7.orig/configure cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7/configure
+--- cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7.orig/configure	2019-10-01 16:56:37.964809781 +0100
++++ cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7/configure	2019-10-01 16:57:25.179262613 +0100
+@@ -5396,7 +5396,7 @@
+ 
+ 			break;
+ 		fi
+-		if test -d "$ac_bam_path_tmp/include/bam" && test -r "$ac_bam_path_tmp/include/bam"; then
++		if test -d "$ac_bam_path_tmp/include" && test -r "$ac_bam_path_tmp/include"; then
+ 			BAM_LDFLAGS="-L$ac_bam_path_tmp/lib"
+ 			BAM_CPPFLAGS="-I$ac_bam_path_tmp/include"
+ 			BAM_LIB_PARAM="-lbam"
+@@ -5427,7 +5427,7 @@
+ 	        	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-					#include <bam/bam.h>
++					#include <bam.h>
+ 
+ int
+ main ()
+Only in cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7: configure~
+Only in cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7.orig: .configure.swp
+diff -urw cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7.orig/src/hits.h cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7/src/hits.h
+--- cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7.orig/src/hits.h	2019-10-01 16:58:39.009543794 +0100
++++ cufflinks-dc3b0cb72a4ac2b6bbc887099e71fc0c21e107b7/src/hits.h	2019-10-01 16:50:58.734415705 +0100
+@@ -25,7 +25,7 @@
+ #include <htslib/bgzf.h>
+ #include <htslib/sam.h>
+ #else
+-#include <bam/sam.h>
++#include <sam.h>
+ #endif
+ 
+ #include "common.h"
