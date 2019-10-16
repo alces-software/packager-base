@@ -1,0 +1,6 @@
+setenv RELION_QSUB_TEMPLATE ${appdir}/etc/common.sh
+setenv RELION_PDFVIEWER_EXECUTABLE evince
+setenv RELION_MOTIONCOR2_EXECUTABLE MotionCor2
+setenv RELION_GCTF_EXECUTABLE Gctf
+setenv RELION_QSUB_COMMAND sbatch
+setenv RELION_QUEUE_NAME default
