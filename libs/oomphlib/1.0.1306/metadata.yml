@@ -1,0 +1,32 @@
+---
+:title: oomph-lib
+:license: 
+:summary: Object-oriented finite-element library
+:url: http://oomph-lib.maths.man.ac.uk/doc/html/index.html
+:description: |
+  oomph-lib is an object-oriented, open-source finite-element library
+  for the simulation of multi-physics problems. It is developed and
+  maintained by Matthias Heil and Andrew Hazel of the School of
+  Mathematics at The University of Manchester, along with many other
+  contributors.
+:group: Libraries
+:changelog: |
+  * Wed Oct 16 2019 Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: oomph-lib-1.0.1306.tar.gz
+:src_dir: oomph-lib-1.0.1306
+:type: libs
+:version: '1.0.1306'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
