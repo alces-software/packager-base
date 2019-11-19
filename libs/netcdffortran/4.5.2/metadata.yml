@@ -1,0 +1,92 @@
+---
+:schema: 1
+:title: NetCDF Fortran
+:summary: Set of interfaces and libraries for array-oriented data access
+:license: Apache License 2.0
+:url: http://www.unidata.ucar.edu/software/netcdf/
+:description: |
+  NetCDF (network Common Data Form) is a set of interfaces for
+  array-oriented data access and a freely-distributed collection of
+  data access libraries for C, Fortran, C++, Java, and other
+  languages. The netCDF libraries support a machine-independent format
+  for representing scientific data. Together, the interfaces,
+  libraries, and format support the creation, access, and sharing of
+  scientific data.
+
+  NetCDF data is:
+
+    * Self-Describing - a netCDF file includes information about the
+      data it contains
+    * Portable - a netCDF file can be accessed by computers with
+      different ways of storing integers, characters, and
+      floating-point numbers
+    * Scalable - a small subset of a large dataset may be accessed
+      efficiently
+    * Appendable - data may be appended to a properly structured
+      netCDF file without copying the dataset or redefining its
+      structure
+    * Sharable - one writer and multiple readers may simultaneously
+      access the same netCDF file
+    * Archivable - access to all earlier forms of netCDF data will be
+      supported by current and future versions of the software
+:group: Libraries
+:changelog: |
+  * Tue Nov 19 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest v4.5.2
+  * Tue Mar  6 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Introduced MPI variant
+  * Wed Aug 24 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v4.4.4
+  * Tue Nov 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: netcdf-fortran-4.5.2.tar.gz
+:src_dir: netcdf-fortran-4.5.2
+:type: libs
+:version: '4.5.2'
+:variants:
+  default:
+    :description: "Standard build"
+    :cppflags: "-I${NETCDFINCLUDE}"
+    :ldflags: "-L${NETCDFLIB}"
+    :requirements:
+      :build:
+        - libs/netcdf
+  mpi:
+    :description: "MPI build"
+    :cppflags: "-I${NETCDF_MPIINCLUDE} -I${HDF5_MPIINCLUDE} -I${MPI_HOME}/include"
+    :ldflags: "-L${NETCDF_MPILIB} -L${HDF5_MPILIB} -L${MPI_HOME}/lib"
+    :buildvars: "CC=mpicc FC=mpif77"
+    :buildargs: "--enable-parallel-tests"
+    :requirements:
+      :build:
+        - mpi/openmpi
+        - apps/hdf5_mpi
+        - libs/netcdf_mpi
+      :runtime:
+        - mpi/openmpi
+        - apps/hdf5_mpi
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-gfortran
+    - zlib-devel
+:compile: |
+  export CPPFLAGS="${CPPFLAGS} <%= variant[:cppflags] %>"
+  export LDFLAGS="${LDFLAGS} <%= variant[:ldflags] %>"
+  <%= variant[:buildvars] %> ./configure <%= variant[:buildargs] %> \
+    --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+  prepend-path PATH ${appdir}/bin
+
