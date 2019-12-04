@@ -14,6 +14,8 @@
   viewing, and analyzing data in the HDF5 format.
 :group: Libraries
 :changelog: |
+  * Web Dec  4 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Include `--enable-fortran` for MPI builds
   * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - Bumped to version 1.10.1
   * Tue Sep 20 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -54,7 +56,7 @@
     :serial_configure_env: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
 :variants:
   mpi:
-    :configure_flags: '--enable-shared --enable-static --enable-parallel --with-pic'
+    :configure_flags: '--enable-shared --enable-static --enable-parallel --with-pic --enable-fortran'
     :requirements:
       :runtime: mpi/openmpi
       :build: mpi/openmpi
