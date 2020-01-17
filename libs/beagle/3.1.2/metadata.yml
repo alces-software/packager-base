@@ -38,7 +38,9 @@
 :type: libs
 :variants:
   default:
+    :configure_flags: ''
   cuda:
+    :configure_flags: '--with-cuda=$NVIDIA_CUDADIR/toolkit LDFLAGS=-L$NVIDIA_CUDADIR/toolkit/lib64/stubs'
     :requirements:
       :build: libs/nvidia-cuda
       :runtime: libs/nvidia-cuda
@@ -46,7 +48,7 @@
   gcc:
 :compile: |
   ./autogen.sh <%= redirect(:autogen) %>
-  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  ./configure --prefix=<%= dest_dir %> <%= variant[:configure_flags] %> <%= redirect(:configure) %>
   make <%= redirect(:compile) %>
 :install: |
   make install <%= redirect(:install) %>
