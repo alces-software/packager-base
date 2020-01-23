@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: Git
+:license: GPLv2
+:summary: Git - the stupid content tracker
+:url: https://git-scm.com/
+:description: |
+  Git is a free and open source distributed version control system
+  designed to handle everything from small to very large projects with
+  speed and efficiency.
+
+  Git is easy to learn and has a tiny footprint with lightning fast
+  performance. It outclasses SCM tools like Subversion, CVS, Perforce,
+  and ClearCase with features like cheap local branching, convenient
+  staging areas, and multiple workflows.
+:group: Tools
+:changelog: |
+  * Thu Jan 23 2019 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v2.25.0
+  * Mon Jul 20 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:dependencies:
+  :build:
+    el:
+      - autoconf
+:src: v2.25.0.tar.gz
+:src_dir: git-2.25.0
+:type: apps
+:version: '2.25.0'
+:compilers:
+  gcc:
+:compile: |
+  autoconf
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
