@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: Strelka
+:license: NONFREE - Illumina Open Source Source License
+:summary: Somatic variant calling workflow for matched tumor-normal samples
+:url: https://sites.google.com/site/strelkasomaticvariantcaller/
+:description: |
+
+  Strelka is an analysis package designed to detect somatic SNVs and
+  small indels from the aligned sequencing reads of matched
+  tumor-normal samples.
+
+  The method itself is described in the following publication:
+
+  Strelka: Accurate somatic small-variant calling from sequenced
+  tumor-normal sample pairs.  Christopher T. Saunders; Wendy Wong;
+  Sajani Swamy; Jennifer Becq; Lisa J. Murray; R. Keira Cheetham
+  Bioinformatics 2012; doi: 10.1093/bioinformatics/bts271
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 23 2020 Dan Shaw <dan.shaw@alces-flight.com>
+    - Updated to latest, v2.9.10
+  * Thu Oct 31 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: strelka_2.9.10-source.tar.gz
+:src_dir: strelka-2.9.10
+:type: apps
+:pkg_type: apps
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - apps/python
+    - libs/boost
+  :runtime:
+    - apps/python
+    - libs/boost
+:dependancies:
+  el:
+    - bzip2
+    - zlib-devel
+:compile: |
+  if [ -z "$GRIDWARE_MAKE_THREADS" ]; then
+    export BUILD_THREADS=1
+  else
+    export BUILD_THREADS=$GRIDWARE_MAKE_THREADS
+  fi
+  mkdir build && cd build <%= redirect(:configure) %>
+  ../configure --prefix=<%= dest_dir %> --jobs=$BUILD_THREADS <%= redirect(:configure) %>
+  make -j $BUILD_THREADS <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %> <%= redirect(:install) %>
+  cd build <%= redirect(:install) %>
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
