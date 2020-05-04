@@ -1,0 +1,70 @@
+---
+:schema: 1
+:license: GPLv2
+:title: IMOD
+:summary: Image processing, modeling and display programs for tomographic reconstruction
+:url: http://bio3d.colorado.edu/imod/
+:description: |
+  IMOD is a set of image processing, modeling and display programs
+  used for tomographic reconstruction and for 3D reconstruction of EM
+  serial sections and optical sections. The package contains tools for
+  assembling and aligning data within multiple types and sizes of
+  image stacks, viewing 3-D data from any orientation, and modeling
+  and display of the image files. IMOD was developed primarily by
+  David Mastronarde, Rick Gaudette, Sue Held, Jim Kremer, Quanren
+  Xiong, and John Heumann at the University of Colorado.
+:group: Imaging
+:changelog: |
+  * Mon May  4 2020 - Darth Brown <rob.brown@alces-flight.com>
+    - Bumped to latest 4.10.43 version
+  * Thu Apr 30 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest 4.10.42 version
+  * Wed Jan 30 2019 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest 4.9.10 version
+  * Wed Feb  3 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: imod_4.10.43_RHEL7-64_CUDA8.0.sh.sic
+:type: apps
+:version: 4.10.43
+:requirements:
+  :runtime:
+    - libs/nvidia-cuda ~> 8.0.44
+:dependencies:
+  :runtime:
+    el:
+      - libtiff
+      - libjpeg-turbo
+      - jbigkit-libs
+      - zlib
+      - mesa-libGLU
+      - java-1.8.0-openjdk-devel
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary installation
+:install: |
+  sh ./imod_4.10.43_RHEL7-64_CUDA8.0.sh.sic \
+    -dir <%= dest_dir %>/.. \
+    -name $(basename <%= dest_dir %>) \
+    -skip -yes
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}MAN ${appdir}/man
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  setenv IMOD_DIR ${appdir}
+  setenv IMOD_JAVADIR /usr/local/java
+  setenv IMOD_PLUGIN_DIR ${appdir}/lib/imodplug
+  setenv FOR_DISABLE_STACK_TRACE 1
+  if { [info exists ::env(GRIDWARE_IMOD_CALIB_DIR)] } {
+    setenv IMOD_CALIB_DIR $::env(GRIDWARE_IMOD_CALIB_DIR)
+  } else {
+    setenv IMOD_CALIB_DIR $::env(HOME)/ImodCalib
+  }
+  setenv IMOD_QTLIBDIR ${appdir}/qtlib
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/man
+
+  prepend-path PATH ${appdir}/bin
