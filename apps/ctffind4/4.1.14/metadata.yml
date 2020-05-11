@@ -1,0 +1,51 @@
+---
+:schema: 1
+:license: Janelia Research Campus Software Copyright 1.1
+:title: CTFFIND4
+:summary: CTF estimation
+:url: http://grigoriefflab.janelia.org/ctffind4
+:description: |
+  CTFFIND4 is an updated version of CTFFIND3, which is itself is an
+  updated version of the program CTFFIND2, which was developed in 1998
+  by Nikolaus Grigorieff at the MRC Laboratory of Molecular Biology in
+  Cambridge, UK with financial support from the MRC.
+  
+  CTFFIND determines defocus parameters from images of untilted
+  specimens.  CTFFIND4 is:
+
+    * Faster than CTFFIND 3 (2-10x, depending on runtime parameters)
+    * Backward compatibility with CTFFIND 3 by giving
+      --old-school-input. Should not break existing scripts
+    * Completely rewritten, in object-oriented Fortran
+    * New interactive user interface with friendly help (just type '?'
+      to get help)
+    * Improved output diagonstics, including an estimate of the
+      maximum resolution at which Thon rings were detected
+    * Outputs 1D profiles which accurately account for astigmatism
+    * Accepts stack of micrographs as input
+    * Accepts stack of movie frames as input
+    * Finds the phase shift from micrographs collected using a phase
+      plate
+
+:group: Imaging
+:changelog: |
+  * Mon May 11 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest v4.1.14
+  * Tue Feb  2 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First Created
+:src: ctffind-4.1.14-linux64.tar.gz
+:src_dir: .
+:type: apps
+:version: 4.1.14
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary package
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
