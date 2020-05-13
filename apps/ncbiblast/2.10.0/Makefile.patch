@@ -1,0 +1,11 @@
+--- Makefile.orig	2015-09-08 12:04:15.046044433 +0000
++++ Makefile	2015-09-08 13:29:52.836977253 +0000
+@@ -46,7 +46,7 @@
+ 	-rm -f $(libdir)/lib*-static.a
+ 	cd $(libdir)  && \
+ 	    for x in *.a; do \
+-	        $(LN_S) "$$x" "`/usr/bin/basename \"$$x\" .a`-static.a"; \
++	        $(LN_S) "$$x" "`/bin/basename \"$$x\" .a`-static.a"; \
+ 	    done
+ 	cd $(includedir0) && find * -name CVS -prune -o -print |\
+             cpio -pd $(pincludedir)
