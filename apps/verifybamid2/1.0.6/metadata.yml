@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: VerifyBamID2
+:license: MIT License
+:summary: A robust tool for DNA contamination estimation from sequence reads using ancestry-agnostic method
+:url: http://griffan.github.io/VerifyBamID/
+:description: |
+  Detecting and estimating inter-sample DNA contamination became a
+  crucial quality assessment step to ensure high quality sequence
+  reads and reliable downstream analysis. Across many existing models,
+  allele frequency usually is used to calculate prior genotype
+  probability. Lack of accurate assignment of allele frequency could
+  result in underestimation of contamination level. Hence we propose
+  this ancestry-agnostic DNA contamination estimation method.
+
+  We applied our method to 1000 Genomes datasets by simulating
+  contamination levels from 1% to 20% and comparing the contamination
+  estimates obtain from different methods. When using pooled allele
+  frequencies, as opposed to population-specific allele frequencies,
+  we observed that the contamination levels are underestimated by 20%,
+  40%, 51%, and 73% for CEU, YRI, FIN, and CHS populations,
+  respectively. Using our new method, the underestimation bias was
+  reduced to 2-5%.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jun  4 2020 Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: 1.0.6.tar.gz
+:src_dir: VerifyBamID-1.0.6
+:version: '1.0.6'
+:compilers:
+  gcc:
+:dependencies:
+  :runtime:
+    el:
+      - bzip2-libs
+      - xz-libs
+  :build:
+    el:
+      - bzip2-devel
+      - xz-devel
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - apps/htslib
+  :runtime:
+    - apps/htslib
+:compile: |
+  mkdir build
+  cd build
+  cmake .. <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv resource <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}RESOURCE ${appdir}/resource
+
+  prepend-path PATH ${appdir}/bin
