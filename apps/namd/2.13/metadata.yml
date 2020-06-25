@@ -15,6 +15,8 @@
   and X-PLOR.
 :group: Chemistry
 :changelog: |
+  * Wed Jun 24 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Added ibverbs build option
   * Mon May  4 2020 - Darth Brown <rob.brown@alces-flight.com>
     - Bumped to v2.13
   * Tue Jan 30 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
@@ -51,6 +53,20 @@
         - libs/fftw2_float
       :build:
         - libs/fftw2_float
+  verbs:
+    :requirements:
+      :runtime:
+        - libs/fftw2_float
+      :build:
+        - libs/fftw2_float
+    :dependencies:
+      :runtime:
+        el:
+          - rdma-core
+          - libibverbs
+      :build:
+        el:
+          - rdma-core-devel
 :dependencies:
   el:
     - tcsh
@@ -62,6 +78,7 @@
   mv charm-v6.8.2 charm-6.8.2
   cd charm-6.8.2
   ./build charm++ <%= variant_name %>-linux-x86_64 --no-build-shared \
+    -j${GRIDWARE_MAKE_THREADS:-1} \
     --with-production \
     -c++-option -fpermissive \
     <%= redirect(:charm_build) %>
@@ -74,7 +91,7 @@
     --cxx-opts -fpermissive \
     <%= redirect(:config) %>
   cd Linux-x86_64-g++
-  make <%= redirect(:make) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:make) %>
 :install: |
   mkdir -p <%= dest_dir %>/bin
   cd Linux-x86_64-g++
