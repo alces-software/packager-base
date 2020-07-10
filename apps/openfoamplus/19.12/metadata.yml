@@ -22,6 +22,8 @@
     - libs/mgridgen
     - libs/qt > 5.6.4
 :changelog: |
+  * Fri Jul 10 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Added missing shared library paths
   * Wed May  6 2020 - Rob Brown <rob.brown@alces-flight.com>
     - Bumped to v19.12
   * Thu Aug 15 2019 - Rob Brown <rob.brown@alces-flight.com>
@@ -204,6 +206,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/openmpi-system
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.6.3/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/metis-5.1.0/build/Linux-x86_64/libmetis
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/boost_1_64_0/lib64
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/CGAL-4.9.1/lib64
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/metis-5.1.0/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib/openmpi-system
