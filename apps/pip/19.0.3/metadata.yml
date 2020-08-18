@@ -78,6 +78,18 @@
       :runtime:
         - apps/python3 ~> 3.7.0
         - apps/setuptools_python37 >= 15.0
+  python35:
+    :description: "Builds for Python 3.5.x series"
+    :python_bin: python3
+    :python_libdir: python3.5
+    :requirements:
+      :tool:
+        - apps/setuptools_python35 >= 15.0
+      :build:
+        - apps/python3 ~> 3.5.0
+      :runtime:
+        - apps/python3 ~> 3.5.0
+        - apps/setuptools_python35 >= 15.0
   python36:
     :description: "Builds for Python 3.6.x series"
     :python_bin: python3
@@ -86,9 +98,9 @@
       :tool:
         - apps/setuptools_python36 >= 15.0
       :build:
-        - apps/python3 ~> 3.7.0
+        - apps/python3 ~> 3.6.0
       :runtime:
-        - apps/python3 ~> 3.7.0
+        - apps/python3 ~> 3.6.0
         - apps/setuptools_python36 >= 15.0
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
