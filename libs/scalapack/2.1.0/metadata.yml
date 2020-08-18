@@ -1,0 +1,86 @@
+---
+:schema: 1
+:license: BSD
+:summary: A library of high-performance linear algebra routines for parallel distributed memory machines
+:url: http://www.netlib.org/scalapack/
+:description: |
+  ScaLAPACK is a library of high-performance linear algebra routines
+  for parallel distributed memory machines. ScaLAPACK solves dense and
+  banded linear systems, least squares problems, eigenvalue problems,
+  and singular value problems. The key ideas incorporated into
+  ScaLAPACK include the use of:
+
+    * a block cyclic data distribution for dense matrices and a block
+      data distribution for banded matrices, parametrizable at runtime
+    * block-partitioned algorithms to ensure high levels of data
+      reuse
+    * well-designed low-level modular components that simplify the
+      task of parallelizing the high level routines by making their
+      source code the same as in the sequential case.
+:group: Libraries
+:changelog: |
+  * Tue Aug 18 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest v2.1.0
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Jul 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: scalapack-2.1.0.tgz
+:type: libs
+:version: '2.1.0'
+:requirements:
+  :build: mpi/openmpi
+  :runtime: mpi/openmpi
+  :tool: apps/cmake
+:compilers:
+  gcc:
+    :configure_env: ''
+  intel:
+    :configure_env: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
+  open64:
+    :configure_env: 'CC=opencc CXX=openCC F77=openf90 FC=openf90 F90=openf90'
+    :cmake_parameters: '-DCMAKE_Fortran_FLAGS="-fno-second-underscore" -DCDEFS="Add_"'
+:variants:
+  atlasstatic:
+    :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.a;$ATLASLIB/libf77blas.a" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.a;$ATLASLIB/libatlas.a"'
+    :requirements:
+      :build: libs/atlas
+  atlasshared:
+    # these params are for atlas < 3.10
+    :cmake_parameters_legacy: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.so;$ATLASLIB/libf77blas.so" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.so;$ATLASLIB/libatlas.so"'
+    # these params are for atlas >= 3.10
+    :cmake_parameters: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/libsatlas.so" -DBLAS_LIBRARIES="$ATLASLIB/libsatlas.so"'
+    :requirements:
+      :build: libs/atlas
+      :runtime: libs/atlas
+  acmlstatic:
+    :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ACMLDIR/lib/libacml.a" -DBLAS_LIBRARIES="$ACMLDIR/lib/libacml.a"'
+    :requirements:
+      :build: libs/acml
+  acmlshared:
+    :cmake_parameters: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$ACMLDIR/lib/libacml.so" -DBLAS_LIBRARIES="$ACMLDIR/lib/libacml.so"'
+    :requirements:
+      :build: libs/acml
+      :runtime: libs/acml
+:compile: |
+  sed -i -e 's/"-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}"/"-DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}" "-DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}"/' CMAKE/FortranMangling.cmake
+  mkdir build
+  cd build
+  <%
+     variant_cmake_params = if variant_name == 'atlas_shared' && ENV['ATLAS_LEGACY']
+                              variant[:cmake_parameters_legacy]
+                            else
+                              variant[:cmake_parameters]
+                            end
+  %>
+  <%= compiler[:configure_env] %> cmake <%= variant_cmake_params %> <%= compiler[:cmake_parameters] %> -DCMAKE_INSTALL_PREFIX:PATH=<%= dest_dir %> .. <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
