@@ -205,7 +205,7 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/openmpi-system
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.6.3/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/metis-5.1.0/build/Linux-x86_64/libmetis
-  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/boost_1_64_0/lib64
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/boost_1_66_0/lib64
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/CGAL-4.9.1/lib64
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/metis-5.1.0/lib
