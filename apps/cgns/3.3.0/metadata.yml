@@ -1,0 +1,69 @@
+---
+:schema: 1
+:license: zlib/libpng License
+:title: CFD General Notation System
+:summary: Standard for the storage and retrieval of computational fluid dynamics (CFD) analysis data
+:url: https://cgns.github.io/
+:description: |
+  The CFD General Notation System (CGNS) provides a general, portable,
+  and extensible standard for the storage and retrieval of
+  computational fluid dynamics (CFD) analysis data. It consists of a
+  collection of conventions, and free and open software implementing
+  those conventions. It is self-descriptive, machine-independent,
+  well-documented, and administered by an international steering
+  committee. It is also an American Institute of Aeronautics and
+  Astronautics (AIAA) Recommended Practice.
+:group: Fluid Dynamics
+:changelog: |
+  * Thu Sep 17 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v3.3.0.tar.gz
+:src_dir: CGNS-3.3.0
+:type: apps
+:version: '3.3.0'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - mpi/openmpi
+    - apps/hdf5_mpi
+  :runtime:
+    - mpi/openmpi
+    - apps/hdf5_mpi
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libXmu-devel
+  :runtime:
+    el:
+      - libXmu
+:compile: |
+  cd src
+  CC=$(which mpicc) \
+    ./configure --prefix=<%= dest_dir %> \
+    --with-hdf5=$HDF5_MPIDIR \
+    --with-mpi=$MPI_HOME/bin/mpicc \
+    --with-fortran \
+    --enable-lfs \
+    --enable-64bit \
+    --disable-shared \
+    --enable-parallel \
+    --with-zlib \
+    --enable-cgnstools \
+    --disable-x \
+    <%= redirect(:configure) %>
+  sed -i -e 's/^CLIBS .*/CLIBS   = -lm -ldl/g' make.defs
+  make <%= redirect(:compile) %>
+:install: |
+  cd src
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin/cgnstools
+  prepend-path PATH ${appdir}/bin
