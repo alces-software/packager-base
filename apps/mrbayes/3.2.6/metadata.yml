@@ -18,7 +18,7 @@
   * Wed Oct 10 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: mrbayes-3.2.6.tar.gz
-:src_dir: mrbayes-3.2.6
+:src_dir: MrBayes-3.2.6
 :type: apps
 :version: '3.2.6'
 :dependencies:
@@ -57,12 +57,8 @@
 :install: |
   mkdir <%= dest_dir %>/bin
   cp -v src/mb <%= dest_dir %>/bin <%= redirect(:install) %>
-  cp -rv documentation <%= dest_dir %>/doc <%= redirect(:install) %>
-  cp -rv examples <%= dest_dir %> <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
-  setenv ${appcaps}DOC ${appdir}/doc
-  setenv ${appcaps}EXAMPLES ${appdir}/examples
 
   prepend-path PATH ${appdir}/bin
