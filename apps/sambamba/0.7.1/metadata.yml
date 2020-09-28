@@ -1,0 +1,39 @@
+---
+:schema: 1
+:license: GPLv2+
+:summary: Tools for working with SAM/BAM data
+:url: http://lomereiter.github.io/sambamba/
+:description: |
+  Sambamba is a high performance modern robust and fast tool (and
+  library), written in the D programming language, for working with
+  SAM and BAM files. Current parallelised functionality is an
+  important subset of samtools functionality, including view, index,
+  sort, markdup, and depth.
+
+  Because of efficient use of modern multicore CPUs, usually sambamba
+  is much faster than samtools.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep 24 2020 Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest v0.7.1 version
+  * Tue Aug  4 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: sambamba-0.7.1-linux-static.gz.sic
+:src_dir: .
+:version: '0.7.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a binary distribution of a precompiled D program
+  cp -v <%= source('sambamba-0.7.1-linux-static.gz.sic') %> sambamba-0.7.1-linux-static.gz
+  gunzip sambamba-0.7.1-linux-static.gz
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v sambamba-0.7.1-linux-static <%= dest_dir %>/bin/sambamba <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/sambamba
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
