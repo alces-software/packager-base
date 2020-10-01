@@ -1,0 +1,13 @@
+--- src/pyOpenMS/setup.py.orig	2015-04-21 09:57:23.000000000 +0000
++++ src/pyOpenMS/setup.py	2016-07-05 12:37:38.454761700 +0000
+@@ -1,8 +1,8 @@
+ # input-encoding: latin-1
+ from __future__ import print_function
+ 
+-import distribute_setup
+-distribute_setup.use_setuptools()
++#import distribute_setup
++#distribute_setup.use_setuptools()
+ 
+ # windows ?
+ import sys
