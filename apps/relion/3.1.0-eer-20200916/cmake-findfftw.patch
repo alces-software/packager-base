@@ -1,0 +1,31 @@
+--- cmake/FindFFTW.cmake.orig	2019-01-25 11:40:45.000000000 +0000
++++ cmake/FindFFTW.cmake	2019-01-30 13:06:01.904030409 +0000
+@@ -2,24 +2,16 @@
+ # for compilation of RELION binaries.
+ #
+ 
+-set(LIB_PATHFFT $ENV{FFTW_LIB})
+-set(INC_PATHFFT $ENV{FFTW_INCLUDE})
+-
+ unset(FFTW_PATH CACHE)
+ unset(FFTW_INCLUDES CACHE)
+ unset(FFTW_LIBRARIES CACHE)
+ 	   
+ 
+-if(DEFINED ENV{FFTW_INCLUDE})
+-    find_path(FFTW_PATH     NAMES fftw3.h PATHS ${INC_PATHFFT} )
+-    find_path(FFTW_INCLUDES NAMES fftw3.h PATHS ${INC_PATHFFT} )
+-else()
+-    find_path(FFTW_PATH     NAMES fftw3.h )
+-    find_path(FFTW_INCLUDES NAMES fftw3.h )
+-endif()
++find_path(FFTW_PATH     NAMES fftw3.h PATHS $ENV{FFTW3_FLOATINCLUDE} )
++find_path(FFTW_INCLUDES NAMES fftw3.h PATHS $ENV{FFTW3_FLOATINCLUDE} )
+ 
+-find_library(_FFTW_SINGLE  NAMES fftw3f  PATHS ${LIB_PATHFFT} $ENV{FFTW_LIB} $ENV{FFTW_HOME} )
+-find_library(_FFTW_DOUBLE  NAMES fftw3   PATHS ${LIB_PATHFFT} $ENV{FFTW_LIB} $ENV{FFTW_HOME} )
++find_library(_FFTW_SINGLE  NAMES fftw3f  PATHS $ENV{FFTW3_FLOATLIB} )
++find_library(_FFTW_DOUBLE  NAMES fftw3   PATHS $ENV{FFTW3_DOUBLELIB} )
+ 
+ if (FFTW_PATH AND FFTW_INCLUDES AND 
+    (_FFTW_SINGLE OR NOT FFTW_FIND_REQUIRED_SINGLE) AND 
