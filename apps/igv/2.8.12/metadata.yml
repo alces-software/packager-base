@@ -1,0 +1,63 @@
+---
+:schema: 1
+:license: LGPLv2.1
+:summary: A high-performance visualization tool for interactive exploration of large, integrated genomic datasets
+:url: http://www.broadinstitute.org/software/igv/home
+:description: |
+  The Integrative Genomics Viewer (IGV) is a high-performance
+  visualization tool for interactive exploration of large, integrated
+  genomic datasets. It supports a wide variety of data types,
+  including array-based and next-generation sequence data, and genomic
+  annotations.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Tue Nov 17 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version v2.8.12
+  * Fri May 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Apr 29 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v2.3.51
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v2.1.21
+    - Refactored to packager style
+  * Tue Feb 22 2011 Steve Norledge
+    - First created
+:src: IGV_2.8.12.zip
+:src_dir: IGV_2.8.12
+:version: '2.8.12'
+:params:
+  :javahome: "Path to JAVA_HOME for Java 11 [specify path excluding bin/ directory, or 'default' for '/usr/lib/jvm/jre-11']"
+:compilers:
+  noarch:
+:dependencies:
+  el:
+    - java-11-openjdk
+:compile: |
+  <% java_home = ( param(:javahome) == 'default' ? '/usr/lib/jvm/jre-11' : param(:javahome) ) %>
+  if [ ! -x <%= java_home %>/bin/java ]; then
+    echo Java could not be found in <%= java_home %>/bin/java. >/dev/stderr
+  fi
+  # no-op; this is a distribution of a Java application
+  java_version=$(<%= java_home %>/bin/java -version 2>&1 | grep " version" | cut -d'"' -f2)
+  java_major=$(echo "$java_version" | cut -d'.' -f1)
+  java_minor=$(echo "$java_version" | cut -d'.' -f2)
+  if [[ "$java_major" -ne "11" ]]; then
+    echo Java version is $java_version but IGV requires Java 11 to run. Please ensure a compatible version is installed. >/dev/stderr
+  fi
+:install: |
+  cp -rv * <%= dest_dir %> <%= redirect(:install) %>
+  rm -f <%= dest_dir %>/*.bat
+  rm -f <%= dest_dir %>/*.command
+  ln -s igv.sh <%= dest_dir %>/igv
+  ln -s igv_hidpi.sh <%= dest_dir %>/igv_hidpi
+  <% java_home = ( param(:javahome) == 'default' ? '/usr/lib/jvm/jre-11' : param(:javahome) ) %>
+  for a in igv igv_hidpi.sh igvtools igvtools_gui igvtools_gui_hidpi; do
+    sed -i -e 's, java , <%= java_home %>/bin/java ,g' "<%= dest_dir %>/$a"
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+  setenv ${appcaps}JAVA ${appdir}/lib
+
+  prepend-path PATH ${appdir}
