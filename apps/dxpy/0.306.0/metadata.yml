@@ -1,0 +1,43 @@
+---
+:schema: 1
+:title: dxpy
+:license: GPLv3
+:summary: DNAnexus Python API
+:url: https://github.com/dnanexus/dx-toolkit
+:description: |
+  The DNAnexus dxpy Python library provides Python bindings to
+  interact with the DNAnexus Platform via its API. The bindings are
+  available to Python apps running within the DNAnexus Execution
+  Environment, and can also be used in scripts you run that access the
+  API from the outside.
+:group: Bioinformatics
+:changelog: |
+  * Tue Mar  9 2021 Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: dxpy-0.306.0.tar.gz
+:type: apps
+:version: '0.306.0'
+:requirements:
+  :build:
+    - apps/python ~> 2.7.3
+    - apps/pip
+  :runtime:
+    - apps/python ~> 2.7.3
+    - apps/pip
+:compilers:
+  noarch:
+:compile: |
+  # no-op
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  pip install --prefix=<%= dest_dir %> .
+  #export PYTHONUSERBASE="$(pwd)/python"
+
+  #mkdir $PYTHONUSERBASE
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
