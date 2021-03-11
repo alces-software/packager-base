@@ -44,6 +44,7 @@
   mv include/eigen3/* include
   rmdir include/eigen3
   sed -i 's/include\/eigen3/include/' share/pkgconfig/eigen3.pc
+  sed -i 's/include\/eigen3/include/' lib64/cmake/eigen3/Eigen3Config.cmake
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}INCLUDE ${appdir}/include
