@@ -25,7 +25,6 @@
   * Fri Jun  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
     - First created
 :src: 3.3.0.tar.gz
-:src_dir: eigen-eigen-26667be4f70b 
 :type: libs
 :version: '3.3.0'
 :compilers:
