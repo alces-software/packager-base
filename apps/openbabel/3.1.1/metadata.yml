@@ -11,9 +11,15 @@
   or related areas.
 :requirements:
   :tool: apps/cmake
-  :build: libs/eigen ~> 3.3.0
+  :build: 
+    - libs/eigen ~> 3.3.0
+    - apps/python
+  :runtime:
+    - apps/python
 :group: Chemistry
 :changelog: |
+  * Tue Mar 30 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Add dependency on python to allow python bindings to be built
   * Wed May 27 2020 - Rob Brown <rob.brown@alces-flight.com>
     - Update to latest v3.1.1; bump eigen3 dependency
   * Thu Feb 20 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -63,3 +69,5 @@
 
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
