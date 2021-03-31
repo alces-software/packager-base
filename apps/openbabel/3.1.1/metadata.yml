@@ -9,15 +9,10 @@
   allowing anyone to search, convert, analyze, or store data from
   molecular modeling, chemistry, solid-state materials, biochemistry,
   or related areas.
-:requirements:
-  :tool: apps/cmake
-  :build: 
-    - libs/eigen ~> 3.3.0
-    - apps/python
-  :runtime:
-    - apps/python
 :group: Chemistry
 :changelog: |
+  * Wed Mar 31 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Add python37 variant to allow builds against python3
   * Tue Mar 30 2021 - Rob Brown <rob.brown@alces-flight.com>
     - Add dependency on python to allow python bindings to be built
   * Wed May 27 2020 - Rob Brown <rob.brown@alces-flight.com>
@@ -45,6 +40,30 @@
       - cairo
       - libxml2
       - perl
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build:
+        - apps/python ~> 2.7.3
+      :runtime:
+        - apps/python ~> 2.7.3
+  python37:
+    :description: "Builds for Python 3.7.x series"
+    :python_bin: python3
+    :python_libdir: python3.7
+    :cmake_flags: "-DPython_ADDITIONAL_VERSIONS=3.7"
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.7.0
+      :runtime:
+        - apps/python3 ~> 3.7.0
+:requirements:
+  :tool: apps/cmake
+  :build: 
+    - libs/eigen ~> 3.3.0
 :src: openbabel-3.1.1-source.tar.bz2
 :type: apps
 :version: '3.1.1'
@@ -58,6 +77,7 @@
         -DPERL_BINDINGS=ON \
         -DEIGEN3_INCLUDE_DIR=$EIGENINCLUDE \
         -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+        <%= variant[:cmake_flags] %> \
         .. <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
@@ -70,4 +90,4 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
 
-  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
+  prepend-path PYTHONPATH ${appdir}/lib/<%= variant[:python_libdir] %>/site-packages
