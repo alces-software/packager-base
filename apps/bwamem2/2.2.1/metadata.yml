@@ -1,0 +1,41 @@
+---
+:schema: 1
+:license: MIT License
+:summary: The next version of bwa-mem
+:url: https://github.com/bwa-mem2/bwa-mem2
+:title: bwa-mem2
+:description: |
+  Bwa-mem2 is the next version of the bwa-mem algorithm in bwa. It
+  produces alignment identical to bwa and is ~1.3-3.1x faster
+  depending on the use-case, dataset and the running machine.
+
+  The original bwa was developed by Heng Li (@lh3). Performance
+  enhancement in bwa-mem2 was primarily done by Vasimuddin Md (@yuk12)
+  and Sanchit Misra (@sanchit-misra) from Parallel Computing Lab,
+  Intel. Bwa-mem2 is distributed under the MIT license.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Apr  1 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: bwa-mem2-2.2.1_x64-linux.tar.bz2
+:src_dir: bwa-mem2-2.2.1_x64-linux
+:version: '2.2.1'
+:dependencies:
+  :runtime:
+    el:
+      - zlib
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary package
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,doc}
+  cp -v LICENSE NEWS.md README.md README-ori.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v bwa-mem2* <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
