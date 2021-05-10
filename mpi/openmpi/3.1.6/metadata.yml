@@ -32,6 +32,14 @@
   :pmi: "Specify path containing pmi.h/pmi2.h for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
   :pmilib: "Specify path containing libpmi.so/libpmi2.so for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
   :extraopts: "Specify additional configure options or 'default' for none"
+:variants:
+  default:
+  cuda:
+    :requirements:
+      :build:
+        - libs/nvidia-cuda
+      :runtime:
+        - libs/nvidia-cuda
 :sources:
   - examples.sge.openmpi.template
 :dependencies:
@@ -61,6 +69,7 @@
   <% else %>
     PMIPARAMS=""
   <% end %>
+  LDFLAGS="$(echo $LDFLAGS | sed 's/-L\S*lib\b//g')"
   ./configure \
     <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> \
     ${TORQUEPARAMS} \
@@ -71,6 +80,7 @@
     --enable-static --enable-shared --prefix=<%= dest_dir %> \
     <%= param(:extraopts) == 'default' ? '' : param(:extraopts) %> \
     <%= compiler[:configure_flags] %> \
+    <% if variant_name == 'cuda' %>--with-cuda=$CUDA_DIR \<% end %>
     <%= redirect(:configure) %>
   make <%= redirect(:make) %>
 :install: |
