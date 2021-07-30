@@ -1,0 +1,69 @@
+:schema: 1
+:license: Common Public License Version 1.0
+:summary: IMB is a networking benchmark tool.
+:url: http://software.intel.com/en-us/articles/intel-mpi-benchmarks/
+:description: |
+  IMB is a networking benchmark tool.
+:group: Benchmarks
+:requirements:
+  :runtime:
+    - mpi/openmpi >= 1.8.1
+  :build:
+    - mpi/openmpi >= 1.8.1
+:changelog: |
+  * Thu Jul 29 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest v2021.2
+  * Tue Sep  6 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
+  * Wed Jul 2 2014 Steve Norledge
+    - bump to v4.0
+  * Tue Mar  4 2014 James Donohue <james.donohue@alces-software.com>
+    - Added MPI example script
+  * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v3.2.4-updated
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Bumped to 3.2.2
+  * Thu Aug 23 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Ported to installer
+  * Wed Aug 17 2011 Steve Norledge
+    - Load openmpi from Alces stack
+  * Sat Feb 19 2011 Steve Norledge
+    - First created
+:src: IMB-v2021.2.tar.gz
+:src_dir: mpi-benchmarks-IMB-v2021.2
+:type: apps
+:version: '2021.2'
+:compilers:
+  gcc:
+:compile: |
+  export CC=mpicc
+  export CXX=mpicxx
+  make <%= redirect :make %>
+:tgtbin:
+  - IMB-EXT
+  - IMB-IO
+  - IMB-MPI1
+  - IMB-MT
+  - IMB-NBC
+  - IMB-RMA
+:tgtdoc:
+  - README.md
+  - ReadMe_IMB.txt
+  - license/license.txt
+  - license/use-of-trademark-license.txt
+  - license/third-party-programs.txt
+:install: |
+  <%package.tgtbin.each do |f|%>
+    install -D -m 755 <%=f%> <%=dest_dir%>/bin/<%=File::basename(f)%>
+  <%end%>
+  <%package.tgtdoc.each do |f|%>
+    install -D -m 644 <%=f%> <%=dest_dir%>/doc/<%=File::basename(f)%>
+  <%end%>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
