@@ -1,0 +1,23 @@
+--- make.inc.orig	2021-07-30 15:23:11.842531430 +0100
++++ make.inc	2021-07-30 15:25:43.055993516 +0100
+@@ -7,7 +7,7 @@
+ #
+ #  The machine (platform) identifier to append to the library names
+ #
+-PLAT = _LINUX
++PLAT = _LINUX_ALCES
+ #
+ #  Modify the FORTRAN and OPTS definitions to refer to the
+ #  compiler and desired compiler options for your machine.  NOOPT
+@@ -16,9 +16,9 @@
+ #  desired load options for your machine.
+ #
+ FC  = gfortran
+-FFLAGS = -O2 -frecursive
++FFLAGS = -O2 -frecursive -m64 -fPIC
+ FFLAGS_DRV = $(FFLAGS)
+-FFLAGS_NOOPT = -O0 -frecursive
++FFLAGS_NOOPT = -O0 -frecursive -m64 -fPIC
+ #  Define LDFLAGS to the desired linker options for your machine.
+ #
+ LDFLAGS =
