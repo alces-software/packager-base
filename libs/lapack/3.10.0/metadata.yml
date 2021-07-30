@@ -1,0 +1,88 @@
+---
+:schema: 1
+:license: BSD
+:summary: Linear Algebra PACKage - routines for equation solving systems
+:url: http://www.netlib.org/lapack/
+:description: |
+  Linear Algebra PACKage (LAPACK) is written in Fortran 90 and
+  provides routines for solving systems of simultaneous linear
+  equations, least-squares solutions of linear systems of equations,
+  eigenvalue problems, and singular value problems. The associated
+  matrix factorizations (LU, Cholesky, QR, SVD, Schur, generalized
+  Schur) are also provided, as are related computations such as
+  reordering of the Schur factorizations and estimating condition
+  numbers. Dense and banded matrices are handled, but not general
+  sparse matrices. In all areas, similar functionality is provided for
+  real and complex matrices, in both single and double precision.
+:group: Libraries
+:changelog: |
+  * Fri Jul 30 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest version 3.10.0
+  * Wed Apr 6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to include distro dependencies
+  * Tue Feb 16 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to conform to more conventional gridware structure
+    - Build shared and static libraries
+  * Wed Jan 22 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 3.5.0
+  * Fri Sep  7 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added open64 support
+    - Bumped to version 3.4.1
+  * Thu Aug 16 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style  
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Ported to alces-installer style package
+  * Fri Feb 18 2011 Steve Norledge
+    - First created
+:src: lapack-3.10.0.tgz
+:requirements:
+  :tool: apps/cmake
+:type: libs
+:version: 3.10.0
+:compilers:
+  gcc:
+  open64:
+:dependencies:
+   el:
+     - gcc-gfortran
+:compile: |
+  mkdir build.static build.shared
+  cd build.static
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DLAPACKE=ON \
+    .. <%= redirect(:cmake_static) %>
+  make <%= redirect(:compile_static) %>
+
+  cd ../build.shared
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DBUILD_SHARED_LIBS=ON \
+    -DLAPACKE=ON \
+    .. <%= redirect(:cmake_shared) %>
+  make <%= redirect(:compile_shared) %>
+:install: |
+  cd build.static
+  make install <%= redirect(:install_static) %>
+  cd ../build.shared
+  make install <%= redirect(:install_shared) %>
+  cd ..
+  mkdir -p <%= dest_dir %>/doc
+  install -m 644 README.md LICENSE -t <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+
+  if { [info exists ::env(GRIDWARE_LAPACK_COMPAT)] } {
+    setenv LAPACKDIR ${appdir}/lib
+    setenv LAPACK_DIR ${appdir}/lib
+    setenv LAPACK ${appdir}/lib/liblapack.a
+
+    prepend-path --delim " " LDFLAGS " -L${appdir}/lib"
+  } {
+    setenv ${appcaps}DIR ${appdir}
+  }
