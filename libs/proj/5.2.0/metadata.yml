@@ -1,0 +1,65 @@
+---
+:schema: 1
+:title: PROJ
+:license: MIT License
+:summary: Generic coordinate transformation software
+:url: https://proj.org/
+:description: |
+  PROJ is a generic coordinate transformation software that transforms
+  geospatial coordinates from one coordinate reference system (CRS) to
+  another. This includes cartographic projections as well as geodetic
+  transformations. PROJ is released under the X/MIT open source
+  license
+
+  PROJ includes command line applications for easy conversion of
+  coordinates from text files or directly from user input. In addition
+  to the command line utilities PROJ also exposes an application
+  programming interface, or API in short. The API lets developers use
+  the functionality of PROJ in their own software without having to
+  implement similar functionality themselves.
+
+  PROJ started purely as a cartography application letting users
+  convert geodetic coordinates into projected coordinates using a
+  number of different cartographic projections. Over the years, as the
+  need has become apparent, support for datum shifts has slowly worked
+  its way into PROJ as well. Today PROJ supports more than a hundred
+  different map projections and can transform coordinates between
+  datums using all but the most obscure geodetic techniques.
+:group: Libraries
+:changelog: |
+  * Wed Aug 18 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v5.2.0
+  * Mon Apr 19 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: proj-5.2.0.tar.gz
+:src_dir: proj-5.2.0
+:type: libs
+:version: '5.2.0'
+:compilers:
+  gcc:
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - sqlite-devel
+      - libtiff-devel
+      - libcurl-devel
+  :runtime:
+    el:
+      - sqlite
+      - libtiff
+      - libcurl
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PATH ${appdir}/bin
