@@ -1,0 +1,60 @@
+---
+:schema: 1
+:license: MIT License
+:summary: Variant discovery program
+:url: https://github.com/AstraZeneca-NGS/VarDictJava
+:description: |
+  VarDictJava is a variant discovery program written in Java and
+  Perl. It is a Java port of VarDict variant caller.
+
+  The original Perl VarDict is a sensitive variant caller for both
+  single and paired sample variant calling from BAM files. VarDict
+  implements several novel features such as amplicon bias aware
+  variant calling from targeted sequencing experiments, rescue of long
+  indels by realigning bwa soft clipped reads and better scalability
+  than many other Java based variant callers. The Java port is around
+  10x faster than the original Perl implementation.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov  4 2021 Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: VarDict-1.8.2.zip
+:src_dir: VarDict-1.8.2
+:version: '1.8.2'
+:compilers:
+  noarch:
+:requirements:
+  :runtime:
+    - apps/R
+    - apps/java >= 8.0.181
+:compile: |
+  # no-op; this is a distribution of a Java application
+:install: |
+  mkdir <%= dest_dir %>/java
+  cp lib/*.jar <%= dest_dir %>/java
+  cp -R bin <%= dest_dir %>
+  rm -f <%= dest_dir %>/bin/VarDict.bat
+  cat <<\EOF > <%= dest_dir %>/bin/VarDict
+  #!/bin/bash
+  CP=${VARDICTDIR}/java/VarDict-1.8.2.jar
+  CP=${CP}:${VARDICTDIR}/java/commons-cli-1.2.jar
+  CP=${CP}:${VARDICTDIR}/java/commons-math3-3.6.1.jar
+  CP=${CP}:${VARDICTDIR}/java/jregex-1.2_01.jar
+  CP=${CP}:${VARDICTDIR}/java/htsjdk-2.21.1.jar
+  exec java `eval echo $VARSCAN_JAVA_OPTS` \
+    -classpath "${CP}" \
+    com.astrazeneca.vardict.Main "$@"
+  EOF
+  ln -s <%= dest_dir %>/bin/VarDict <%= dest_dir %>/bin/vardict
+:module: |
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+  setenv ${appcaps}_JAVA_MEM_MS 768m
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Xms\$${appcaps}_JAVA_MEM_MS"
+
+  prepend-path PATH ${appdir}/bin
