@@ -1,0 +1,60 @@
+---
+:schema: 1
+:title: LoFreq
+:license: BSD License
+:summary: Fast and sensitive variant-caller for inferring SNVs from high-throughput sequencing data
+:url: http://sourceforge.net/p/lofreq/wiki/Home/
+:description: |
+  LoFreq is a fast and sensitive variant-caller for inferring
+  single-nucleotide variants (SNVs) from high-throughput sequencing
+  data. It is designed to robustly call low-frequency variants by
+  exploiting base-call quality values. LoFreq has been used to call
+  rare variants in viral and bacterial sequencing datasets and can be
+  used to study mitochondrial heteroplasmy and rare somatic mutations
+  in heterogeneous tumors.
+
+  LoFreq makes full use of base-call qualities (and versions >=0.5
+  also use read mapping qualities) which are usually ignored by other
+  methods or only used for filtering. It is very sensitive; most
+  notably, it is able to predict variants below the average base-call
+  quality (i.e. sequencing error rate). Each SNV call is assigned a
+  p-value which allows for rigorous false positive control. Even
+  though it uses no approximations or heuristics, it is very efficient
+  due to several runtime optimizations. LoFreq is generic and fast
+  enough to be applied to high-coverage data and large genomes. It
+  takes a minute to analyze Dengue genome sequencing data with nearly
+  4000X coverage, roughly one hour to call SNVs on a 600X coverage
+  E.coli genome and 1.5 hours to run on a 100X coverage human exome
+  dataset.
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov  4 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version available v2.1.5
+  * Wed Sep 17 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version available (binary only), 2.0.0
+  * Thu Dec  5 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: lofreq_star-2.1.5.tar.gz
+:src_dir: lofreq_star-2.1.5
+:type: apps
+:version: 2.1.5
+:requirements:
+  :build:
+    - apps/python ~> 2.7
+    - apps/htslib >= 1.10.2
+  :runtime:
+    - apps/python ~> 2.7
+    - apps/htslib >= 1.10.2
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> --with-htslib=${HTSLIBDIR} <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PYTHONPATH ${appdir}/lib/python2.7/site-packages
