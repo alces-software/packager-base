@@ -1,0 +1,47 @@
+---
+:schema: 1
+:license: CeCILL License
+:summary: Detect low allele frequency variations
+:url: https://github.com/EtieM/outLyzer
+:description: |
+  OutLyzer is a variant-caller conceived for low allele-ratio
+  mutations detection, based on sequencing background noise
+  evaluation. It evaluates if the mutation is significantly different
+  from background noise, using modified Thompson tau technique.
+
+  This program was conceived in the Department of Cancer Biology and
+  Genetics, Francois Baclesse Cancer Center, Caen, France
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Fri Nov 12 2021 Rob Brown <rob.brown@alces-flight.com>
+    - Updated to use Python 3.9 rather than Python 2.7.x
+  * Thu Nov  4 2021 Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: 3.0.tar.gz
+:src_dir: outLyzer-3.0
+:version: '3.0.0'
+:compilers:
+  noarch:
+:requirements:
+  :runtime:
+    - apps/python3 ~> 3.9.0
+    - libs/numpy_python39 >= 1.8.2
+    - libs/scipy_python39 >= 1.2.1
+    - apps/samtools >= 1.2.0
+:compile: |
+  # no-op; this is a distribution of a Python application
+:install: |
+  mkdir <%= dest_dir %>/{bin,doc}
+  cp outLyzer.py <%= dest_dir %>/bin
+  chmod 755 <%= dest_dir %>/bin/outLyzer.py
+  sed -i 's,^#!.*,#!/usr/bin/env python3,g' <%= dest_dir %>/bin/outLyzer.py 
+  cp *.txt <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+
+  setenv samtools $::env(SAMTOOLSBIN)/samtools
