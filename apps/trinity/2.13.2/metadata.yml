@@ -1,0 +1,149 @@
+---
+:schema: 1
+:title: Trinity
+:license: BSD
+:summary: A novel method for the efficient and robust de novo reconstruction of transcriptomes from RNA-seq data
+:url: http://trinityrnaseq.sourceforge.net/
+:description: |
+  Trinity, developed at the Broad Institute and the Hebrew University
+  of Jerusalem, represents a novel method for the efficient and robust
+  de novo reconstruction of transcriptomes from RNA-seq data. Trinity
+  combines three independent software modules: Inchworm, Chrysalis,
+  and Butterfly, applied sequentially to process large volumes of
+  RNA-seq reads. Trinity partitions the sequence data into many
+  individual de Bruijn graphs, each representing the transcriptional
+  complexity at at a given gene or locus, and then processes each
+  graph independently to extract full-length splicing isoforms and to
+  tease apart transcripts derived from paralogous genes.
+:group: Bioinformatics
+:changelog: |
+  * Fri Feb 25 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version, v2.13.2
+  * Wed Oct  7 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version, v2.11.0
+  * Mon Oct 10 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added java-1.8.0-openjdk as dependency
+  * Thu Sep  8 2016 Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Wed Mar 30 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, v2.2.0
+  * Wed Oct  8 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated example script to refer to correct fact for smp slots
+  * Tue Apr 15 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to 2014-04-13 version
+    - Removed Java memory patch (now exists upstream)
+  * Thu Apr  3 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added example script and title
+    - Tweaked environment variables to add MALLOC_ARENA_MAX=1
+    - Added runtime dependencies on Bowtie and Samtools
+    - Added patch to introduce Java memory requirement when version is requested
+  * Fri Dec 13 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to 2013-11-10 version
+  * Tue Oct  1 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to 2013-08-04 version
+  * Sat Sep  8 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Feb 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v2.13.2.tar.gz
+:src_dir: trinityrnaseq-v2.13.2
+:type: apps
+:version: 2.13.2
+:requirements:
+  :tool:
+    - apps/cmake
+  :runtime:
+    - apps/bowtie
+    - apps/samtools
+:variants:
+  default:
+    :description: "Build for Pythong 2.7.x series"
+  python34:
+    :description: "Build for Python 3.4.x series"
+    :requirements:
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34
+    :pyfiles:
+      - ./util/misc/alt_GG_read_partitioning_JCornish/genwig2.py
+      - ./util/misc/TPM_weighted_gene_length.py
+      - ./util/support_scripts/trinity_installer.py
+      - ./Analysis/SuperTranscripts/pylib/Node_path.py
+      - ./Analysis/SuperTranscripts/pylib/Topological_sort.py
+      - ./Analysis/SuperTranscripts/pylib/Compact_graph_pruner.py
+      - ./Analysis/SuperTranscripts/pylib/Gene_splice_modeler.py
+      - ./Analysis/SuperTranscripts/pylib/DP_matrix.py
+      - ./Analysis/SuperTranscripts/pylib/GraphCycleException.py
+      - ./Analysis/SuperTranscripts/pylib/TGraph.py
+      - ./Analysis/SuperTranscripts/pylib/Node_alignment.py
+      - ./Analysis/SuperTranscripts/pylib/Trinity_util.py
+      - ./Analysis/SuperTranscripts/pylib/Compact_graph_partial.py
+      - ./Analysis/SuperTranscripts/pylib/Trinity_fasta_parser.py
+      - ./Analysis/SuperTranscripts/pylib/Splice_model_refiner.py
+      - ./Analysis/SuperTranscripts/pylib/TGLOBALS.py
+      - ./Analysis/SuperTranscripts/pylib/TNode.py
+      - ./Analysis/SuperTranscripts/pylib/Compact_graph_whole.py
+      - ./Analysis/SuperTranscripts/Trinity_gene_splice_modeler.py
+      - ./Analysis/SuperTranscripts/extract_supertranscript_from_reference.py
+      - ./Analysis/SuperTranscripts/AllelicVariants/run_variant_calling.py
+      - ./trinity-plugins/COLLECTL/util/collectl_dat_to_time_matrix.py
+      - ./trinity-plugins/seqtk-trinity/testing/test_seqtk_trinity.py
+      - ./trinity-plugins/DEXseq_util/dexseq_prepare_annotation.py
+      - ./PyLib/Pipeliner.py
+:dependencies:
+  el:
+    - gcc-c++
+    - zlib-devel
+    - git
+    - ncurses-devel
+    - perl-Data-Dumper
+    - java-1.8.0-openjdk
+:compilers:
+  gcc:
+:compile: |
+  # Prevent CXX from being supplied as an absolute path because the
+  # Inchworm/configure file branches based on the name of the compiler
+  # binary, not taking into account that it might be prefixed with a
+  # path.  We assume that the PATH is set up correctly that the
+  # preferred binary is found without the path prefix.
+  CXX=$(basename "$CXX")
+
+  make <%= redirect(:compile) %>
+  make plugins <%= redirect(:compile) %>
+  <% if variant_name == "python34" %>
+  <% variant[:pyfiles].each do |f| %>
+  sed -i -e 's,#!.*,#!/usr/bin/env python3,g' <%= f %>
+  <% end %>
+  <% end %>
+:sources:
+  - trinity.sh.tpl
+  - trinity.sh.md
+:install: |
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+  cp -v <%= source('trinity.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
+  cp -v <%= source('trinity.sh.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}
+  setenv ${appcaps}TEMPLATES ${appdir}/share/clusterware/templates
+  setenv ${appcaps}EXAMPLEDOCS ${appdir}/share/clusterware/guides
+
+  # This variable tunes the virtual memory system to work better with
+  # abstracted languages, such as Java.  If you need this setting to
+  # be skipped, ensure the variable ALCES_SKIP_VMM_TWEAK is set and
+  # exported in your environment before loading the module.
+  if { [info exists ::env(ALCES_SKIP_VMM_TWEAK)] == 0 } {
+    setenv MALLOC_ARENA_MAX 1
+  }
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/util
+  prepend-path PATH ${appdir}
+  prepend-path LD_LIBRARY_PATH ${appdir}/trinity-plugins/jellyfish/lib
+
+  prepend-path CW_DOCPATH ${appdir}/share/clusterware
