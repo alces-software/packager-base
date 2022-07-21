@@ -1,0 +1,101 @@
+---
+:schema: 1
+:title: CUDA Toolkit
+:license: NONFREE - NVIDIA Software License/CUDPP License
+:license_help: |
+  For NVIDIA Software License details, see
+  <http://www.nvidia.co.uk/object/nv_swlicense.html>.
+
+  For CUDPP Licese details, see
+  <http://www.gpgpu.org/static/developer/cudpp/rel/cudpp_1.0a/html/license.html>.
+:summary: Development environment for C and C++ developers building GPU-accelerated applications
+:url: http://developer.nvidia.com/cuda/cuda-toolkit
+:description: |
+  NVIDIA® CUDA(TM) is a general purpose parallel computing
+  architecture introduced by NVIDIA. It includes the CUDA Instruction
+  Set Architecture (ISA) and the parallel compute engine in the
+  GPU. To program to the CUDA architecture, developers can use C, one
+  of the most widely used high-level programming languages, which can
+  then be run at great performance on a CUDA-enabled processor
+
+  The NVIDIA® CUDA® Toolkit provides a comprehensive development
+  environment for C and C++ developers building GPU-accelerated
+  applications.  The CUDA Toolkit includes a compiler for NVIDIA GPUs,
+  math libraries, and tools for debugging and optimizing the
+  performance of your applications.  You’ll also find programming
+  guides, user manuals, API reference, and other documentation to help
+  you get started quickly accelerating your application with GPUs.
+:group: Libraries
+:changelog: |
+  * Thu Jul 21 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to 11.7.0 version
+  * Thu Nov  4 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to 11.2.0 version
+  * Wed Aug 19 2020 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to 11.0.3 version
+    - Updated installation methodology
+  * Fri May 17 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to 10.1.168 version
+  * Tue Jan 29 2019 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to 10.0.130 version
+  * Tue Feb 21 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v8.0.61 version
+  * Fri May  6 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v7.0 release 7.5.18
+  * Mon Oct 26 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Removed obsolete install script
+    - Set installer environment variable for use with Alces Clusterware handler
+  * Wed Apr 22 2015 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v7.0 release 7.0.28
+  * Fri Sep 12 2014 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v6.5 release 6.5.14
+  * Sun Aug 18 2013 - Steve Norledge <steve.norledge@alces-software.com>
+    - Bumped to v5.5 release 5.5.22
+  * Wed Nov 7 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - Bumped to v5 release 5.0.35
+    - Modifications to cope with new Nvidia installer that packages SDK Tookit and the Nvidia driver all in one.
+    - SDK is now samples
+    - Add install script for dev driver
+  * Thu Oct 11 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest available v4.2.9
+  * Tue Sep 25 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri Mar 30 2012 Steve Norledge
+    - Bump to latest version
+  * Tue Jul 26 2011 Steve Norledge
+    - First created
+:src: cuda_11.7.0_515.43.04_linux.run.sic
+:src_dir: .
+:type: libs
+:version: '11.7.0'
+:compilers:
+  bin:
+:compile: |
+  # move main source file to it's proper name (ie. drop the sic extension)
+  mv cuda_11.7.0_515.43.04_linux.run.sic cuda_11.7.0_515.43.04_linux.run
+:install: |
+  mkdir -p <%= dest_dir %>/installers
+  /bin/sh cuda_11.7.0_515.43.04_linux.run \
+     --tmpdir=/var/tmp \
+     --silent \
+     --toolkit --samples \
+     --installpath=<%= dest_dir %> \
+     --no-man-page
+  /bin/sh cuda_11.7.0_515.43.04_linux.run \
+    --tar xf ./builds/NVIDIA-Linux-x86_64-515.43.04.run
+  cp -v builds/*.run <%= dest_dir %>/installers
+  # create link for dev driver
+  (cd <%= dest_dir %>/installers && ln -snf NVIDIA-Linux-x86_64-515.43.04.run devdriver.run)
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SAMPLES ${appdir}/samples
+  setenv ${appcaps}DRIVER_INSTALLER ${appdir}/installers/NVIDIA-Linux-x86_64-515.43.04.run
+
+  setenv CUDA_DIR ${appdir}
+  setenv CUDA_HOME ${appdir}
+  setenv CUDA_SAMPLES ${appdir}/samples
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/doc/man
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
