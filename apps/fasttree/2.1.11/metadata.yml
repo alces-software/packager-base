@@ -1,0 +1,52 @@
+---
+:schema: 1
+:title: FastTree
+:license: GPLv2
+:summary: Inference of approximately-maximum-likelihood phylogenetic trees from alignments of nucleotide or protein sequences.
+:url: http://www.microbesonline.org/fasttree/
+:description: |
+  FastTree infers approximately-maximum-likelihood phylogenetic trees
+  from alignments of nucleotide or protein sequences. FastTree can
+  handle alignments with up to a million of sequences in a reasonable
+  amount of time and memory. For large alignments, FastTree is
+  100-1,000 times faster than PhyML 3.0 or RAxML 7. FastTree is
+  open-source software -- you can download the code below.
+
+  FastTree is more accurate than PhyML 3 with default settings, and
+  much more accurate than the distance-matrix methods that are
+  traditionally used for large alignments. FastTree uses the
+  Jukes-Cantor or generalized time-reversible (GTR) models of
+  nucleotide evolution and the JTT (Jones-Taylor-Thornton 1992) or WAG
+  (Whelan & Goldman 2001) models of amino acid evolution. To account
+  for the varying rates of evolution across sites, FastTree uses a
+  single rate for each site (the "CAT" approximation). To quickly
+  estimate the reliability of each split in the tree, FastTree
+  computes local support values with the Shimodaira-Hasegawa test
+  (these are the same as PhyML 3's "SH-like local supports").
+:group: Bioinformatics
+:changelog: |
+  * Thu Sep  1 2022 Rob Brown <rob.brown@alces-flight.com>
+      - Updated to latest release, v2.1.11
+  * Tue May  3 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+      - Updated distro dependencies for EL 
+  * Wed Jul 17 2013 James Donohue <james.donohue@alces-software.com>
+      - Change metadata to be more version- and compiler-agnostic 
+  * Tue Jul 16 2013 James Donohue <james.donohue@alces-software.com>
+      - First created
+:src: FastTree.c.sic
+:type: apps
+:version: '2.1.11'
+:compilers:
+  gcc:
+    :compile_flags: '-Wall -O3 -finline-functions -funroll-loops'
+:compile: |
+  mv -v FastTree.c.sic FastTree.c <%= redirect(:compile) %>
+  $CC <%= compiler[:compile_flags] %> -o FastTree -lm FastTree.c <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v FastTree <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
