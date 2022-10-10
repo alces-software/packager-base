@@ -1,0 +1,84 @@
+---
+:title: Octopus
+:license: LGPL v3
+:summary: A scientific program aimed at the ab initio virtual experimentation
+:url: http://www.tddft.org/programs/octopus
+:description: |
+  Octopus is a scientific program aimed at the ab initio virtual
+  experimentation on a hopefully ever-increasing range of system
+  types. Electrons are described quantum-mechanically within
+  density-functional theory (DFT), in its time-dependent form
+  (TDDFT) when doing simulations in time. Nuclei are described
+  classically as point particles. Electron-nucleus interaction is
+  described within the pseudopotential approximation.
+
+  For optimal execution perfomance Octopus is parallelized using
+  MPI and OpenMP and can scale to tens of thousands of processors.
+  It also has support for graphical processing units (GPUs) through
+  OpenCL.
+:group: Chemistry
+:changelog: |
+  * Mon Oct 10 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version, v12.0
+  * Fri Feb 11 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version, v11.4
+  * Wed Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Feb 11 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: octopus-12.0.tar.gz
+:src_dir: octopus-12.0
+:type: apps
+:version: '12.0'
+:requirements:
+  :build:
+  - mpi/openmpi
+  - libs/blas
+  - libs/lapack
+  - libs/fftw3_double
+  - apps/perl
+  - libs/gsl
+  - libs/libxc
+  :runtime:
+  - mpi/openmpi
+  - apps/perl
+  - libs/gsl
+  - libs/libxc
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-gfortran
+    - gcc-c++
+:patches:
+  - global.F90.patch
+:compile: |
+  sed -i -e 's,#!.*,#!/usr/bin/env perl,g' src/fdep/fortran_dependencies.pl
+  LDFLAGS="$(echo $LDFLAGS | sed 's,-L[^\S]*compilers/gcc/[^\s]*/lib\b,,g')"
+  CC=mpicc FC=mpif90 ./configure --prefix=<%= dest_dir %> \
+  --enable-mpi \
+  --with-fft-lib=${FFTW3_DOUBLELIB}/libfftw3.a \
+  --with-fftw-prefix=${FFTW3_DOUBLEDIR} \
+  --with-blas=$BLAS \
+  --with-lapack=$LAPACKLIB/liblapack.a \
+  --with-gsl-prefix=$GSLDIR \
+  --with-libxc-prefix=$LIBXCDIR <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/doc <%= redirect(:doc) %>
+  cp -R doc/* <%= dest_dir %>/doc <%= redirect(:doc) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}MAN ${appdir}/share/man
+
+  setenv OCTOPUS_SHARE ${appdir}/share/octopus
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man

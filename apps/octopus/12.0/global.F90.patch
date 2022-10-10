@@ -1,0 +1,11 @@
+--- src/basic/global.F90.orig	2022-01-27 19:22:53.000000000 +0000
++++ src/basic/global.F90	2022-02-11 15:17:11.790404795 +0000
+@@ -184,7 +184,7 @@
+     if (share /= "") then
+       conf%share = trim(share)
+     else
+-      conf%share = SHARE_DIR
++    !  conf%share = SHARE_DIR
+     end if
+     conf%git_commit = GIT_COMMIT
+     conf%build_time = BUILD_TIME
