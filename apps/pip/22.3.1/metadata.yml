@@ -1,0 +1,98 @@
+---
+:schema: 1
+:title: pip
+:license: MIT
+:summary: The PyPA recommended tool for installing and managing Python packages.
+:url: https://pypi.python.org/pypi/pip
+:description: |
+  pip is a package management system used to install and manage software
+  packages written in Python. Many packages can be found in the Python Package
+  Index (PyPI).
+:group: Tools
+:changelog: |
+  * Wed Jan  4 2023 - Rob Brown <rob.brown@alces-software.com>
+    - Updated to v22.3.1
+  * Mon Aug 17 2020 - Rob Brown <rob.brown@alces-software.com>
+    - Updated to v19.0.3
+  * Thu Mar  5 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v9.0.1 version
+  * Fri May 20 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Trigger rebuild
+  * Thu May 19 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest v8.1.2 version
+    - Added python3 and python34 variants
+  * Wed Nov 12 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Correction to PATH in modulefile.
+  * Tue Sep  2 2014 Ben Armston <ben.armston@alces-software.com>
+    - First created
+:src: pip-22.3.1.tar.gz
+:src_dir: pip-22.3.1
+:type: apps
+:version: '22.3.1'
+:compilers:
+  noarch:
+:variants:
+  python37:
+    :description: "Builds for Python 3.7.x series"
+    :python_bin: python3
+    :python_libdir: python3.7
+    :requirements:
+      :tool:
+        - apps/setuptools_python37 >= 46.1
+      :build:
+        - apps/python3 ~> 3.7.0
+      :runtime:
+        - apps/python3 ~> 3.7.0
+        - apps/setuptools_python37 >= 46.1
+  python38:
+    :description: "Builds for Python 3.8.x series"
+    :python_bin: python3
+    :python_libdir: python3.8
+    :requirements:
+      :tool:
+        - apps/setuptools_python38 >= 46.1
+      :build:
+        - apps/python3 ~> 3.8.0
+      :runtime:
+        - apps/python3 ~> 3.8.0
+        - apps/setuptools_python38 >= 46.1
+  python39:
+    :description: "Builds for Python 3.9.x series"
+    :python_bin: python3
+    :python_libdir: python3.9
+    :requirements:
+      :tool:
+        - apps/setuptools_python39 >= 46.1
+      :build:
+        - apps/python3 ~> 3.9.0
+      :runtime:
+        - apps/python3 ~> 3.9.0
+        - apps/setuptools_python39 >= 46.1
+  python310:
+    :description: "Builds for Python 3.10.x series"
+    :python_bin: python3
+    :python_libdir: python3.10
+    :requirements:
+      :tool:
+        - apps/setuptools_python310 >= 46.1
+      :build:
+        - apps/python3 ~> 3.10.0
+      :runtime:
+        - apps/python3 ~> 3.10.0
+        - apps/setuptools_python310 >= 46.1
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHON_DEST_DIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONPATH=$PYTHONPATH:$PYTHON_DEST_DIR
+  mkdir -p $PYTHON_DEST_DIR
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+  mv <%= dest_dir %>/python/bin <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
+  prepend-path PATH ${appdir}/bin
