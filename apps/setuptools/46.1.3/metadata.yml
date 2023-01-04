@@ -9,6 +9,8 @@
 :type: apps
 :group: Tools
 :changelog: |
+  * Wed Jan  4 2023 Rob Brown <rob.brown@alces-flight.com>
+    - Added support for Python 3.10
   * Fri Nov 12 2021 Rob Brown <rob.brown@alces-flight.com>
     - Added support for Python 3.9
   * Thu Apr 30 2020 Rob Brown <rob.brown@alces-flight.com>
@@ -94,6 +96,13 @@
     :requirements:
       :build: apps/python3 ~> 3.9.0
       :runtime: apps/python3 ~> 3.9.0
+  python310:
+    :description: "Builds for Python 3.10.x series"
+    :python_bin: python3
+    :python_libdir: python3.10
+    :requirements:
+      :build: apps/python3 ~> 3.10.0
+      :runtime: apps/python3 ~> 3.10.0
 :compile: |
   export PYTHONDONTWRITEBYTECODE=true
   <%= variant[:python_bin] %> setup.py build <%= redirect(:build) %>
