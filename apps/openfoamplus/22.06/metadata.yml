@@ -21,6 +21,9 @@
     - libs/mgridgen
     - libs/qt >= 5.9.2
 :changelog: |
+  * Thu Feb  2 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Handle site binary applications
+    - Rework version handling
   * Mon Jul 18 2022 - Rob Brown <rob.brown@alces-flight.com>
     - Bumped to v22.06
   * Mon Jul 11 2022 - Rob Brown <rob.brown@alces-flight.com>
@@ -185,6 +188,10 @@
   cp -rv ./OpenFOAM-v2206/* <%= dest_dir %> <%= redirect(:install) %>
   cp -rv ./ThirdParty-v2206/* <%= dest_dir %>/3rdparty <%= redirect(:install_3rdparty) %>
 :module: |
+  set openfoam_project_dir <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/openfoamplus/${version}
+  set openfoam_site_lib ${openfoam_project_dir}/lib
+  set openfoam_site_bin ${openfoam_project_dir}/bin
+
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
@@ -200,8 +207,8 @@
   setenv FOAM_ETC ${appdir}/etc
   setenv FOAM_LIBBIN ${appdir}/platforms/linux64GccDPInt32Opt/lib
   setenv FOAM_MPI openmpi
-  setenv FOAM_SITE_APPBIN ${appdir}/platforms/linux64GccDPInt32Opt/bin
-  setenv FOAM_SITE_LIBBIN ${appdir}/platforms/linux64GccDPInt32Opt/lib
+  setenv FOAM_SITE_APPBIN ${openfoam_site_bin}
+  setenv FOAM_SITE_LIBBIN ${openfoam_site_lib}
   setenv FOAM_SOLVERS ${appdir}/applications/solvers
   setenv FOAM_SRC ${appdir}/src
   setenv FOAM_TUTORIALS ${appdir}/tutorials
@@ -218,11 +225,13 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib/sys-openmpi
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/ParaView-5.10.1/lib64
+  prepend-path LD_LIBRARY_PATH ${openfoam_site_lib}
 
   prepend-path PATH ${appdir}/wmake
   prepend-path PATH ${appdir}/bin
   prepend-path PATH ${appdir}/platforms/linux64GccDPInt32Opt/bin
   prepend-path PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.10.1/bin/
+  prepend-path PATH ${openfoam_site_bin}
 
   if { [info exists ::env(MPI_HOME)] } {
     setenv MPI_ARCH_PATH $::env(MPI_HOME)
@@ -241,6 +250,7 @@
   setenv WM_PRECISION_OPTION DP
   setenv WM_PROJECT_DIR ${appdir}
   setenv WM_PROJECT OpenFOAM
-  setenv WM_PROJECT_VERSION v2206
+  setenv WM_PROJECT_VERSION v<%= version.gsub('.','') %>
+  setenv WM_PROJECT_USER_DIR ${openfoam_project_dir}
   setenv WM_THIRD_PARTY_DIR ${appdir}/3rdparty
   setenv PV_PLUGIN_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/paraview-5.10
