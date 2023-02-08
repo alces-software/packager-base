@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: pyBigWig
+:license: MIT License 
+:summary: A python extension, written in C, for quick access to and creation of bigWig files. 
+:url: https://github.com/deeptools/pyBigWig
+:description: |
+  A python extension, written in C, for quick access to and creation 
+  of bigWig files. This extension uses libBigWig for local and remote 
+  file access.
+:group: Libraries
+:changelog: |
+  * Wed Feb  8 2023 Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest release v0.3.18
+  * Tue Apr 12 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:dependencies:
+  :build:
+    el:
+      - libcurl-devel
+      - zlib-devel
+  :runtime:
+    el:
+      - libcurl
+      - zlib
+:requirements:
+  :build: 
+    - apps/python ~> 2.7.0
+    - apps/setuptools
+  :runtime: 
+    - apps/python ~> 2.7.0
+    - apps/setuptools
+:src: pyBigWig-0.3.18.tar.gz 
+:src_dir: pyBigWig-0.3.18
+:type: libs
+:version: '0.3.18'
+:compilers:
+  gcc:
+:dependencies: 
+  el:
+    - libcurl-devel
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  python setup.py build <%= redirect(:compile) %>  
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/python2.7/site-packages/
+  export PYTHONPATH=$PYTHONPATH:<%= dest_dir %>/python/lib/python2.7/site-packages/  
+  python setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}PYTHON ${appdir}/python
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/python2.7/site-packages
