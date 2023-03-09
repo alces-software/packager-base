@@ -1,0 +1,56 @@
+---
+:schema: 1
+:title: LIGGGHTS
+:license: GPLv2+
+:url: https://github.com/CFDEMproject/LIGGGHTS-PUBLIC
+:summary: Open source discrete element method particle simulation software
+:description: |
+  LIGGGHTS (R) stands for LAMMPS improved for general granular and
+  granular heat transfer simulations. LAMMPS is a classical molecular
+  dynamics simulator. It is widely used in the field of Molecular
+  Dynamics. Thanks to physical and algorithmic analogies, LAMMPS
+  offers basic functionalities for DEM simulations. LIGGGHTS (R) aims
+  to improve those capability with the goal to apply it to industrial
+  applications.
+:group: Chemistry
+:type: apps
+:changelog: |
+  * Thu Mar  9 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: liggghts-3.8.0.20221027.tar.gz
+:src_dir: LIGGGHTS-PUBLIC-9fb7f67592be9304afca9cb6840892b3b7d048d6
+:sources:
+  - Makefile.user
+:version: '3.8.0.20221027'
+:requirements:
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+    - apps/python3
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  cp <%= source('Makefile.user') %> MAKE/Makefile.user
+  make auto <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,lib,doc,python}
+  cp -av python/liggghts.py <%= dest_dir %>/python <%= redirect(:install) %>
+  cp -av python/examples <%= dest_dir %>/share <%= redirect(:install) %>
+  cd src
+  cp -av libliggghts.so liblmp_auto.so liblmp_auto.a <%= dest_dir %>/lib <%= redirect(:install) %>
+  cp -av lmp_auto <%= dest_dir %>/bin <%= redirect(:install) %>
+  cd ..
+  cp -av doc <%= dest_dir %>/doc/manual <%= redirect(:install) %>
+  cp -av README LICENSE release-notes.txt <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PYTHONPATH ${appdir}/python
