@@ -1,0 +1,116 @@
+---
+:schema: 1
+:title: LAMMPS Molecular Dynamics Simulator
+:license: GPL
+:url: http://lammps.sandia.gov/
+:summary: LAMMPS ('Large-scale Atomic/Molecular Massively Parallel Simulator') is a molecular dynamics program from Sandia National Laboratories
+:description: |
+  LAMMPS is a classical molecular dynamics (MD) code with these
+  general classes of functionality:
+
+    * General features
+    * Particle and model types
+    * Force fields
+    * Atom creation
+    * Ensembles, constraints, and boundary conditions
+    * Integrators
+    * Diagnostics
+    * Output
+    * Multi-replica models
+    * Pre- and post-processing
+    * Specialized features (beyond MD itself)
+:group: Chemistry
+:type: apps
+:changelog: |
+  * Wed Mar  8 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Upgraded to 29th September 2021 release
+  * Mon May 20 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Enable all standard packages
+  * Fri Dec 21 2018 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to latest stable 12Dec18
+  * Wed Feb 17 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest stable 16Feb16
+  * Wed Aug 14 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: lammps-29Sep2021.tar.gz
+:src_dir: lammps-29Sep2021
+:version: '20210929'
+:requirements:
+  :tool:
+    - apps/cmake >= 3.10
+  :build:
+    - libs/fftw3_double
+    - libs/openblas
+    - mpi/openmpi
+    - apps/python3
+    - apps/ffmpeg
+  :runtime:
+    - libs/fftw3_double
+    - libs/openblas
+    - mpi/openmpi
+    - apps/python3
+    - apps/ffmpeg
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DFFTW3_INCLUDE_DIR=$FFTW3_DOUBLEINCLUDE \
+    -DFFTW3_LIBRARY=$FFTW3_DOUBLELIB/libfftw3.so \
+    -DBUILD_DOC=OFF -DBUILD_LAMMPS_SHELL=OFF -DBUILD_MPI=ON \
+    -DBUILD_OMP=ON -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=ON \
+    -DBUILD_TOOLS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_EXTENSIONS=OFF \
+    -DCMAKE_TUNE_FLAGS= -DCOLVARS_DEBUG=OFF \
+    -DCOLVARS_LEPTON=ON -DDOWNLOAD_KOKKOS=OFF -DENABLE_CLANG_TIDY=OFF \
+    -DENABLE_TESTING=OFF -DEXTERNAL_KOKKOS=OFF \
+    -DFFT=FFTW3 -DFFT_FFTW_THREADS=OFF -DFFT_PACK=array \
+    -DFFT_SINGLE=OFF -DGPU_API=opencl -DGPU_PREC=mixed \
+    -DKokkos_CXX_STANDARD= -DLAMMPS_EXCEPTIONS=OFF -DLAMMPS_INSTALL_RPATH=OFF \
+    -DLAMMPS_LONGLONG_TO_LONG=OFF -DLAMMPS_MEMALIGN=64 -DLAMMPS_SIZES=smallbig \
+    -DMESSAGE_ZMQ=OFF -DMLIAP_ENABLE_PYTHON=OFF -DPKG_ADIOS=OFF \
+    -DPKG_ASPHERE=ON -DPKG_ATC=ON -DPKG_AWPMD=ON \
+    -DPKG_BOCS=ON -DPKG_BODY=ON -DPKG_BROWNIAN=ON \
+    -DPKG_CG-DNA=ON -DPKG_CG-SDK=ON -DPKG_CLASS2=ON \
+    -DPKG_COLLOID=ON -DPKG_COLVARS=ON -DPKG_COMPRESS=ON \
+    -DPKG_CORESHELL=ON -DPKG_DIELECTRIC=ON -DPKG_DIFFRACTION=ON \
+    -DPKG_DIPOLE=ON -DPKG_DPD-BASIC=ON -DPKG_DPD-MESO=ON \
+    -DPKG_DPD-REACT=ON -DPKG_DPD-SMOOTH=ON -DPKG_DRUDE=ON \
+    -DPKG_EFF=ON -DPKG_EXTRA-COMPUTE=ON -DPKG_EXTRA-DUMP=ON \
+    -DPKG_EXTRA-FIX=ON -DPKG_EXTRA-MOLECULE=ON -DPKG_EXTRA-PAIR=ON \
+    -DPKG_FEP=ON -DPKG_GPU=OFF -DPKG_GRANULAR=ON \
+    -DPKG_H5MD=OFF -DPKG_INTEL=ON -DPKG_INTERLAYER=ON \
+    -DPKG_KIM=OFF -DPKG_KOKKOS=OFF -DPKG_KSPACE=ON \
+    -DPKG_LATBOLTZ=ON -DPKG_LATTE=OFF -DPKG_MACHDYN=OFF \
+    -DPKG_MANIFOLD=ON -DPKG_MANYBODY=ON -DPKG_MC=ON \
+    -DPKG_MDI=OFF -DPKG_MEAM=ON -DPKG_MESONT=ON \
+    -DPKG_MESSAGE=ON -DPKG_MGPT=ON -DPKG_MISC=ON \
+    -DPKG_ML-HDNNP=OFF -DPKG_ML-IAP=ON -DPKG_ML-PACE=OFF \
+    -DPKG_ML-QUIP=OFF -DPKG_ML-RANN=ON -DPKG_ML-SNAP=ON \
+    -DPKG_MOFFF=ON -DPKG_MOLECULE=ON -DPKG_MOLFILE=OFF \
+    -DPKG_MPIIO=ON -DPKG_MSCG=OFF -DPKG_NETCDF=OFF \
+    -DPKG_OPENMP=ON -DPKG_OPT=ON -DPKG_ORIENT=ON \
+    -DPKG_PERI=ON -DPKG_PHONON=ON -DPKG_PLUGIN=ON \
+    -DPKG_PLUMED=OFF -DPKG_POEMS=ON -DPKG_PTM=ON \
+    -DPKG_PYTHON=ON -DPKG_QEQ=ON -DPKG_QMMM=OFF \
+    -DPKG_QTB=ON -DPKG_REACTION=ON -DPKG_REAXFF=ON \
+    -DPKG_REPLICA=ON -DPKG_RIGID=ON -DPKG_SCAFACOS=OFF \
+    -DPKG_SHOCK=ON -DPKG_SMTBQ=ON -DPKG_SPH=ON \
+    -DPKG_SPIN=ON -DPKG_SRD=ON -DPKG_TALLY=ON \
+    -DPKG_UEF=ON -DPKG_VORONOI=OFF -DPKG_VTK=OFF \
+    -DPKG_YAFF=ON -DWITH_FFMPEG=ON -DWITH_GZIP=ON \
+    -DWITH_JPEG=ON -DWITH_PNG=ON -DWITH_SWIG=OFF \
+    ../cmake <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PYTHONPATH ${appdir}/lib/python3.10/site-packages
