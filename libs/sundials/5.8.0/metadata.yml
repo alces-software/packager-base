@@ -1,0 +1,66 @@
+---
+:schema: 1
+:title: SUNDIALS
+:license: BSD License
+:url: https://computing.llnl.gov/projects/sundials
+:summary: SUite of Nonlinear and DIfferential/ALgebraic equation Solvers
+:description: |
+  SUNDIALS is a SUite of Nonlinear and DIfferential/ALgebraic equation
+  Solvers. It consists of the following six solvers: CVODE, solves
+  initial value problems for ordinary differential equation (ODE)
+  systems; CVODES, solves ODE systems and includes sensitivity
+  analysis capabilities (forward and adjoint); ARKODE, solves initial
+  value ODE problems with additive Runge-Kutta methods, include
+  support for IMEX methods; IDA, solves initial value problems for
+  differential-algebraic equation (DAE) systems; IDAS, solves DAE
+  systems and includes sensitivity analysis capabilities (forward and
+  adjoint); KINSOL, solves nonlinear algebraic systems.
+:group: Mathematics
+:type: libs
+:changelog: |
+  * Thu Mar  9 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: sundials-5.8.0.tar.gz
+:version: '5.8.0'
+:requirements:
+  :tool:
+    - apps/cmake >= 3.10
+:compilers:
+  gcc:
+    :cmake_params: ""
+  intel:
+    :cmake_params: "-DCMAKE_C_COMPILER=icc -DCMAKE_Fortran_COMPILER=ifort"
+:variants:
+  sp:
+    :precision: single
+  dp:
+    :precision: double
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DBUILD_ARKODE=ON \
+    -DBUILD_CVODE=ON \
+    -DBUILD_CVODES=ON \
+    -DBUILD_IDA=ON \
+    -DBUILD_IDAS=ON \
+    -DBUILD_KINSOL=ON \
+    -DBUILD_SHARED_LIBS=ON \
+    -DBUILD_STATIC_LIBS=ON \
+    -DCMAKE_C_FLAGS="-O2" \
+    -DEXAMPLES_ENABLE_C=OFF \
+    -DSUNDIALS_PRECISION=<%= variant[:precision] %> \
+    <%= compiler[:cmake_params] %> \
+    .. <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  conflict libs/sundials_<%= variant_name == 'sp' ? 'dp' : 'sp' %>
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
