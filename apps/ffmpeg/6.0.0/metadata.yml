@@ -1,0 +1,70 @@
+---
+:schema: 1
+:title: FFmpeg
+:license: LGPL or GPL - see http://www.ffmpeg.org/legal.html
+:summary: A complete, cross-platform solution to record, convert and stream audio and video
+:url: http://www.ffmpeg.org/
+:description: |
+  FFmpeg is the leading multimedia framework, able to decode, encode,
+  transcode, mux, demux, stream, filter and play pretty much anything
+  that humans and machines have created. It supports the most obscure
+  ancient formats up to the cutting edge. No matter if they were
+  designed by some standards committee, the community or a
+  corporation. It contains libavcodec, libavutil, libavformat,
+  libavfilter, libavdevice, libswscale and libswresample which can be
+  used by applications, as well as ffmpeg, ffserver, ffplay and
+  ffprobe which can be used by end users for transcoding, streaming
+  and playing.
+:group: Graphics
+:changelog: |
+  * Wed Mar  8 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest v6.0.0
+  * Mon Jun  3 2019 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest v4.1.3
+  * Fri May 27 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
+    - Build YASM as prerequisite for build process
+  * Fri Nov 22 2013 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 1.2.1
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: ffmpeg-6.0.tar.bz2
+:src_dir: .
+:sources:
+  - yasm-1.3.0.tar.gz
+:type: apps
+:version: '6.0.0'
+:dependencies:
+  el:
+    - autoconf
+    - zlib-devel
+    - libtool
+    - freetype-devel
+    - gcc-c++
+    - automake
+:compilers:
+  gcc:
+:compile: |
+  TOPDIR=$(pwd)
+  tar xzf <%= source('yasm-1.3.0.tar.gz') %>
+  cd yasm-1.3.0
+  autoreconf -fiv <%= redirect(:yasm_reconf) %>
+  ./configure --prefix="$TOPDIR/yasm" <%= redirect(:yasm_configure) %>
+  make <%= redirect(:yasm_compile) %>
+  make install <%= redirect(:yasm_install) %>
+  PATH="${TOPDIR}"/yasm/bin:$PATH
+  cd ../ffmpeg-6.0
+  ./configure --enable-shared --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd ffmpeg-6.0
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
