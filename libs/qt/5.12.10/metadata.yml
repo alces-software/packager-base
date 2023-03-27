@@ -23,6 +23,9 @@
 :group: Libraries
 :type: libs
 :changelog: |
+  * Mon Mar 27 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Add additional dependency on libxkbcommon to ensure xcb plugin is built
+    - Updated upstream source
   * Wed Nov 18 2020 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to latest v5.12.10 version
   * Thu Mar  8 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
@@ -68,6 +71,7 @@
       - nss-devel
       - dbus-devel
       - alsa-lib-devel
+      - libxkbcommon-devel
   :runtime:
     el:
       - libxcb
@@ -86,6 +90,8 @@
       - fontconfig
       - mesa-libGL
       - mesa-libEGL
+      - libxkbcommon
+      - libxkbcommon-x11
 :compilers:
   gcc:  
 :compile: |
