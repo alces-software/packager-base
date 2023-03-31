@@ -1,0 +1,47 @@
+---
+:schema: 1
+:title: Tandem Repeats Finder
+:license: GPLv3+
+:summary: Locate and display tandem repeats in DNA sequences
+:url: http://tandem.bu.edu/trf/trf.html
+:description: |
+  A tandem repeat in DNA is two or more adjacent, approximate copies
+  of a pattern of nucleotides. Tandem Repeats Finder is a program to
+  locate and display tandem repeats in DNA sequences. In order to use
+  the program, the user submits a sequence in FASTA format. There is
+  no need to specify the pattern, the size of the pattern or any other
+  parameter. The output consists of two files: a repeat table file and
+  an alignment file. The repeat table contains information about each
+  repeat, including its location, size, number of copies and
+  nucleotide content. 
+
+  The program is very fast, analyzing sequences on the order of .5Mb
+  in just a few seconds. Submitted sequences may be of arbitrary
+  length. Repeats with pattern size in the range from 1 to 2000 bases
+  are detected.
+:group: Bioinformatics
+:changelog: |
+  * Thu Mar 30 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest release v4.0.9
+  * Mon Jun 27 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Tue Feb 26 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: trf409.linux64.sic
+:src_dir: .
+:type: apps
+:version: '4.0.9'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary package
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v <%= source('trf409.linux64.sic') %> <%= dest_dir %>/bin/trf <%= redirect(:install) %>
+  chmod 755 <%= dest_dir %>/bin/trf
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
