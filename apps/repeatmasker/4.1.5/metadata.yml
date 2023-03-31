@@ -1,0 +1,104 @@
+---
+:schema: 1
+:license: OSL 2.1; see http://opensource.org/licenses/osl-2.1.php
+:summary: Screens DNA sequences for interspersed repeats and low complexity DNA sequences
+:url: http://www.repeatmasker.org/
+:description: |
+  RepeatMasker is a program that screens DNA sequences for
+  interspersed repeats and low complexity DNA sequences. The output of
+  the program is a detailed annotation of the repeats that are present
+  in the query sequence as well as a modified version of the query
+  sequence in which all the annotated repeats have been masked
+  (default: replaced by Ns). On average, almost 50% of a human genomic
+  DNA sequence currently will be masked by the program. Sequence
+  comparisons in RepeatMasker are performed by one of several popular
+  search engines including, cross_match, ABBlast/WUBlast, RMBlast and
+  Decypher.
+:group: Bioinformatics
+:changelog: |
+  * Thu Mar 30 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to version 4.1.5
+  * Mon May 12 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to version 4.0.5
+  * Wed Feb 27 2013 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: RepeatMasker-4.1.5.tar.gz
+:src_dir: RepeatMasker
+:type: apps
+:version: '4.1.5'
+:params: 
+  :library: "Path to tar.gz file complete RepeatMasker repeat library or 'dist' to use the minimal repeat library distributed with RepeatMasker"
+:requirements:
+  :tool: 
+    - apps/perl >= 5.8.0
+    - apps/cpanminus
+  :build:
+    - apps/trf >= 4.0.9
+    - apps/rmblast >= 2.13.0
+    - apps/python3 >= 3.10.0
+    - apps/setuptools_python310
+  :runtime:
+    - apps/trf >= 4.0.9
+    - apps/rmblast >= 2.13.0
+    # Requires Perl v5.008 or later 
+    - apps/perl >= 5.8.0
+    - apps/python3 >= 3.10.0
+    - apps/setuptools_python310
+:compilers:
+  noarch:
+:additional_prereqs:
+  - Tie::File
+  - Getopt::Long
+  - POSIX
+  - File::Copy
+  - File::Path
+  - Data::Dumper
+  - Cwd
+  # Requires a version of Scalar::Util compiled with XS option
+  - Scalar::Util
+  # Requires at least version 2.06 of Storable
+  - Storable~2.06
+:sources:
+  - RepeatMaskerConfig.pm
+  - configure
+:compile: |
+  for a in addRepBase.pl DupMasker ProcessRepeats RepeatMasker util/*; do
+    sed -e 's|#!.*perl\s*$|#!/usr/bin/env perl|g' -e 's|#!.*perl -w\s*$|#!/usr/bin/env perl\nuse warnings;|g' -i $a
+  done
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  easy_install --install-dir $PYTHONDEPSDIR h5py <%= redirect(:python) %>
+  # Install required Perl modules
+  export PERL5LIB="<%= dest_dir %>/perl/lib/perl5"
+  export PERL_CPANM_OPT="-l <%= dest_dir %>/perl -n"
+  for a in <%= package.additional_prereqs.join(' ') %>; do
+    cpanm $a <%= redirect(:cpanm) %>
+  done
+  # Perform other setup tasks (derived from ./configure script)
+  sed -e "s,%TRF_PRGM%,$TRFBIN/trf,g" \
+    -e "s,%LIBDIR%,<%= dest_dir %>/bin/Libraries,g" \
+    -e "s,%RMBLAST_DIR%,$RMBLASTBIN,g" \
+    < <%= source("RepeatMaskerConfig.pm") %> > RepeatMaskerConfig.pm
+  <% if param(:library).to_s.downcase != 'dist' %>
+    tar -xzf <%= param(:library) %>
+  <% end %>
+  cp <%= source('configure') %> configure
+  ./configure -trf_prgm `which trf` -rmblast_dir $RMBLASTDIR
+:install: |
+  PYTHONDEPSDIR=$(pwd)/python
+  PYTHONPATH=<%= dest_dir %>/python/lib/python3.10/site-packages
+  mkdir -p <%= dest_dir %>/python/lib/python3.10/site-packages
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/python3.10/site-packages <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/{doc,bin}
+  cp -Rv *.pm <%= dest_dir %>/perl/lib/perl5 <%= redirect(:install) %>
+  cp -Rv LICENSE README.md INSTALL repeatmasker.help <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv RepeatMasker bluegrad.jpg daterepeats.help DupMasker HTMLAnnotHeader.html Libraries Matrices ProcessRepeats RepeatProteinMask util <%= dest_dir %>/bin <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PYTHONPATH ${appdir}/python/lib/python3.10/site-packages
