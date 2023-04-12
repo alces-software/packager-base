@@ -1,0 +1,54 @@
+---
+:schema: 1
+:title: Atomsk
+:license: GPLv3+
+:summary: The Swiss-army knife of atomic simulations
+:url: https://atomsk.univ-lille.fr/
+:description: |
+  Atomsk is a command-line program that aims at creating,
+  manipulating, and converting atomic systems, for the purpose of ab
+  initio calculations, classical potential simulations, electron
+  microscopy simulations, or visualization. It supports the file
+  formats used by many programs, among which LAMMPS, VASP, Quantum
+  Espresso, Atomeye, xCrySDen, Dr Probe or JEMS.
+:group: Chemisty
+:changelog: |
+  * Thu Mar 30 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: atomsk_b0.12.tar.gz
+:src_dir: atomsk_b0.12
+:type: apps
+:version: '0.12'
+:dependencies:
+  el:
+    - gcc-gfortran
+:requirements:
+  :build:
+    - libs/lapack
+  :runtime:
+    - libs/lapack
+:compilers:
+  gcc:
+:compile: |
+  cd src
+  export LAPACK="-L${LAPACKLIB} -llapack"
+  make atomsk <%= redirect(:make) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,etc,share/man/man1}
+  cp -v man/atomsk <%= dest_dir %>/share/man/man1/atomsk.1 <%= redirect(:install) %>
+  cp -Rv examples <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -Rv doc <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v tools/*.sh <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v etc/atomsk.conf <%= dest_dir %>/etc <%= redirect(:install) %>
+  cp -v src/atomsk <%= dest_dir %>/bin <%= redirect(:install) %>
+  cp -v CHANGELOG README LICENSE <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -v tools/README <%= dest_dir %>/doc/README.tools <%= redirect(:install) %>
+  chmod -R g-w <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/share/man
