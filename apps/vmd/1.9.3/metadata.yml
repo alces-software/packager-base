@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: UIUC Open Source License - see http://www.ks.uiuc.edu/Research/vmd/current/LICENSE.html
+:summary: Molecular visualization program for displaying, animating, and analyzing large biomolecular systems
+:url: http://www.ks.uiuc.edu/Research/vmd/
+:description: |
+  VMD (Visual Molecular Dynamics) is designed for modeling,
+  visualization, and analysis of biological systems such as proteins,
+  nucleic acids, lipid bilayer assemblies, etc. It may be used to view
+  more general molecules, as VMD can read standard Protein Data Bank
+  (PDB) files and display the contained structure. VMD provides a wide
+  variety of methods for rendering and coloring a molecule: simple
+  points and lines, CPK spheres and cylinders, licorice bonds,
+  backbone tubes and ribbons, cartoon drawings, and others. VMD can be
+  used to animate and analyze the trajectory of a molecular dynamics
+  (MD) simulation. In particular, VMD can act as a graphical front end
+  for an external MD program by displaying and animating a molecule
+  undergoing simulation on a remote computer.
+:group: Chemistry
+:changelog: |
+  * Tue Mar 28 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v1.9.2
+  * Thu Feb  2 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue May 29 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: vmd-1.9.3.bin.LINUXAMD64-CUDA8-OptiX4-OSPRay111p1.opengl.tar.gz
+:src_dir: vmd-1.9.3
+:type: apps
+:version: '1.9.3'
+:compilers:
+  bin:
+:dependencies:
+  :build:
+    el:
+      - perl
+  :runtime:
+    el:
+      - mesa-libGLU
+      - libXinerama
+      - libXi
+      - perl
+      - tcsh
+:compile: |
+  # no-op, this is a binary installer.
+:install: |
+  export VMDINSTALLBINDIR=<%= dest_dir %>/bin
+  export VMDINSTALLLIBRARYDIR=<%= dest_dir %>/lib
+  ./configure  <%= redirect(:configure) %>
+  cd src
+  make install <%= redirect(:make) %>
+:module: |
+  # we use BASEDIR here rather than DIR in order to prevent an
+  # environment conflict with the application
+  setenv ${appcaps}BASEDIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  # Disable Ospray by default as it requires SSE4.1 which may not be
+  # present.
+  setenv VMDNOOSPRAY 1
+
+  prepend-path PATH ${appdir}/bin
+  
