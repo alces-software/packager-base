@@ -1,0 +1,8 @@
+--- src/Programs/Makefile.orig	2023-04-12 10:03:08.847399751 +0100
++++ src/Programs/Makefile	2023-04-12 10:03:19.111608169 +0100
+@@ -96,5 +96,4 @@
+ 	    echo "Copying $$f to ${QUIP_INSTALLDIR}/$${f}${QUIP_MPI_SUFFIX}" ; \
+ 	    cp $$f ${QUIP_INSTALLDIR}/$${f}${QUIP_MPI_SUFFIX} ; \
+ 	  done ;\
+-
+ 	fi

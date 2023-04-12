@@ -1,0 +1,47 @@
+# Place to override setting elsewhere, in particular things set in Makefile.linux_x86_64_gfortran_openmpi+openmp
+# look in /var/cache/gridware/src/apps/quip/0.9.12/gcc-4.8.5+openmpi-4.1.5+lapack-3.10.0+blas-3.10.0/QUIP-0.9.12/arch/Makefile.linux_x86_64_gfortran_openmpi+openmp for defaults set by arch
+# 
+# F77=mpif77
+# F90=mpif90
+# F95=mpif90
+# CC=mpicc
+# CPLUSPLUS=mpiCC
+# FPP=gfortran -E -x f95-cpp-input
+# LINKER=mpif90
+# LIBTOOL=
+# OPTIM=
+# COPTIM=
+# QUIPPY_INSTALL_OPTS=
+# DEBUG=-O0 -g -DDUMP_CORE_ON_ABORT -DDEBUG -fbounds-check
+# DEBUG=
+# CDEBUG=
+MATH_LINKOPTS=-L$(LAPACKLIB) -llapack -L$(BLASLIB) -lblas
+PYTHON=python3
+PIP=pip
+EXTRA_LINKOPTS=
+HAVE_CP2K=0
+HAVE_VASP=0
+HAVE_TB=0
+HAVE_PRECON=1
+HAVE_LOTF=0
+HAVE_ONIOM=0
+HAVE_LOCAL_E_MIX=0
+HAVE_QC=0
+HAVE_GAP=0
+HAVE_DESCRIPTORS_NONCOMMERCIAL=0
+HAVE_QR=1
+HAVE_SCALAPACK=0
+HAVE_THIRDPARTY=0
+HAVE_FX=0
+HAVE_SCME=0
+HAVE_MTP=0
+HAVE_MBD=0
+HAVE_TTM_NF=0
+HAVE_CH4=0
+HAVE_NETCDF4=0
+HAVE_MDCORE=0
+HAVE_ASAP=0
+HAVE_CGAL=0
+HAVE_METIS=0
+HAVE_LMTO_TBE=0
+SIZEOF_FORTRAN_T=2

@@ -1,0 +1,64 @@
+---
+:schema: 1
+:title: QUIP
+:license: GPLv2
+:summary: libAtoms/QUIP molecular dynamics framework
+:url: https://libatoms.github.io/
+:description: |
+  The QUIP package is a collection of software tools to carry out
+  molecular dynamics simulations. It implements a variety of
+  interatomic potentials and tight binding quantum mechanics, and is
+  also able to call external packages, and serve as plugins to other
+  software such as LAMMPS, CP2K and also the python framework
+  ASE. Various hybrid combinations are also supported in the style of
+  QM/MM, with a particular focus on materials systems such as metals
+  and semiconductors.
+:group: Chemistry
+:changelog: |
+  * Tue Apr 11 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v0.9.12.tar.gz
+:type: apps
+:src_dir: 'QUIP-0.9.12'
+:version: '0.9.12'
+:compilers:
+  gcc:
+:requirements:
+  :build:
+    - mpi/openmpi
+    - libs/lapack
+    - libs/blas
+  :runtime:
+    - mpi/openmpi
+    - libs/lapack
+    - libs/blas
+:patches:
+  - fix-broken-makefile.patch0
+:sources:
+  - Makefile.inc
+  - fox-b5b69ef.tar.gz
+:compile: |
+  export QUIP_ARCH=linux_x86_64_gfortran_openmpi+openmp
+  mkdir -p build/$QUIP_ARCH
+  cp <%= source('Makefile.inc') %> build/$QUIP_ARCH/Makefile.inc
+  cd src
+  tar xzf <%= source('fox-b5b69ef.tar.gz') %>
+  rmdir fox
+  mv fox-b5b69ef9a46837bd944ba5c9bc1cf9d00a6198a7 fox
+  cd ..
+  make <%= redirect(:compile) %>
+:install: |
+  export QUIP_ARCH=linux_x86_64_gfortran_openmpi+openmp
+  export QUIP_INSTALLDIR=<%= dest_dir %>/bin
+  export QUIP_STRUCTS_DIR=<%= dest_dir %>/share/Structures
+  mkdir -p <%= dest_dir %>/{bin,doc,share/Structures}
+  make install <%= redirect(:install) %>
+  #cp -Rv doc <%= dest_dir %>/doc <%= redirect(:install) %>
+  cp -Rv share/Parameters <%= dest_dir %>/share <%= redirect(:install) %>
+  cp -v CITATION.cff README.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
