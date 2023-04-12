@@ -25,9 +25,11 @@
 :requirements:
   :build:
     - mpi/openmpi
+    - libs/vtk_mpi
   :runtime:
     - mpi/openmpi
     - apps/python3
+    - libs/vtk_mpi
 :compilers:
   gcc:
 :compile: |

@@ -6,10 +6,10 @@ USE_MPI = "ON"
 USE_CATALYST = "OFF"
 # VTK: "ON" or "OFF"
 # Description: Allow the use of VTK output that can be read directly with ParaView
-USE_VTK = "OFF"
+USE_VTK = "ON"
 # If you want to use the vtk output feature and did not install vtk yourself
 # then set the following to "ON" and uncomment it to allow for an automatic download and compilation
-#AUTOINSTALL_VTK = "OFF"
+AUTOINSTALL_VTK = "OFF"
 # SUPERQUADRICS: "ON" or "OFF"
 # Description: Enable superquadric particles (Note: requires boost)
 USE_SUPERQUADRICS = "ON"
@@ -117,9 +117,9 @@ BUILD_LIBRARIES = "ALL"
 # VTK specific variables
 #
 # Path that contains the includes (vtkVersion.h)
-#VTK_INC_USR=-I/path/to/vtk/include
+VTK_INC_USR=-I$(VTK_MPIINCLUDE)/vtk-9.2
 # Path that contains the VTK libraries
-#VTK_LIB_USR=-L/path/to/vtk/lib
+VTK_LIB_USR=-L$(VTK_MPILIB)
 # Additional VTK libraries to include
 #VTK_ADDLIBS_USR=
 # Appendix to the library names
