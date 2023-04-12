@@ -28,8 +28,10 @@
 :compilers:
   gcc:
     :cmake_params: ""
+    :env_vars: ""
   intel:
     :cmake_params: "-DCMAKE_C_COMPILER=icc -DCMAKE_Fortran_COMPILER=ifort"
+    :env_vars: 'FCFLAGS="-O3 -march=core-avx2 -align array64byte -fma -ftz -fomit-frame-pointer" FFLAGS="-O3 -march=core-avx2 -align array64byte -fma -ftz -fomit-frame-pointer" CFLAGS='-O3 -march=core-avx2 -fma -ftz -fomit-frame-pointer -fPIC' CC=icc CPP="icpc -E" FC=ifort F77=ifort F90=ifort'
 :variants:
   sp:
     :precision: single
@@ -38,7 +40,7 @@
 :compile: |
   mkdir build
   cd build
-  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+  <%= compiler[:env_vars] %> cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
     -DBUILD_ARKODE=ON \
     -DBUILD_CVODE=ON \
     -DBUILD_CVODES=ON \
