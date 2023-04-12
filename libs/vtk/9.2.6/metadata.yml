@@ -1,0 +1,59 @@
+---
+:schema: 1
+:title: VTK
+:license: BSD License
+:summary: Software for manipulating and displaying scientific data
+:url: https://vtk.org/
+:description: |
+  The Visualization Toolkit (VTK) is open source software for
+  manipulating and displaying scientific data. It comes with
+  state-of-the-art tools for 3D rendering, a suite of widgets for 3D
+  interaction, and extensive 2D plotting capability.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Tue Apr 11 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: VTK-9.2.6.tar.gz
+:src_dir: VTK-9.2.6
+:version: 9.2.6
+:requirements:
+  :tool:
+    - apps/cmake >= 2.8.8
+  :build:
+    - libs/qt >= 5.9.0
+    - apps/python3 >= 3.4.0
+  :runtime:
+    - libs/qt >= 5.9.0
+    - apps/python3 >= 3.4.0
+:variants:
+  default:
+    :cmake_flags: ""
+  mpi:
+    :cmake_flags: "-DVTK_USE_MPI=ON"
+    :requirements:
+      :build:
+        - mpi/openmpi
+      :runtime:
+        - mpi/openmpi
+:compilers:
+  gcc:  
+:compile: |
+  mkdir build
+  cd build
+  cmake .. \
+    -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DVTK_WRAP_PYTHON=ON \
+    <%= variant[:cmake_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib64
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PATH ${appdir}/bin
