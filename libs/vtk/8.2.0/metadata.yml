@@ -1,0 +1,77 @@
+---
+:schema: 1
+:title: VTK
+:license: BSD License
+:summary: Software for manipulating and displaying scientific data
+:url: https://vtk.org/
+:description: |
+  The Visualization Toolkit (VTK) is open source software for
+  manipulating and displaying scientific data. It comes with
+  state-of-the-art tools for 3D rendering, a suite of widgets for 3D
+  interaction, and extensive 2D plotting capability.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Mon Apr 17 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v8.2.0
+  * Tue Apr 11 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: VTK-8.2.0.tar.gz
+:src_dir: VTK-8.2.0
+:version: 8.2.0
+:requirements:
+  :tool:
+    - apps/cmake >= 2.8.8
+  :build:
+    - libs/qt >= 5.9.0
+  :runtime:
+    - libs/qt >= 5.9.0
+:dependencies:
+  :build:
+    el:
+      - libXt-devel
+  :runtime:
+    el:
+      - libXt
+:variants:
+  default:
+    :cmake_flags: ""
+    :requirements:
+      :build:
+        - apps/python3 >= 3.4.0
+      :runtime:
+        - apps/python3 >= 3.4.0
+  mpi:
+    :cmake_flags: "-DModule_vtkFiltersParallelMPI:BOOL=ON -DModule_vtkIOMPIParallel:BOOL=ON -DModule_vtkParallelMPI:BOOL=ON -DModule_vtkRenderingParallel:BOOL=ON -DModule_vtkIOMPIImage:BOOL=ON -DVTK_Group_MPI:BOOL=ON -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpic++"
+    :requirements:
+      :build:
+        - apps/python3 < 3.7.0
+        - mpi/openmpi
+      :runtime:
+        - apps/python3 < 3.7.0
+        - mpi/openmpi
+#:patches:
+#  - python-3.8-compat.patch1
+:compilers:
+  gcc:  
+:compile: |
+  mkdir build
+  cd build
+  cmake .. \
+    -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DPYTHON_LIBRARY=$(echo ${PYTHONLIB}/libpython3.*m.so) \
+    -DPYTHON_INCLUDE_DIR=$(echo ${PYTHONINCLUDE}/python3*) \
+    -DVTK_WRAP_PYTHON=ON \
+    <%= variant[:cmake_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib64
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PATH ${appdir}/bin
