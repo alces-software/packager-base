@@ -1,0 +1,201 @@
+---
+:schema: 1
+:title: SciPy
+:license: BSD
+:summary: Scientific tools for Python
+:url: http://www.scipy.org/
+:description: |
+  SciPy (pronounced "Sigh Pie") is open-source software for
+  mathematics, science, and engineering.
+
+  The SciPy library depends on NumPy, which provides convenient and
+  fast N-dimensional array manipulation. The SciPy library is built to
+  work with NumPy arrays, and provides many user-friendly and
+  efficient numerical routines such as routines for numerical
+  integration and optimization.
+:type: libs
+:group: Mathematics
+:changelog: |
+  * Wed May 17 2023 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.10.1
+    - Added support for Python 3.10
+    - Switched to OpenBLAS
+  * Fri Nov 12 2021 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.7.2
+    - Added support for Python 3.7 through Python 3.9
+  * Mon Jan 28 2019 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v1.2.0
+    - Added support for Python 3.6
+  * Wed Mar 30 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use patchelf to remove hardcoded ATLAS library paths
+    - Added distro dependencies
+    - Don't build bytecode
+  * Wed Mar 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Moved atlas paths from compiler section to compile and install section.
+  * Tue Jan 26 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Upgraded to v0.17.0
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added python34 variant for Python 3.4.x
+  * Thu Mar 26 2015 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.15.1
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v0.13.2 and added python3 variant
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v0.12.0
+  * Wed Sep 19 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Thu Jul 7 2011 Steve Norledge
+    - First created
+:src: scipy-1.10.1.tar.gz
+:version: '1.10.1'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/patchelf >= 0.9
+  :build:
+    - libs/openblas
+  :runtime:
+    - libs/openblas
+:dependencies:
+  el:
+    - gcc-gfortran
+    - gcc-c++
+:variants:
+  default:
+    :description: "Builds for Python 2.7.x series"
+    :python_bin: python
+    :python_libdir: python2.7
+    :requirements:
+      :build:
+        - apps/python ~> 2.7.0
+        - libs/numpy
+      :runtime:
+        - apps/python ~> 2.7.0
+        - libs/numpy
+  python3:
+    :description: "Builds for Python 3.3.x series"
+    :python_bin: python3
+    :python_libdir: python3.3
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+      :runtime:
+        - apps/python3 ~> 3.3.0
+        - libs/numpy_python3
+  python34:
+    :description: "Builds for Python 3.4.x series"
+    :python_bin: python3
+    :python_libdir: python3.4
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34
+      :runtime:
+        - apps/python3 ~> 3.4.0
+        - libs/numpy_python34
+  python36:
+    :description: "Builds for Python 3.6.x series"
+    :python_bin: python3
+    :python_libdir: python3.6
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.6.0
+        - libs/numpy_python36
+      :runtime:
+        - apps/python3 ~> 3.6.0
+        - libs/numpy_python36
+  python37:
+    :description: "Builds for Python 3.7.x series"
+    :python_bin: python3
+    :python_libdir: python3.7
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.7.0
+        - libs/numpy_python37
+      :runtime:
+        - apps/python3 ~> 3.7.0
+        - libs/numpy_python37
+  python38:
+    :description: "Builds for Python 3.8.x series"
+    :python_bin: python3
+    :python_libdir: python3.8
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.8.0
+        - libs/numpy_python38
+      :runtime:
+        - apps/python3 ~> 3.8.0
+        - libs/numpy_python36
+  python39:
+    :description: "Builds for Python 3.9.x series"
+    :python_bin: python3
+    :python_libdir: python3.9
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.9.0
+        - apps/cython_python39
+        - libs/numpy_python39
+      :runtime:
+        - apps/python3 ~> 3.9.0
+        - apps/cython_python39
+        - libs/numpy_python39
+  python310:
+    :description: "Builds for Python 3.10.x series"
+    :python_bin: python3
+    :python_libdir: python3.10
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.10.0
+        - apps/cython_python310
+        - libs/numpy_python310
+      :runtime:
+        - apps/python3 ~> 3.10.0
+        - apps/cython_python310
+        - libs/numpy_python310
+:compile: |
+  # Workaround the fact that the tarball comes with all files set with
+  # a mtime of 1970 which then breaks installation down the line as
+  # Python's Zip cannot handle files before 1980. :facepalm:
+  find . -execdir touch {} +
+
+  export LDFLAGS=-shared
+  cat <<EOF > site.cfg
+  [openblas]
+  libraries = openblas
+  library_dirs = $OPENBLASLIB
+  include_dirs = $OPENBLASINCLUDE
+  runtime_library_dirs = $OPENBLASLIB
+  EOF
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
+  PYTHONDEPSDIR=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  easy_install --install-dir $PYTHONDEPSDIR pybind11 pythran <%= redirect(:python) %>
+  <%= variant[:python_bin] %> setup.py config_fc --fcompiler=gnu95 --noarch build <%= redirect(:build) %>
+  for a in $(find . | grep so$); do
+    if ldd $a | grep -q gridware.*openblas; then
+      fq_lib=$(ldd $a | grep gridware.*openblas | awk '{print $1;}')
+      short_lib=$(basename $fq_lib)
+      patchelf --replace-needed $fq_lib $short_lib $a
+    fi
+  done
+:install: |
+  cat <<EOF > site.cfg
+  [openblas]
+  libraries = openblas
+  library_dirs = $OPENBLASLIB
+  include_dirs = $OPENBLASINCLUDE
+  runtime_library_dirs = $OPENBLASLIB
+  EOF
+  export PYTHONDONTWRITEBYTECODE=true
+  export PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  <%= variant[:python_bin] %> setup.py install --prefix <%= dest_dir %>/python <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
