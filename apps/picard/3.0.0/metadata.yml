@@ -1,0 +1,110 @@
+---
+:license: MIT License
+:summary: Command line tools for manipulating high-throughput sequencing (HTS) data and formats
+:url: https://github.com/broadinstitute/picard
+:description: |
+  Picard is a set of command line tools for manipulating
+  high-throughput sequencing (HTS) data and formats such as
+  SAM/BAM/CRAM and VCF. These file formats are defined in the
+  [Hts-specs repository]<http://samtools.github.io/hts-specs/>. See
+  especially the [SAM specification]<http://samtools.github.io/hts-specs/SAMv1.pdf> and
+  the [VCF specification]<http://samtools.github.io/hts-specs/VCFv4.3.pdf>.
+:group: Bioinformatics
+:changelog: |
+  * Fri Jun 16 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest version 3.0.0
+  * Wed Apr 27 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest version 2.27.1
+  * Wed Jan 8 2020 - Dan Shaw <dan.shaw@alces-flight.com>
+    - Bumped to latest version 2.21.6
+  * Tue Jan 31 2017 - Andrew Provis <andrew.provis@alces-software.com>
+    - Added example templates as Clusterware literal scripts
+  * Tue Oct 4  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to latest version 2.6.0
+  * Tue Apr 5  2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to include OS dependencies
+  * Thu Feb 25 2016 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version 2.1.0
+    - Updated license, summary, url, description
+  * Mon Apr 27 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version 1.130
+  * Mon Apr 27 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to version 1.128
+  * Wed Sep  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version 1.119
+  * Fri Dec 13 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest version 1.104
+    - Detect available tools by glob rather than hard-coded list
+  * Wed Jul 05 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version 1.94
+    - Refactored to use wrapper script instead of aliases
+  * Wed Feb 20 2013 James Donohue <james.donohue@alces-software.com>
+    - Bumped to latest version 1.85
+  * Mon Feb 11 2013 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add configuration for java.io.tmpdir
+  * Tue Aug 21 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.75
+    - Refactored to packager style
+  * Wed Oct 12 2011 Mark J. Titorenko
+    - First created
+:src: picard-3.0.0.jar.sic
+:type: apps
+:version: '3.0.0'
+:compilers:
+  bin:
+:requirements:
+  :tool:
+    - apps/java >= 17.0.0
+  :runtime:
+    - apps/java >= 17.0.0
+:compile: |
+  # no-op; this is a binary distribution of a Java application
+:install: |
+  mkdir -p <%= dest_dir %>/{java,bin} <%= redirect(:install) %>
+  mv picard-3.0.0.jar.sic picard.jar <%= redirect(:install) %>
+  cp -rv *.jar <%= dest_dir %>/java <%= redirect(:install) %>
+  cat <<\EOF > <%= dest_dir %>/bin/picard
+  #!/bin/bash
+  n=$(basename $0)
+  if [ "$n" == 'picard' ]; then
+    n=$1
+    shift
+  fi
+  if [ -z "$n" ]; then
+    echo "Usage: $0 <application> [<parameters>]"
+  else
+    exec $JAVA_HOME/bin/java `eval echo $PICARD_JAVA_OPTS` -jar "<%= dest_dir %>/java/picard.jar" "$n" "$@"
+  fi
+  exit 1
+  EOF
+  chmod 755 <%= dest_dir %>/bin/picard
+  cd <%= dest_dir %>/java
+  progs=$($JAVA_HOME/bin/java -jar "<%= dest_dir %>/java/picard.jar" 2>&1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | grep '^    [A-Z]' | cut -f5 -d' ' | xargs) || true
+  cd <%= dest_dir %>/bin
+  for a in $progs; do
+    ln -s picard $a
+  done
+  cd -
+:module: |
+  setenv ${appcaps}_JAVA_OPTS "-Xmx\$${appcaps}_JAVA_MEM_MX -Djava.io.tmpdir=\$${appcaps}_JAVA_TMPDIR \$${appcaps}_JAVA_EXTRA_OPTS"
+
+  set JAVA_OPTS \$${appcaps}_JAVA_OPTS
+
+  setenv ${appcaps}_JAVA_MEM_MX 2g
+
+  if { [info exists ::env(GRIDWARE_TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(GRIDWARE_TMPDIR)
+  } elseif { [info exists ::env(TMPDIR)] } {
+    setenv ${appcaps}_JAVA_TMPDIR $::env(TMPDIR)
+  } else {
+    setenv ${appcaps}_JAVA_TMPDIR "/tmp"
+  }
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}JAVA ${appdir}/java
+
+  prepend-path PATH ${appdir}/bin
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
