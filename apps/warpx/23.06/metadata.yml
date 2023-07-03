@@ -1,0 +1,54 @@
+---
+:schema: 1
+:license: BSD License
+:summary: Advanced, time-based electromagnetic & electrostatic Particle-In-Cell code
+:url: https://ecp-warpx.github.io/
+:description: |
+  WarpX is an advanced, time-based, electromagnetic & electrostatic
+  Particle-In-Cell code.
+
+  It supports many features including:
+
+    * Perfectly-Matched Layers (PML)
+    * Boosted-frame simulations
+    * Mesh refinement
+:type: apps
+:group: Physics
+:requirements:
+  :tool: apps/cmake >= 3.20.0
+  :build:
+    - mpi/openmpi
+  :runtime:
+    - mpi/openmpi
+:compilers:
+  gcc:
+:changelog: |
+  * Mon Jul  3 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to build all dimensions
+  * Mon Jun 19 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: 23.06.tar.gz
+:src_dir: WarpX-23.06
+:version: '23.06'
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DWarpX_DIMS="1;2;RZ;3" \
+    .. <%= redirect(:configure) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:make) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  for a in bin/*; do
+    if [ -L "$a" ]; then
+      cp -a "$a" <%= dest_dir %>/bin
+    fi
+  done
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib64
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
