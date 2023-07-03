@@ -1,0 +1,80 @@
+---
+:schema: 1
+:title: MPICH
+:license: BSD License
+:summary: A high-performance and widely portable implementation of the MPI standard (MPI-1, MPI-2 and MPI-3)
+:url: http://www.mcs.anl.gov/research/projects/mpich2/
+:description: |
+  MPICH is a high-performance and widely portable implementation of
+  the Message Passing Interface (MPI) standard (MPI-1, MPI-2 and
+  MPI-3). The goals of MPICH are:
+
+  1. to provide an MPI implementation that efficiently supports
+     different computation and communication platforms including
+     commodity clusters (desktop systems, shared-memory systems,
+     multicore architectures), high-speed networks (10 Gigabit
+     Ethernet, InfiniBand, Myrinet, Quadrics) and proprietary high-end
+     computing systems (Blue Gene, Cray)
+
+  2. to enable cutting-edge research in MPI through an easy-to-extend
+     modular framework for other derived implementations.
+
+  MPICH was originally developed during the MPI standards process
+  starting in 1992 to provide feedback to the MPI Forum on
+  implementation and usability issues.  This original implementation
+  was based on the Chameleon portability system to provide a
+  light-weight implementation layer (hence the name MPICH from MPI
+  over CHameleon).  Around 2001, development had begun on a new
+  implementation named MPICH2.  MPICH2 implemented additional features
+  of the MPI-2 standard over what was implemented in the original
+  MPICH (now referred to as MPICH-1).  The final release of the
+  original MPICH is 1.2.7p1.  The version numbers of MPICH2 were
+  restarted at 0.9 and continue to 1.5. Starting with the major
+  release in November 2012, the project is renamed back to MPICH with
+  a version number of 3.0.
+:group: MPI
+:changelog: |
+  * Mon Jul  3 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest MPICH v4.1.2
+  * Thu Mar  9 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest MPICH v4.1.1
+  * Thu May 16 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to latest MPICH v3.0.4
+    - Renamed package to mpich to match modern MPICH project naming policy
+  * Tue Sep  4 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Tue Mar 13 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mpich-4.1.2.tar.gz
+:type: mpi
+:version: 4.1.2
+:requirements:
+  :tool:
+    - apps/python3
+:compilers:
+  gcc:
+    :configure_prefix:
+    :configure_flags: '--with-pm=hydra:gforker --enable-shared --with-ucx=embedded'
+  intel:
+    :configure_prefix: "CC='icc -i-dynamic' CXX='icpc -i-dynamic' FC='ifort -i-dynamic'"
+    :configure_flags: '--with-pm=hydra:gforker --enable-shared --enabled-sharedlibs=gcc --with-ucx=embedded'
+:compile: |
+  # Remove F90 from environment as the configure script doesn't like it (and uses FC)
+  unset F90
+  <%= compiler[:configure_prefix] %> ./configure --prefix=<%= dest_dir %> <%= compiler[:configure_flags] %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  setenv MPI_HOME ${appdir}
+  setenv MPICH_USE_SHLIB yes
+  setenv P4_GLOBMEMSIZE 67108864
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib/shared
+  prepend-path MANPATH ${appdir}/share/man
