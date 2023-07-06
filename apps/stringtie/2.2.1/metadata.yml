@@ -1,0 +1,42 @@
+---
+:schema: 1
+:title: stringtie 
+:license: Artistic License 2.0 
+:summary: A fast and highly efficient assembler of RNA-Seq alignments 
+:url: https://ccb.jhu.edu/software/stringtie/ 
+:description: |
+  StringTie is a fast and highly efficient assembler of RNA-Seq alignments 
+  into potential transcripts. It uses a novel network flow algorithm as 
+  well as an optional de novo assembly step to assemble and quantitate 
+  full-length transcripts representing multiple splice variants for each 
+  gene locus. Its input can include not only the alignments of raw reads 
+  used by other transcript assemblers, but also alignments longer sequences 
+  that have been assembled from those reads.In order to identify 
+  differentially expressed genes between experiments, StringTie's output 
+  can be processed by specialized software like Ballgown, Cuffdiff or other 
+  programs (DESeq2, edgeR, etc.).
+:type: apps
+:group: Bioinformatics
+:dependencies:
+  el:
+    - zlib-devel
+    - gcc-c++
+:changelog: |
+  * Thu Jul  6 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version v2.2.1
+  * Fri Dec 22 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - First created
+:src: stringtie-2.2.1.tar.gz
+:version: '2.2.1'
+:compilers:
+  gcc:
+:compile: |
+  make <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/bin
+  cp -v stringtie <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
