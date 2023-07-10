@@ -18,11 +18,15 @@
   :tool: apps/cmake >= 3.20.0
   :build:
     - mpi/openmpi
+    - apps/hdf5_mpi
   :runtime:
     - mpi/openmpi
+    - apps/hdf5_mpi
 :compilers:
   gcc:
 :changelog: |
+  * Mon Jul 10 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Update to include parallel HDF5
   * Mon Jul  3 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to build all dimensions
   * Mon Jun 19 2023 - Rob Brown <rob.brown@alces-flight.com>
