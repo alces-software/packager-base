@@ -59,11 +59,25 @@
   :runtime:
     el:
       - libjpeg-turbo
+:params:
+  :withmolfile: "Specify whether to include support for the VMD MOLFILE plugin [true|false]"
 :compilers:
   gcc:
 :compile: |
   mkdir build
   cd build
+  <% if param(:withmolfile) == "true" %>
+    if [ -f "${VMDBASEDIR}/lib/plugins/include/molfile_plugin.h" ]; then
+      EXTRA_CMAKE_ARGS="-DPKG_MOLFILE=ON -DMOLFILE_INCLUDE_DIR=${VMDBASEDIR}/lib/plugins/include"
+    else
+      echo "MOLFILE plugin support was requested, but VMD not available; try: -m apps/vmd" 1>&2
+      exit 1
+    fi
+  <% elsif param(:withmolfile) == "false" %>
+    EXTRA_CMAKE_ARGS="-DPKG_MOLFILE=OFF"
+  <% else %>
+    echo "Bad value for parameter 'withmolfile'; specify 'true' or 'false'." 1>&2
+  <% end %>
   cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
     -DFFTW3_INCLUDE_DIR=$FFTW3_DOUBLEINCLUDE \
     -DFFTW3_LIBRARY=$FFTW3_DOUBLELIB/libfftw3.so \
@@ -96,7 +110,7 @@
     -DPKG_MESSAGE=ON -DPKG_MGPT=ON -DPKG_MISC=ON \
     -DPKG_ML-HDNNP=OFF -DPKG_ML-IAP=ON -DPKG_ML-PACE=OFF \
     -DPKG_ML-QUIP=OFF -DPKG_ML-RANN=ON -DPKG_ML-SNAP=ON \
-    -DPKG_MOFFF=ON -DPKG_MOLECULE=ON -DPKG_MOLFILE=OFF \
+    -DPKG_MOFFF=ON -DPKG_MOLECULE=ON \
     -DPKG_MPIIO=ON -DPKG_MSCG=OFF -DPKG_NETCDF=OFF \
     -DPKG_OPENMP=ON -DPKG_OPT=ON -DPKG_ORIENT=ON \
     -DPKG_PERI=ON -DPKG_PHONON=ON -DPKG_PLUGIN=ON \
@@ -109,6 +123,7 @@
     -DPKG_UEF=ON -DPKG_VORONOI=OFF -DPKG_VTK=OFF \
     -DPKG_YAFF=ON -DWITH_FFMPEG=ON -DWITH_GZIP=ON \
     -DWITH_JPEG=ON -DWITH_PNG=ON -DWITH_SWIG=OFF \
+    ${EXTRA_CMAKE_ARGS} \
     ../cmake <%= redirect(:cmake) %>
   make <%= redirect(:compile) %>
 :install: |
