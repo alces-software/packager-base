@@ -1,0 +1,81 @@
+---
+:schema: 1
+:title: XCrySDen
+:summary: Crystalline and molecular structure rendering
+:license: GPLv2+
+:url: http://www.xcrysden.org/
+:description: |
+  XCrySDen is a crystalline and molecular structure render program,
+  with additional capabilities of rendering contours, isosurfaces,
+  Wigner-Seitz cells (also Brillouin zone), Fermi surfaces and so
+  on. Some of its features are the following:
+
+    * widget with periodic table of elements.
+    * displaying molecular and crystalline structure in several
+      different display modes.
+    * displaying crystal and Wigner-Seitz cells.
+    * displaying smaller or bigger portion of crystal (multiplying the
+      unit cells).
+    * visualizing the forces as vectors.
+    * animations.
+    * displaying contours and colorplanes.
+    * displaying isosurfaces.
+    * reciprocal-space analysis:
+      * selecting a k-path inside the Brillouin-zone
+      * visualizing Fermi surfaces
+:type: apps
+:group: 
+:changelog: |
+  * Thu 17 July 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: xcrysden-1.6.2.tar.gz
+:version: '1.6.2'
+:requirements:
+  :build:
+    - libs/fftw3_double
+  :runtime:
+    - libs/fftw3_double
+:compilers:
+  gcc:
+:sources:
+  - bwidget-1.9.13.tar.gz
+  - Togl2.0-src.tar.gz
+  - Make.sys
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - gcc-gfortran
+      - tk-devel
+      - tcl-devel
+      - libX11-devel
+      - libXmu-devel
+      - mesa-libGL-devel
+      - mesa-libGLU-devel
+  :runtime:
+    el:
+      - tk
+      - tcl
+      - libX11
+      - libXmu
+      - mesa-libGL
+      - mesa-libGLU
+:compile: |
+  cp <%= source('Make.sys') %> Make.sys
+  cp <%= source('bwidget-1.9.13.tar.gz') %> external/src
+  cp <%= source('Togl2.0-src.tar.gz') %> external/src
+  make all <%= redirect(:compile) %>
+:install: |
+  prefix=<%= dest_dir %> make install <%= redirect(:install) %>
+  cp -av external/src/Togl2.0/libTogl2.0.so <%= dest_dir %>/lib <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}DOC ${appdir}/share/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
+

@@ -1,0 +1,32 @@
+#########################################################################
+#
+#  System-dependent definitions suitable for compiling xcrysden using
+#  a system shared libraries (needs Tcl/Tk/Togl/GL/GLU/FFTW libraries)
+#
+########################################################################
+MAKE = make
+CPPFLAGS ?=
+CFLAGS += -ffast-math -funroll-loops -fPIC -pedantic -Wall
+CC     = gcc 
+MATH   = -lm -lc
+FFLAGS ?= -fdefault-double-8 -fdefault-real-8 -O2
+FC     = gfortran
+X_LIB     = -lXmu -lX11 
+X_INCDIR  = 
+TCL_LIB      = -ltcl$(TCL_VER2)
+TK_LIB       = -ltk$(TCL_VER2)
+TOGL_LIB     = -L$(TOPDIR)/external/src/Togl2.0 -lTogl2.0
+GLU_LIB      = -lGLU
+GL_LIB       = -lGL
+FFTW3_LIB    = -L$(FFTW3_DOUBLELIB) -lfftw3
+EXT_LIB      =
+TCL_INCDIR      = -I/usr/include/tcl$(TCL_VER2) -I$(TOPDIR)/external/include
+TK_INCDIR       =
+TOGL_INCDIR     = 
+GL_INCDIR       = 
+FFTW3_INCDIR    = -I$(FFTW3_DOUBLEINCLUDE)
+COMPILE_TOGL     = yes
+TOGL_OPTIONS   = --enable-shared --with-tcl=/usr/lib64 --with-tk=/usr/lib64
+TCL_MAJOR_VERSION   = 8
+TCL_MINOR_VERSION   = 5
+TCL_RELEASE_SERIAL  = 13
