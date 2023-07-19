@@ -29,8 +29,7 @@
   :psm2: "Specify whether to use Intel Omni-Path PSM2 libs [true|false]"
   :torque: "Specify whether to enable Torque Support [false|/path/to/torque]"
   :sge: "Specify whether to enable SGE Support [true|false]"
-  :pmi: "Specify path containing pmi.h/pmi2.h for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
-  :pmilib: "Specify path containing libpmi.so/libpmi2.so for PMI Support (e.g. for SLURM) [false|/path/to/directory]"
+  :slurm: "Specify whether to enable Slurm Support [true|false]"
   :extraopts: "Specify additional configure options or 'default' for none"
 :sources:
   - examples.sge.openmpi.template
@@ -52,25 +51,14 @@
   <% else %>
     TORQUEPARAMS=""
   <% end %>
-  <% if param(:pmi) != 'false' %>
-    if [ ! -d "<%= param(:pmi) %>" ]; then
-      echo "Unable to find PMI include directory: <%= param(:pmi) %>" >/dev/stderr
-      exit 1
-    else
-      PMIPARAMS="--with-pmi=<%= param(:pmi) %> --with-pmi-libdir=<%= param(:pmilib) %>"
-      export CPPFLAGS="-I<%= param(:pmi) %>"
-    fi
-  <% else %>
-    PMIPARAMS=""
-  <% end %>
   ./configure \
     <%= '--with-sge' if param(:sge).to_s.downcase == 'true' %> \
+    <%= '--with-slurm' if param(:slurm).to_s.downcase == 'true' %> \
     ${TORQUEPARAMS} \
-    ${PMIPARAMS} \
     <%= '--with-psm' if param(:psm).to_s.downcase == 'true' %> \
     <%= '--with-psm2' if param(:psm2).to_s.downcase == 'true' %> \
     --enable-mpi1-compatibility \
-    --enable-static --enable-shared --prefix=<%= dest_dir %> \
+    --enable-shared --prefix=<%= dest_dir %> \
     <%= param(:extraopts) == 'default' ? '' : param(:extraopts).gsub('%','=') %> \
     <%= compiler[:configure_flags] %> \
     <%= redirect(:configure) %>
@@ -99,6 +87,8 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path MANPATH ${appdir}/share/man
 :changelog: |
+  * Wed Jul 19 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Refactored to use alternative Slurm build parameters
   * Wed Mar 1 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Bumped to v4.1.5
   * Fri Jul 9 2021 - Rob Brown <rob.brown@alces-flight.com>
