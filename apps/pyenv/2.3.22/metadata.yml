@@ -1,0 +1,56 @@
+---
+:schema: 1
+:license: MIT License
+:summary: Simple Python version management
+:url: https://github.com/pyenv/pyenv
+:description: |
+  pyenv lets you easily switch between multiple versions of
+  Python. It's simple, unobtrusive, and follows the UNIX tradition of
+  single-purpose tools that do one thing well.
+
+  This project was forked from rbenv and ruby-build, and modified for
+  Python.
+:group: Languages
+:changelog: |
+  * Wed Jul 19 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v2.3.22.tar.gz
+:type: apps
+:version: '2.3.22'
+:compilers:
+  gcc:
+:compile: |
+  src/configure <%= redirect(:build) %>
+  make -C src <%= redirect(:build) %>
+:install: |
+  cp -Rv bin completions libexec plugins pyenv.d <%= dest_dir %> <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -v LICENSE *.md <%= dest_dir %>/doc <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/share
+  cp -Rv man <%= dest_dir %>/share <%= redirect(:install) %>
+:module: |
+  conflict apps/python3
+  conflict apps/python
+  conflict apps/anaconda3
+  conflict apps/anaconda
+
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path PATH $::env(HOME)/.pyenv/shims
+  prepend-path MANPATH ${appdir}/share/man
+
+  if { [module-info mode] == "load" } {
+      puts -nonewline "eval \"\$(${appdir}/bin/pyenv init -)\";"
+      flush stdout
+  }
+
+  if { [module-info mode] == "remove" } {
+      set-alias pyenv {: $*}
+      set-alias _pyenv {: $*}
+      prepend-path PATH $::env(HOME)/.pyenv/shims
+      setenv PYENV_SHELL ""
+      setenv PYENV_VERSION ""
+  }
