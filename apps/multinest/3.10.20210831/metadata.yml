@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: MultiNest
+:license: NONFREE
+:url: https://github.com/JohannesBuchner/MultiNest
+:summary: Multi-Modal Nested Sampler
+:description: |
+  MultiNest is a Bayesian inference tool which calculates the evidence
+  and explores the parameter space which may contain multiple
+  posterior modes and pronounced (curving) degeneracies in moderately
+  high dimensions.
+:group: Mathematics
+:type: apps
+:changelog: |
+  * Wed Jul 19 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: multinest-3.10.20210831.tar.gz
+:src_dir: MultiNest-a06c192c5a940a71a35cf6fb8a5fbf66df4ac0b6
+:version: '3.10.20210831'
+:requirements:
+  :tool:
+    - apps/cmake
+  :build:
+    - libs/openblas
+    - mpi/openmpi
+  :runtime:
+    - libs/openblas
+    - mpi/openmpi
+:compilers:
+  gcc:
+:compile: |
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    .. <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cd ..
+  cp -v README LICENCE license.pdf <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path CMAKE_MODULEPATH ${appdir}/CMakeModules
