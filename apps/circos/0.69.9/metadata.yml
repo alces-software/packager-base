@@ -1,0 +1,81 @@
+---
+:schema: 1
+:license: GPL
+:title: Circos
+:summary: A software package for visualizing data and information.
+:url: http://circos.ca/
+:description: |
+  Circos is a software package for visualizing data and information.
+  It visualizes data in a circular layout — this makes Circos ideal
+  for exploring relationships between objects or positions. There are
+  other reasons why a circular layout is advantageous, not the least
+  being the fact that it is attractive.
+
+  Circos is ideal for creating publication-quality infographics and
+  illustrations with a high data-to-ink ratio, richly layered data and
+  pleasant symmetries. You have fine control each element in the
+  figure to tailor its focus points and detail to your audience.
+
+  Circos is flexible. Although originally designed for visualizing
+  genomic data, it can create figures from data in any field—from
+  genomics to visualizing migration to mathematical art. If you have
+  data that describes relationships or multi-layered annotations of
+  one or more scales, Circos is for you.
+
+  Circos can be automated. It is controlled by plain-text
+  configuration files, which makes it easily incorporated into data
+  acquisition, analysis and reporting pipelines (a data pipeline is a
+  multi-step process in which data is analyzed by multiple and
+  typically independent tools, each passing their output as the input
+  to the next step).
+:group: Graphics
+:changelog: |
+  * Fri Aug 18 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version v0.69-9
+  * Fri Oct 21 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Mon May 19 2014 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: circos-0.69-9.tgz
+:src_dir: circos-0.69-9
+:type: apps
+:version: '0.69.9'
+:requirements:
+  :tool: apps/cpanminus
+:compilers:
+  noarch:
+:dependencies:
+  el:
+    - perl-devel
+    - gd-devel
+    - perl-Clone
+    - perl-Digest-MD5
+    - perl-GD
+    - perl-List-MoreUtils
+    - perl-Params-Validate
+:compile: |
+  export TOPDIR=$(pwd)
+  export PERL5LIB="${TOPDIR}/perl/lib/perl5:$PERL5LIB"
+  export PERL_CPANM_OPT="-l ${TOPDIR}/perl -n"
+  failed_mods="$(cd bin; ./circos -modules | grep missing | awk '{print $2;}')"
+  cpanm $failed_mods Set::IntSpan Math::Bezier <%= redirect(:cpanm) %>
+  for a in bin/gddiag bin/circos etc/makehuesteps; do
+    sed -e 's|#!/bin/env|#!/usr/bin/env|g' -i $a
+  done
+:install: |
+  mkdir doc
+  mv $(find . -maxdepth 1 -type f) doc
+  cp -Rv * <%= dest_dir %> <%= redirect(:install) %>
+
+  mv <%= dest_dir %>/example <%= dest_dir %>/examples
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PERL5LIB ${appdir}/perl/lib/perl5
+  prepend-path MANPATH ${appdir}/perl/man
+  prepend-path PATH ${appdir}/perl/bin
+
+  prepend-path PATH ${appdir}/bin
