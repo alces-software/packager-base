@@ -1,0 +1,48 @@
+---
+:schema: 1
+:title: MUMmer
+:license: Artistic License
+:summary: System for rapidly aligning entire genomes
+:url: https://github.com/mummer4/mummer
+:description: |
+  MUMmer is a system for rapidly aligning DNA and protein
+  sequences. The nucmer aligner in the current version (release 4.x)
+  can align two mammalian genomes in about 3 hours on a typical 32+
+  core workstation with 64+Gb RAM; smaller genomes such as bacteria or
+  small eukaryotes are aligned in seconds or minutes. The promer
+  utility generates alignments based upon the six-frame translations
+  of both input sequences. promer permits the alignment of genomes for
+  which the proteins are similar but the DNA sequence is too divergent
+  to detect similarity. See the nucmer and promer readme files in the
+  "docs/" subdirectory for more details. MUMmer is open source, and we
+  ask that you cite our most recent paper in any publications that use
+  this system:
+
+  (The latest Version 4.x citation)
+
+    Marçais G, Delcher AL, Phillippy AM, Coston R, Salzberg SL, Zimin
+    A. MUMmer4: A fast and versatile genome alignment system. PLoS
+    computational biology. 2018 Jan 26;14(1):e1005944.
+:group: Bioinformatics
+:changelog: |
+  * Wed Oct 18 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest 4.0.0-rc1 version
+  * Wed Nov 28 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: mummer-4.0.0rc1.tar.gz
+:src_dir: mummer-4.0.0rc1
+:type: apps
+:version: '4.0.0-rc1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin

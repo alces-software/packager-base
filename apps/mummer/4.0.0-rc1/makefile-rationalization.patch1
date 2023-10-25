@@ -1,0 +1,92 @@
+diff -ur MUMmer3.23.orig/Makefile MUMmer3.23/Makefile
+--- MUMmer3.23.orig/Makefile	2011-12-17 02:49:27.000000000 +0000
++++ MUMmer3.23/Makefile	2012-11-29 10:01:21.000000000 +0000
+@@ -27,8 +27,8 @@
+ 
+ 
+ TOP_DIR     := $(CURDIR)
+-BIN_DIR     := $(TOP_DIR)
+-AUX_BIN_DIR := $(TOP_DIR)/aux_bin
++BIN_DIR     := $(TOP_DIR)/build
++AUX_BIN_DIR := $(TOP_DIR)/build
+ 
+ DOC_DIR       := $(TOP_DIR)/docs
+ SCRIPT_DIR    := $(TOP_DIR)/scripts
+diff -ur MUMmer3.23.orig/scripts/Makefile MUMmer3.23/scripts/Makefile
+--- MUMmer3.23.orig/scripts/Makefile	2011-12-17 02:49:26.000000000 +0000
++++ MUMmer3.23/scripts/Makefile	2012-11-29 10:03:42.000000000 +0000
+@@ -11,10 +11,12 @@
+ SCRIPT_DIR := $(CURDIR)
+ endif
+ 
+-SCRIPT_DIR := $(CURDIR)
++DEST_BIN_DIR := %DEST_DIR%/bin
++DEST_AUX_BIN_DIR := %DEST_DIR%/bin
++SCRIPT_DIR := %DEST_DIR%/lib
+ SED := $(filter /%,$(shell /bin/sh -c 'type sed'))
+ CSH := $(filter /%,$(shell /bin/sh -c 'type csh'))
+-PERL := $(filter /%,$(shell /bin/sh -c 'type perl'))
++PERL := /usr/bin/env perl
+ VPATH := $(BIN_DIR)
+ 
+ ALL := exact-tandems mapview mummerplot nucmer promer \
+@@ -37,7 +39,7 @@
+ #-- not so PHONY rules --#
+ exact-tandems: exact-tandems.csh
+ 	$(SED)  -e 's?__CSH_PATH?$(CSH)?g' \
+-		-e 's?__BIN_DIR?$(BIN_DIR)?g' \
++		-e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+ 		-e 's?__SCRIPT_DIR?$(SCRIPT_DIR)?g' \
+ 		exact-tandems.csh > $(BIN_DIR)/exact-tandems
+ 	chmod 755 $(BIN_DIR)/exact-tandems
+@@ -51,42 +53,42 @@
+ mummerplot: mummerplot.pl Foundation.pm
+ 	$(SED)  -e 's?__PERL_PATH?$(PERL)?g' \
+                 -e 's?__SCRIPT_DIR?$(SCRIPT_DIR)?g' \
+-                -e 's?__BIN_DIR?$(BIN_DIR)?g' \
++                -e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+                 mummerplot.pl > $(BIN_DIR)/mummerplot
+ 	chmod 755 $(BIN_DIR)/mummerplot
+ 
+ dnadiff: dnadiff.pl Foundation.pm
+ 	$(SED) -e 's?__PERL_PATH?$(PERL)?g' \
+                -e 's?__SCRIPT_DIR?$(SCRIPT_DIR)?g' \
+-               -e 's?__BIN_DIR?$(BIN_DIR)?g' \
++               -e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+                  dnadiff.pl > $(BIN_DIR)/dnadiff
+ 	chmod 755 $(BIN_DIR)/dnadiff
+ 
+ nucmer: nucmer.pl Foundation.pm
+ 	$(SED)  -e 's?__PERL_PATH?$(PERL)?g' \
+                 -e 's?__SCRIPT_DIR?$(SCRIPT_DIR)?g' \
+-                -e 's?__AUX_BIN_DIR?$(AUX_BIN_DIR)?g' \
+-                -e 's?__BIN_DIR?$(BIN_DIR)?g' \
++                -e 's?__AUX_BIN_DIR?$(DEST_AUX_BIN_DIR)?g' \
++                -e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+                  nucmer.pl > $(BIN_DIR)/nucmer
+ 	chmod 755 $(BIN_DIR)/nucmer
+ 
+ promer: promer.pl Foundation.pm
+ 	$(SED)  -e 's?__PERL_PATH?$(PERL)?g' \
+                 -e 's?__SCRIPT_DIR?$(SCRIPT_DIR)?g' \
+-                -e 's?__AUX_BIN_DIR?$(AUX_BIN_DIR)?g' \
+-                -e 's?__BIN_DIR?$(BIN_DIR)?g' \
++                -e 's?__AUX_BIN_DIR?$(DEST_AUX_BIN_DIR)?g' \
++                -e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+                 promer.pl > $(BIN_DIR)/promer
+ 	chmod 755 $(BIN_DIR)/promer
+ 
+ run-mummer1: run-mummer1.csh
+ 	$(SED)  -e 's?__CSH_PATH?$(CSH)?g' \
+-		-e 's?__BIN_DIR?$(BIN_DIR)?g' \
++		-e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+ 		run-mummer1.csh > $(BIN_DIR)/run-mummer1
+ 	chmod 755 $(BIN_DIR)/run-mummer1
+ 
+ run-mummer3: run-mummer3.csh
+ 	$(SED)  -e 's?__CSH_PATH?$(CSH)?g' \
+-		-e 's?__BIN_DIR?$(BIN_DIR)?g' \
++		-e 's?__BIN_DIR?$(DEST_BIN_DIR)?g' \
+ 		run-mummer3.csh > $(BIN_DIR)/run-mummer3
+ 	chmod 755 $(BIN_DIR)/run-mummer3
+ 
