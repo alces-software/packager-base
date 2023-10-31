@@ -1,0 +1,70 @@
+---
+:schema: 1
+:title: Threading Building Blocks
+:license: GPLv2
+:summary: C++ template library that simplifies the development of software applications running in parallel
+:url: http://www.threadingbuildingblocks.org/
+:description: |
+  Intel(R) Threading Building Blocks (Intel(R) TBB) is a popular
+  software C++ template library that simplifies the development of
+  software applications running in parallel (key to any multicore
+  computer). Intel(R) TBB extends C++ for parallelism in an easy to
+  use and efficient manner. It is designed to work with any C++
+  compiler thus simplifying development of applications for multi-core
+  systems. Intel(R) TBB is a C++ template library that adds parallel
+  programming for C++ programmers. It uses generic programming to be
+  efficient. Threading Building Blocks includes algorithms, highly
+  concurrent containers, locks and atomic operations, a task scheduler
+  and a scalable memory allocator. These components in Intel(R) TBB
+  can be used individually or all together to ease C++ development for
+  multi-core. Intel(R) TBB provides an abstraction for parallelism
+  that avoids the low level programming inherent in the direct use of
+  threading packages such as p-threads or Windows threads. It has
+  programmers express tasks instead of threads. Intel(R) TBB
+  facilitates scalable performance in a way that works across a
+  variety of machines for today, and readies programs for tomorrow. It
+  detects the number of cores on the hardware platform and makes the
+  necessary adjustments as more cores are added to allow software to
+  adapt. Thus, Intel(R) TBB more effectively takes advantage of
+  multi-core hardware. - See more at:
+  http://www.threadingbuildingblocks.org/faq#sthash.5ryWwww1.dpuf
+:group: Libraries
+:changelog: |
+  * Wed Oct 11 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Upgraded to v2021.10.0
+  * Thu Jun 22 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Upgraded to v2021.9.0
+  * Mon May  8 2017 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Add library directory to LD_LIBRARY_PATH
+  * Mon Apr  4 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgrade to latest v4.4 release
+  * Wed Jun 24 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgrade to latest v4.3 release
+  * Thu Aug 29 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v2021.10.0.tar.gz
+:src_dir: oneTBB-2021.10.0
+:type: libs
+:version: '2021.10.0'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:requirements:
+  :tool: apps/cmake
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> .. <%= redirect(:configure) %>
+  make <%= redirect(:compiler) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
