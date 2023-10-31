@@ -26,8 +26,9 @@
 :group: Languages
 :requirements:
   :build:
-    - libs/lapack
-    - libs/blas
+    - libs/openblas
+  :runtime:
+    - libs/openblas
 :dependencies:
   :build:
     el:
@@ -43,7 +44,7 @@
       - xz-devel
       - zlib-devel
       - bzip2-devel
-      - pcre-devel
+      - pcre2-devel
       - tk-devel
   :runtime:
     el:
@@ -58,10 +59,13 @@
       - xz-libs
       - zlib
       - bzip2-libs
-      - pcre
+      - pcre2
       - tk
       - libgfortran
 :changelog: |
+  * Mon Oct 30 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated dependencies and added x11 config
+    - Switched to OpenBLAS
   * Mon May 11 2020 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to latest 3.6.x version, 3.6.3
   * Mon Sep 16 2019 - Rob Brown <rob.brown@alces-flight.com>
@@ -140,11 +144,17 @@
 :compilers:
   gcc:
   open64:
+:params:
+  :x11: "Enable X11 support [yes|no]"
 :compile: |
-  ./configure --with-blas=$BLASDIR/libblas.a \
-              --with-lapack=$LAPACKDIR/liblapack.a \
+  <% if !['yes','no'].include?(param(:x11).to_s.downcase) %>
+    echo "Invalid 'x11' parameter: specify 'yes' or 'no'." 1>&2
+    exit 1
+  <% end %>
+  ./configure --with-blas=$OPENBLASLIB/libopenblas.so \
+              --with-lapack=$OPENBLASLIB/libopenblas.so \
               --prefix=<%= dest_dir %> \
-              --with-x=no \
+              --with-x=<%= param(:x11) %> \
               --enable-R-shlib \
               --enable-BLAS-shlib <%= redirect(:configure) %>
   make <%= redirect(:make) %>
