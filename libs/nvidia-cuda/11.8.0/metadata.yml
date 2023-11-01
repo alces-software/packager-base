@@ -27,6 +27,8 @@
   you get started quickly accelerating your application with GPUs.
 :group: Libraries
 :changelog: |
+  * Wed Nov  1 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Include samples from new location
   * Mon Jun 12 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Bumped to 11.8.0 version
   * Thu Jul 21 2022 - Rob Brown <rob.brown@alces-flight.com>
@@ -68,6 +70,8 @@
     - First created
 :src: cuda_11.8.0_520.61.05_linux.run.sic
 :src_dir: .
+:sources:
+- cuda-samples-11.8.tar.gz
 :type: libs
 :version: '11.8.0'
 :compilers:
@@ -75,12 +79,13 @@
 :compile: |
   # move main source file to it's proper name (ie. drop the sic extension)
   mv cuda_11.8.0_520.61.05_linux.run.sic cuda_11.8.0_520.61.05_linux.run
+  tar xzf <%= source('cuda-samples-11.8.tar.gz') %>
 :install: |
   mkdir -p <%= dest_dir %>/installers
   /bin/sh cuda_11.8.0_520.61.05_linux.run \
      --tmpdir=/var/tmp \
      --silent \
-     --toolkit --samples \
+     --toolkit \
      --installpath=<%= dest_dir %> \
      --no-man-page
   /bin/sh cuda_11.8.0_520.61.05_linux.run \
@@ -88,6 +93,7 @@
   cp -v builds/*.run <%= dest_dir %>/installers
   # create link for dev driver
   (cd <%= dest_dir %>/installers && ln -snf NVIDIA-Linux-x86_64-520.61.05.run devdriver.run)
+  cp -Rv cuda-samples-11.8 <%= dest_dir %>/samples <%= redirect(:install) %>
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
