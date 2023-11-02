@@ -1,0 +1,39 @@
+---
+:schema: 1
+:title: libbsd
+:license: BSD License
+:summary: Provides useful functions commonly found on BSD systems
+:url: https://libbsd.freedesktop.org/wiki/
+:description: |
+  This library provides useful functions commonly found on BSD
+  systems, and lacking on others like GNU systems, thus making it
+  easier to port projects with strong BSD origins, without needing to
+  embed the same code over and over again on each project.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Thu Nov  2 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: libbsd-0.11.7.tar.xz
+:version: 0.11.7
+:requirements:
+  :build:
+    - libs/libmd
+  :runtime:
+    - libs/libmd
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> LDFLAGS=-L$LIBMDLIB CFLAGS=-I$LIBMDINCLUDE <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
