@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: libmd
+:license: BSD License
+:summary: Orovides message digest functions found on BSD systems
+:url: https://www.hadrons.org/software/libmd/
+:description: |
+  This library provides message digest functions found on BSD systems
+  either on their libc (NetBSD, OpenBSD) or libmd (FreeBSD,
+  DragonflyBSD, macOS, Solaris) libraries and lacking on others like
+  GNU systems.
+:group: Libraries
+:type: libs
+:changelog: |
+  * Thu Nov  2 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: libmd-1.1.0.tar.xz
+:version: 1.1.0
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path MANPATH ${appdir}/share/man
