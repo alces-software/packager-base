@@ -1,0 +1,50 @@
+---
+:schema: 1
+:title: SPAdes
+:license: GPLv2+
+:summary: Assembly toolkit containing various assembly pipelines
+:url: https://cab.spbu.ru/software/spades/
+:description: |
+  SPAdes - St. Petersburg genome assembler - is an assembly toolkit
+  containing various assembly pipelines.
+
+  SPAdes works with Illumina or IonTorrent reads and is capable of
+  providing hybrid assemblies using PacBio, Oxford Nanopore and Sanger
+  reads. You can also provide additional contigs that will be used as
+  long reads.
+
+  SPAdes supports paired-end reads, mate-pairs and unpaired
+  reads. SPAdes can take as input several paired-end and mate-pair
+  libraries simultaneously. Note, that SPAdes was initially designed
+  for small genomes. It was tested on bacterial (both single-cell MDA
+  and standard isolates), fungal and other small genomes. SPAdes is
+  not intended for larger genomes (e.g. mammalian size genomes). For
+  such purposes you can use it at your own risk.
+:group: Bioinformatics
+:changelog: |
+  * Mon Nov  6 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: SPAdes-3.15.5.tar.gz
+:src_dir: SPAdes-3.15.5
+:type: apps
+:version: '3.15.5'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/cmake >= 3.5.0
+:compile: |
+  mkdir build
+  cd build
+  cmake ../src \
+    -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
