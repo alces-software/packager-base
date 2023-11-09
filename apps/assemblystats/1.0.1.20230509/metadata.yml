@@ -1,0 +1,40 @@
+---
+:schema: 1
+:title: Assembly Stats
+:license: GPLv3
+:summary: Get assembly statistics from FASTA and FASTQ files
+:url: https://github.com/sanger-pathogens/assembly-stats
+:description: |
+  Get assembly statistics from FASTA and FASTQ files.
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov  9 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: assembly-stats-1.0.1.20230509.tar.gz
+:src_dir: assembly-stats-7bdb58b8d0c5289e7f13785d826abcdf3678e126
+:type: apps
+:version: '1.0.1.20230509'
+:requirements:
+  :tool:
+    - apps/cmake
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DINSTALL_DIR:PATH=<%= dest_dir %>/bin \
+    .. \
+    <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+  cd ..
+  mkdir <%= dest_dir %>/doc
+  cp -v AUTHORS LICENSE README.md CHANGELOG.md <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  prepend-path PATH ${appdir}/bin
