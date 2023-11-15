@@ -1,0 +1,71 @@
+:schema: 1
+:title: HPL
+:license: Modified Free http://www.netlib.org/benchmark/hpl/copyright.html
+:summary: A Portable Implementation of the High-Performance Linpack Benchmark for Distributed-Memory Computers
+:url: http://www.netlib.org/benchmark/hpl/
+:description: |
+  HPL is a software package that solves a (random) dense linear system
+  in double precision (64 bits) arithmetic on distributed-memory
+  computers. It can thus be regarded as a portable as well as freely
+  available implementation of the High Performance Computing Linpack
+  Benchmark.
+
+  The algorithm used by HPL can be summarized by the following keywords:
+
+    * Two-dimensional block-cyclic data distribution
+    * Right-looking variant of the LU factorization with row partial
+      pivoting featuring multiple look-ahead depths
+    * Recursive panel factorization with pivot search and column
+      broadcast combined
+    * Various virtual panel broadcast topologies
+    * Bandwidth reducing swap-broadcast algorithm
+    * Backward substitution with look-ahead of depth 1
+:group: Benchmarks
+:changelog: |
+  * Wed Nov 15 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version, v2.3
+  * Fri Dec  8 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Corrected error where examples directory was not created during installation
+  * Tue Sep  6 2016 - Andrew Provis <andrew.provis@alces-software.com>
+    - Updated example templates to Clusterware literal scripts
+  * Thu May  5 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated distro dependencies for EL 
+    - Removed symlink in blas
+  * Wed May 14 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Tidied up the description field; added title field
+  * Mon Mar  3 2014 James Donohue <james.donohue@alces-software.com>
+    - Added simple example script
+  * Wed Nov 21 2012 - Steve Norledge <steve.norledge@alces-software.com>
+    - First created
+:src: hpl-2.3.tar.gz
+#:patches:
+#  - alces-hpl.patch
+:type: apps
+:version: '2.3'
+:compilers:
+  gcc:
+    :build_name: Linux-gcc
+:requirements:
+  :runtime:
+    - mpi/openmpi
+  :build:
+    - mpi/openmpi
+    - libs/openblas
+:sources:
+  - hpl-8proc.alces.dat
+:compile: |
+  ./configure LDFLAGS=-L$OPENBLASLIB CC=mpicc \
+    --prefix=<%= dest_dir %> \
+    <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir -pv <%= dest_dir %>/examples <%= redirect(:install) %>
+  cp -v <%= source('hpl-8proc.alces.dat') %> <%= dest_dir %>/examples <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}EXAMPLES ${appdir}/examples
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
