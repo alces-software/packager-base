@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: AUGUSTUS
+:license: Artistic License 2.0
+:summary: Predicts genes in eukaryotic genomic sequences
+:url: http://bioinf.uni-greifswald.de/augustus/
+:description: |
+  AUGUSTUS is a gene prediction program for eukaryotes written by
+  Mario Stanke and Oliver Keller.  It can be used as an ab initio
+  program, which means it bases its prediction purely on the
+  sequence. AUGUSTUS may also incorporate hints on the gene structure
+  coming from extrinsic sources such as EST, MS/MS, protein alignments
+  and synthenic genomic alignments.
+:group: Bioinformatics
+:changelog: |
+  * Thu Nov  9 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v3.5.0
+  * Wed Jan 24 2017 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Updated to v3.3
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: augustus-3.5.0.tar.gz
+:src_dir: Augustus-3.5.0
+:type: apps
+:version: '3.5.0'
+:requirements:
+  :build:
+    - apps/bamtools
+    - libs/boost
+    - apps/htslib
+  :runtime:
+    - apps/bamtools
+    - libs/boost
+    - apps/htslib
+:compilers:
+  gcc:
+:compile: |
+  echo 'MYSQL = false' >> common.mk
+  echo 'COMPGENEPRED = false' >> common.mk
+  LDFLAGS="-L$BOOSTLIB -L$BAMTOOLSLIB" \
+    CPPFLAGS="-I$BOOSTINCLUDE -I$BAMTOOLSINCLUDE/bamtools" \
+    make augustus <%= redirect(:compile) %>
+  LDFLAGS="-L$BOOSTLIB -L$BAMTOOLSLIB -L$HTSLIBLIB" \
+    CPPFLAGS="-I$BOOSTINCLUDE -I$BAMTOOLSINCLUDE/bamtools -I$HTSLIBINCLUDE/htslib" \
+    make auxprogs <%= redirect(:compile) %>
+:install: |
+  for a in bin docs auxprogs config examples scripts; do
+    cp -av $a <%= dest_dir %> <%= redirect(:install) %>
+  done
+  mv <%= dest_dir %>/docs <%= dest_dir %>/doc
+  cp -av README.md retraining.html <%= dest_dir %>/doc <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SCRIPT ${appdir}/scripts
+  setenv ${appcaps}DOC ${appdir}/docs
+
+  setenv AUGUSTUS_CONFIG_PATH ${appdir}/config
+
+  prepend-path PATH ${appdir}/scripts
+  prepend-path PATH ${appdir}/bin
+
