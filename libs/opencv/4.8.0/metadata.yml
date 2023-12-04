@@ -99,7 +99,6 @@
   setenv ${appcaps}LIB ${appdir}/lib64
   setenv ${appcaps}SHARE ${appdir}/share
 
-  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
   prepend-path PATH ${appdir}/bin
   prepend-path PYTHONPATH ${appdir}/lib/python3.11/site-packages
