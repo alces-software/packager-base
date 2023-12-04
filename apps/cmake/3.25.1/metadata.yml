@@ -55,4 +55,3 @@
   setenv ${appcaps}BIN ${appdir}/bin
 
   prepend-path PATH ${appdir}/bin
-  prepend-path MANPATH ${appdir}/man
