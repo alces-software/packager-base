@@ -104,9 +104,6 @@
 
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
-  setenv ${appcaps}LIB ${appdir}/lib
   setenv ${appcaps}JAVA ${appdir}/java
 
   prepend-path PATH ${appdir}/bin
-
-  prepend-path LD_LIBRARY_PATH ${appdir}/lib
