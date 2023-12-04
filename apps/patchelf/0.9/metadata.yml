@@ -39,6 +39,6 @@
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
 
-  prepend-path MANPATH ${appdir}/shar/man
+  prepend-path MANPATH ${appdir}/share/man
   
   prepend-path PATH ${appdir}/bin
