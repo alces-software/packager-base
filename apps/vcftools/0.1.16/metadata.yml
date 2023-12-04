@@ -69,14 +69,13 @@
   cp -v <%= source('vcftools.md') %> <%= dest_dir %>/share/clusterware/guides <%= redirect(:install) %>
   cp -v <%= source('vcftools.sh.tpl') %> <%= dest_dir %>/share/clusterware/templates <%= redirect(:install) %>
 
-  mv lib/site_perl/$(perl -e 'printf "%vd\n", $^V;') lib/perl
-  rm -rf lib/site_perl
+  mv <%= dest_dir %>/lib/site_perl/$(perl -e 'printf "%vd\n", $^V;') <%= dest_dir %>/lib/perl
+  rm -rf <%= dest_dir %>/lib
 :module: |
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
   setenv ${appcaps}SHARE ${appdir}/share
 
-  prepend-path PERL5LIB ${appdir}/lib/perl
   prepend-path MANPATH ${appdir}/share/man
   prepend-path PATH ${appdir}/bin
 
