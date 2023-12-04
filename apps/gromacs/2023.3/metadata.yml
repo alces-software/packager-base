@@ -198,13 +198,13 @@
   prepend-path PATH ${appdir}/bin
 
   setenv GMXBIN ${appdir}/bin
-  setenv GMXLDLIB ${appdir}/lib
+  setenv GMXLDLIB ${appdir}/lib64
   setenv GMXMAN ${appdir}/share/man
   setenv GMXDATA ${appdir}/share
 
   prepend-path PATH ${appdir}/bin
-  prepend-path LD_LIBRARY_PATH ${appdir}/lib
-  prepend-path PKG_CONFIG_PATH ${appdir}/lib/pkgconfig
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PKG_CONFIG_PATH ${appdir}/lib64/pkgconfig
   prepend-path MANPATH ${appdir}/share/man
 
   set completion_data ""
