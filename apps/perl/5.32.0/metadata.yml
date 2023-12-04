@@ -82,7 +82,7 @@
   setenv GRIDWARE_${appcaps}_VERSION ${version}
 
   prepend-path PATH ${appdir}/bin
-  prepend-path MANPATH ${appdir}/share/man
+  prepend-path MANPATH ${appdir}/man
 
   if { $::env(USER) != "root" } {
     if { [module-info mode load] } {
