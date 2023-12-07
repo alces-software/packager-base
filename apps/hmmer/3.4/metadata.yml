@@ -1,0 +1,46 @@
+---
+:schema: 1
+:license: GPL
+:summary: Biosequence analysis using profile hidden Markov models
+:url: http://hmmer.org/
+:description: |
+  HMMER is used for searching sequence databases for homologs of
+  protein sequences, and for making protein sequence alignments.  It
+  implements methods using probabilistic models called profile hidden
+  Markov models (profile HMMs).
+:group: Bioinformatics
+:changelog: |
+  * Thu Dec  7 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v3.4
+  * Mon Sep  6 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v3.3.2
+  * Mon Apr 18 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL & updated download link
+  * Wed Sep  3 2014 - Ben Armston <ben.armston@alces-software.com>
+    - Updgraded to 3.1b1
+  * Sun Sep  9 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Nov 30 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: hmmer-3.4.tar.gz
+:type: apps
+:version: '3.4'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/doc
+  cp -v Userguide.pdf README.md LICENSE RELEASE-3.4.md <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  prepend-path MANPATH ${appdir}/share/man
