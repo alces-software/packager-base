@@ -1,0 +1,94 @@
+---
+:schema: 1
+:title: Sequence Read Archive Toolkit
+:license: Public Domain
+:summary: Programmatically access data housed within SRA and convert it from the SRA format
+:url: http://www.ncbi.nlm.nih.gov/sra
+:description: |
+  The SRA Toolkit and SDK from NCBI is a collection of tools and
+  libraries for using data in the INSDC Sequence Read Archives,
+  allowing you to programmatically access data housed within SRA and
+  convert it from the SRA format to any of the following formats:
+
+    * AB SOLiD native
+    * FASTQ
+    * SFF (Roche 454)
+    * Illumina native
+
+  You can also use the toolkit to convert from the formats listed
+  below into the SRA format:
+
+    * FASTQ
+    * AB SOLiD-SRF
+    * AB SOLiD-Native
+    * Illumina SRF
+    * Illumina Native
+    * SFF
+
+  The Sequence Read Archive (SRA) stores raw sequence data from
+  "next-generation" sequencing technologies including 454, IonTorrent,
+  Illumina, SOLiD, Helicos and Complete Genomics. In addition to raw
+  sequence data, SRA now stores alignment information in the form of
+  read placements on a reference sequence.
+
+  SRA is NIH’s primary archive of high-throughput sequencing data and
+  is part of the international partnership of archives (INSDC) at the
+  NCBI, the European Bioinformatics Institute and the DNA Database of
+  Japan. Data submitted to any of the three organizations are shared
+  among them.
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan  4 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest release v3.0.10
+  * Mon Jul  6 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest release v3.0.5
+  * Mon Jun 20 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Sep  3 2014 - James Donohue <james.donohue@alces-software.com>
+    - Updated to latest version 2.3.5-2
+  * Wed Sep 19 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Nov 30 2011 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: sra-tools-3.0.10.tar.gz
+:src_dir: sra-tools-3.0.10
+:sources:
+  - ncbi-vdb-3.0.10.tar.gz
+:type: apps
+:version: '3.0.10'
+:requirements:
+  :tool:
+    - apps/cmake >= 3.16.0
+:dependencies:
+  el:
+    - gcc-c++
+    - libxml2-devel
+:compilers:
+  gcc:
+:compile: |
+  pushd ..
+  tar xzf <%= source("ncbi-vdb-#{version}.tar.gz") %>
+  cd ncbi-vdb-<%= version %>
+  mkdir dist
+  cd dist
+  cmake .. <%= redirect(:configure_vdb) %>
+  make <%= redirect(:make_vdb) %>
+  popd
+  mkdir dist
+  cd dist
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+     -DVDB_LIBDIR=$(pwd)/../../ncbi-vdb-<%= version %>/dist/lib \
+     -DVDB_INCDIR=$(pwd)/../../ncbi-vdb-3.0.10/interfaces \
+     .. <%= redirect(:configure) %>
+  make <%= redirect(:make) %>
+:install: |
+  cd dist
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  
