@@ -1,0 +1,70 @@
+---
+:schema: 1
+:license: OTHER - see http://www.cise.ufl.edu/research/sparse/SuiteSparse/
+:summary: A suite of sparse matrix packages
+:url: http://www.cise.ufl.edu/research/sparse/SuiteSparse/
+:description: |
+  SuiteSparse is a single archive that contains all packages authored
+  or co-authored by Professor Tim Davis has that are available at
+  http://www.cise.ufl.edu/research/sparse. Currently, this includes:
+
+    * AMD: symmetric approximate minimum degree
+    * BTF: permutation to block triangular form
+    * CAMD: symmetric approximate minimum degree
+    * CCOLAMD: constrained column approximate minimum degree
+    * COLAMD: column approximate minimum degree
+    * CHOLMOD: sparse supernodal Cholesky factorization and update/downdate
+    * CSparse: a concise sparse matrix package
+    * CXSparse: an extended version of CSparse
+    * KLU: sparse LU factorization, for circuit simulation
+    * LDL: a simple LDL^T factorization
+    * UMFPACK: sparse multifrontal LU factorization
+    * RBio: MATLAB toolbox for reading/writing sparse matrices
+    * UFconfig: common configuration for all but CSparse
+    * SuiteSparseQR: multifrontal sparse QR
+:group: Mathematics
+:requirements:
+  :tool: apps/cmake
+  :build: 
+    - libs/openblas
+    - libs/mpfr >= 4.0.0
+:changelog: |
+  * Mon Dec  4 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest 7.3.1 release
+  * Thu Aug  4 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest 5.12.0 release
+  * Tue Mar 22 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Explicitly link against libstdc++ for EL6 compatibility
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest v4.5.1 release
+  * Tue Aug 19 2014 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to latest v4.2.1 release
+  * Thu Sep  6 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Fri May 18 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: SuiteSparse-7.3.1.tar.gz
+:src_dir: SuiteSparse-7.3.1
+:type: libs
+:version: '7.3.1'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+    - gcc-gfortran
+:compile: |
+  CMAKE_OPTIONS="\
+  -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+  -DMPFR_INCLUDE_DIR=$MPFRINCLUDE \
+  -DMPFR_LIBRARY=$MPFRLIB/libmpfr.so \
+  " \
+  make <%= redirect(:compile) %> 
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
