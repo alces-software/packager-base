@@ -1,0 +1,36 @@
+---
+:schema: 1
+:title: GenomeTools
+:license: ISC License
+:summary: The versatile open source genome analysis software
+:url: https://genometools.org/
+:description: |
+  The GenomeTools genome analysis system is a free collection of
+  bioinformatics tools (in the realm of genome informatics) combined
+  into a single binary named gt. It is based on a C library named
+  “libgenometools” which consists of several modules.
+:type: apps
+:group: Bioinformatics
+:changelog: |
+  * Thu Jan 18 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v1.6.5.tar.gz
+:version: '1.6.5'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  make cairo=no <%= redirect(:compile) %>
+:install: |
+  make prefix=<%= dest_dir %> cairo=no install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
