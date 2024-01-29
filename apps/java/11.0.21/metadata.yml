@@ -1,0 +1,43 @@
+---
+:schema: 1
+:license: OTHER - Oracle
+:title: Oracle Java(TM)
+:summary: Java Programing Language
+:url: http://www.java.com
+:description: |
+  Oracle Java is the #1 programming language and development
+  platform. It reduces costs, shortens development timeframes, drives
+  innovation, and improves application services. With millions of
+  developers running more than 60 billion Java Virtual Machines
+  worldwide, Java continues to be the development platform of choice
+  for enterprises and developers.
+:group: Languages
+:changelog: |
+  * Mon Jan 29 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to Java 11
+  * Wed Feb  1 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to Java 18
+  * Thu Jun 16 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Mon Feb 18 2013 - Steve Norledge <steve.norledge@alces-software.com>
+    - First created
+:src: jdk-11.0.21_linux-x64_bin.tar.gz
+:src_dir: jdk-11.0.21
+:type: apps
+:version: '11.0.21'
+:compilers:
+  noarch:
+:compile: |
+  # No-op; this is a distribution of a binary application.
+:install: | 
+  mkdir -p <%= dest_dir %>
+  cp -av * <%= dest_dir %>
+  chown root:root -R <%= dest_dir %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv JAVA_HOME ${appdir}
+  setenv JAVAHOME ${appdir}
+
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
