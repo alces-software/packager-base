@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: Incompact3D
+:license: BSD License
+:summary: Solver for the Navier-Stokes equations
+:url: https://github.com/xcompact3d/Incompact3d
+:description: |
+  Xcompact3d is a Fortran-based framework of high-order
+  finite-difference flow solvers dedicated to the study of turbulent
+  flows. Dedicated to Direct and Large Eddy Simulations (DNS/LES) for
+  which the largest turbulent scales are simulated, it can combine the
+  versatility of industrial codes with the accuracy of spectral
+  codes. Its user-friendliness, simplicity, versatility, accuracy,
+  scalability, portability and efficiency makes it an attractive tool
+  for the Computational Fluid Dynamics community.
+:group: Simulation
+:changelog: |
+  * Mon Feb  5 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v4.0.tar.gz
+:src_dir: Incompact3d-4.0
+:type: apps
+:version: '4.0'
+:compilers:
+  gcc:
+:requirements:
+  - mpi/openmpi
+:compile: |
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:compile) %>
+:install: |
+  mkdir -p <%= dest_dir %>/{bin,share,doc}
+  cp -v xcompact3d <%= dest_dir %>/bin
+  cp -Rv examples <%= dest_dir %>/share
+  cp -v LICENSE <%= dest_dir %>/doc
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path PATH ${appdir}/bin
