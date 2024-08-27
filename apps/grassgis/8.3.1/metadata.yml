@@ -1,0 +1,82 @@
+---
+:schema: 1
+:license: GPLv2+
+:summary: Free and open source Geographic Information System (GIS) software suite
+:title: GRASS GIS
+:url: https://grass.osgeo.org/
+:description: |
+  GRASS GIS, commonly referred to as GRASS (Geographic Resources
+  Analysis Support System), is a free and open source Geographic
+  Information System (GIS) software suite used for geospatial data
+  management and analysis, image processing, graphics and maps
+  production, spatial modeling, and visualization. GRASS GIS is
+  currently used in academic and commercial settings around the world,
+  as well as by many governmental agencies and environmental
+  consulting companies. It is a founding member of the Open Source
+  Geospatial Foundation (OSGeo).
+
+  GRASS GIS contains over 350 modules to render maps and images on
+  monitor and paper; manipulate raster, and vector data including
+  vector networks; process multispectral image data; and create,
+  manage, and store spatial data. GRASS GIS offers both an intuitive
+  graphical user interface as well as command line syntax for ease of
+  operations. GRASS GIS can interface with printers, plotters,
+  digitizers, and databases to develop new data as well as manage
+  existing data.
+:group: Geography
+:changelog: |
+  * Fri Aug  9 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v8.3.1
+  * Tue Feb 16 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:dependencies:
+  el:
+    - gcc-c++
+    - ncurses-devel
+    - zlib-devel
+    - flex
+    - bison
+    - libpng-devel
+    - libtiff-devel
+    - readline-devel
+    - sqlite-devel
+    - freetype-devel
+    - cairo-devel
+    - mesa-libGL-devel
+    - mesa-libGLU-devel
+:requirements:
+  :build:
+    - libs/proj
+    - libs/gdal
+    - libs/fftw3_double
+  :runtime:
+    - libs/proj
+:src: grass-8.3.1.tar.gz
+:src_dir: grass-8.3.1
+:type: apps
+:version: '8.3.1'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> \
+    --without-pdal \
+    --with-proj-includes=$PROJINCLUDE \
+    --with-proj-libs=$PROJLIB \
+    --with-proj-share=$PROJSHARE/proj \
+    --with-fftw-libs=$FFTW3_DOUBLELIB \
+    --with-fftw-includes=$FFTW3_DOUBLEINCLUDE \
+    --with-freetype-includes=/usr/include/freetype2 \
+    <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/dist
+  mv <%= dest_dir %>/grass83 <%= dest_dir %>/dist
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  setenv GISBASE ${appdir}/dist/grass83
+  setenv GRASS_PROJSHARE $::env(PROJSHARE)
+  
+  prepend-path PATH ${appdir}/bin
