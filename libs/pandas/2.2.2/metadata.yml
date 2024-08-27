@@ -1,0 +1,86 @@
+---
+:schema: 1
+:title: pandas
+:license: BSD
+:summary: Powerful data structures for data analysis, time series,and statistics
+:url: http://pandas.pydata.org/
+:description: |
+  pandas is a Python package providing fast, flexible, and expressive
+  data structures designed to make working with structured (tabular,
+  multidimensional, potentially heterogeneous) and time series data
+  both easy and intuitive. It aims to be the fundamental high-level
+  building block for doing practical, real world data analysis in
+  Python. Additionally, it has the broader goal of becoming the most
+  powerful and flexible open source data analysis / manipulation tool
+  available in any language. It is already well on its way toward this
+  goal.
+
+  pandas is well suited for many different kinds of data:
+
+    * Tabular data with heterogeneously-typed columns, as in an SQL
+      table or Excel spreadsheet
+    * Ordered and unordered (not necessarily fixed-frequency) time
+      series data.
+    * Arbitrary matrix data (homogeneously typed or heterogeneous)
+      with row and column labels
+    * Any other form of observational / statistical data sets. The
+      data actually need not be labeled at all to be placed into a
+      pandas data structure
+:type: libs
+:group: Libraries
+:changelog: |
+  * Fri Aug  9 2024 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v2.2.2
+    - Restructured for multiple Python version support
+  * Fri Feb 10 2023 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.3.5
+  * Wed Jun 19 2019 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v0.24.2
+  * Thu Apr 28 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Mon Nov  9 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest version, v0.17.0
+  * Tue Jun 10 2014 - James Donohue <james.donohue@alces-software.com>
+    - First created
+:src: pandas-2.2.2.tar.gz
+:version: '2.2.2'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:variants:
+  python312:
+    :description: "Builds for Python 3.12.x series"
+    :python_bin: python3
+    :python_libdir: python3.12
+    :requirements:
+      :tool:
+        - apps/cython_python312
+      :build:
+        - apps/python3 ~> 3.12.0
+        - libs/numpy_python312
+      :runtime:
+        - apps/python3 ~> 3.12.0
+        - libs/numpy_python312
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  export PYTHONPATH=$PYTHONPATH:$PYTHONDEPSDIR
+  mkdir $PYTHONDEPSDIR
+  pip3 install --prefix=$PYTHONDEPSDIR 'python-dateutil>=2.8.2' <%= redirect(:python) %>
+  pip3 install --prefix=$PYTHONDEPSDIR 'pytz>=2020.1' <%= redirect(:python) %>
+
+  pip3 wheel . <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PYTHONDEPSDIR=$(pwd)/python
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  cp -av $PYTHONDEPSDIR/* <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages <%= redirect(:install) %>
+
+  PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages:$PYTHONPATH
+  pip3 install --prefix=<%= dest_dir %>/python pandas*.whl <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
