@@ -1,0 +1,67 @@
+---
+:schema: 1
+:license: Apache License 2.0
+:summary: C++ library for linear algebra & scientific computing
+:title: Armadillo
+:url: http://arma.sourceforge.net/
+:description: |
+  Armadillo is a high quality linear algebra library (matrix maths)
+  for the C++ language, aiming towards a good balance between speed
+  and ease of use.
+ 
+  Provides high-level syntax and functionality deliberately similar to
+  Matlab. Useful for algorithm development directly in C++, or quick
+  conversion of research code into production environments. Provides
+  efficient classes for vectors, matrices and cubes; dense and sparse
+  matrices are supported. Integer, floating point and complex numbers
+  are supported.
+:group: Libraries
+:changelog: |
+  * Tue Aug 27 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Upgraded to 14.0.2
+  * Thu Sep 30 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: armadillo-14.0.2.tar.xz
+:requirements:
+  :tool: apps/cmake
+  :build:
+    - libs/openblas
+    - libs/lapack
+    - apps/hdf5_serial
+    - libs/arpack-ng
+    - libs/superlu
+  :runtime:
+    - libs/openblas
+    - libs/lapack
+    - apps/hdf5_serial
+    - libs/arpack-ng
+    - libs/superlu
+:type: libs
+:version: 14.0.2
+:compilers:
+  gcc:
+:dependencies:
+   :build:
+     el:
+       - gcc-c++
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DOpenBLAS_LIBRARY=$OPENBLASLIB/libopenblas.so \
+    -DLAPACK_LIBRARY=$LAPACKLIB/liblapack.so \
+    -DHDF5_LIBRARY=$HDF5LIB \
+    -DARPACK_LIBRARY=$ARPACK_NGLIB/libarpack.so \
+    -DSuperLU_LIBRARY=$SUPERLULIB/libsuperlu.so \
+    -DSuperLU_INCLUDE_DIR=$SUPERLUINCLUDE \
+    .. <%= redirect(:cmake) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
