@@ -1,0 +1,79 @@
+---
+:schema: 1
+:title: PROJ
+:license: MIT License
+:summary: Generic coordinate transformation software
+:url: https://proj.org/
+:description: |
+  PROJ is a generic coordinate transformation software that transforms
+  geospatial coordinates from one coordinate reference system (CRS) to
+  another. This includes cartographic projections as well as geodetic
+  transformations. PROJ is released under the X/MIT open source
+  license
+
+  PROJ includes command line applications for easy conversion of
+  coordinates from text files or directly from user input. In addition
+  to the command line utilities PROJ also exposes an application
+  programming interface, or API in short. The API lets developers use
+  the functionality of PROJ in their own software without having to
+  implement similar functionality themselves.
+
+  PROJ started purely as a cartography application letting users
+  convert geodetic coordinates into projected coordinates using a
+  number of different cartographic projections. Over the years, as the
+  need has become apparent, support for datum shifts has slowly worked
+  its way into PROJ as well. Today PROJ supports more than a hundred
+  different map projections and can transform coordinates between
+  datums using all but the most obscure geodetic techniques.
+:group: Libraries
+:changelog: |
+  * Fri Aug  9 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v9.4.1
+  * Thu Aug  4 2022 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v9.0.1
+  * Wed Aug 18 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v5.2.0
+  * Mon Apr 19 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: proj-9.4.1.tar.gz
+:src_dir: proj-9.4.1
+:type: libs
+:version: '9.4.1'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/cmake >= 3.9.0
+  :build:
+    - apps/sqlite >= 3.11.0
+  :runtime:
+    - apps/sqlite >= 3.11.0
+:dependencies:
+  :build:
+    el:
+      - gcc-c++
+      - libtiff-devel
+      - libcurl-devel
+  :runtime:
+    el:
+      - libtiff
+      - libcurl
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+   -DSQLITE3_INCLUDE_DIR=$SQLITEINCLUDE -DSQLITE3_LIBRARY=$SQLITELIB/libsqlite3.so \
+   .. <%= redirect(:configure) %>
+  cmake --build . <%= redirect(:build) %>
+:install: |
+  cd build
+  cmake --build . --target install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}SHARE ${appdir}/share
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PATH ${appdir}/bin
