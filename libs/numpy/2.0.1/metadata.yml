@@ -1,0 +1,154 @@
+---
+:schema: 1
+:license: BSD
+:summary: Fundamental package for scientific computing in Python
+:url: http://numpy.scipy.org/
+:description: |
+  NumPy is the fundamental package for scientific computing with
+  Python. It contains among other things:
+
+    * a powerful N-dimensional array object
+    * sophisticated (broadcasting) functions
+    * tools for integrating C/C++ and Fortran code
+    * useful linear algebra, Fourier transform, and random number
+      capabilities
+
+  Besides its obvious scientific uses, NumPy can also be used as an
+  efficient multi-dimensional container of generic data. Arbitrary
+  data-types can be defined. This allows NumPy to seamlessly and
+  speedily integrate with a wide variety of databases.
+:type: libs
+:group: Mathematics
+:changelog: |
+  * Thu Aug  9 2024 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v2.0.1
+  * Thu Aug  9 2024 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.26.4
+    - Added support for Python 3.12
+  * Thu Aug 31 2023 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.25.2
+    - Added support for Python 3.11
+    - Dropped support for Python older than 3.9.x
+  * Thu May 11 2023 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.24.3
+    - Added support for Python 3.10
+    - Switched to OpenBLAS
+  * Fri Nov 12 2021 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.21.4
+    - Added support for Python 3.9
+  * Thu Apr 30 2020 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.18.3
+    - Added support for Python 3.7 and Python 3.8
+  * Wed Jun 19 2019 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v1.16.2
+  * Mon Jan 28 2019 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Bumped to v1.16.0
+    - Added support for Python 3.6
+  * Sun May 15 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Bumped to v1.10.4
+  * Wed Mar 30 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Use patchelf to remove hardcoded ATLAS library paths
+    - Added distro dependencies
+  * Wed Mar 23 2016 - Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Moved atlas paths from compiler section to compile and install section.
+  * Wed May  6 2015 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added python34 variant for Python 3.4.x
+  * Thu Mar 26 2015 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v1.9.2
+  * Thu Jan 16 2014 - James Donohue <james.donohue@alces-software.com>
+    - Bumped to v1.8.0 and added python3 variant
+  * Fri May 10 2013 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.7.1
+  * Fri Aug 17 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Upgraded to v1.6.2
+    - Refactored to packager style
+  * Thu Jul 7 2011 Steve Norledge
+    - First created
+:src: numpy-2.0.1.tar.gz
+:version: '2.0.1'
+:compilers:
+  gcc:
+:requirements:
+  :tool:
+    - apps/patchelf >= 0.9
+  :build:
+    - libs/openblas
+  :runtime:
+    - libs/openblas
+:dependencies:
+  el:
+    - gcc-gfortran
+:variants:
+  python39:
+    :description: "Builds for Python 3.9.x series"
+    :python_bin: python3
+    :python_libdir: python3.9
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.9.0
+        - apps/cython_python39
+        - apps/setuptools_python39
+      :runtime: 
+        - apps/python3 ~> 3.9.0
+        - apps/setuptools_python39
+  python310:
+    :description: "Builds for Python 3.10.x series"
+    :python_bin: python3
+    :python_libdir: python3.10
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.10.0
+        - apps/cython_python310
+        - apps/setuptools_python310
+      :runtime: 
+        - apps/python3 ~> 3.10.0
+        - apps/setuptools_python310
+  python311:
+    :description: "Builds for Python 3.11.x series"
+    :python_bin: python3
+    :python_libdir: python3.11
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.11.0
+        - apps/cython_python311
+        - apps/setuptools_python311
+      :runtime: 
+        - apps/python3 ~> 3.11.0
+        - apps/setuptools_python311
+  python312:
+    :description: "Builds for Python 3.12.x series"
+    :python_bin: python3
+    :python_libdir: python3.12
+    :requirements:
+      :build:
+        - apps/python3 ~> 3.12.0
+        - apps/cython_python312
+      :runtime: 
+        - apps/python3 ~> 3.12.0
+:compile: |
+  export PYTHONDONTWRITEBYTECODE=true
+  PKG_CONFIG_PATH=$OPENBLASLIB/pkgconfig:$PKG_CONFIG_PATH
+  pip3 wheel . \
+    -Csetup-args=-Dallow-noblas=false \
+    -Csetup-args=-Dblas-order=openblas \
+    -Csetup-args=-Dlapack-order=openblas \
+    <%= redirect(:build) %>
+:install: |
+  export PYTHONDONTWRITEBYTECODE=true
+  mkdir -p <%= dest_dir %>/python/lib/<%= variant[:python_libdir] %>/site-packages
+  export PYTHONPATH=<%= dest_dir %>/python/lib/<%= variant[:python_libdir ] %>/site-packages:$PYTHONPATH
+  pip3 install --prefix=<%= dest_dir %>/python numpy*.whl <%= redirect(:install) %>
+  pushd <%= dest_dir %>/python/lib
+  for a in $(find . | grep so$); do
+    if ldd $a | grep -q gridware.*openblas; then
+      patchelf --remove-rpath $a
+    fi
+  done
+  popd
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/python/bin
+
+  prepend-path PATH ${appdir}/python/bin
+
+  prepend-path PYTHONPATH ${appdir}/python/lib/<%= variant[:python_libdir] %>/site-packages
