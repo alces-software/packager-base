@@ -23,7 +23,9 @@
 :group: Libraries
 :type: libs
 :changelog: |
-  * Mon Oxt 23 2023 - Rob Brown <rob.brown@alces-flight.com>
+  * Fri Jul 12 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated EL8 dependencies
+  * Mon Oct 23 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to latest 5.x release, 5.15.11
   * Tue Jul  4 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to latest 5.x release, 5.15.10
@@ -66,7 +68,6 @@
       - libX11-devel
       - libXrender-devel
       - libXi-devel
-      - gstreamer-plugins-base-devel
       - libxslt-devel
       - openssl-devel
       - fontconfig-devel
@@ -77,6 +78,11 @@
       - alsa-lib-devel
       - libxkbcommon-devel
       - libxkbcommon-x11-devel
+    el7:
+      - gstreamer-plugins-base-devel
+    el8:
+      - gstreamer1-plugins-base-devel
+      - wayland-devel
   :runtime:
     el:
       - libxcb
@@ -89,7 +95,6 @@
       - libX11
       - libXrender
       - libXi
-      - gstreamer-plugins-base
       - libxslt
       - openssl
       - fontconfig
@@ -97,6 +102,11 @@
       - mesa-libEGL
       - libxkbcommon
       - libxkbcommon-x11
+    el7:
+      - gstreamer-plugins-base
+    el8:    
+      - gstreamer1-plugins-base
+      - libwayland-client
 :compilers:
   gcc:  
 :compile: |
