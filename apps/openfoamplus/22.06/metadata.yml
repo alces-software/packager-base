@@ -21,6 +21,8 @@
     - libs/mgridgen
     - libs/qt >= 5.9.2
 :changelog: |
+  * Tue Sep  3 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Fix site binary application directory
   * Thu Feb  2 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Handle site binary applications
     - Rework version handling
@@ -188,7 +190,7 @@
   cp -rv ./OpenFOAM-v2206/* <%= dest_dir %> <%= redirect(:install) %>
   cp -rv ./ThirdParty-v2206/* <%= dest_dir %>/3rdparty <%= redirect(:install_3rdparty) %>
 :module: |
-  set openfoam_project_dir <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/openfoamplus/${version}
+  set openfoam_project_dir <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/openfoamplus/${version}
   set openfoam_site_lib ${openfoam_project_dir}/lib
   set openfoam_site_bin ${openfoam_project_dir}/bin
 
