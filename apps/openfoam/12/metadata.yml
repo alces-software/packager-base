@@ -18,6 +18,9 @@
     - mpi/openmpi
     - libs/qt > 5.12.0
 :changelog: |
+  * Tue Sep  3 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Added wmake to PATH
+    - Handle site binary applications
   * Fri Jul 12 2024 - Rob Brown <rob.brown@alces-flight.com>
     - Bumped to v12
   * Tue Jul  2 2024 - Rob Brown <rob.brown@alces-flight.com>
@@ -131,6 +134,9 @@
   fi
   export FOAM_INST_DIR="${TOPDIR}" <%= redirect(:setup) %>
 
+  cp ${TOPDIR}/OpenFOAM-12/etc/config.sh/example/prefs.sh ${TOPDIR}/OpenFOAM-12/etc/config.sh/prefs.sh
+  echo "export ParaView_TYPE=ThirdParty" >> ${TOPDIR}/OpenFOAM-12/etc/config.sh/prefs.sh
+
   # Need to do this waltz as OpenFOAM unsets MPI_HOME :-/
   echo "Unset MPI Home" <%= redirect(:stage) %>
   old_MPI_HOME=${MPI_HOME} <%= redirect(:setup) %>
@@ -154,15 +160,17 @@
 
   # Now the built in ParaView - this means we can run paraFoam without needing to use the '-builtin' option.
   export QT_INSTALL_PLUGINS=$QTDIR/plugins
-  ./makeParaView -osmesa -mpi -qmake "$QTBIN"/qmake \
+  ./makeParaView -version 5.11.2 \
+    -osmesa -mpi -qmake "$QTBIN"/qmake \
     QT_MOC_EXECUTABLE=$QTBIN/moc \
     QT_RCC_EXECUTABLE=$QTBIN/rcc \
     QT_UIC_EXECUTABLE=$QTBIN/uic \
+    CMAKE_C_FLAGS="-Wno-error=incompatible-pointer-types" \
     <%= redirect(:paraviewmake) %>
 
   # Remove obsolete include line from paraview-config.cmake that
   # breaks building openfoam vtkPVFoam and maybe more
-  sed -i -e 's/  include.*Client-targets.cmake.*//g' platforms/linux64Gcc/ParaView-5.10.1/lib64/cmake/paraview-5.10/paraview-config.cmake
+  #sed -i -e 's/  include.*Client-targets.cmake.*//g' platforms/linux64Gcc/ParaView-5.11.2§/lib64/cmake/paraview-5.11/paraview-config.cmake
 
   old_MPI_HOME=${MPI_HOME}
   source ${TOPDIR}/OpenFOAM-12/etc/bashrc
@@ -178,9 +186,14 @@
   ./Allwmake <%= redirect(:pvreadermake) %>
 :install: |
   mkdir <%= dest_dir %>/3rdparty
+  mkdir -p <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/openfoam/${version}
   cp -rv ./OpenFOAM-12/* <%= dest_dir %> <%= redirect(:install) %>
   cp -rv ./ThirdParty-12/* <%= dest_dir %>/3rdparty <%= redirect(:install_3rdparty) %>
 :module: |
+  set openfoam_project_dir <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/openfoam/${version}
+  set openfoam_site_lib ${openfoam_project_dir}/lib
+  set openfoam_site_bin ${openfoam_project_dir}/bin
+
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
@@ -191,6 +204,8 @@
   setenv FOAM_JOB_DIR ${appdir}/jobControl
   setenv FOAM_LIBBIN ${appdir}/platforms/linux64GccDPInt32Opt/lib
   setenv FOAM_MPI openmpi
+  setenv FOAM_SITE_APPBIN ${openfoam_site_bin}
+  setenv FOAM_SITE_LIBBIN ${openfoam_site_lib}
   setenv FOAM_SETTINGS ""
   setenv FOAM_SIGFPE ""
   setenv FOAM_SOLVERS ${appdir}/applications/solvers
@@ -202,21 +217,24 @@
   # other locations are tried first before falling back to dummies.
   append-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/dummy
   prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib
-  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/paraview-5.10
+  prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/paraview-5.11
   prepend-path LD_LIBRARY_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/openmpi-system
-  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.10.1/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.11.2/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/metis-5.1.0/build/Linux-x86_64/libmetis
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/boost_1_64_0/lib64
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/CGAL-4.10.0/lib64
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/metis-5.1.0/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib/openmpi-system
-  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/ParaView-5.10.1/lib
+  prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/ParaView-5.11.2/lib
+  prepend-path LD_LIBRARY_PATH ${openfoam_site_lib}
 
+  prepend-path PATH ${appdir}/wmake
   prepend-path PATH ${appdir}/bin
   prepend-path PATH ${appdir}/platforms/linux64GccDPInt32Opt/bin
-  prepend-path PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.10.1/bin/
-
+  prepend-path PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.11.2/bin/
+  prepend-path PATH ${openfoam_site_bin}
+  
   if { [info exists ::env(MPI_HOME)] } {
     setenv MPI_ARCH_PATH $::env(MPI_HOME)
   }
@@ -246,4 +264,4 @@
   setenv WM_PROJECT_INST_DIR ${appdir}
   setenv WM_PROJECT_VERSION ${version}
   setenv WM_THIRD_PARTY_DIR ${appdir}/3rdparty
-  setenv PV_PLUGIN_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/paraview-5.10
+  setenv PV_PLUGIN_PATH ${appdir}/platforms/linux64GccDPInt32Opt/lib/paraview-5.11
