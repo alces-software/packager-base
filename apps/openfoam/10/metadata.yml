@@ -18,6 +18,9 @@
     - mpi/openmpi
     - libs/qt > 5.6.4
 :changelog: |
+  * Tue Sep  3 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Added wmake to PATH
+    - Handle site binary applications
   * Mon Mar 18 2024 - Rob Brown <rob.brown@alces-flight.com>
     - Bumped to v10
   * Fri Aug 27 2021 - Rob Brown <rob.brown@alces-flight.com>
@@ -175,6 +178,10 @@
   cp -rv ./OpenFOAM-10/* <%= dest_dir %> <%= redirect(:install) %>
   cp -rv ./ThirdParty-10/* <%= dest_dir %>/3rdparty <%= redirect(:install_3rdparty) %>
 :module: |
+  set openfoam_project_dir <%= File.expand_path(File.join(Config.packages_dir(opts[:depot]),'..')) %>/share/openfoam/${version}
+  set openfoam_site_lib ${openfoam_project_dir}/lib
+  set openfoam_site_bin ${openfoam_project_dir}/bin
+
   setenv ${appcaps}DIR ${appdir}
   setenv ${appcaps}BIN ${appdir}/bin
 
@@ -185,6 +192,8 @@
   setenv FOAM_JOB_DIR ${appdir}/jobControl
   setenv FOAM_LIBBIN ${appdir}/platforms/linux64GccDPInt32Opt/lib
   setenv FOAM_MPI openmpi
+  setenv FOAM_SITE_APPBIN ${openfoam_site_bin}
+  setenv FOAM_SITE_LIBBIN ${openfoam_site_lib}
   setenv FOAM_SETTINGS ""
   setenv FOAM_SIGFPE ""
   setenv FOAM_SOLVERS ${appdir}/applications/solvers
@@ -206,10 +215,13 @@
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/metis-5.1.0/lib
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64GccDPInt32/lib/openmpi-system
   prepend-path LD_LIBRARY_PATH ${appdir}/3rdparty/platforms/linux64Gcc/ParaView-5.6.3/lib
+  prepend-path LD_LIBRARY_PATH ${openfoam_site_lib}
 
+  prepend-path PATH ${appdir}/wmake
   prepend-path PATH ${appdir}/bin
   prepend-path PATH ${appdir}/platforms/linux64GccDPInt32Opt/bin
   prepend-path PATH ${appdir}/3rdparty/build/linux64Gcc/ParaView-5.6.3/bin/
+  prepend-path PATH ${openfoam_site_bin}
 
   if { [info exists ::env(MPI_HOME)] } {
     setenv MPI_ARCH_PATH $::env(MPI_HOME)
