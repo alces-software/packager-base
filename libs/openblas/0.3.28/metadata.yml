@@ -1,0 +1,76 @@
+---
+:schema: 1
+:title: OpenBLAS
+:license: BSD License
+:summary: An optimized BLAS library
+:url: http://www.openblas.net/
+:description: |
+  OpenBLAS is an open source BLAS library forked from the
+  GotoBLAS2-1.13 BSD version. Since Mr. Kazushige Goto left TACC,
+  GotoBLAS is no longer being maintained. This project was created to
+  continue developing OpenBLAS/GotoBLAS.
+
+  In OpenBLAS 0.2.0, level 3 BLAS is optimized on the Intel Sandy
+  Bridge 64-bit OS and obtains a performance comparable with that
+  Intel MKL.
+
+  Level 3 BLAS performance was optimized on the ICT Loongson-3A CPU
+  and outperforms GotoBLAS by 135% in a single thread and 120% in 4
+  threads.
+
+  Some GotoBLAS bugs have been fixed including a SEGFAULT bug on the
+  new Linux kernel, MingW32/64 bugs, and a ztrmm computing error bug
+  on Intel Nehalem.
+:type: libs
+:group: Libraries
+:changelog: |
+  * Thu Sep 26 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v0.3.28
+  * Fri Aug  9 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v0.3.27
+  * Wed Mar  8 2023 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v0.3.21
+  * Fri Jun 25 2021 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to v0.3.15
+  * Thu Feb  1 2018 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to v0.2.20
+  * Mon Feb 15 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: OpenBLAS-0.3.28.tar.gz
+:src_dir: OpenBLAS-0.3.28
+:params:
+  :int64: "Build with 64-bit integer representations (default=no) [yes|no]"
+:variants:
+  default:
+    :makeflags: ''
+  openmp:
+    :makeflags: 'USE_OPENMP=1'
+:dependencies:
+  el:
+    - gcc-gfortran
+:version: '0.3.28'
+:compilers:
+  gcc:
+:compile: |
+  <% if !['yes','no'].include?(param(:int64).to_s.downcase) %>
+    echo "Invalid 'int64' parameter: specify 'yes' or 'no'." 1>&2
+    exit 1
+  <% end %>
+  make DYNAMIC_ARCH=1 \
+    <%= param(:int64).to_s.downcase == 'yes' ? 'INTERFACE64=1 ' : '' %> \
+    BINARY=64 \
+    NO_SHARED=0 <%= variant[:makeflags] %> <%= redirect(:compile) %>
+:install: |
+  make DYNAMIC_ARCH=1 \
+    <%= param(:int64).to_s.downcase == 'yes' ? 'INTERFACE64=1 ' : '' %> \
+    BINARY=64 \
+    NO_SHARED=0 <%= variant[:makeflags] %> \
+    PREFIX=<%= dest_dir %> install <%= redirect(:install) %>
+  rmdir <%= dest_dir %>/bin
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib
+  
