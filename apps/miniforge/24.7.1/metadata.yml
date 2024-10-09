@@ -1,0 +1,35 @@
+---
+:schema: 1
+:title: Miniforge
+:license: BSD License
+:summary: A conda-forge distribution.
+:url: https://conda-forge.org/miniforge
+:description: |
+  Miniforge is the preferred conda-forge installer and includes conda,
+  mamba, and their dependencies.
+:group: Languages
+:changelog: |
+  * Thu Oct 3 2024 - Mark J. Titorenko <mark.titorenko@alces-flight.com>
+    - First created
+:src: Mambaforge-24.7.1-2-Linux-x86_64.sh.sic
+:src_dir: .
+:type: apps
+:version: '24.7.1'
+:compilers:
+  bin:
+:compile: |
+  # no-op; this is a distribution of a binary package
+:install: |
+  ln -s <%= source('Mambaforge-24.7.1-2-Linux-x86_64.sh.sic') %> install.sh
+  sh install.sh -f -b -p <%= dest_dir %> <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+
+  prepend-path PATH ${appdir}/bin
+
+  conflict apps/anaconda
+  conflict apps/anaconda3
+  conflict apps/miniconda3
+  conflict apps/python3
+  conflict apps/python
