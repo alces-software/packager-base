@@ -1,0 +1,38 @@
+---
+:schema: 1
+:title: DMTCP
+:license: LGPLv3+ 
+:summary: Distributed MultiThreaded Checkpointing
+:url: https://dmtcp.sourceforge.io/
+:description: |
+  DMTCP (Distributed MultiThreaded Checkpointing) transparently
+  checkpoints a single-host or distributed computation in user-space
+  -- with no modifications to user code or to the O/S. It works on
+  most Linux applications, including Python, Matlab, R, GUI desktops,
+  MPI, etc. It is robust and widely used (on Sourceforge since 2007).
+:type: apps
+:group: Tools
+:changelog: |
+  * Wed Oct 16 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - Updated to latest version v3.1.2
+  * Mon Feb  5 2024 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: v3.1.2.tar.gz
+:src_dir: dmtcp-3.1.2
+:version: '3.1.2'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - gcc-c++
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make -j ${GRIDWARE_MAKE_THREADS:-1} <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}DOC ${appdir}/doc
+
+  prepend-path PATH ${appdir}/bin
