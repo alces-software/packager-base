@@ -40,6 +40,7 @@
 :src_dir: OpenBLAS-0.3.28
 :params:
   :int64: "Build with 64-bit integer representations (default=no) [yes|no]"
+  :num_threads: "Specify maximum number of parallel threads (default=<cores in build system>) [<int>|default]"
 :variants:
   default:
     :makeflags: ''
@@ -58,11 +59,13 @@
   <% end %>
   make DYNAMIC_ARCH=1 \
     <%= param(:int64).to_s.downcase == 'yes' ? 'INTERFACE64=1 ' : '' %> \
+    <%= param(:num_threads) == 'default' ? '' : "NUM_THREADS=#{param(:num_threads).to_i}" %> \
     BINARY=64 \
     NO_SHARED=0 <%= variant[:makeflags] %> <%= redirect(:compile) %>
 :install: |
   make DYNAMIC_ARCH=1 \
     <%= param(:int64).to_s.downcase == 'yes' ? 'INTERFACE64=1 ' : '' %> \
+    <%= param(:num_threads) == 'default' ? '' : "NUM_THREADS=#{param(:num_threads).to_i}" %> \
     BINARY=64 \
     NO_SHARED=0 <%= variant[:makeflags] %> \
     PREFIX=<%= dest_dir %> install <%= redirect(:install) %>
@@ -73,4 +76,3 @@
   setenv ${appcaps}INCLUDE ${appdir}/include
 
   prepend-path LD_LIBRARY_PATH ${appdir}/lib
-  
