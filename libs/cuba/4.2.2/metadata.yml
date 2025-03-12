@@ -1,0 +1,38 @@
+---
+:schema: 1
+:license: LGPL
+:summary: Library for multidimensional numerical integration
+:url: https://feynarts.de/cuba/
+:description: |
+  The Cuba library offers a choice of four independent routines for
+  multidimensional numerical integration: Vegas, Suave, Divonne, and
+  Cuhre.
+
+  All four have a C/C++, Fortran, and Mathematica interface and can
+  integrate vector integrands. Their invocation is very similar, so it
+  is easy to substitute one method by another for cross-checking. For
+  further safeguarding, the output is supplemented by a χ²-probability
+  which quantifies the reliability of the error estimate.
+:group: Libraries
+:changelog: |
+  * Wed Mar 12 2025 - Rob Brown <rob.brown@alces-flight.com>
+    - First created
+:src: Cuba-4.2.2.tar.gz
+:type: libs
+:version: 4.2.2
+:src_dir: Cuba-4.2.2
+:compilers:
+  gcc:
+:dependencies:
+   el:
+     - gcc-gfortran
+:compile: |
+  ./configure --prefix=<%= dest_dir %>
+  make <%= redirect(:compile) %>
+:install: |
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  
+  setenv ${appcaps}LIB ${appdir}/lib
+  setenv ${appcaps}INCLUDE ${appdir}/include
