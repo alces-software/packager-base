@@ -16,6 +16,8 @@
   real and complex matrices, in both single and double precision.
 :group: Libraries
 :changelog: |
+  * Wed Mar 12 2025 - Rob Brown <rob.brown@alces-flight.com>
+    - Add option to build 64-bit libraries
   * Wed Feb  5 2025 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to latest v3.12.1 release
   * Tue Feb 27 2024 - Rob Brown <rob.brown@alces-flight.com>
@@ -49,26 +51,58 @@
 :dependencies:
    el:
      - gcc-gfortran
+:params:
+  :int64: "Additionally build 64-bit integer representation libraries (default=no) [yes|no]"
 :compile: |
+  <% if !['yes','no'].include?(param(:int64).to_s.downcase) %>
+    echo "Invalid 'int64' parameter: specify 'yes' or 'no'." 1>&2
+    exit 1
+  <% end %>
   mkdir build.static build.shared
   cd build.static
   cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
     -DLAPACKE=ON \
-    .. <%= redirect(:cmake_static) %>
+    .. <%= redirect(:configure_static) %>
   make <%= redirect(:compile_static) %>
 
   cd ../build.shared
   cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
     -DBUILD_SHARED_LIBS=ON \
     -DLAPACKE=ON \
-    .. <%= redirect(:cmake_shared) %>
+    .. <%= redirect(:configure_shared) %>
   make <%= redirect(:compile_shared) %>
+
+  <% if param(:int64).to_s.downcase == 'yes' %>
+  cd ..
+  mkdir build64.static build64.shared
+  cd build64.static
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DBUILD_INDEX64=ON \
+    -DLAPACKE=ON \
+    .. <%= redirect(:configure_shared_64) %>
+  make <%= redirect(:compile_shared_64) %>
+
+  cd ../build64.shared
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> \
+    -DBUILD_SHARED_LIBS=ON \
+    -DBUILD_INDEX64=ON \
+    -DLAPACKE=ON \
+    .. <%= redirect(:configure_shared_64) %>
+  make <%= redirect(:compile_shared_64) %>
+  <% end %>
 :install: |
   cd build.static
   make install <%= redirect(:install_static) %>
   cd ../build.shared
   make install <%= redirect(:install_shared) %>
   cd ..
+  <% if param(:int64).to_s.downcase == 'yes' %>
+  cd build64.static
+  make install <%= redirect(:install_static) %>
+  cd ../build64.shared
+  make install <%= redirect(:install_shared) %>
+  cd ..
+  <% end %>
   mkdir -p <%= dest_dir %>/doc
   install -m 644 README.md LICENSE -t <%= dest_dir %>/doc
 :module: |
