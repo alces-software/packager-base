@@ -1,0 +1,41 @@
+---
+:schema: 1
+:title: PHREEQC
+:license: Public Domain
+:summary: Perform a wide variety of aqueous geochemical calculations
+:url: https://www.usgs.gov/software/phreeqc-version-3
+:description: |
+  PHREEQC Version 3 is a computer program written in the C++
+  programming language that is designed to perform a wide variety of
+  aqueous geochemical calculations. PHREEQC implements several types
+  of aqueous models including two ion-association aqueous models.
+:group: Simulation
+:changelog: |
+  * Wed Mar 26 2025 - Rob Brown (rob.brown@alces-flight.com>
+    - First created
+:src: phreeqc-3.8.6-17100.tar.gz
+:sources:
+- iphreeqc-3.8.6-17100.tar.gz
+:src_dir: phreeqc-3.8.6-17100
+:type: apps
+:version: '3.8.6'
+:compilers:
+  gcc:
+:compile: |
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:configure) %>
+  make <%= redirect(:build) %>
+  tar xzf <%= source('iphreeqc-3.8.6-17100.tar.gz') %>
+  cd iphreeqc-3.8.6-17100
+  ./configure --prefix=<%= dest_dir %> <%= redirect(:lib_configure) %>
+  make <%= redirect(:lib_build) %>
+:install: |
+  make install <%= redirect(:install) %>
+  cd iphreeqc-3.8.6-17100
+  make install <%= redirect(:lib_install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+  setenv ${appcaps}LIB ${appdir}/lib
+
+  prepend-path PATH ${appdir}/bin
