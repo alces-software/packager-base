@@ -51,6 +51,8 @@
     - libs/fftw3_double
   :runtime:
     - libs/proj
+    - libs/gdal
+    - libs/fftw3_double
 :src: grass-8.3.1.tar.gz
 :src_dir: grass-8.3.1
 :type: apps
