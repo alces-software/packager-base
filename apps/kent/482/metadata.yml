@@ -1,0 +1,119 @@
+---
+:schema: 1
+:title: Kent source utilities
+:license: NONFREE - personal, academic, and non-profit use
+:summary: Jim Kent and the UCSC Genome Bioinformatics Group program suite
+:url: http://genomewiki.ucsc.edu/index.php/Kent_source_utilities
+:description: |
+  Jim Kent and the UCSC Genome Bioinformatics Group's suite of
+  biological analysis and web display programs.  All files are
+  copyrighted, but license is granted for personal, academic, and
+  non-profit use.  Commercial users should contact kent@soe.ucsc.edu.
+:group: Bioinformatics
+:changelog: |
+  * Fri May 30 2025 Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to latest v482
+  * Mon Apr 25 2016 Ruan G. Ellis <ruan.ellis@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Feb  3 2015 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Copy lib and inc directories from source tree into share/src so
+      third party tools can link against them if necessary.
+  * Wed Aug  6 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest v301.1
+    - Added configuration of UCSC browser htdocs to install script
+  * Fri Aug  1 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Copy trackDb.sql into share subdirectory
+  * Fri Feb  7 2014 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Updated to latest v295
+  * Tue Sep 25 2012 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Refactored to packager style
+  * Wed Dec 7 2011 Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: v482_branch.1.tar.gz
+:src_dir: kent-482_branch.1
+:type: apps
+:version: '482'
+:compilers:
+  gcc:
+:dependencies:
+  el:
+    - libpng-devel
+    - mariadb-devel
+    - rsync
+#:patches:
+#- straw-patch-gh93.patch
+:compile: |
+  OUTDIR="$(pwd)"
+  mkdir -p out/bin out/htdocs out/cgi-bin-root out/${OUTDIR}/out/cgi-bin-root/ out/${OUTDIR}/out/cgi-bin-root/loader
+  touch out/${OUTDIR}/out/cgi-bin-root/phyloPng
+  cd src
+  CFLAGS=-lstdc++ make USE_SSL=1 \
+       DESTDIR=${OUTDIR}/out \
+       DOCUMENTROOT=${OUTDIR}/out/htdocs \
+       CGI_BIN=${OUTDIR}/out/cgi-bin \
+       BINDIR=${OUTDIR}/out/bin \
+       MACHTYPE=x86_64 <%= redirect(:make) %>
+:install: |
+  OUTDIR="$(pwd)"
+  cp -rv out/bin <%= dest_dir %> <%= redirect(:install) %>
+  cp -rv out/${OUTDIR}/out/bin/* <%= dest_dir %>/bin <%= redirect(:install) %>
+  mkdir -p <%= dest_dir %>/www/cgi-bin
+  cp -rv out/cgi-bin-root/* <%= dest_dir %>/www/cgi-bin <%= redirect(:install) %>
+  cp -rv out/${OUTDIR}/out/cgi-bin-root/* <%= dest_dir %>/www/cgi-bin <%= redirect(:install) %>
+  cp -rv out/htdocs <%= dest_dir %>/www <%= redirect(:install) %>
+
+  mkdir <%= dest_dir %>/share
+  cp -v src/hg/lib/trackDb.sql <%= dest_dir %>/share <%= redirect(:install) %>
+  mkdir <%= dest_dir %>/share/src
+  cp -Rv src/inc src/lib <%= dest_dir %>/share/src
+  cat <<EOF > <%= dest_dir %>/share/ucsc_browser-<%= version %>.conf
+  Listen 8030
+  <VirtualHost *:8030>
+  DocumentRoot <%= dest_dir %>/www/htdocs
+
+  XBitHack on
+  # the ScriptAlias directive is crucial
+  ScriptAlias /cgi-bin <%= dest_dir %>/www/cgi-bin
+  <Directory "<%= dest_dir %>/www/cgi-bin">
+    AllowOverride None
+    Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    Order allow,deny
+    Allow from all
+    AddHandler cgi-script cgi pl
+  </Directory>
+
+  <Directory <%= dest_dir %>/www/htdocs>
+    Order allow,deny
+    Allow from all
+    AllowOverride AuthConfig
+    Options +Includes
+  </Directory>
+
+  </VirtualHost>
+  EOF
+
+  cp -rv src/hg/htdocs/* <%= dest_dir %>/www/htdocs <%= redirect(:install) %>
+  cd <%= dest_dir %>/www
+  TRASH_DIR=/var/cache/kent/trash
+  # The trash directory must exist and be world-writable 777
+  ln -s $TRASH_DIR trash
+  cd <%= dest_dir %>/www/htdocs
+  mv js/root/* js
+  rmdir js/root
+  ln -s $TRASH_DIR trash
+  ln -s ENCODE encode
+  ln -s goldenPath goldenpath
+  cd <%= dest_dir %>/www/htdocs/style
+  for a in *.css; do
+    ln -s $a $(basename $a .css)-v<%= version.split('.').first %>.css
+  done
+  cd <%= dest_dir %>/www
+  #Removed this as no httpd installed - will fail installation otherwise
+  #chown -R apache:apache htdocs
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}SHARE ${appdir}/share
+  setenv ${appcaps}SRC ${appdir}/share/src
+
+  prepend-path PATH ${appdir}/bin

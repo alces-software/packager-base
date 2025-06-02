@@ -1,0 +1,21 @@
+--- src/hg/lib/straw/straw.cpp.orig	2025-05-19 19:24:48.000000000 +0100
++++ src/hg/lib/straw/straw.cpp	2025-05-30 16:14:26.362739318 +0100
+@@ -32,6 +32,7 @@
+ #include <utility>
+ #include <vector>
+ #include <streambuf>
++#include <cstdint>
+ //#include <curl/curl.h>
+ #include <iterator>
+ #include <algorithm>
+--- src/hg/affyTransciptome/makefile.orig	2025-05-19 19:24:48.000000000 +0100
++++ src/hg/affyTransciptome/makefile	2025-05-30 16:24:16.941118928 +0100
+@@ -3,7 +3,7 @@
+ 
+ L += $(MYSQLLIBS)
+ MYLIBDIR = ../../lib/$(MACHTYPE)
+-MYLIBS =  $(MYLIBDIR)/jkhgap.a $(MYLIBDIR)/jkweb.a $(L)
++MYLIBS =  -lstdc++ $(MYLIBDIR)/jkhgap.a $(MYLIBDIR)/jkweb.a $(L)
+ 
+ O = affyPairsToSample normalizeSampleFile avgTranscriptomeExps maxTranscriptomeExps scaleSampleFiles averageZoomLevels \
+ 	groupSamples
