@@ -1,0 +1,62 @@
+---
+:schema: 1
+:title: SCOTCH
+:license: CeCILL-C free/libre software license - see http://j.mp/T3UC9g
+:summary: Graph and mesh/hypergraph partitioning, graph clustering, and sparse matrix ordering
+:url: http://scotch.gforge.inria.fr/
+:description: |
+  SCOTCH is a software package for sequential and parallel graph
+  partitioning, static mapping, and sparse matrix block ordering, and
+  sequential mesh and hypergraph partitioning.
+
+  Its purpose is to apply graph theory, with a divide and conquer
+  approach, to scientific computing problems such as graph and mesh
+  partitioning, static mapping, and sparse matrix ordering, in
+  application domains ranging from structural mechanics to operating
+  systems or bio-chemistry.
+
+  The SCOTCH distribution is a set of programs and libraries which
+  implement the static mapping and sparse matrix reordering algorithms
+  developed within the SCOTCH project.
+:group: Mathematics
+:changelog: |
+  * Tue Sep 16 2025 - Rob Brown <rob.brown@alces-flight.com>
+    - Bumped to v7.0.9
+  * Mon Jun  6 2016 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - Added distro dependencies for EL
+  * Wed Nov 21 2012 - Mark J. Titorenko <mark.titorenko@alces-software.com>
+    - First created
+:src: scotch-v7.0.9.tar.gz
+:src_dir: scotch-v7.0.9
+:type: libs
+:version: '7.0.9'
+:dependencies:
+  el:
+    - zlib-devel
+:requirements:
+  :build: mpi/openmpi
+  :runtime: mpi/openmpi
+  :tool:
+    - apps/cmake >= 3.10.0
+    - apps/flex >= 2.6.4
+:compilers:
+  gcc:
+:compile: |
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=<%= dest_dir %> .. <%= redirect(:configure) %>
+  make <%= redirect(:compile) %>
+:install: |
+  cd build
+  make install <%= redirect(:install) %>
+:module: |
+  setenv ${appcaps}DIR ${appdir}
+  setenv ${appcaps}LIB ${appdir}/lib64
+  setenv ${appcaps}BIN ${appdir}/bin
+  setenv ${appcaps}INCLUDE ${appdir}/include
+
+  prepend-path LD_LIBRARY_PATH ${appdir}/lib64
+  prepend-path PATH ${appdir}/bin
+  prepend-path MANPATH ${appdir}/man
+
+
