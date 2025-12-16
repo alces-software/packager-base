@@ -19,6 +19,8 @@
       source code the same as in the sequential case.
 :group: Libraries
 :changelog: |
+  * Tue Dec 16 2025 - Rob Brown <rob.brown@alces-flight.com>
+    - Add variant for OpenMP
   * Fri May 12 2023 - Rob Brown <rob.brown@alces-flight.com>
     - Updated to latest v2.2.0
   * Tue Aug 18 2020 - Rob Brown <rob.brown@alces-flight.com>
@@ -36,7 +38,7 @@
   :tool: apps/cmake
 :compilers:
   gcc:
-    :configure_env: 'CC=mpicc CXX=mpic++ F77=mpif77 FC=mpifort F90=mpif90'
+    :configure_env: 'CC=mpicc CXX=mpic++ F77=mpif77 FC=mpifort F90=mpif90 CFLAGS=-Wno-implicit-function-declaration FFLAGS=-fallow-argument-mismatch'
   intel:
     :configure_env: 'CC=icc CXX=icpc F77=ifort FC=ifort F90=ifort'
   open64:
@@ -48,6 +50,11 @@
     :requirements:
       :build: libs/openblas
       :runtime: libs/openblas
+  openmp:
+    :cmake_paramaters: '-DBUILD_SHARED_LIBS=ON -DLAPACK_LIBRARIES="$OPENBLAS_OPENMPLIB/libopenblas.so" -DBLAS_LIBRARIES="OPENBLAS_OPENMPLIB/libopenblas.so"'
+    :requirements:
+      :build: libs/openblas_openmp
+      :runtime: libs/openblas_openmp
   atlasstatic:
     :cmake_parameters: '-DBUILD_STATIC_LIBS=ON -DLAPACK_LIBRARIES="$ATLASLIB/liblapack.a;$ATLASLIB/libf77blas.a" -DBLAS_LIBRARIES="$ATLASLIB/libcblas.a;$ATLASLIB/libatlas.a"'
     :requirements:
