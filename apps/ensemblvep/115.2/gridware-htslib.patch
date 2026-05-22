@@ -1,0 +1,11 @@
+--- INSTALL.pl.old	2017-07-05 16:43:18.715286680 +0100
++++ INSTALL.pl	2017-07-05 16:43:47.031486235 +0100
+@@ -759,7 +759,7 @@
+ 
+   print "Attempting to install Bio::DB::HTS and htslib.\n\n>>> If this fails, try re-running with --NO_HTSLIB\n\n";
+ 
+-  my $htslib_location = install_htslib();
++  my $htslib_location = $ENV{'HTSLIBLIB'};
+   rmtree( $DEST_DIR.'/tmp' );
+ 
+   #Now install Bio::DB::HTS proper
